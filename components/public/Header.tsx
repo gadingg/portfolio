@@ -26,8 +26,8 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Hide header completely on all admin routes
-  if (pathname?.startsWith('/admintgadink')) {
+  // Hide header completely on admin routes and /second (which uses floating dock)
+  if (pathname?.startsWith('/admintgadink') || pathname?.startsWith('/second')) {
     return null;
   }
 

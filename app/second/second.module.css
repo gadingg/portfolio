@@ -1,0 +1,339 @@
+/* ────────────────────────────────────────────────────────── */
+/* Creatie® Portfolio Scoped CSS Module (/second)             */
+/* Implements Emil Kowalski Craft & UI/UX Pro Max Principles   */
+/* ────────────────────────────────────────────────────────── */
+
+.pageContainer {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  font-family: 'Plus Jakarta Sans', 'Mona Sans', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  color: var(--text-color, #1e293b);
+  background-color: var(--bg-page, #f7f9f6);
+  transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1), color 0.5s ease;
+}
+
+/* Light Theme Variables */
+:global(html[data-theme="light"]) .pageContainer {
+  --text-color: #0f172a;
+  --text-muted: #475569;
+  --text-subtle: #64748b;
+  --bg-page: #f8faf7;
+  --card-bg: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.08);
+  --card-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.07), 0 4px 12px rgba(0, 0, 0, 0.03);
+  --dock-bg: rgba(255, 255, 255, 0.85);
+  --dock-border: rgba(255, 255, 255, 0.6);
+  --dock-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+  --grid-pattern-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Dark Theme Variables */
+:global(html:not([data-theme="light"])) .pageContainer {
+  --text-color: #f8fafc;
+  --text-muted: #cbd5e1;
+  --text-subtle: #94a3b8;
+  --bg-page: #040817;
+  --card-bg: rgba(15, 23, 42, 0.88);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --card-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.5);
+  --dock-bg: rgba(15, 23, 42, 0.82);
+  --dock-border: rgba(255, 255, 255, 0.12);
+  --dock-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7);
+  --grid-pattern-color: rgba(255, 255, 255, 0.035);
+}
+
+/* Section Grid Paper Background */
+.gridPaperSection {
+  position: relative;
+  width: 100%;
+  background-image: 
+    linear-gradient(to right, var(--grid-pattern-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-pattern-color) 1px, transparent 1px);
+  background-size: 36px 36px;
+  background-position: center center;
+}
+
+/* Section Wrapper with generous breathability */
+.sectionWrap {
+  width: 100%;
+  max-width: 1240px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 100px;
+  padding-bottom: 100px;
+  position: relative;
+  z-index: 10;
+}
+
+@media (min-width: 768px) {
+  .sectionWrap {
+    padding-left: 48px;
+    padding-right: 48px;
+    padding-top: 140px;
+    padding-bottom: 140px;
+  }
+}
+
+/* Section Heading Badge */
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.pillBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  margin-bottom: 16px;
+  user-select: none;
+  transform: rotate(-1.5deg);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pillBadge:hover {
+  transform: rotate(0deg) scale(1.05);
+}
+
+.sectionTitle {
+  font-size: 2.25rem;
+  line-height: 1.1;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: var(--text-color);
+  max-width: 800px;
+}
+
+@media (min-width: 768px) {
+  .sectionTitle {
+    font-size: 3.5rem;
+  }
+}
+
+/* Sticky Note & Paper Cards */
+.stickyCard {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 32px 28px;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+  position: relative;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.stickyCard:hover {
+  transform: translateY(-8px) scale(1.02) rotate(0deg) !important;
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.18);
+  z-index: 20;
+}
+
+/* Paperclip SVG container */
+.paperclipWrap {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
+}
+
+/* Dog-ear corner fold */
+.dogEarFold {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 32px 32px;
+  border-color: transparent transparent #f97316 transparent;
+  filter: drop-shadow(-2px -2px 3px rgba(0, 0, 0, 0.12));
+}
+
+/* Top Corner Tab on stats cards */
+.cornerTab {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 38px;
+  height: 38px;
+  border-top-right-radius: 19px;
+}
+
+/* Floating Badges in Hero */
+.heroSticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  user-select: none;
+  cursor: pointer;
+  vertical-align: middle;
+  margin: 0 6px;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.heroSticker:hover {
+  transform: scale(1.12) rotate(0deg) !important;
+}
+
+/* Doodle Eyes tracking */
+.doodleEyeWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 2px solid #0f172a;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.eyeBall {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #0f172a;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pupil {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #0f172a;
+  transition: transform 0.1s ease-out;
+}
+
+/* Services Pastel Bars */
+.serviceBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 28px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  user-select: none;
+}
+
+.serviceBar:hover {
+  transform: translateY(-4px) scale(1.015);
+  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.12);
+}
+
+/* Floating Dock at bottom */
+.dockContainer {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  border-radius: 32px;
+  background: var(--dock-bg);
+  border: 1px solid var(--dock-border);
+  box-shadow: var(--dock-shadow);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.dockItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dockItem:hover {
+  transform: translateY(-6px) scale(1.18);
+}
+
+.dockTooltip {
+  position: absolute;
+  top: -38px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dockItem:hover .dockTooltip {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+/* Marquee Bar */
+.marqueeWrap {
+  width: 100%;
+  overflow: hidden;
+  background: #facc15;
+  color: #0f172a;
+  font-weight: 900;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 14px 0;
+  display: flex;
+  user-select: none;
+}
+
+.marqueeTrack {
+  display: flex;
+  white-space: nowrap;
+  animation: marqueeScroll 28s linear infinite;
+}
+
+.marqueeTrack:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marqueeScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
