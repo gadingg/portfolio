@@ -36,12 +36,11 @@
         linear-gradient(180deg, oklch(18% 0.05 28) 0%, oklch(15% 0.04 220) 42%, oklch(13% 0.04 240) 100%);
       --grid-line: rgba(255, 255, 255, 0.03);
       --grid-opacity: 0.18;
-      --bg-hero: #0d1218;
-      --hero-overlay-gradient: linear-gradient(180deg, rgba(1, 6, 10, .2) 0%, rgba(1, 6, 10, .2) 36%, rgba(4, 10, 16, .62) 74%, rgba(8, 12, 18, .96) 100%),
-        radial-gradient(circle at center, rgba(255, 186, 94, .08), transparent 22%),
-        radial-gradient(circle at center, rgba(0, 0, 0, .03), rgba(0, 0, 0, .46) 100%);
-      --hero-title-shadow: 0 18px 40px rgba(0, 0, 0, .35);
-      --hero-subtitle-shadow: 0 5px 16px rgba(0, 0, 0, .7);
+      --bg-hero: #080d14;
+      --hero-overlay-gradient: radial-gradient(ellipse at 50% 48%, rgba(8, 13, 20, 0.65) 0%, rgba(8, 13, 20, 0.35) 45%, rgba(8, 13, 20, 0.15) 75%),
+        linear-gradient(180deg, rgba(8, 13, 20, 0.4) 0%, rgba(8, 13, 20, 0.12) 30%, rgba(8, 13, 20, 0.70) 75%, #080d14 100%);
+      --hero-title-shadow: 0 18px 40px rgba(0, 0, 0, .45);
+      --hero-subtitle-shadow: 0 5px 16px rgba(0, 0, 0, .8);
       --button-primary-bg: linear-gradient(180deg, rgba(24, 27, 30, .96), rgba(10, 12, 15, .94));
       --button-secondary-bg: rgba(255, 255, 255, .07);
       --button-secondary-hover-border: rgba(255, 205, 127, .28);
@@ -73,64 +72,59 @@
       --carousel-progress-bg: rgba(255, 255, 255, .09);
       --ambient-orb-amber: rgba(255, 180, 102, .16);
       --ambient-orb-teal: rgba(62, 145, 139, .12);
-      --hero-fallback-bg: linear-gradient(90deg, rgba(3, 8, 12, .72), rgba(3, 8, 12, .1) 46%, rgba(3, 8, 12, .2)),
-        url("assets/images/hero-poster-dark.webp") center / cover no-repeat,
-        linear-gradient(135deg, #1d3033, #09131e 55%, #3d251c);
+      --hero-fallback-bg: url("assets/images/hero-dark.jpg") center / cover no-repeat;
     }
 
     /* Light Theme Variables (Morning Theme) */
     html[data-theme="light"] {
       color-scheme: light;
-      --ink: oklch(14% 0.02 220);
-      --muted: rgba(14, 22, 30, 0.76);
-      --border: rgba(0, 0, 0, 0.09);
-      --border-strong: rgba(0, 0, 0, 0.16);
-      --surface: rgba(255, 255, 255, 0.85);
-      --bg-gradient: radial-gradient(circle at 50% 0%, rgba(255, 180, 120, .18), transparent 30%),
-        radial-gradient(circle at 20% 14%, rgba(61, 180, 170, .14), transparent 25%),
-        linear-gradient(180deg, oklch(98% 0.01 220) 0%, oklch(95% 0.01 220) 42%, oklch(92% 0.01 220) 100%);
-      --grid-line: rgba(0, 0, 0, 0.035);
+      --ink: #0f172a;
+      --muted: #334155;
+      --border: rgba(15, 23, 42, 0.08);
+      --border-strong: rgba(15, 23, 42, 0.14);
+      --surface: rgba(255, 255, 255, 0.92);
+      --bg-gradient: radial-gradient(circle at 50% 0%, rgba(255, 180, 120, .14), transparent 30%),
+        radial-gradient(circle at 20% 14%, rgba(61, 180, 170, .10), transparent 25%),
+        linear-gradient(180deg, #f8fafc 0%, #f1f5f9 42%, #e2e8f0 100%);
+      --grid-line: rgba(15, 23, 42, 0.035);
       --grid-opacity: 0.12;
-      --bg-hero: #eef3f6;
-      --hero-overlay-gradient: linear-gradient(180deg, rgba(238, 243, 246, .82) 0%, rgba(238, 243, 246, .88) 36%, rgba(235, 240, 244, .94) 74%, rgba(230, 236, 240, .98) 100%),
-        radial-gradient(circle at center, rgba(255, 180, 100, .12), transparent 35%),
-        radial-gradient(circle at center, rgba(255, 255, 255, .2), rgba(230, 236, 240, .2) 100%);
-      --hero-title-shadow: 0 10px 25px rgba(0, 0, 0, .06);
-      --hero-subtitle-shadow: none;
-      --button-primary-bg: linear-gradient(180deg, rgba(20, 25, 30, .98), rgba(10, 14, 18, .96));
-      --button-secondary-bg: rgba(0, 0, 0, .05);
-      --button-secondary-hover-border: rgba(0, 0, 0, .24);
-      --chip-bg: rgba(0, 0, 0, .05);
-      --chip-border: rgba(0, 0, 0, .1);
-      --chip-color: oklch(16% 0.02 220);
+      --bg-hero: #f4f6f8;
+      --hero-overlay-gradient: radial-gradient(ellipse at 50% 48%, rgba(255, 255, 255, 0.68) 0%, rgba(255, 255, 255, 0.38) 45%, rgba(244, 246, 248, 0.12) 75%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.08) 30%, rgba(244, 246, 248, 0.60) 75%, #f4f6f8 100%);
+      --hero-title-shadow: 0 2px 20px rgba(255, 255, 255, .9);
+      --hero-subtitle-shadow: 0 1px 12px rgba(255, 255, 255, .8);
+      --button-primary-bg: #0f172a;
+      --button-secondary-bg: rgba(255, 255, 255, 0.92);
+      --button-secondary-hover-border: #0f172a;
+      --chip-bg: rgba(255, 255, 255, 0.90);
+      --chip-border: rgba(15, 23, 42, 0.12);
+      --chip-color: #0f172a;
       --brief-bg: linear-gradient(180deg, rgba(238, 243, 246, .98), rgba(230, 236, 240, .95));
       --brief-orb: rgba(61, 180, 170, .08);
       --projects-bg: radial-gradient(circle at 10% 0%, rgba(255, 180, 120, .12), transparent 25%),
-        linear-gradient(180deg, oklch(95% 0.01 220), oklch(93% 0.01 220));
+        linear-gradient(180deg, #f1f5f9, #e2e8f0);
       --project-card-bg: linear-gradient(180deg, rgba(255, 255, 255, .96), rgba(255, 255, 255, .88));
-      --project-card-border: rgba(0, 0, 0, 0.08);
+      --project-card-border: rgba(15, 23, 42, 0.08);
       --project-card-inner-glow: radial-gradient(circle at 72% 26%, rgba(255, 180, 120, .08), transparent 30%);
       --project-card-glow: rgba(255, 180, 120, .15);
       --gallery-bg: radial-gradient(circle at 82% 18%, rgba(61, 180, 170, .08), transparent 25%),
-        linear-gradient(180deg, oklch(93% 0.01 220), oklch(95% 0.01 220));
+        linear-gradient(180deg, #e2e8f0, #f1f5f9);
       --gallery-overlay: linear-gradient(180deg, transparent, rgba(3, 7, 11, .28) 28%, rgba(2, 6, 10, .94) 100%);
       --apps-bg: radial-gradient(circle at 14% 12%, rgba(255, 180, 120, .08), transparent 25%),
-        linear-gradient(180deg, oklch(95% 0.01 220), oklch(92% 0.01 220));
+        linear-gradient(180deg, #f1f5f9, #e2e8f0);
       --app-card-bg: linear-gradient(180deg, rgba(255, 255, 255, .96), rgba(255, 255, 255, .88));
       --app-card-glow: rgba(255, 180, 100, .04);
-      --contact-bg: radial-gradient(circle at 18% 12%, rgba(255, 180, 120, .08), transparent 25%),
-        linear-gradient(180deg, oklch(92% 0.01 220), oklch(94% 0.01 220));
-      --contact-shell-bg: linear-gradient(180deg, rgba(255, 255, 255, .96), rgba(255, 255, 255, .88));
-      --contact-link-bg: rgba(0, 0, 0, .04);
-      --contact-link-color: oklch(16% 0.02 220);
-      --roofline-color: rgba(0, 0, 0, .06);
-      --roofline-bg: rgba(0, 0, 0, .025);
-      --carousel-progress-bg: rgba(0, 0, 0, .1);
-      --ambient-orb-amber: rgba(255, 180, 102, .08);
-      --ambient-orb-teal: rgba(62, 145, 139, .06);
-      --hero-fallback-bg: linear-gradient(90deg, rgba(255, 255, 255, .72), rgba(255, 255, 255, .15) 46%, rgba(255, 255, 255, .2)),
-        url("assets/images/hero-poster-light.webp") center / cover no-repeat,
-        linear-gradient(135deg, #e5f0f3, #eef3f6 55%, #f7e8db);
+      --contact-bg: radial-gradient(circle at 18% 12%, rgba(255, 180, 120, .1), transparent 25%),
+        linear-gradient(180deg, #e2e8f0, #f8fafc);
+      --contact-shell-bg: linear-gradient(180deg, rgba(255, 255, 255, .95), rgba(255, 255, 255, .90));
+      --contact-link-bg: rgba(15, 23, 42, 0.05);
+      --contact-link-color: #0f172a;
+      --roofline-color: rgba(15, 23, 42, 0.08);
+      --roofline-bg: rgba(15, 23, 42, 0.04);
+      --carousel-progress-bg: rgba(15, 23, 42, 0.08);
+      --ambient-orb-amber: rgba(255, 180, 102, .12);
+      --ambient-orb-teal: rgba(62, 145, 139, .09);
+      --hero-fallback-bg: url("assets/images/hero-light.jpg?v=light2") center / cover no-repeat;
       --accent: oklch(52% 0.18 64);
     }
 
@@ -357,9 +351,18 @@
       transition: opacity 0.3s ease, transform 0.3s var(--easing), color 0.4s ease;
     }
 
+    html[data-theme="light"] .nav-menu a {
+      opacity: 0.88;
+      color: #0f172a;
+    }
+
     .nav-menu a:hover {
       opacity: 1;
       transform: translateY(-1px);
+    }
+
+    html[data-theme="light"] .nav-menu a:hover {
+      color: #c2410c;
     }
 
     .theme-toggle {
@@ -432,6 +435,7 @@
 
     .hero-media,
     .hero-fallback,
+    .hero-bg-layer,
     .hero-video,
     .hero-overlay {
       position: absolute;
@@ -448,6 +452,46 @@
       transition: background 0.4s ease;
     }
 
+    .hero-bg-layer {
+      position: absolute;
+      inset: -24px;
+      background-size: cover;
+      background-position: center;
+      transition: opacity 0.8s ease, transform 1.2s var(--easing);
+      will-change: opacity, transform;
+      animation: heroAmbientMotion 28s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroAmbientMotion {
+      0% {
+        transform: scale(1.02) translate(0, 0);
+      }
+      50% {
+        transform: scale(1.05) translate(-8px, -6px);
+      }
+      100% {
+        transform: scale(1.03) translate(6px, -10px);
+      }
+    }
+
+    .hero-bg-dark {
+      background-image: url("assets/images/hero-dark.jpg");
+      opacity: 1;
+    }
+
+    .hero-bg-light {
+      background-image: url("assets/images/hero-light.jpg?v=light2");
+      opacity: 0;
+    }
+
+    html[data-theme="light"] .hero-bg-dark {
+      opacity: 0;
+    }
+
+    html[data-theme="light"] .hero-bg-light {
+      opacity: 1;
+    }
+
     .hero-video {
       width: 100%;
       height: 100%;
@@ -458,6 +502,7 @@
       will-change: transform, opacity;
       mask-image: radial-gradient(circle at center, black 0 52%, rgba(0, 0, 0, .92) 64%, rgba(0, 0, 0, .62) 78%, transparent 96%);
       -webkit-mask-image: radial-gradient(circle at center, black 0 52%, rgba(0, 0, 0, .92) 64%, rgba(0, 0, 0, .62) 78%, transparent 96%);
+      z-index: 1;
     }
 
     /* Visibility control by theme */
@@ -471,19 +516,21 @@
     }
 
     html[data-theme="light"] #heroVideoLight.is-ready {
-      opacity: 0.85;
+      opacity: 1;
     }
 
     .hero-overlay {
-      z-index: 1;
+      z-index: 2;
       background: var(--hero-overlay-gradient);
       pointer-events: none;
-      transition: background 0.4s ease;
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      transition: background 0.5s ease;
     }
 
     .hero-center {
       position: relative;
-      z-index: 2;
+      z-index: 3;
       min-height: 100svh;
       display: grid;
       place-items: center;
@@ -499,15 +546,22 @@
       display: inline-flex;
       align-items: center;
       gap: 11px;
-      padding: 12px 16px;
+      padding: 12px 18px;
       border: 1px solid var(--border-strong);
       border-radius: 999px;
       background: var(--surface);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 14px 38px rgba(0, 0, 0, .2);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 14px 38px rgba(0, 0, 0, .18);
       color: var(--ink);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       transition: border-color 0.4s, background 0.4s, color 0.4s;
+    }
+
+    html[data-theme="light"] .hero-eyebrow {
+      background: rgba(255, 255, 255, 0.94);
+      border-color: rgba(15, 23, 42, 0.12);
+      color: #0f172a;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
     }
 
     .status-dot {
@@ -522,24 +576,45 @@
 
     .hero-title {
       margin: 24px 0 0;
-      color: var(--ink);
       font-size: clamp(4rem, 9vw, 8.4rem);
-      font-weight: 500;
-      letter-spacing: -.085em;
-      line-height: .86;
-      text-shadow: var(--hero-title-shadow);
-      transition: color 0.4s, text-shadow 0.4s;
+      font-weight: 700;
+      letter-spacing: -.065em;
+      line-height: .88;
+      transition: color 0.4s, text-shadow 0.4s, filter 0.4s;
+    }
+
+    html:not([data-theme="light"]) .hero-title {
+      color: #ffffff;
+      background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 60%, #fdba74 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 28px rgba(0, 0, 0, 0.75));
+    }
+
+    html[data-theme="light"] .hero-title {
+      color: #0b1320;
+      background: linear-gradient(135deg, #090e18 0%, #16243b 55%, #c2410c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 14px rgba(255, 255, 255, 0.95));
     }
 
     .hero-subtitle {
       max-width: 760px;
       margin: 28px auto 0;
       color: var(--ink);
-      opacity: 0.85;
+      opacity: 0.92;
       font-size: clamp(15px, 1.4vw, 18px);
       line-height: 1.85;
       text-shadow: var(--hero-subtitle-shadow);
       transition: color 0.4s, text-shadow 0.4s;
+    }
+
+    html[data-theme="light"] .hero-subtitle {
+      color: #1e293b;
+      opacity: 0.96;
+      font-weight: 500;
+      text-shadow: 0 1px 12px rgba(255, 255, 255, 0.9);
     }
 
     .hero-actions {
@@ -568,9 +643,19 @@
       transition: transform .4s var(--easing), border-color .35s ease, background .35s ease, box-shadow .4s ease, color 0.4s ease;
     }
 
-    /* Ensure readable action buttons in light mode */
+    /* Light mode buttons */
     html[data-theme="light"] .button--primary {
-      color: #fff;
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.22);
+    }
+
+    html[data-theme="light"] .button--secondary {
+      background: rgba(255, 255, 255, 0.92);
+      color: #0f172a;
+      border-color: rgba(15, 23, 42, 0.18);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
     }
 
     .button--primary {
@@ -633,6 +718,13 @@
       transition: background 0.4s, border-color 0.4s, color 0.4s;
     }
 
+    html[data-theme="light"] .hero-chips span {
+      background: rgba(255, 255, 255, 0.90);
+      border-color: rgba(15, 23, 42, 0.12);
+      color: #0f172a;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    }
+
     .hero-contact {
       position: absolute;
       right: 28px;
@@ -648,6 +740,12 @@
       letter-spacing: .2em;
       text-transform: uppercase;
       transition: color 0.4s ease;
+    }
+
+    html[data-theme="light"] .hero-contact {
+      color: #334155;
+      font-weight: 700;
+      text-shadow: 0 1px 8px rgba(255, 255, 255, 0.95);
     }
 
     .hero-contact a {
@@ -690,6 +788,7 @@
       display: grid;
       grid-template-columns: repeat(12, minmax(0, 1fr));
       gap: 16px;
+      perspective: 1200px;
     }
 
     .project-card {
@@ -702,7 +801,9 @@
       background: var(--project-card-bg);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04), 0 18px 50px rgba(0, 0, 0, .05);
       text-decoration: none;
-      transition: transform .45s var(--easing), border-color .4s ease, box-shadow .45s ease, background 0.4s ease;
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: border-color .4s ease, box-shadow .45s ease, background 0.4s ease;
     }
 
     .project-preview {
@@ -1032,6 +1133,7 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 24px;
+      perspective: 1200px;
     }
 
     .app-card {
@@ -1040,7 +1142,9 @@
       border-radius: 2.2rem;
       background: var(--app-card-bg);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, .055), 0 24px 68px rgba(0, 0, 0, .05);
-      transition: transform .45s var(--easing), border-color .4s ease, box-shadow .45s ease, background 0.4s ease;
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: border-color .4s ease, box-shadow .45s ease, background 0.4s ease;
     }
 
     .app-preview {
@@ -1274,13 +1378,15 @@
     /* Motion and focus */
     .js .reveal {
       opacity: 0;
-      transform: translateY(30px);
-      transition: opacity .8s ease, transform .8s var(--easing);
+      visibility: hidden;
+      will-change: transform, opacity;
     }
 
-    .js .reveal.in {
+    .js .reveal.in,
+    .no-js .reveal {
       opacity: 1;
-      transform: translateY(0);
+      visibility: visible;
+      transform: none;
     }
 
     :focus-visible {
@@ -1592,12 +1698,17 @@
     <section class="hero" id="home" aria-labelledby="hero-title">
       <div class="hero-media" aria-hidden="true">
         <div class="hero-fallback"></div>
-        <video class="hero-video" id="heroVideoDark" autoplay muted loop playsinline preload="metadata"
-          poster="assets/images/hero-poster.webp">
-          <source src="https://vjs.zencdn.net/v/oceans.mp4" type="video/mp4">
+        <!-- High-res illustration layers with subtle breathing ambient motion -->
+        <div class="hero-bg-layer hero-bg-dark" id="heroBgDark"></div>
+        <div class="hero-bg-layer hero-bg-light" id="heroBgLight"></div>
+        <!-- Video elements ready for Veo mp4 clips with high-res poster fallbacks -->
+        <video class="hero-video" id="heroVideoDark" autoplay muted loop playsinline preload="auto"
+          poster="assets/images/hero-dark.jpg">
+          <source src="assets/videos/hero-dark.mp4" type="video/mp4">
         </video>
-        <video class="hero-video" id="heroVideoLight" muted loop playsinline preload="metadata">
-          <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
+        <video class="hero-video" id="heroVideoLight" autoplay muted loop playsinline preload="auto"
+          poster="assets/images/hero-light.jpg?v=light2">
+          <source src="assets/videos/hero-light.mp4?v=light2" type="video/mp4">
         </video>
       </div>
       <div class="hero-overlay" aria-hidden="true"></div>
@@ -2017,6 +2128,8 @@
     </footer>
   </main>
 
+  <script src="assets/js/gsap.min.js"></script>
+  <script src="assets/js/ScrollTrigger.min.js"></script>
   <script>
     (() => {
       'use strict';
@@ -2048,7 +2161,16 @@
       function markVideoReady(video) {
         if (!video) return;
 
-        const setReady = () => video.classList.add('is-ready');
+        const setReady = () => {
+          video.classList.add('is-ready');
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+          if (!reducedMotion) {
+            if ((currentTheme === 'light' && video.id === 'heroVideoLight') ||
+                (currentTheme !== 'light' && video.id === 'heroVideoDark')) {
+              video.play().catch(() => { });
+            }
+          }
+        };
         const setFallback = () => {
           video.classList.remove('is-ready');
           video.pause();
@@ -2056,6 +2178,7 @@
 
         if (video.readyState >= 2) setReady();
         video.addEventListener('loadeddata', setReady, { once: true });
+        video.addEventListener('canplay', setReady, { once: true });
         video.addEventListener('error', setFallback);
       }
 
@@ -2109,51 +2232,266 @@
         }
       }
 
-      const revealItems = document.querySelectorAll('.reveal');
+      // Initialize GSAP & ScrollTrigger Animations
+      if (window.gsap && window.ScrollTrigger) {
+        gsap.registerPlugin(ScrollTrigger);
 
-      if ('IntersectionObserver' in window) {
-        const revealObserver = new IntersectionObserver((entries, observer) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            entry.target.classList.add('in');
-            observer.unobserve(entry.target);
+        const mm = gsap.matchMedia();
+
+        mm.add("(prefers-reduced-motion: no-preference)", () => {
+          // 1. HERO ENTRANCE ORCHESTRATION
+          const heroTl = gsap.timeline({ defaults: { ease: "power4.out" }, delay: 0.1 });
+
+          heroTl
+            .fromTo('.site-header', 
+              { y: -50, autoAlpha: 0 }, 
+              { y: 0, autoAlpha: 1, duration: 1.0, ease: "power3.out" }
+            )
+            .fromTo('.hero-eyebrow', 
+              { y: 24, autoAlpha: 0, scale: 0.94 }, 
+              { y: 0, autoAlpha: 1, scale: 1, duration: 0.8, ease: "back.out(1.7)" }, 
+              "-=0.6"
+            )
+            .fromTo('.hero-title', 
+              { y: 48, autoAlpha: 0, filter: "blur(6px)" }, 
+              { y: 0, autoAlpha: 1, filter: "blur(0px)", duration: 1.1, ease: "power4.out" }, 
+              "-=0.5"
+            )
+            .fromTo('.hero-subtitle', 
+              { y: 22, autoAlpha: 0 }, 
+              { y: 0, autoAlpha: 1, duration: 0.85, ease: "power3.out" }, 
+              "-=0.7"
+            )
+            .fromTo('.hero-actions .button', 
+              { y: 18, autoAlpha: 0, scale: 0.95 }, 
+              { y: 0, autoAlpha: 1, scale: 1, duration: 0.65, stagger: 0.12, ease: "back.out(1.5)" }, 
+              "-=0.5"
+            )
+            .fromTo('.hero-chips span', 
+              { y: 16, autoAlpha: 0, scale: 0.86 }, 
+              { y: 0, autoAlpha: 1, scale: 1, duration: 0.55, stagger: 0.08, ease: "back.out(1.6)" }, 
+              "-=0.4"
+            )
+            .fromTo('.hero-contact', 
+              { autoAlpha: 0, y: 12 }, 
+              { autoAlpha: 1, y: 0, duration: 0.8 }, 
+              "-=0.3"
+            );
+
+          // 2. HERO SCROLL PARALLAX & RETREAT (GSAP Scrub)
+          gsap.to('.hero-media', {
+            scale: 1.14,
+            y: 80,
+            ease: "none",
+            scrollTrigger: {
+              trigger: '.hero',
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 1.2
+            }
           });
-        }, {
-          threshold: 0.14,
-          rootMargin: '0px 0px -4% 0px'
-        });
 
-        revealItems.forEach((item, index) => {
-          item.style.transitionDelay = `${Math.min(index % 4, 3) * 55}ms`;
-          revealObserver.observe(item);
+          gsap.to('.hero-shell', {
+            y: -75,
+            autoAlpha: 0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: '.hero',
+              start: 'top top',
+              end: '60% top',
+              scrub: 0.8
+            }
+          });
+
+          // 3. AMBIENT ORBS ORGANIC DRIFT
+          gsap.to('.ambient-orb--amber', {
+            x: 60,
+            y: -45,
+            duration: 11,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+          });
+          gsap.to('.ambient-orb--teal', {
+            x: -65,
+            y: 55,
+            duration: 14,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+          });
+
+          // 4. SECTION REVEALS ON SCROLL (BATCHED)
+          ScrollTrigger.batch('.reveal:not(.hero .reveal)', {
+            start: "top 88%",
+            once: true,
+            onEnter: (batch) => {
+              gsap.fromTo(batch, 
+                { y: 38, autoAlpha: 0 }, 
+                { y: 0, autoAlpha: 1, duration: 0.85, stagger: 0.12, ease: "power3.out", overwrite: "auto" }
+              );
+            }
+          });
+
+          // 5. WEB APPS 3D CARD TILT & DEPTH
+          const appCards = document.querySelectorAll('.app-card');
+          gsap.fromTo(appCards, 
+            { y: 65, rotationX: 10, autoAlpha: 0 }, 
+            {
+              y: 0,
+              rotationX: 0,
+              autoAlpha: 1,
+              duration: 1.0,
+              stagger: 0.2,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: '.apps-section',
+                start: 'top 82%',
+                once: true
+              }
+            }
+          );
+
+          appCards.forEach((card) => {
+            const previewImg = card.querySelector('.app-preview img');
+            card.addEventListener('mousemove', (e) => {
+              const rect = card.getBoundingClientRect();
+              const normX = (e.clientX - rect.left) / rect.width - 0.5;
+              const normY = (e.clientY - rect.top) / rect.height - 0.5;
+
+              gsap.to(card, {
+                rotationY: normX * 9,
+                rotationX: -normY * 9,
+                transformPerspective: 1000,
+                duration: 0.35,
+                ease: "power2.out"
+              });
+
+              if (previewImg) {
+                gsap.to(previewImg, {
+                  x: normX * 12,
+                  y: normY * 12,
+                  scale: 1.04,
+                  duration: 0.35,
+                  ease: "power2.out"
+                });
+              }
+            });
+
+            card.addEventListener('mouseleave', () => {
+              gsap.to(card, {
+                rotationX: 0,
+                rotationY: 0,
+                duration: 0.65,
+                ease: "power3.out"
+              });
+              if (previewImg) {
+                gsap.to(previewImg, {
+                  x: 0,
+                  y: 0,
+                  scale: 1.0,
+                  duration: 0.65,
+                  ease: "power3.out"
+                });
+              }
+            });
+          });
+
+          // 6. PROJECTS GRID 3D HOVER TILT
+          const projectCards = document.querySelectorAll('.project-card');
+          projectCards.forEach((card) => {
+            const cardImg = card.querySelector('.project-preview img');
+            const glow = card.querySelector('.card-glow');
+
+            card.addEventListener('mousemove', (e) => {
+              const rect = card.getBoundingClientRect();
+              const normX = (e.clientX - rect.left) / rect.width - 0.5;
+              const normY = (e.clientY - rect.top) / rect.height - 0.5;
+
+              gsap.to(card, {
+                rotationY: normX * 7,
+                rotationX: -normY * 7,
+                transformPerspective: 950,
+                duration: 0.35,
+                ease: "power2.out"
+              });
+
+              if (cardImg) {
+                gsap.to(cardImg, {
+                  scale: 1.05,
+                  x: normX * 8,
+                  y: normY * 8,
+                  duration: 0.35,
+                  ease: "power2.out"
+                });
+              }
+
+              if (glow) {
+                gsap.to(glow, {
+                  x: normX * 35,
+                  y: normY * 35,
+                  opacity: 0.75,
+                  duration: 0.3,
+                  ease: "power2.out"
+                });
+              }
+            });
+
+            card.addEventListener('mouseleave', () => {
+              gsap.to(card, {
+                rotationX: 0,
+                rotationY: 0,
+                duration: 0.6,
+                ease: "power3.out"
+              });
+              if (cardImg) {
+                gsap.to(cardImg, {
+                  scale: 1.0,
+                  x: 0,
+                  y: 0,
+                  duration: 0.6,
+                  ease: "power3.out"
+                });
+              }
+              if (glow) {
+                gsap.to(glow, {
+                  x: 0,
+                  y: 0,
+                  opacity: 0.45,
+                  duration: 0.5,
+                  ease: "power2.out"
+                });
+              }
+            });
+          });
+
+          // 7. TACTILE MAGNETIC BUTTONS
+          const magneticButtons = document.querySelectorAll('.button--primary, .button--secondary, .theme-toggle');
+          magneticButtons.forEach((btn) => {
+            btn.addEventListener('mousemove', (e) => {
+              const rect = btn.getBoundingClientRect();
+              const x = (e.clientX - (rect.left + rect.width / 2)) * 0.32;
+              const y = (e.clientY - (rect.top + rect.height / 2)) * 0.32;
+              gsap.to(btn, { x, y, duration: 0.28, ease: "power2.out" });
+            });
+            btn.addEventListener('mouseleave', () => {
+              gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1, 0.4)" });
+            });
+          });
+
+          // 8. THEME TOGGLE CLICK 360 BOUNCE
+          if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+              gsap.fromTo(themeToggle, 
+                { rotate: 0, scale: 0.8 }, 
+                { rotate: 360, scale: 1, duration: 0.55, ease: "back.out(2)" }
+              );
+            });
+          }
         });
       } else {
-        revealItems.forEach((item) => item.classList.add('in'));
-      }
-
-      if (!reducedMotion) {
-        let ticking = false;
-
-        const updateHeroParallax = () => {
-          const progress = Math.min(window.scrollY / (window.innerHeight * 1.15), 1);
-          const scale = 1.07 + progress * 0.1;
-          const translate = progress * 14;
-          const transformVal = `scale(${scale}) translateY(${translate}px)`;
-          if (heroVideoDark) heroVideoDark.style.transform = transformVal;
-          if (heroVideoLight) heroVideoLight.style.transform = transformVal;
-        };
-
-        const onScroll = () => {
-          if (ticking) return;
-          ticking = true;
-          requestAnimationFrame(() => {
-            updateHeroParallax();
-            ticking = false;
-          });
-        };
-
-        window.addEventListener('scroll', onScroll, { passive: true });
-        updateHeroParallax();
+        // Fallback for non-GSAP environments
+        document.querySelectorAll('.reveal').forEach((item) => item.classList.add('in'));
       }
 
       const carousel = document.querySelector('[data-carousel]');
