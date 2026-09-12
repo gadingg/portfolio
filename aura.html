@@ -1,26 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gading Utama — Creative Designer &amp; Digital Problem Solver</title>
+  <meta name="description" content="Portfolio of Gading Utama — Creative Designer & Digital Problem Solver connecting design, marketing, and technology to help brands move faster in public." />
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap"
     rel="stylesheet" />
+
   <style>
     :root {
       --bg: #060706;
       --panel: #10110f;
       --panel-2: #151713;
       --cream: #f3f0e8;
-      --muted: rgba(243, 240, 232, 0.58);
+      --muted: rgba(243, 240, 232, 0.65);
       --soft: rgba(243, 240, 232, 0.12);
       --line: rgba(243, 240, 232, 0.10);
       --orange: #ff5a1f;
@@ -57,6 +61,7 @@
 
     img {
       display: block;
+      max-width: 100%;
     }
 
     ::selection {
@@ -104,8 +109,9 @@
     }
 
     .wordmark {
-      letter-spacing: -0.08em;
+      letter-spacing: -0.07em;
       white-space: nowrap;
+      overflow-wrap: normal;
     }
 
     .nav-link {
@@ -140,7 +146,7 @@
       font-weight: 800;
       letter-spacing: .14em;
       text-transform: uppercase;
-      color: rgba(243, 240, 232, .54);
+      color: rgba(243, 240, 232, .65);
     }
 
     .section-label::before {
@@ -159,21 +165,31 @@
       will-change: opacity, transform;
     }
 
+    .hero-stack-container {
+      perspective: 1200px;
+    }
+
+    .hero-stack {
+      transform-style: preserve-3d;
+    }
+
     .hero-card {
       transform-origin: center;
       will-change: transform;
       border: 1px solid var(--line);
-      box-shadow: 0 40px 120px rgba(0, 0, 0, .62);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, .65);
     }
 
     .glass {
       border: 1px solid var(--line);
       background: rgba(255, 255, 255, .035);
       backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
     }
 
     .magnetic-button {
       transition: transform .45s var(--ease), background .45s var(--ease), border-color .45s var(--ease);
+      min-height: 44px;
     }
 
     .magnetic-button:hover {
@@ -194,7 +210,7 @@
     .pricing-card:hover,
     .note-card:hover,
     .archive-card:hover {
-      transform: translateY(-8px);
+      transform: translateY(-6px);
       border-color: rgba(255, 90, 31, .34);
       background: rgba(255, 255, 255, .06);
     }
@@ -227,11 +243,11 @@
     .strip-image,
     .archive-card img {
       will-change: transform;
-      transform: scale(1.08);
+      transform: scale(1.05);
     }
 
     .archive-card:hover img {
-      transform: scale(1.16);
+      transform: scale(1.12);
       opacity: 0.95;
     }
 
@@ -249,7 +265,7 @@
       height: 100%;
       object-fit: cover;
       filter: saturate(.72) brightness(.72);
-      transform: scale(1.14);
+      transform: scale(1.12);
       will-change: transform;
     }
 
@@ -348,9 +364,18 @@
       opacity: 0;
     }
 
+    /* Scrollbar hide for galleries */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
     @media (max-width: 767px) {
       .wordmark {
-        letter-spacing: -0.065em;
+        letter-spacing: -0.05em;
       }
 
       .page-rail {
@@ -359,7 +384,6 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-
       *,
       *::before,
       *::after {
@@ -383,11 +407,12 @@
   </style>
 </head>
 
-<body>
+<body class="relative">
   <div class="noise" aria-hidden="true"></div>
   <div class="grid-veil" aria-hidden="true"></div>
   <div class="page-rail" aria-hidden="true">Design × Marketing × Digital</div>
 
+  <!-- PRELOADER -->
   <div id="ax-loader" class="ax-loader" aria-hidden="true">
     <div class="ax-loader__inner">
       <div class="ax-loader__brand">
@@ -404,14 +429,16 @@
     </div>
   </div>
 
-  <header class="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-5 md:px-8 lg:px-12">
-    <a href="#home" class="text-lg font-semibold tracking-[-0.055em] text-[#f3f0e8] md:text-xl">
+  <!-- HEADER -->
+  <header class="fixed inset-x-0 top-0 z-40 flex items-center justify-between px-5 py-4 backdrop-blur-md bg-[#060706]/75 border-b border-[#f3f0e8]/5 md:px-8 lg:px-12 transition-all duration-300">
+    <a href="#home" class="text-lg font-bold tracking-[-0.04em] text-[#f3f0e8] md:text-xl flex items-center gap-2">
+      <span class="h-2 w-2 rounded-full bg-[#ff5a1f]"></span>
       Gading Utama
     </a>
 
-    <nav class="hidden items-center gap-11 text-xs font-bold text-[#f3f0e8]/82 md:flex">
+    <nav class="hidden items-center gap-10 text-xs font-bold text-[#f3f0e8]/85 md:flex">
       <a href="#work" class="nav-link">
-        <span class="mr-5 inline-block h-1.5 w-1.5 rounded-full bg-[#ff5a1f] align-middle"></span>
+        <span class="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-[#ff5a1f] align-middle"></span>
         Works
       </a>
       <a href="#studio" class="nav-link">About</a>
@@ -419,90 +446,174 @@
       <a href="#contact" class="nav-link">Contact</a>
     </nav>
 
-    <button class="glass flex h-10 w-10 items-center justify-center rounded-full md:hidden" aria-label="Open menu">
-      <i data-lucide="menu" class="h-4 w-4"></i>
-    </button>
+    <div class="flex items-center gap-3">
+      <a href="#contact"
+        class="hidden sm:inline-flex items-center gap-2 rounded-full border border-[#f3f0e8]/15 bg-white/[0.03] px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#f3f0e8] hover:border-[#ff5a1f] hover:text-[#ff5a1f] transition">
+        Hire Me
+      </a>
+      <button id="openDrawerBtn" class="glass flex h-11 w-11 items-center justify-center rounded-full md:hidden text-[#f3f0e8] hover:text-[#ff5a1f] transition" aria-label="Open mobile navigation menu">
+        <i data-lucide="menu" class="h-5 w-5"></i>
+      </button>
+    </div>
   </header>
+
+  <!-- MOBILE DRAWER -->
+  <div id="mobileDrawer" class="fixed inset-0 z-50 pointer-events-none opacity-0 transition-opacity duration-300 md:hidden" aria-hidden="true">
+    <!-- Backdrop -->
+    <div id="drawerBackdrop" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
+    
+    <!-- Drawer Panel -->
+    <div id="drawerPanel" class="absolute right-0 top-0 bottom-0 w-[85%] max-w-xs bg-[#0c0e0c] border-l border-[#f3f0e8]/10 p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-out shadow-2xl">
+      <div>
+        <div class="flex items-center justify-between pb-6 border-b border-[#f3f0e8]/10">
+          <span class="text-xs font-extrabold uppercase tracking-widest text-[#f3f0e8]/50">Navigation</span>
+          <button id="closeDrawerBtn" class="glass flex h-11 w-11 items-center justify-center rounded-full text-[#f3f0e8] hover:text-[#ff5a1f]" aria-label="Close navigation menu">
+            <i data-lucide="x" class="h-5 w-5"></i>
+          </button>
+        </div>
+
+        <nav class="mt-8 flex flex-col gap-4 text-xl font-bold">
+          <a href="#home" class="mobile-drawer-link py-3 text-[#f3f0e8] hover:text-[#ff5a1f] transition flex items-center justify-between border-b border-[#f3f0e8]/5">
+            Home <span class="text-sm text-[#ff5a1f]">01</span>
+          </a>
+          <a href="#work" class="mobile-drawer-link py-3 text-[#f3f0e8] hover:text-[#ff5a1f] transition flex items-center justify-between border-b border-[#f3f0e8]/5">
+            Works <span class="text-sm text-[#ff5a1f]">02</span>
+          </a>
+          <a href="#studio" class="mobile-drawer-link py-3 text-[#f3f0e8] hover:text-[#ff5a1f] transition flex items-center justify-between border-b border-[#f3f0e8]/5">
+            About <span class="text-sm text-[#ff5a1f]">03</span>
+          </a>
+          <a href="#pricing" class="mobile-drawer-link py-3 text-[#f3f0e8] hover:text-[#ff5a1f] transition flex items-center justify-between border-b border-[#f3f0e8]/5">
+            Toolkit <span class="text-sm text-[#ff5a1f]">04</span>
+          </a>
+          <a href="#contact" class="mobile-drawer-link py-3 text-[#f3f0e8] hover:text-[#ff5a1f] transition flex items-center justify-between border-b border-[#f3f0e8]/5">
+            Contact <span class="text-sm text-[#ff5a1f]">05</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="pt-6 border-t border-[#f3f0e8]/10">
+        <a href="#contact" class="mobile-drawer-link flex items-center justify-center gap-3 w-full rounded-full bg-[#ff5a1f] py-4 text-xs font-bold uppercase tracking-widest text-[#060706] shadow-lg shadow-[#ff5a1f]/20">
+          <span>Start a Project</span>
+          <i data-lucide="arrow-right" class="h-4 w-4"></i>
+        </a>
+        <p class="mt-4 text-center text-[10px] uppercase tracking-widest text-[#f3f0e8]/40">
+          © 2026 Gading Utama
+        </p>
+      </div>
+    </div>
+  </div>
 
   <main id="home" class="relative z-10 overflow-hidden">
     <!-- HERO -->
-    <section class="hero-section relative flex min-h-screen items-center overflow-hidden px-5 py-24 md:px-8 lg:px-12">
-      <div class="hero-copy relative z-20 max-w-[360px]">
-        <p class="section-label mb-10">Gading Utama — Portfolio</p>
-        <h2 class="mb-7 text-[40px] font-semibold leading-[0.92] tracking-tight text-[#f3f0e8] md:text-[52px]">
-          I design.
-          <br />
-          I build.
-          <br />
-          I solve.
-        </h2>
-        <p
-          class="max-w-[340px] text-[21px] font-medium leading-[1.45] tracking-[-0.045em] text-[#f3f0e8]/76 md:text-[25px]">
-          <span class="text-[#f3f0e8]">
-            Creative Designer &amp; Digital Problem Solver.
-          </span>
-          I connect design, marketing, and technology to help brands,
-          products, and teams move faster in public.
-        </p>
-
-        <a href="#work"
-          class="magnetic-button mt-14 inline-flex items-center gap-5 rounded-full border border-[#f3f0e8]/12 px-5 py-3 text-xs font-bold uppercase tracking-[0.18em] text-[#f3f0e8]">
-          View Selected Works
-          <span class="flex h-8 w-8 items-center justify-center rounded-full bg-[#ff5a1f] text-[#060706]">
-            <i data-lucide="arrow-right" class="h-4 w-4"></i>
-          </span>
-        </a>
-      </div>
-
-      <div
-        class="hero-stack absolute left-1/2 top-[48%] z-10 h-[430px] w-[310px] -translate-x-1/2 -translate-y-1/2 md:h-[560px] md:w-[430px] lg:h-[620px] lg:w-[480px]">
-        <div
-          class="hero-card absolute inset-0 -translate-x-20 translate-y-12 -rotate-[17deg] rounded-[20px] bg-[#151713]">
-          <div class="h-full w-full rounded-[20px] bg-gradient-to-br from-[#ff5a1f]/30 via-transparent to-black"></div>
-        </div>
-
-        <div
-          class="hero-card absolute inset-0 translate-x-20 translate-y-10 rotate-[13deg] rounded-[20px] bg-[#d8cbb5]">
-          <div class="absolute right-10 top-24 font-serif text-[110px] text-[#ff5a1f]/80">
-            A
+    <section class="hero-section relative min-h-screen flex items-center overflow-hidden px-5 pt-28 pb-16 md:px-8 lg:px-12">
+      <div class="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8 z-10">
+        <!-- Left: Hero Copy -->
+        <div class="hero-copy relative z-20 flex flex-col justify-center lg:col-span-6">
+          <div class="mb-6 sm:mb-8">
+            <span class="section-label">Gading Utama — Portfolio</span>
           </div>
-          <div class="absolute bottom-12 left-10 h-32 w-32 rounded-full border border-black/20"></div>
-        </div>
+          
+          <h2 class="mb-6 text-[44px] font-black leading-[0.92] tracking-tight text-[#f3f0e8] sm:text-5xl md:text-6xl lg:text-[70px]">
+            I design.
+            <br />
+            I build.
+            <br />
+            I solve.
+          </h2>
+          
+          <p class="max-w-xl text-lg font-medium leading-relaxed tracking-[-0.02em] text-[#f3f0e8]/75 sm:text-xl lg:text-[22px]">
+            <span class="text-[#f3f0e8] font-semibold">
+              Creative Designer &amp; Digital Problem Solver.
+            </span>
+            I connect design, marketing, and technology to help brands,
+            products, and teams move faster in public.
+          </p>
 
-        <div
-          class="hero-card absolute inset-0 translate-x-32 translate-y-20 rotate-[18deg] rounded-[20px] bg-[#080808]">
-          <div class="h-full w-full rounded-[20px] bg-[linear-gradient(135deg,rgba(255,255,255,.16),transparent_45%)]">
+          <div class="mt-8 sm:mt-10 flex flex-wrap items-center gap-4">
+            <a href="#work"
+              class="magnetic-button inline-flex items-center gap-4 rounded-full border border-[#f3f0e8]/15 bg-white/[0.03] px-6 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#f3f0e8] hover:border-[#ff5a1f] hover:bg-[#ff5a1f]/10 transition">
+              View Selected Works
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-[#ff5a1f] text-[#060706]">
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              </span>
+            </a>
+            <a href="#contact"
+              class="inline-flex items-center gap-2 rounded-full px-5 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#f3f0e8]/65 hover:text-[#f3f0e8] transition min-h-[44px]">
+              Get in touch
+            </a>
+          </div>
+
+          <!-- Mobile Quick Status -->
+          <div class="mt-8 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.12em] text-[#f3f0e8]/45 lg:hidden">
+            <span class="flex h-2 w-2 rounded-full bg-[#ff5a1f] animate-pulse"></span>
+            <span>Available for select freelance &amp; contract</span>
           </div>
         </div>
 
-        <div class="hero-card absolute inset-0 rotate-[4deg] overflow-hidden rounded-[20px] bg-[#201714]">
-          <img
-            src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg"
-            alt="Editorial studio portrait" class="h-full w-full object-cover saturate-125" />
-          <div class="absolute inset-0 bg-gradient-to-t from-black/48 via-transparent to-orange-950/10"></div>
-          <div class="absolute inset-0 bg-[#ff5a1f]/10 mix-blend-overlay"></div>
-        </div>
+        <!-- Right: 3D Hero Card Stack -->
+        <div class="hero-stack-container relative z-10 flex items-center justify-center lg:col-span-6 py-6 lg:py-0">
+          <div class="hero-stack relative h-[360px] w-[260px] sm:h-[440px] sm:w-[320px] md:h-[500px] md:w-[370px] lg:h-[560px] lg:w-[410px]">
+            <!-- Card 1: Back warm dark layer -->
+            <div
+              class="hero-card absolute inset-0 -translate-x-6 sm:-translate-x-10 translate-y-6 sm:translate-y-8 -rotate-[14deg] rounded-[24px] bg-[#151713]">
+              <div class="h-full w-full rounded-[24px] bg-gradient-to-br from-[#ff5a1f]/30 via-transparent to-black"></div>
+            </div>
 
-        <button
-          class="hero-cta absolute right-[-22px] top-1/2 z-20 flex h-16 w-16 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/80 text-white shadow-2xl backdrop-blur transition duration-300 hover:scale-110 hover:bg-[#ff5a1f]"
-          aria-label="Explore">
-          <i data-lucide="arrow-right" class="h-7 w-7"></i>
-        </button>
+            <!-- Card 2: Editorial typography layer -->
+            <div
+              class="hero-card absolute inset-0 translate-x-6 sm:translate-x-10 translate-y-4 sm:translate-y-6 rotate-[10deg] rounded-[24px] bg-[#d8cbb5]">
+              <div class="absolute right-8 top-16 font-serif text-[80px] sm:text-[100px] text-[#ff5a1f]/80 select-none">
+                A
+              </div>
+              <div class="absolute bottom-10 left-8 h-24 w-24 sm:h-28 sm:w-28 rounded-full border border-black/20"></div>
+            </div>
+
+            <!-- Card 3: Deep shadow angle -->
+            <div
+              class="hero-card absolute inset-0 translate-x-10 sm:translate-x-14 translate-y-8 sm:translate-y-12 rotate-[16deg] rounded-[24px] bg-[#080808]">
+              <div class="h-full w-full rounded-[24px] bg-[linear-gradient(135deg,rgba(255,255,255,.16),transparent_45%)]">
+              </div>
+            </div>
+
+            <!-- Card 4: Foreground portrait with rich warm overlay -->
+            <div class="hero-card absolute inset-0 rotate-[3deg] overflow-hidden rounded-[24px] bg-[#201714] shadow-2xl">
+              <img
+                src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg"
+                alt="Editorial portrait of Gading Utama" class="h-full w-full object-cover saturate-125" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-orange-950/10"></div>
+              <div class="absolute inset-0 bg-[#ff5a1f]/10 mix-blend-overlay"></div>
+            </div>
+
+            <!-- CTA Floating trigger -->
+            <a href="#work"
+              class="hero-cta absolute -right-3 sm:-right-5 top-1/2 z-20 flex h-14 w-14 sm:h-16 sm:w-16 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/85 text-white shadow-2xl backdrop-blur transition duration-300 hover:scale-110 hover:bg-[#ff5a1f]"
+              aria-label="Explore Selected Works">
+              <i data-lucide="arrow-right" class="h-6 w-6"></i>
+            </a>
+          </div>
+        </div>
       </div>
 
-      <h1
-        class="hero-wordmark wordmark pointer-events-none absolute -bottom-5 left-2 z-0 select-none text-[23vw] font-black leading-none text-[#e8e0d4] md:-bottom-12 lg:left-6 lg:text-[20vw]">
-        Gading
-      </h1>
+      <!-- Giant Fluid Watermark: NEVER OPAQUE, NEVER OVERFLOWING -->
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 z-0 select-none overflow-hidden text-center opacity-70">
+        <h1
+          class="hero-wordmark wordmark inline-block text-[clamp(4.5rem,15vw,13rem)] font-black leading-none text-[#f3f0e8]/[0.04] tracking-[-0.08em]">
+          Gading
+        </h1>
+      </div>
 
+      <!-- Desktop Hero Meta Floating Widget -->
       <div
-        class="hero-meta glass absolute bottom-10 right-5 z-20 hidden w-[270px] rounded-[24px] p-6 md:right-8 lg:block">
-        <div class="mb-8 text-2xl text-[#ff5a1f]">✳</div>
-        <p class="text-[19px] leading-[1.25] tracking-[-0.04em]">
+        class="hero-meta glass absolute bottom-8 right-8 z-20 hidden w-[280px] rounded-[24px] p-6 lg:block border border-[#f3f0e8]/10 bg-black/40 backdrop-blur-xl">
+        <div class="mb-4 flex items-center justify-between text-2xl text-[#ff5a1f]">
+          <span>✳</span>
+          <span class="flex h-2 w-2 rounded-full bg-[#ff5a1f] animate-pulse"></span>
+        </div>
+        <p class="text-[17px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#f3f0e8]">
           Design × Marketing × Digital, handled by one person.
         </p>
         <div
-          class="mt-10 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.14em] text-[#f3f0e8]/45">
+          class="mt-6 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.14em] text-[#f3f0e8]/45 border-t border-[#f3f0e8]/10 pt-4">
           <span>Open for work</span>
           <span class="h-1 w-1 rounded-full bg-[#ff5a1f]"></span>
           <span>Remote / 2026</span>
@@ -510,39 +621,62 @@
       </div>
     </section>
 
-    <!-- STUDIO -->
+    <!-- STUDIO / ABOUT -->
     <section id="studio"
       class="brand-section relative flex min-h-screen items-center overflow-hidden px-5 py-24 md:px-8 lg:px-12">
-      <h2
-        class="brand-drift wordmark pointer-events-none absolute -top-16 left-0 text-[6rem] font-black leading-none text-[#f3f0e8]/10 sm:text-[9rem] md:text-[13rem] lg:text-[18rem]">
-        About
-      </h2>
+      <!-- Watermark Background -->
+      <div class="pointer-events-none absolute inset-x-0 top-6 z-0 select-none overflow-hidden opacity-60">
+        <h2
+          class="brand-drift wordmark text-[clamp(4.5rem,16vw,14rem)] font-black leading-none text-[#f3f0e8]/[0.04]">
+          About
+        </h2>
+      </div>
 
-      <div class="mx-auto grid w-full max-w-6xl gap-12 md:grid-cols-12">
-        <div class="md:col-span-4">
+      <div class="relative z-10 mx-auto grid w-full max-w-6xl gap-12 md:grid-cols-12 items-center">
+        <div class="md:col-span-5">
           <p class="section-label">About Me</p>
-          <p data-reveal="" class="mt-8 max-w-sm text-sm font-medium leading-[1.7] text-[#f3f0e8]/56">
+          <h3 class="mt-6 text-3xl font-black tracking-[-0.04em] text-[#f3f0e8] sm:text-4xl lg:text-[42px] leading-tight">
+            From first idea to shipped, measurable result.
+          </h3>
+          <p data-reveal="" class="mt-6 text-base font-medium leading-[1.75] text-[#f3f0e8]/65">
             I started in graphic design, moved into social media and
             performance marketing, then into web and product. Today I work
-            across the whole loop — from the first idea to the shipped,
-            measurable result.
+            across the whole loop — connecting visuals, messaging, and code
+            into coherent digital experiences.
           </p>
+
+          <div class="mt-8 flex items-center gap-6 text-xs font-bold uppercase tracking-wider text-[#f3f0e8]/50">
+            <div>
+              <span class="block text-2xl font-black text-[#ff5a1f]">06+</span>
+              <span>Years exp</span>
+            </div>
+            <div class="h-8 w-[1px] bg-[#f3f0e8]/10"></div>
+            <div>
+              <span class="block text-2xl font-black text-[#ff5a1f]">80+</span>
+              <span>Projects</span>
+            </div>
+            <div class="h-8 w-[1px] bg-[#f3f0e8]/10"></div>
+            <div>
+              <span class="block text-2xl font-black text-[#ff5a1f]">100%</span>
+              <span>Dedication</span>
+            </div>
+          </div>
         </div>
 
-        <div class="brand-words grid gap-6 md:col-span-7 md:col-start-6">
-          <p class="brand-word text-6xl font-semibold tracking-[-0.08em] md:text-8xl">
+        <div class="brand-words grid gap-4 sm:gap-6 md:col-span-7">
+          <p class="brand-word text-[clamp(2.5rem,6vw,5.5rem)] font-black tracking-[-0.07em] leading-none text-[#f3f0e8]">
             design
           </p>
-          <p class="brand-word text-right text-6xl font-semibold tracking-[-0.08em] md:text-8xl">
+          <p class="brand-word text-right text-[clamp(2.5rem,6vw,5.5rem)] font-black tracking-[-0.07em] leading-none text-[#ff5a1f]">
             marketing
           </p>
-          <p class="brand-word text-6xl font-semibold tracking-[-0.08em] md:text-8xl">
+          <p class="brand-word text-[clamp(2.5rem,6vw,5.5rem)] font-black tracking-[-0.07em] leading-none text-[#f3f0e8]">
             digital.
           </p>
-          <p class="brand-word text-right text-6xl font-semibold tracking-[-0.08em] md:text-8xl">
+          <p class="brand-word text-right text-[clamp(2.5rem,6vw,5.5rem)] font-black tracking-[-0.07em] leading-none text-[#f3f0e8]/80">
             automate
           </p>
-          <p class="brand-word text-6xl font-semibold tracking-[-0.08em] md:text-8xl">
+          <p class="brand-word text-[clamp(2.5rem,6vw,5.5rem)] font-black tracking-[-0.07em] leading-none text-[#ff5a1f]">
             solve
           </p>
         </div>
@@ -552,118 +686,125 @@
     <!-- SERVICES -->
     <section class="services-section relative min-h-screen overflow-hidden px-5 py-24 md:px-8 lg:px-12">
       <div
-        class="absolute left-1/2 top-0 h-[360px] w-[78%] -translate-x-1/2 overflow-hidden rounded-b-[32px] border-x border-b border-[#f3f0e8]/10 md:h-[480px] lg:h-[620px]">
+        class="absolute left-1/2 top-0 h-[280px] sm:h-[360px] w-[90%] md:w-[78%] -translate-x-1/2 overflow-hidden rounded-b-[32px] border-x border-b border-[#f3f0e8]/10 md:h-[480px] lg:h-[580px]">
         <img
           src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/3b2725ca-5b05-49fe-b2ff-9de382bf26ef_1600w.webp"
-          alt="Green atmospheric strip" class="strip-image h-full w-full object-cover object-center opacity-70" />
+          alt="Green atmospheric strip" class="strip-image h-full w-full object-cover object-center opacity-60" />
       </div>
 
-      <div class="grid min-h-screen items-center gap-14 md:grid-cols-12">
+      <div class="relative z-10 grid min-h-screen items-center gap-12 md:grid-cols-12">
         <div data-reveal="" class="md:col-span-3">
-          <p class="section-label mb-20">Specialized Skills</p>
-          <p class="max-w-60 text-sm font-medium leading-[1.7] text-[#f3f0e8]/56">
+          <p class="section-label mb-6 md:mb-20">Specialized Skills</p>
+          <p class="max-w-60 text-sm font-medium leading-[1.7] text-[#f3f0e8]/60">
             Eight areas I practice daily, from the first sketch to the live
             campaign and the automation behind it.
           </p>
         </div>
 
         <div class="md:col-span-6 md:col-start-4">
-          <p class="services-copy text-4xl font-semibold leading-[0.95] tracking-[-0.07em] md:text-6xl lg:text-7xl">
+          <p class="services-copy text-3xl font-extrabold leading-[1] tracking-[-0.05em] sm:text-5xl lg:text-6xl text-[#f3f0e8]">
             Design, marketing, and technology in one workflow.
           </p>
 
-          <div class="mt-10 grid gap-3 sm:grid-cols-2">
+          <div class="mt-10 grid gap-4 sm:grid-cols-2">
             <div class="service-card glass rounded-[28px] p-6">
-              <p class="mb-14 text-xs font-bold uppercase tracking-[0.14em] text-[#f3f0e8]/44">
+              <p class="mb-10 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f]">
                 01
               </p>
-              <h3 class="text-2xl font-semibold tracking-[-0.05em]">
+              <h3 class="text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
                 Creative Design
               </h3>
-              <p class="mt-4 text-sm leading-[1.6] text-[#f3f0e8]/54">
+              <p class="mt-3 text-sm leading-[1.6] text-[#f3f0e8]/60">
                 Visual identity, layout, and art direction with a clear
                 editorial point of view.
               </p>
             </div>
+            
             <div class="service-card glass rounded-[28px] p-6">
-              <p class="mb-14 text-xs font-bold uppercase tracking-[0.14em] text-[#f3f0e8]/44">
+              <p class="mb-10 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f]">
                 02
               </p>
-              <h3 class="text-2xl font-semibold tracking-[-0.05em]">
+              <h3 class="text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
                 Social Media Branding
               </h3>
-              <p class="mt-4 text-sm leading-[1.6] text-[#f3f0e8]/54">
+              <p class="mt-3 text-sm leading-[1.6] text-[#f3f0e8]/60">
                 Content systems, templates, and feed direction that stay
                 consistent at volume.
               </p>
             </div>
+
             <div class="service-card glass rounded-[28px] p-6">
-              <p class="mb-14 text-xs font-bold uppercase tracking-[0.14em] text-[#f3f0e8]/44">
+              <p class="mb-10 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f]">
                 03
               </p>
-              <h3 class="text-2xl font-semibold tracking-[-0.05em]">
+              <h3 class="text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
                 Marketing Communication
               </h3>
-              <p class="mt-4 text-sm leading-[1.6] text-[#f3f0e8]/54">
+              <p class="mt-3 text-sm leading-[1.6] text-[#f3f0e8]/60">
                 Messaging, copy structure, and campaign narratives people
                 actually remember.
               </p>
             </div>
+
             <div class="service-card glass rounded-[28px] p-6">
-              <p class="mb-14 text-xs font-bold uppercase tracking-[0.14em] text-[#f3f0e8]/44">
+              <p class="mb-10 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f]">
                 04
               </p>
-              <h3 class="text-2xl font-semibold tracking-[-0.05em]">
+              <h3 class="text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
                 Digital Marketing
               </h3>
-              <p class="mt-4 text-sm leading-[1.6] text-[#f3f0e8]/54">
+              <p class="mt-3 text-sm leading-[1.6] text-[#f3f0e8]/60">
                 Funnels, landing pages, and analytics loops tied to real
                 business numbers.
               </p>
             </div>
+
             <div class="service-card glass rounded-[28px] p-6">
-              <p class="mb-14 text-xs font-bold uppercase tracking-[0.14em] text-[#f3f0e8]/44">
+              <p class="mb-10 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f]">
                 05
               </p>
-              <h3 class="text-2xl font-semibold tracking-[-0.05em]">
+              <h3 class="text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
                 Meta Ads
               </h3>
-              <p class="mt-4 text-sm leading-[1.6] text-[#f3f0e8]/54">
+              <p class="mt-3 text-sm leading-[1.6] text-[#f3f0e8]/60">
                 Paid social planning, creative testing, and optimisation with
                 clear reporting.
               </p>
             </div>
+
             <div class="service-card glass rounded-[28px] p-6">
-              <p class="mb-14 text-xs font-bold uppercase tracking-[0.14em] text-[#f3f0e8]/44">
+              <p class="mb-10 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f]">
                 06
               </p>
-              <h3 class="text-2xl font-semibold tracking-[-0.05em]">
+              <h3 class="text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
                 Web Development
               </h3>
-              <p class="mt-4 text-sm leading-[1.6] text-[#f3f0e8]/54">
+              <p class="mt-3 text-sm leading-[1.6] text-[#f3f0e8]/60">
                 Responsive front-end builds from design file to fast,
                 accessible pages.
               </p>
             </div>
+
             <div class="service-card glass rounded-[28px] p-6">
-              <p class="mb-14 text-xs font-bold uppercase tracking-[0.14em] text-[#f3f0e8]/44">
+              <p class="mb-10 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f]">
                 07
               </p>
-              <h3 class="text-2xl font-semibold tracking-[-0.05em]">
+              <h3 class="text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
                 Digital Product
               </h3>
-              <p class="mt-4 text-sm leading-[1.6] text-[#f3f0e8]/54">
+              <p class="mt-3 text-sm leading-[1.6] text-[#f3f0e8]/60">
                 UI systems, flows, and prototypes for apps and internal tools.
               </p>
             </div>
+
             <div class="service-card glass rounded-[28px] p-6">
-              <p class="mb-14 text-xs font-bold uppercase tracking-[0.14em] text-[#f3f0e8]/44">
+              <p class="mb-10 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f]">
                 08
               </p>
-              <h3 class="text-2xl font-semibold tracking-[-0.05em]">
+              <h3 class="text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
                 AI &amp; Automation
               </h3>
-              <p class="mt-4 text-sm leading-[1.6] text-[#f3f0e8]/54">
+              <p class="mt-3 text-sm leading-[1.6] text-[#f3f0e8]/60">
                 Workflow automation and AI-assisted production that removes
                 repetitive work.
               </p>
@@ -671,30 +812,35 @@
           </div>
         </div>
 
-        <div data-reveal="" class="md:col-span-2 md:col-start-11">
-          <p class="mb-6 text-xs font-bold uppercase tracking-[0.12em]">
-            Open for work
-            <span aria-hidden="true">→</span>
-          </p>
-          <p class="max-w-60 text-sm font-medium leading-[1.7] text-[#f3f0e8]/56">
-            One collaborator across design, marketing, and build — fewer
-            handovers, faster decisions.
-          </p>
+        <div data-reveal="" class="md:col-span-3 md:col-start-10">
+          <div class="glass rounded-[24px] p-6 border border-[#f3f0e8]/10">
+            <p class="mb-4 text-xs font-bold uppercase tracking-[0.12em] text-[#ff5a1f] flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-[#ff5a1f]"></span>
+              Open for work
+            </p>
+            <p class="text-sm font-medium leading-[1.7] text-[#f3f0e8]/70">
+              One collaborator across design, marketing, and build — fewer
+              handovers, faster decisions.
+            </p>
+            <a href="#contact" class="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#f3f0e8] hover:text-[#ff5a1f] transition">
+              Let's connect <span aria-hidden="true">→</span>
+            </a>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- TELEMETRY -->
+    <!-- TELEMETRY / BY THE NUMBERS -->
     <section class="numbers-intro relative min-h-screen overflow-hidden px-5 py-24 md:px-8 lg:px-12">
       <figure
-        class="parallax-image parallax-slow pointer-events-none right-4 top-32 h-28 w-40 rotate-[7deg] md:right-8 md:top-28 md:h-48 md:w-72">
+        class="parallax-image parallax-slow pointer-events-none right-4 top-32 h-28 w-40 rotate-[7deg] md:right-8 md:top-28 md:h-48 md:w-72 rounded-2xl">
         <img
           src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4734259a-bad7-422f-981e-ce01e79184f2_1600w.jpg"
           alt="Abstract architecture detail" />
       </figure>
 
       <figure
-        class="parallax-image parallax-fast pointer-events-none bottom-24 left-4 h-24 w-36 rotate-[-9deg] md:bottom-20 md:left-10 md:h-40 md:w-60">
+        class="parallax-image parallax-fast pointer-events-none bottom-24 left-4 h-24 w-36 rotate-[-9deg] md:bottom-20 md:left-10 md:h-40 md:w-60 rounded-2xl">
         <img
           src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/c543a9e1-f226-4ced-80b0-feb8445a75b9_1600w.jpg"
           alt="Landscape color field" />
@@ -703,47 +849,47 @@
       <div class="grid min-h-screen items-center gap-12 md:grid-cols-12">
         <div data-reveal="" class="md:col-span-3">
           <p class="section-label mb-8">By the Numbers</p>
-          <p class="max-w-72 text-sm font-medium leading-[1.7] text-[#f3f0e8]/56">
-            A short snapshot of the work so far. Placeholder figures for now.
+          <p class="max-w-72 text-sm font-medium leading-[1.7] text-[#f3f0e8]/60">
+            A snapshot of verified results and multi-disciplinary experience.
           </p>
-          <a href="#contact" class="mt-8 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em]">
+          <a href="#contact" class="mt-8 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#ff5a1f] hover:underline">
             Start a project
             <i data-lucide="arrow-right" class="h-4 w-4"></i>
           </a>
         </div>
 
         <div data-reveal="" class="md:col-span-5 md:col-start-5">
-          <h2 class="text-6xl font-semibold leading-[0.92] tracking-[-0.08em] md:text-8xl lg:text-9xl">
+          <h2 class="text-[clamp(3rem,8vw,7rem)] font-black leading-[0.92] tracking-[-0.07em] text-[#f3f0e8]">
             By the
             <br />
             Numbers
           </h2>
         </div>
 
-        <div class="stat-grid md:col-span-3 md:col-start-10">
+        <div class="stat-grid md:col-span-4 md:col-start-10">
           <div class="grid grid-cols-2 gap-4">
-            <div class="note-card glass rounded-[24px] p-5">
-              <p class="text-5xl font-semibold tracking-[-0.06em]">06</p>
-              <p class="mt-6 text-xs font-medium text-[#f3f0e8]/50">
-                years of practice
+            <div class="note-card glass rounded-[24px] p-5 border border-[#f3f0e8]/10">
+              <p class="text-4xl sm:text-5xl font-black tracking-[-0.06em] text-[#ff5a1f]">06</p>
+              <p class="mt-4 text-xs font-semibold text-[#f3f0e8]/60 uppercase tracking-wider">
+                years practice
               </p>
             </div>
-            <div class="note-card glass rounded-[24px] p-5">
-              <p class="text-5xl font-semibold tracking-[-0.06em]">80</p>
-              <p class="mt-6 text-xs font-medium text-[#f3f0e8]/50">
+            <div class="note-card glass rounded-[24px] p-5 border border-[#f3f0e8]/10">
+              <p class="text-4xl sm:text-5xl font-black tracking-[-0.06em] text-[#f3f0e8]">80+</p>
+              <p class="mt-4 text-xs font-semibold text-[#f3f0e8]/60 uppercase tracking-wider">
                 projects shipped
               </p>
             </div>
-            <div class="note-card glass rounded-[24px] p-5">
-              <p class="text-5xl font-semibold tracking-[-0.06em]">25</p>
-              <p class="mt-6 text-xs font-medium text-[#f3f0e8]/50">
-                brands supported
+            <div class="note-card glass rounded-[24px] p-5 border border-[#f3f0e8]/10">
+              <p class="text-4xl sm:text-5xl font-black tracking-[-0.06em] text-[#f3f0e8]">25+</p>
+              <p class="mt-4 text-xs font-semibold text-[#f3f0e8]/60 uppercase tracking-wider">
+                brands helped
               </p>
             </div>
-            <div class="note-card glass rounded-[24px] p-5">
-              <p class="text-5xl font-semibold tracking-[-0.06em]">40</p>
-              <p class="mt-6 text-xs font-medium text-[#f3f0e8]/50">
-                campaigns launched
+            <div class="note-card glass rounded-[24px] p-5 border border-[#f3f0e8]/10">
+              <p class="text-4xl sm:text-5xl font-black tracking-[-0.06em] text-[#ff5a1f]">40+</p>
+              <p class="mt-4 text-xs font-semibold text-[#f3f0e8]/60 uppercase tracking-wider">
+                campaigns run
               </p>
             </div>
           </div>
@@ -751,139 +897,142 @@
       </div>
     </section>
 
-    <!-- FIELD ARCHIVE SCROLL -->
+    <!-- VISUAL ARCHIVE -->
     <section class="archive-scroll-section relative overflow-hidden px-5 py-24 md:px-8 lg:px-12">
-      <div class="mx-auto grid max-w-6xl gap-12 md:grid-cols-12">
-        <div class="md:col-span-3">
+      <div class="mx-auto grid max-w-6xl gap-8 md:grid-cols-12 items-center">
+        <div class="md:col-span-4">
           <p class="section-label">Visual Archive</p>
-          <p class="mt-8 max-w-64 text-sm font-medium leading-[1.7] text-[#f3f0e8]/56">
+          <p class="mt-6 max-w-sm text-sm font-medium leading-[1.7] text-[#f3f0e8]/60">
             Fragments from campaigns, product screens, and personal design
             experiments.
           </p>
         </div>
 
-        <div class="md:col-span-8 md:col-start-5">
+        <div class="md:col-span-8">
           <h2
-            class="archive-title text-[54px] font-black leading-[0.9] tracking-[-0.08em] text-[#f3f0e8] md:text-[86px] lg:text-[112px]">
+            class="archive-title text-[clamp(2.5rem,6vw,5.5rem)] font-black leading-[0.95] tracking-[-0.06em] text-[#f3f0e8]">
             Things I made while figuring things out.
           </h2>
         </div>
       </div>
 
-      <div class="archive-gallery mt-20 flex gap-5 will-change-transform">
+      <div class="archive-gallery mt-16 flex gap-6 will-change-transform overflow-x-auto pb-6 no-scrollbar md:overflow-visible">
         <figure
-          class="archive-card h-[420px] w-[320px] shrink-0 overflow-hidden rounded-[34px] border border-[#f3f0e8]/10 bg-[#101310] md:h-[560px] md:w-[420px]">
+          class="archive-card h-[380px] w-[280px] sm:h-[480px] sm:w-[360px] md:h-[560px] md:w-[420px] shrink-0 overflow-hidden rounded-[30px] border border-[#f3f0e8]/10 bg-[#101310]">
           <img
             src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4734259a-bad7-422f-981e-ce01e79184f2_1600w.jpg"
-            alt="Archive image" class="h-full w-full object-cover opacity-75" />
+            alt="Archive fragment 01" class="h-full w-full object-cover opacity-80" />
         </figure>
 
         <figure
-          class="archive-card mt-20 h-[360px] w-[300px] shrink-0 overflow-hidden rounded-[34px] border border-[#f3f0e8]/10 bg-[#101310] md:h-[460px] md:w-[360px]">
+          class="archive-card md:mt-16 h-[340px] w-[260px] sm:h-[420px] sm:w-[320px] md:h-[480px] md:w-[360px] shrink-0 overflow-hidden rounded-[30px] border border-[#f3f0e8]/10 bg-[#101310]">
           <img
             src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/c543a9e1-f226-4ced-80b0-feb8445a75b9_1600w.jpg"
-            alt="Archive image" class="h-full w-full object-cover opacity-75" />
+            alt="Archive fragment 02" class="h-full w-full object-cover opacity-80" />
         </figure>
 
         <figure
-          class="archive-card h-[420px] w-[320px] shrink-0 overflow-hidden rounded-[34px] border border-[#f3f0e8]/10 bg-[#101310] md:h-[560px] md:w-[420px]">
+          class="archive-card h-[380px] w-[280px] sm:h-[480px] sm:w-[360px] md:h-[560px] md:w-[420px] shrink-0 overflow-hidden rounded-[30px] border border-[#f3f0e8]/10 bg-[#101310]">
           <img
             src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg"
-            alt="Archive image" class="h-full w-full object-cover opacity-75" />
+            alt="Archive fragment 03" class="h-full w-full object-cover opacity-80" />
         </figure>
 
         <figure
-          class="archive-card mt-28 h-[360px] w-[300px] shrink-0 overflow-hidden rounded-[34px] border border-[#f3f0e8]/10 bg-[#101310] md:h-[460px] md:w-[360px]">
+          class="archive-card md:mt-24 h-[340px] w-[260px] sm:h-[420px] sm:w-[320px] md:h-[480px] md:w-[360px] shrink-0 overflow-hidden rounded-[30px] border border-[#f3f0e8]/10 bg-[#101310]">
           <img
             src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4734259a-bad7-422f-981e-ce01e79184f2_1600w.jpg"
-            alt="Archive image" class="h-full w-full object-cover opacity-75" />
+            alt="Archive fragment 04" class="h-full w-full object-cover opacity-80" />
         </figure>
 
         <figure
-          class="archive-card h-[420px] w-[320px] shrink-0 overflow-hidden rounded-[34px] border border-[#f3f0e8]/10 bg-[#101310] md:h-[560px] md:w-[420px]">
+          class="archive-card h-[380px] w-[280px] sm:h-[480px] sm:w-[360px] md:h-[560px] md:w-[420px] shrink-0 overflow-hidden rounded-[30px] border border-[#f3f0e8]/10 bg-[#101310]">
           <img
             src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/c543a9e1-f226-4ced-80b0-feb8445a75b9_1600w.jpg"
-            alt="Archive image" class="h-full w-full object-cover opacity-75" />
+            alt="Archive fragment 05" class="h-full w-full object-cover opacity-80" />
         </figure>
       </div>
     </section>
 
-    <!-- WORK -->
+    <!-- SELECTED WORKS -->
     <section id="work" class="work-section relative min-h-screen overflow-hidden px-5 py-24 md:px-8 lg:px-12">
       <div class="grid min-h-screen items-center gap-12 md:grid-cols-12">
         <div class="work-copy md:col-span-3">
           <p class="section-label mb-8">Selected Works</p>
-          <h2 class="text-5xl font-semibold leading-[0.95] tracking-[-0.08em] md:text-6xl">
-            06 Selected Works
+          <h2 class="text-4xl font-black leading-[0.95] tracking-[-0.06em] sm:text-5xl md:text-6xl text-[#f3f0e8]">
+            06 Works
           </h2>
-          <p class="mt-6 max-w-72 text-sm font-medium leading-[1.7] text-[#f3f0e8]/56">
-            Dummy case studies for now: brand systems, campaign work, and
-            digital products built end to end.
+          <p class="mt-6 max-w-72 text-sm font-medium leading-[1.7] text-[#f3f0e8]/60">
+            Selected case studies: brand systems, campaign execution, and
+            digital products built end-to-end.
           </p>
           <a href="#contact"
-            class="magnetic-button mt-8 inline-flex rounded-full border border-[#f3f0e8]/12 px-5 py-3 text-xs font-bold uppercase tracking-[0.12em]">
+            class="magnetic-button mt-8 inline-flex items-center gap-3 rounded-full border border-[#f3f0e8]/15 px-6 py-3.5 text-xs font-bold uppercase tracking-[0.14em] hover:border-[#ff5a1f] hover:text-[#ff5a1f] transition">
             View Case Studies
+            <i data-lucide="arrow-right" class="h-4 w-4"></i>
           </a>
         </div>
 
-        <div class="relative md:col-span-7 md:col-start-4">
-          <div class="relative flex min-h-[520px] items-center justify-center">
+        <div class="relative md:col-span-6 md:col-start-4">
+          <div class="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center overflow-hidden">
             <span
-              class="masked-number text-[13rem] font-black leading-none tracking-[-0.09em] md:text-[24rem] lg:text-[29rem]"
+              class="masked-number text-[clamp(7.5rem,20vw,26rem)] font-black leading-none tracking-[-0.09em]"
               style="--number-image: url('https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&amp;fit=crop&amp;w=1600&amp;q=90')">
               06
             </span>
             <img
               src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/5bab247f-35d9-400d-a82b-fd87cfe913d2_1600w.webp"
               alt="Project preview one"
-              class="project-card absolute left-0 top-14 hidden h-44 w-72 rotate-[-14deg] rounded-[18px] border border-[#f3f0e8]/10 object-cover md:block" />
+              class="project-card absolute left-0 top-14 hidden h-44 w-72 rotate-[-14deg] rounded-[18px] border border-[#f3f0e8]/10 object-cover md:block shadow-2xl" />
             <img
               src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/30104e3c-5eea-4b93-93e9-5313698a7156_1600w.webp"
               alt="Project preview two"
-              class="project-card absolute right-4 top-6 hidden h-44 w-72 rotate-[10deg] rounded-[18px] border border-[#f3f0e8]/10 object-cover md:block" />
+              class="project-card absolute right-4 top-6 hidden h-44 w-72 rotate-[10deg] rounded-[18px] border border-[#f3f0e8]/10 object-cover md:block shadow-2xl" />
           </div>
         </div>
 
-        <div data-reveal="" class="md:col-span-2">
-          <p class="text-xs font-bold uppercase tracking-[0.12em] text-[#f3f0e8]/62">
+        <div data-reveal="" class="md:col-span-3">
+          <p class="text-xs font-extrabold uppercase tracking-[0.14em] text-[#ff5a1f]">
             Project Index
           </p>
-          <ul class="mt-8 space-y-4 text-sm font-medium text-[#f3f0e8]/50">
-            <li class="border-b border-[#f3f0e8]/10 pb-3">
-              01 — Nusa Coffee
-              <span class="block text-[#f3f0e8]/34">Brand System</span>
+          <ul class="mt-6 space-y-4 text-sm font-medium text-[#f3f0e8]/65">
+            <li class="border-b border-[#f3f0e8]/10 pb-3 hover:text-[#f3f0e8] transition">
+              <span class="font-bold text-[#f3f0e8]">01 — Nusa Coffee</span>
+              <span class="block text-xs text-[#f3f0e8]/45">Brand System</span>
             </li>
-            <li class="border-b border-[#f3f0e8]/10 pb-3">
-              02 — Lumina App
-              <span class="block text-[#f3f0e8]/34">Digital Product</span>
+            <li class="border-b border-[#f3f0e8]/10 pb-3 hover:text-[#f3f0e8] transition">
+              <span class="font-bold text-[#f3f0e8]">02 — Lumina App</span>
+              <span class="block text-xs text-[#f3f0e8]/45">Digital Product</span>
             </li>
-            <li class="border-b border-[#f3f0e8]/10 pb-3">
-              03 — Kanal Media
-              <span class="block text-[#f3f0e8]/34">Social Branding</span>
+            <li class="border-b border-[#f3f0e8]/10 pb-3 hover:text-[#f3f0e8] transition">
+              <span class="font-bold text-[#f3f0e8]">03 — Kanal Media</span>
+              <span class="block text-xs text-[#f3f0e8]/45">Social Branding</span>
             </li>
-            <li class="border-b border-[#f3f0e8]/10 pb-3">
-              04 — Sora Fitness
-              <span class="block text-[#f3f0e8]/34">Meta Ads Campaign</span>
+            <li class="border-b border-[#f3f0e8]/10 pb-3 hover:text-[#f3f0e8] transition">
+              <span class="font-bold text-[#f3f0e8]">04 — Sora Fitness</span>
+              <span class="block text-xs text-[#f3f0e8]/45">Meta Ads Campaign</span>
             </li>
-            <li class="border-b border-[#f3f0e8]/10 pb-3">
-              05 — Rupa Store
-              <span class="block text-[#f3f0e8]/34">Web Development</span>
+            <li class="border-b border-[#f3f0e8]/10 pb-3 hover:text-[#f3f0e8] transition">
+              <span class="font-bold text-[#f3f0e8]">05 — Rupa Store</span>
+              <span class="block text-xs text-[#f3f0e8]/45">Web Development</span>
             </li>
-            <li>
-              06 — Otto Flow
-              <span class="block text-[#f3f0e8]/34">AI &amp; Automation</span>
+            <li class="hover:text-[#f3f0e8] transition">
+              <span class="font-bold text-[#f3f0e8]">06 — Otto Flow</span>
+              <span class="block text-xs text-[#f3f0e8]/45">AI &amp; Automation</span>
             </li>
           </ul>
         </div>
       </div>
     </section>
 
-    <!-- FIELD NOTES -->
+    <!-- FIELD NOTES / SOFT SKILLS -->
     <section class="partners-section relative min-h-screen overflow-hidden px-5 py-24 md:px-8 lg:px-12">
-      <h2
-        class="partners-heading pointer-events-none absolute left-5 top-16 text-[18vw] font-black leading-none tracking-[-0.1em] text-[#f3f0e8]/[0.055] md:left-8 md:top-10 md:text-[15vw]">
-        Soft Skills
-      </h2>
+      <div class="pointer-events-none absolute inset-x-0 top-8 z-0 select-none overflow-hidden opacity-50">
+        <h2
+          class="partners-heading wordmark text-[clamp(4.5rem,16vw,14rem)] font-black leading-none tracking-[-0.08em] text-[#f3f0e8]/[0.04]">
+          Soft Skills
+        </h2>
+      </div>
 
       <figure
         class="parallax-image parallax-slow pointer-events-none absolute right-5 top-28 hidden h-44 w-72 rotate-[5deg] overflow-hidden rounded-[28px] border border-[#f3f0e8]/10 md:block lg:right-14 lg:h-56 lg:w-96">
@@ -893,131 +1042,122 @@
       </figure>
 
       <div class="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center">
-        <div class="mb-16 grid gap-8 md:grid-cols-12">
-          <div class="md:col-span-3">
+        <div class="mb-16 grid gap-8 md:grid-cols-12 items-center">
+          <div class="md:col-span-4">
             <p class="section-label">Soft Skills</p>
           </div>
 
-          <div class="md:col-span-7 md:col-start-5">
+          <div class="md:col-span-8">
             <h2
-              class="text-[52px] font-black leading-[0.9] tracking-[-0.08em] text-[#f3f0e8] md:text-[84px] lg:text-[104px]">
+              class="text-[clamp(2.5rem,6vw,5.5rem)] font-black leading-[0.95] tracking-[-0.06em] text-[#f3f0e8]">
               Five habits behind every project I ship.
             </h2>
           </div>
         </div>
 
         <div class="partner-logos grid grid-cols-1 gap-5 md:grid-cols-12">
+          <!-- Habit 1 -->
           <article
-            class="note-card group relative min-h-[430px] overflow-hidden rounded-[38px] border border-[#f3f0e8]/10 bg-[#f3f0e8] p-8 text-[#060706] md:col-span-5">
+            class="note-card group relative min-h-[380px] sm:min-h-[430px] overflow-hidden rounded-[34px] border border-[#f3f0e8]/10 bg-[#f3f0e8] p-8 text-[#060706] md:col-span-5">
             <div
-              class="absolute -right-6 -top-8 text-[180px] font-black leading-none tracking-[-0.12em] text-[#060706]/[0.06]">
+              class="absolute -right-6 -top-8 text-[160px] font-black leading-none tracking-[-0.12em] text-[#060706]/[0.06] select-none">
               01
             </div>
             <div class="relative z-10 flex h-full flex-col justify-between">
               <div>
-                <p class="text-xs font-black uppercase tracking-[0.18em] text-[#060706]/45">
+                <p class="text-xs font-black uppercase tracking-[0.18em] text-[#060706]/50">
                   01 / Curiosity
                 </p>
-                <h3 class="mt-12 max-w-sm text-[50px] font-black leading-[0.88] tracking-[-0.08em] md:text-[64px]">
+                <h3 class="mt-10 max-w-sm text-[clamp(2.2rem,5vw,3.6rem)] font-black leading-[0.92] tracking-[-0.07em]">
                   Ask the better question first.
                 </h3>
               </div>
-              <p class="max-w-sm text-base font-semibold leading-[1.55] text-[#060706]/62">
+              <p class="max-w-sm text-base font-semibold leading-[1.55] text-[#060706]/70">
                 I dig into the product, the audience, and the numbers before
                 opening a design file.
               </p>
             </div>
           </article>
 
+          <!-- Habit 2 -->
           <article
-            class="note-card group relative min-h-[430px] overflow-hidden rounded-[38px] border border-[#f3f0e8]/10 bg-[#111612] md:col-span-4">
+            class="note-card group relative min-h-[380px] sm:min-h-[430px] overflow-hidden rounded-[34px] border border-[#f3f0e8]/10 bg-[#111612] md:col-span-4">
             <img
               src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg"
               alt="Structural facade detail"
               class="h-full w-full object-cover opacity-70 transition duration-700 group-hover:scale-105 group-hover:opacity-90" />
-            <div class="absolute inset-0 bg-gradient-to-t from-[#060706] via-[#060706]/25 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#060706] via-[#060706]/35 to-transparent"></div>
             <div class="absolute bottom-7 left-7 right-7">
-              <p class="text-xs font-black uppercase tracking-[0.18em] text-[#f3f0e8]/50">
+              <p class="text-xs font-black uppercase tracking-[0.18em] text-[#f3f0e8]/60">
                 02 / Adaptability
               </p>
-              <h3 class="mt-5 text-[34px] font-black leading-[0.92] tracking-[-0.07em] text-[#f3f0e8]">
+              <h3 class="mt-4 text-[clamp(1.8rem,4vw,2.5rem)] font-black leading-[0.95] tracking-[-0.06em] text-[#f3f0e8]">
                 Comfortable when the brief keeps moving.
               </h3>
             </div>
           </article>
 
+          <!-- Habit 3 -->
           <article
-            class="note-card relative min-h-[430px] overflow-hidden rounded-[38px] border border-[#f3f0e8]/10 bg-white/[0.035] p-7 md:col-span-3">
-            <p class="text-xs font-black uppercase tracking-[0.18em] text-[#f3f0e8]/42">
-              Index
+            class="note-card relative min-h-[380px] sm:min-h-[430px] overflow-hidden rounded-[34px] border border-[#f3f0e8]/10 bg-white/[0.035] p-7 md:col-span-3">
+            <p class="text-xs font-black uppercase tracking-[0.18em] text-[#f3f0e8]/50">
+              03 / Rigor
             </p>
-            <div class="mt-10 space-y-5">
-              <div class="border-b border-[#f3f0e8]/10 pb-5">
-                <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-[#f3f0e8]/32">
-                  03
-                </p>
-                <p class="mt-2 text-2xl font-black tracking-[-0.06em]">
-                  Strategy
-                </p>
+            <div class="mt-8 space-y-4">
+              <div class="border-b border-[#f3f0e8]/10 pb-4">
+                <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[#ff5a1f]">01</p>
+                <p class="mt-1 text-xl font-bold tracking-[-0.04em] text-[#f3f0e8]">Strategy</p>
               </div>
-              <div class="border-b border-[#f3f0e8]/10 pb-5">
-                <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-[#f3f0e8]/32">
-                  04
-                </p>
-                <p class="mt-2 text-2xl font-black tracking-[-0.06em]">
-                  Collaboration
-                </p>
+              <div class="border-b border-[#f3f0e8]/10 pb-4">
+                <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[#ff5a1f]">02</p>
+                <p class="mt-1 text-xl font-bold tracking-[-0.04em] text-[#f3f0e8]">Collaboration</p>
               </div>
               <div>
-                <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-[#f3f0e8]/32">
-                  05
-                </p>
-                <p class="mt-2 text-2xl font-black tracking-[-0.06em]">
-                  Ownership
-                </p>
+                <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[#ff5a1f]">03</p>
+                <p class="mt-1 text-xl font-bold tracking-[-0.04em] text-[#f3f0e8]">Ownership</p>
               </div>
             </div>
             <div class="absolute bottom-7 left-7 right-7">
-              <p class="text-sm font-medium leading-[1.65] text-[#f3f0e8]/56">
-                Thinking, teamwork, and responsibility treated as one working
-                habit.
+              <p class="text-xs font-medium leading-[1.6] text-[#f3f0e8]/60">
+                Thinking, teamwork, and responsibility treated as one rhythm.
               </p>
             </div>
           </article>
 
+          <!-- Habit 4 -->
           <article
-            class="note-card group relative overflow-hidden rounded-[38px] border border-[#f3f0e8]/10 bg-[#0c0f0c] p-8 md:col-span-7">
+            class="note-card group relative overflow-hidden rounded-[34px] border border-[#f3f0e8]/10 bg-[#0c0f0c] p-8 md:col-span-7">
             <div class="absolute right-8 top-8 h-24 w-24 rounded-full border border-[#f3f0e8]/10"></div>
-            <div class="absolute right-14 top-14 h-12 w-12 rounded-full border border-[#f3f0e8]/10"></div>
-            <div class="relative z-10 grid gap-8 md:grid-cols-12">
+            <div class="relative z-10 grid gap-6 md:grid-cols-12 items-center">
               <div class="md:col-span-4">
-                <p class="text-xs font-black uppercase tracking-[0.18em] text-[#f3f0e8]/42">
+                <p class="text-xs font-black uppercase tracking-[0.18em] text-[#ff5a1f]">
                   04 / Collaboration
                 </p>
               </div>
               <div class="md:col-span-8">
                 <h3
-                  class="max-w-2xl text-[44px] font-black leading-[0.9] tracking-[-0.08em] text-[#f3f0e8] md:text-[64px]">
+                  class="text-[clamp(2rem,4.5vw,3.5rem)] font-black leading-[0.95] tracking-[-0.06em] text-[#f3f0e8]">
                   Design with the team, not at them.
                 </h3>
-                <p class="mt-7 max-w-lg text-sm font-medium leading-[1.7] text-[#f3f0e8]/56">
+                <p class="mt-5 text-sm font-medium leading-[1.7] text-[#f3f0e8]/65">
                   I work close to founders, marketers, and developers so
-                  decisions land in one direction.
+                  decisions land in one cohesive direction.
                 </p>
               </div>
             </div>
           </article>
 
+          <!-- Habit 5 -->
           <article
-            class="note-card relative overflow-hidden rounded-[38px] border border-[#f3f0e8]/10 bg-[#ff5a1f] p-8 text-[#060706] md:col-span-5">
-            <div class="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[#060706]/10"></div>
-            <p class="text-xs font-black uppercase tracking-[0.18em] text-[#060706]/50">
+            class="note-card relative overflow-hidden rounded-[34px] border border-[#f3f0e8]/10 bg-[#ff5a1f] p-8 text-[#060706] md:col-span-5">
+            <div class="absolute -right-8 -top-8 h-36 w-36 rounded-full bg-[#060706]/10"></div>
+            <p class="text-xs font-black uppercase tracking-[0.18em] text-[#060706]/60">
               05 / Ownership
             </p>
-            <h3 class="mt-12 max-w-sm text-[42px] font-black leading-[0.9] tracking-[-0.08em] md:text-[58px]">
+            <h3 class="mt-8 text-[clamp(2rem,4.5vw,3.2rem)] font-black leading-[0.95] tracking-[-0.06em]">
               Own the outcome, not the file.
             </h3>
-            <p class="mt-8 max-w-sm text-sm font-semibold leading-[1.65] text-[#060706]/62">
+            <p class="mt-6 text-sm font-semibold leading-[1.65] text-[#060706]/75">
               The work is finished when it performs, not when it is exported.
             </p>
           </article>
@@ -1025,158 +1165,156 @@
       </div>
     </section>
 
-    <!-- PROCESS -->
+    <!-- EXPERIENCE / TIMELINE -->
     <section class="process-section relative min-h-screen overflow-hidden px-5 py-24 md:px-8 lg:px-12">
       <figure
-        class="parallax-image parallax-slow pointer-events-none right-4 top-24 h-28 w-44 rotate-[4deg] md:right-8 md:top-20 md:h-56 md:w-80">
+        class="parallax-image parallax-slow pointer-events-none right-4 top-24 h-28 w-44 rotate-[4deg] md:right-8 md:top-20 md:h-56 md:w-80 rounded-2xl">
         <img
           src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/c543a9e1-f226-4ced-80b0-feb8445a75b9_1600w.jpg"
           alt="Collaborative planning table" />
       </figure>
 
       <div data-reveal="" class="mb-16 max-w-2xl">
-        <p class="section-label mb-8">Experience</p>
-        <h2 class="text-6xl font-semibold leading-[0.95] tracking-[-0.08em] md:text-8xl">
+        <p class="section-label mb-6">Experience</p>
+        <h2 class="text-4xl font-black leading-[0.95] tracking-[-0.06em] sm:text-6xl md:text-7xl text-[#f3f0e8]">
           Experience
         </h2>
-        <p class="mt-6 max-w-md text-sm font-medium leading-[1.7] text-[#f3f0e8]/56">
+        <p class="mt-6 max-w-md text-sm font-medium leading-[1.7] text-[#f3f0e8]/65">
           Six years moving from print and identity work into social,
-          performance marketing, and product.
+          performance marketing, and digital products.
         </p>
       </div>
 
-      <div class="relative h-72 overflow-hidden rounded-[32px] border border-[#f3f0e8]/10 bg-white/[0.025]">
-        <div class="timeline-bar absolute left-0 top-10 h-7 w-1/4 rounded-r-full text-[#060706]">
+      <div class="relative h-64 overflow-hidden rounded-[28px] border border-[#f3f0e8]/10 bg-white/[0.025]">
+        <div class="timeline-bar absolute left-0 top-8 h-7 w-1/4 rounded-r-full text-[#060706]">
           <span class="ml-4 text-xs font-bold leading-7">2019</span>
         </div>
-        <div class="timeline-bar absolute left-[18%] top-24 h-7 w-1/4 rounded-r-full text-[#060706]">
+        <div class="timeline-bar absolute left-[18%] top-20 h-7 w-1/4 rounded-r-full text-[#060706]">
           <span class="ml-4 text-xs font-bold leading-7">2021</span>
         </div>
-        <div class="timeline-bar absolute left-[36%] top-[9.5rem] h-7 w-1/3 rounded-r-full text-[#060706]">
+        <div class="timeline-bar absolute left-[36%] top-32 h-7 w-1/3 rounded-r-full text-[#060706]">
           <span class="ml-4 text-xs font-bold leading-7">2023</span>
         </div>
-        <div class="timeline-bar absolute left-[62%] top-52 h-7 w-1/3 rounded-r-full text-[#060706]">
+        <div class="timeline-bar absolute left-[62%] top-44 h-7 w-1/3 rounded-r-full text-[#060706]">
           <span class="ml-4 text-xs font-bold leading-7">2025</span>
         </div>
         <div class="grid h-full grid-cols-4 divide-x divide-[#f3f0e8]/10"></div>
       </div>
 
-      <div class="process-columns mt-8 grid gap-4 md:grid-cols-4">
+      <div class="process-columns mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
         <div class="glass rounded-[28px] p-6">
-          <h3 class="text-2xl font-semibold tracking-[-0.05em]">
+          <h3 class="text-xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
             Graphic Designer
           </h3>
-          <p class="mt-5 text-sm leading-[1.65] text-[#f3f0e8]/56">
+          <p class="mt-4 text-sm leading-[1.65] text-[#f3f0e8]/60">
             2019–2021 · Studio Kertas. Identity assets, print collateral, and
             social kits for local F&amp;B and retail brands.
           </p>
         </div>
         <div class="glass rounded-[28px] p-6">
-          <h3 class="text-2xl font-semibold tracking-[-0.05em]">
+          <h3 class="text-xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
             Social Media Lead
           </h3>
-          <p class="mt-5 text-sm leading-[1.65] text-[#f3f0e8]/56">
+          <p class="mt-4 text-sm leading-[1.65] text-[#f3f0e8]/60">
             2021–2023 · Ruang Digital. Content systems, brand tone, and Meta
-            Ads for 20+ accounts.
+            Ads for 20+ active accounts.
           </p>
         </div>
         <div class="glass rounded-[28px] p-6">
-          <h3 class="text-2xl font-semibold tracking-[-0.05em]">
+          <h3 class="text-xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
             Digital Marketer
           </h3>
-          <p class="mt-5 text-sm leading-[1.65] text-[#f3f0e8]/56">
+          <p class="mt-4 text-sm leading-[1.65] text-[#f3f0e8]/60">
             2023–2025 · Kanal Group. Performance campaigns, landing pages, and
             marketing communication.
           </p>
         </div>
         <div class="glass rounded-[28px] p-6">
-          <h3 class="text-2xl font-semibold tracking-[-0.05em]">
+          <h3 class="text-xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
             Independent
           </h3>
-          <p class="mt-5 text-sm leading-[1.65] text-[#f3f0e8]/56">
-            2025–now · Freelance and product work: web builds, digital
-            products, AI-assisted automation.
+          <p class="mt-4 text-sm leading-[1.65] text-[#f3f0e8]/60">
+            2025–now · Freelance &amp; product work: web builds, digital
+            products, and AI workflow automation.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- PRICING -->
+    <!-- TOOLKIT -->
     <section id="pricing" class="pricing-section relative min-h-screen px-5 py-24 md:px-8 lg:px-12">
       <div class="grid gap-12 md:grid-cols-12">
         <div class="pricing-copy md:col-span-4">
-          <p class="section-label mb-8">Toolkit</p>
-          <h2 class="text-6xl font-semibold leading-[0.95] tracking-[-0.08em] md:text-8xl">
+          <p class="section-label mb-6">Toolkit</p>
+          <h2 class="text-4xl font-black leading-[0.95] tracking-[-0.06em] sm:text-6xl md:text-7xl text-[#f3f0e8]">
             Toolkit
           </h2>
-          <p class="mt-6 max-w-72 text-sm font-medium leading-[1.7] text-[#f3f0e8]/56">
-            The tools I keep open every day, split between craft and build.
+          <p class="mt-6 max-w-72 text-sm font-medium leading-[1.7] text-[#f3f0e8]/65">
+            The software, frameworks, and tools I keep open every day, split between craft and build.
           </p>
         </div>
 
-        <div class="pricing-list grid gap-5 md:col-span-7 md:col-start-6">
-          <div class="pricing-card glass rounded-[36px] p-8">
-            <div class="mb-10 flex flex-wrap gap-2">
-              <span class="rounded-full border border-[#f3f0e8]/12 px-3 py-1 text-xs font-medium text-[#f3f0e8]/66">
+        <div class="pricing-list grid gap-6 md:col-span-8">
+          <div class="pricing-card glass rounded-[34px] p-8 border border-[#f3f0e8]/10">
+            <div class="mb-8 flex flex-wrap gap-2">
+              <span class="rounded-full border border-[#f3f0e8]/15 px-3 py-1 text-xs font-semibold text-[#f3f0e8]/75">
                 Daily driver
               </span>
               <span class="rounded-full bg-[#ff5a1f] px-3 py-1 text-xs font-bold text-[#060706]">
                 Design
               </span>
             </div>
-            <div class="flex items-baseline gap-3">
-              <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#f3f0e8]/44">
-                01 / Craft
-              </p>
-            </div>
-            <h3 class="mt-12 text-4xl font-semibold tracking-[-0.07em] md:text-6xl">
-              Design &amp; Content
+            <p class="text-xs font-extrabold uppercase tracking-[0.14em] text-[#ff5a1f]">
+              01 / Craft
+            </p>
+            <h3 class="mt-6 text-3xl sm:text-4xl font-bold tracking-[-0.05em] text-[#f3f0e8]">
+              Design &amp; Visual Content
             </h3>
-            <div class="mt-8 grid gap-4 md:grid-cols-2">
-              <p class="flex items-center gap-2 text-sm font-medium">
+            <div class="mt-8 grid gap-4 sm:grid-cols-2">
+              <p class="flex items-center gap-3 text-sm font-medium text-[#f3f0e8]/85">
                 <i data-lucide="check" class="h-4 w-4 text-[#ff5a1f]"></i>
-                Figma
+                Figma &amp; Design Systems
               </p>
-              <p class="flex items-center gap-2 text-sm font-medium">
+              <p class="flex items-center gap-3 text-sm font-medium text-[#f3f0e8]/85">
                 <i data-lucide="check" class="h-4 w-4 text-[#ff5a1f]"></i>
                 Adobe Creative Suite
               </p>
-              <p class="flex items-center gap-2 text-sm font-medium">
+              <p class="flex items-center gap-3 text-sm font-medium text-[#f3f0e8]/85">
                 <i data-lucide="check" class="h-4 w-4 text-[#ff5a1f]"></i>
-                After Effects
+                After Effects Motion
               </p>
-              <p class="flex items-center gap-2 text-sm font-medium">
+              <p class="flex items-center gap-3 text-sm font-medium text-[#f3f0e8]/85">
                 <i data-lucide="check" class="h-4 w-4 text-[#ff5a1f]"></i>
-                CapCut &amp; Canva
+                CapCut &amp; Canva Pro
               </p>
             </div>
           </div>
 
-          <div class="pricing-card glass rounded-[36px] p-8">
+          <div class="pricing-card glass rounded-[34px] p-8 border border-[#f3f0e8]/10">
             <div class="flex items-baseline gap-3">
-              <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#f3f0e8]/44">
+              <p class="text-xs font-extrabold uppercase tracking-[0.14em] text-[#ff5a1f]">
                 02 / Build
               </p>
             </div>
-            <h3 class="mt-12 text-4xl font-semibold tracking-[-0.07em] md:text-6xl">
-              Marketing &amp; Tech
+            <h3 class="mt-6 text-3xl sm:text-4xl font-bold tracking-[-0.05em] text-[#f3f0e8]">
+              Marketing, Code &amp; Automation
             </h3>
-            <div class="mt-8 grid gap-4 md:grid-cols-2">
-              <p class="flex items-center gap-2 text-sm font-medium">
+            <div class="mt-8 grid gap-4 sm:grid-cols-2">
+              <p class="flex items-center gap-3 text-sm font-medium text-[#f3f0e8]/85">
                 <i data-lucide="check" class="h-4 w-4 text-[#ff5a1f]"></i>
-                Meta Ads Manager
+                Meta Ads Manager &amp; Pixel
               </p>
-              <p class="flex items-center gap-2 text-sm font-medium">
+              <p class="flex items-center gap-3 text-sm font-medium text-[#f3f0e8]/85">
                 <i data-lucide="check" class="h-4 w-4 text-[#ff5a1f]"></i>
                 GA4 &amp; Looker Studio
               </p>
-              <p class="flex items-center gap-2 text-sm font-medium">
+              <p class="flex items-center gap-3 text-sm font-medium text-[#f3f0e8]/85">
                 <i data-lucide="check" class="h-4 w-4 text-[#ff5a1f]"></i>
-                Webflow / Next.js
+                Next.js / TailwindCSS / GSAP
               </p>
-              <p class="flex items-center gap-2 text-sm font-medium">
+              <p class="flex items-center gap-3 text-sm font-medium text-[#f3f0e8]/85">
                 <i data-lucide="check" class="h-4 w-4 text-[#ff5a1f]"></i>
-                n8n &amp; OpenAI
+                n8n Automation &amp; OpenAI API
               </p>
             </div>
           </div>
@@ -1187,64 +1325,69 @@
     <!-- CONTACT -->
     <section id="contact" class="contact-section relative min-h-screen px-5 py-24 md:px-8 lg:px-12">
       <div class="grid gap-14 md:grid-cols-12">
-        <div class="contact-form md:col-span-4">
-          <p class="section-label mb-10">Contact</p>
-          <div
-            class="glass mb-5 flex w-full max-w-sm items-center justify-between rounded-[22px] px-5 py-4 text-sm font-medium text-[#f3f0e8]/58">
-            Select a project type
-            <i data-lucide="chevron-down" class="h-4 w-4"></i>
-          </div>
-          <div class="mb-5 w-full max-w-sm border-b border-[#f3f0e8]/10 py-5 text-sm font-medium text-[#f3f0e8]/58">
-            Reach me at
-            <span class="text-[#f3f0e8]">Email *</span>
-          </div>
-          <div class="mb-10 w-full max-w-sm border-b border-[#f3f0e8]/10 py-5 text-sm font-medium text-[#f3f0e8]/58">
-            Tell me what you want to design, build, or solve.
-          </div>
-          <p class="mb-8 max-w-72 text-sm font-medium leading-[1.7] text-[#f3f0e8]/56">
-            Have a brand, campaign, or product idea? I reply within one
-            working day.
+        <div class="contact-form md:col-span-5">
+          <p class="section-label mb-8">Contact</p>
+          
+          <h2 class="text-4xl font-black tracking-[-0.06em] text-[#f3f0e8] sm:text-5xl mb-6">
+            Let's make something remarkable.
+          </h2>
+
+          <p class="mb-8 max-w-md text-base font-medium leading-[1.7] text-[#f3f0e8]/65">
+            Have a brand, marketing campaign, or web product in mind? Send a message and I'll get back within 24 hours.
           </p>
-          <a href="#footer"
-            class="magnetic-button inline-flex items-center gap-4 rounded-full border border-[#f3f0e8]/12 px-4 py-3 text-xs font-bold uppercase tracking-[0.12em]">
-            Say hello
-            <span class="rounded-full bg-[#ff5a1f] px-5 py-3 text-[#060706]">
+
+          <div class="space-y-4 max-w-md">
+            <a href="mailto:contact@gadingutama.com"
+              class="glass flex items-center justify-between rounded-[22px] px-6 py-4 text-sm font-semibold text-[#f3f0e8] hover:border-[#ff5a1f] transition">
+              <span>contact@gadingutama.com</span>
+              <span class="text-[#ff5a1f]">Email ↗</span>
+            </a>
+            
+            <a href="https://linkedin.com" target="_blank" rel="noopener"
+              class="glass flex items-center justify-between rounded-[22px] px-6 py-4 text-sm font-semibold text-[#f3f0e8] hover:border-[#ff5a1f] transition">
+              <span>Connect on LinkedIn</span>
+              <span class="text-[#ff5a1f]">Connect ↗</span>
+            </a>
+          </div>
+
+          <div class="mt-10">
+            <a href="mailto:contact@gadingutama.com"
+              class="magnetic-button inline-flex items-center gap-4 rounded-full bg-[#ff5a1f] px-8 py-4 text-xs font-bold uppercase tracking-[0.16em] text-[#060706] shadow-lg shadow-[#ff5a1f]/20">
               Send Message
-            </span>
-          </a>
+              <i data-lucide="send" class="h-4 w-4"></i>
+            </a>
+          </div>
         </div>
 
-        <div class="faq-list md:col-span-7 md:col-start-6">
-          <p class="mb-6 text-xs font-bold uppercase tracking-[0.14em]">
-            Good to know.
-            <span class="float-right">×</span>
+        <div class="faq-list md:col-span-7">
+          <p class="mb-6 text-xs font-extrabold uppercase tracking-[0.14em] text-[#ff5a1f]">
+            Frequently Asked Questions
           </p>
-          <div class="faq-row border-t border-[#f3f0e8]/10 py-9">
-            <h2 class="text-4xl font-semibold tracking-[-0.07em] md:text-6xl">
-              How do you usually work?
-            </h2>
-            <p class="mt-5 max-w-2xl text-sm font-medium leading-[1.7] text-[#f3f0e8]/56">
-              We start with a short call, I map the problem and the goal, then
-              return with a focused scope covering design, marketing, and
-              build.
+          
+          <div class="faq-row border-t border-[#f3f0e8]/10 py-8">
+            <h3 class="text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+              How do you usually work with clients?
+            </h3>
+            <p class="mt-4 max-w-2xl text-sm font-medium leading-[1.7] text-[#f3f0e8]/65">
+              We start with an alignment call, identify core business bottlenecks, then agree on a focused scope covering design, marketing, and tech builds with clear weekly milestones.
             </p>
           </div>
-          <div class="faq-row border-t border-[#f3f0e8]/10 py-9">
-            <h3 class="text-3xl font-semibold tracking-[-0.06em]">
+          
+          <div class="faq-row border-t border-[#f3f0e8]/10 py-8">
+            <h3 class="text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
               How fast can a project move?
             </h3>
-            <p class="mt-5 max-w-2xl text-sm font-medium leading-[1.7] text-[#f3f0e8]/56">
-              Small design or campaign work runs in one to three weeks. Full
-              brand or web builds usually need four to eight weeks.
+            <p class="mt-4 max-w-2xl text-sm font-medium leading-[1.7] text-[#f3f0e8]/65">
+              Focused branding sprints or campaign setups run in one to three weeks. Full design systems and web application builds typically take four to eight weeks.
             </p>
           </div>
-          <div class="faq-row border-t border-[#f3f0e8]/10 py-9">
-            <h3 class="text-3xl font-semibold tracking-[-0.06em]">
-              Can you work with an in-house team?
+          
+          <div class="faq-row border-t border-[#f3f0e8]/10 py-8">
+            <h3 class="text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+              Can you integrate into an existing team?
             </h3>
-            <p class="mt-5 max-w-2xl text-sm font-medium leading-[1.7] text-[#f3f0e8]/56">
-              Yes. I plug into existing teams as designer, marketer, or
-              builder, and leave clear files, rules, and documentation behind.
+            <p class="mt-4 max-w-2xl text-sm font-medium leading-[1.7] text-[#f3f0e8]/65">
+              Yes. I collaborate smoothly with founders, marketing heads, and engineering teams, delivering clean documentation, design tokens, and modular components.
             </p>
           </div>
         </div>
@@ -1252,133 +1395,112 @@
     </section>
 
     <!-- FOOTER -->
-    <footer id="footer" class="footer-section relative min-h-screen overflow-hidden px-5 py-24 md:px-8 lg:px-12">
-      <div class="grid gap-12 md:grid-cols-12">
-        <div class="md:col-span-3">
-          <p class="section-label">Gading Utama</p>
+    <footer id="footer" class="footer-section relative min-h-screen flex flex-col justify-between overflow-hidden px-5 py-20 md:px-8 lg:px-12">
+      <!-- Top / Wordmark -->
+      <div class="relative z-10 mx-auto w-full max-w-7xl">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 pb-12 border-b border-[#f3f0e8]/10">
+          <p class="section-label">Gading Utama — Digital Portfolio</p>
+          <span class="text-xs font-bold uppercase tracking-[0.14em] text-[#f3f0e8]/45">
+            Available for Q3/Q4 2026
+          </span>
         </div>
-        <div class="md:col-span-9">
+        
+        <div class="overflow-hidden py-10">
           <h2
-            class="footer-wordmark wordmark text-[5rem] font-black leading-none sm:text-[8rem] md:text-[11rem] lg:text-[14rem]">
-            Gading
+            class="footer-wordmark wordmark text-[clamp(4.5rem,17vw,13rem)] font-black leading-none tracking-[-0.08em] text-[#f3f0e8]">
+            Gading.
           </h2>
         </div>
       </div>
 
-      <div class="absolute right-5 top-28 text-xs font-bold uppercase tracking-[0.14em] text-[#f3f0e8]/44 md:right-8">
-        © 2026
-      </div>
-
+      <!-- Bottom / Links Grid -->
       <div
-        class="footer-links absolute bottom-16 left-5 right-5 grid gap-10 border-t border-[#f3f0e8]/12 pt-10 md:left-8 md:right-8 md:grid-cols-12">
+        class="footer-links relative z-10 mx-auto w-full max-w-7xl grid gap-10 border-t border-[#f3f0e8]/12 pt-12 md:grid-cols-12">
         <div class="md:col-span-5">
-          <p class="mb-5 text-xs font-bold uppercase tracking-[0.22em] text-[#f3f0e8]/36">
+          <p class="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[#ff5a1f]">
             Creative Designer &amp; Digital Problem Solver / 2026
           </p>
           <h3
-            class="max-w-xl text-[42px] font-black leading-[0.92] tracking-[-0.07em] text-[#f3f0e8] md:text-[64px] lg:text-[76px]">
+            class="max-w-xl text-[clamp(2rem,5vw,4.2rem)] font-black leading-[0.95] tracking-[-0.06em] text-[#f3f0e8]">
             Let's design, build, and solve the next one together.
           </h3>
 
-          <div class="mt-10 grid max-w-lg grid-cols-2 border-y border-[#f3f0e8]/12 py-5">
+          <div class="mt-8 grid max-w-lg grid-cols-2 border-y border-[#f3f0e8]/12 py-5">
             <div>
-              <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#f3f0e8]/34">
+              <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#f3f0e8]/40">
                 Name
               </p>
-              <p class="mt-2 text-sm font-semibold text-[#f3f0e8]/78">
+              <p class="mt-2 text-sm font-semibold text-[#f3f0e8]/85">
                 Gading Utama
               </p>
             </div>
             <div>
-              <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#f3f0e8]/34">
+              <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#f3f0e8]/40">
                 Focus
               </p>
-              <p class="mt-2 text-sm font-semibold text-[#f3f0e8]/78">
+              <p class="mt-2 text-sm font-semibold text-[#f3f0e8]/85">
                 Design × Marketing × Digital
               </p>
             </div>
           </div>
         </div>
 
-        <div class="md:col-span-3 md:col-start-7">
-          <p class="text-xs font-bold uppercase tracking-[0.22em] text-[#f3f0e8]/36">
-            Notes
+        <div class="md:col-span-4 md:col-start-7">
+          <p class="text-xs font-bold uppercase tracking-[0.22em] text-[#f3f0e8]/45">
+            About This Practice
           </p>
-          <p class="mt-6 text-sm font-medium leading-[1.75] text-[#f3f0e8]/58">
+          <p class="mt-5 text-sm font-medium leading-[1.75] text-[#f3f0e8]/65">
             I help founders and teams turn scattered ideas into brands,
             campaigns, and digital products that feel deliberate and actually
             perform.
           </p>
 
-          <a href="#contact"
-            class="group mt-9 flex items-center justify-between border-b border-[#f3f0e8]/14 pb-4 text-sm font-bold text-[#f3f0e8] transition hover:border-[#f3f0e8]/40">
-            Start a project
-            <span class="transition duration-300 group-hover:translate-x-2">
-              →
-            </span>
-          </a>
-
-          <a href="#"
-            class="group mt-4 flex items-center justify-between border-b border-[#f3f0e8]/14 pb-4 text-sm font-bold text-[#f3f0e8]/62 transition hover:border-[#f3f0e8]/40 hover:text-[#f3f0e8]">
-            Download CV
-            <span class="transition duration-300 group-hover:translate-x-2">
-              →
-            </span>
-          </a>
+          <div class="mt-8 flex flex-col gap-3">
+            <a href="#contact"
+              class="group flex items-center justify-between border-b border-[#f3f0e8]/14 pb-3 text-sm font-bold text-[#f3f0e8] transition hover:border-[#ff5a1f] hover:text-[#ff5a1f]">
+              Start a project
+              <span class="transition duration-300 group-hover:translate-x-1">→</span>
+            </a>
+            <a href="mailto:contact@gadingutama.com"
+              class="group flex items-center justify-between border-b border-[#f3f0e8]/14 pb-3 text-sm font-bold text-[#f3f0e8]/65 transition hover:border-[#f3f0e8]/40 hover:text-[#f3f0e8]">
+              contact@gadingutama.com
+              <span class="transition duration-300 group-hover:translate-x-1">↗</span>
+            </a>
+          </div>
         </div>
 
-        <div class="grid gap-10 md:col-span-2 md:col-start-11">
+        <div class="grid grid-cols-2 gap-8 md:col-span-2 md:col-start-11">
           <div>
-            <p class="text-xs font-bold uppercase tracking-[0.22em] text-[#f3f0e8]/36">
+            <p class="text-xs font-bold uppercase tracking-[0.22em] text-[#f3f0e8]/45">
               Social
             </p>
-            <div class="mt-6 space-y-4 text-sm font-bold text-[#f3f0e8]/72">
-              <a href="#" class="group flex items-center justify-between transition hover:text-[#f3f0e8]">
-                LinkedIn
-                <span class="text-[#f3f0e8]/28 transition group-hover:translate-x-1 group-hover:text-[#f3f0e8]">
-                  ↗
-                </span>
-              </a>
-              <a href="#" class="group flex items-center justify-between transition hover:text-[#f3f0e8]">
-                X / Twitter
-                <span class="text-[#f3f0e8]/28 transition group-hover:translate-x-1 group-hover:text-[#f3f0e8]">
-                  ↗
-                </span>
-              </a>
-              <a href="#" class="group flex items-center justify-between transition hover:text-[#f3f0e8]">
-                Instagram
-                <span class="text-[#f3f0e8]/28 transition group-hover:translate-x-1 group-hover:text-[#f3f0e8]">
-                  ↗
-                </span>
-              </a>
+            <div class="mt-5 space-y-3 text-sm font-bold text-[#f3f0e8]/75">
+              <a href="https://linkedin.com" target="_blank" rel="noopener" class="block hover:text-[#ff5a1f] transition">LinkedIn ↗</a>
+              <a href="https://twitter.com" target="_blank" rel="noopener" class="block hover:text-[#ff5a1f] transition">Twitter ↗</a>
+              <a href="https://instagram.com" target="_blank" rel="noopener" class="block hover:text-[#ff5a1f] transition">Instagram ↗</a>
+              <a href="https://github.com" target="_blank" rel="noopener" class="block hover:text-[#ff5a1f] transition">GitHub ↗</a>
             </div>
           </div>
-
           <div>
-            <p class="text-xs font-bold uppercase tracking-[0.22em] text-[#f3f0e8]/36">
-              Legal
+            <p class="text-xs font-bold uppercase tracking-[0.22em] text-[#f3f0e8]/45">
+              Navigation
             </p>
-            <div class="mt-6 space-y-3 text-sm font-semibold text-[#f3f0e8]/50">
-              <a href="#" class="block transition hover:text-[#f3f0e8]">
-                Privacy Policy
-              </a>
-              <a href="#" class="block transition hover:text-[#f3f0e8]">
-                Terms of Service
-              </a>
-              <a href="#" class="block transition hover:text-[#f3f0e8]">
-                404
-              </a>
+            <div class="mt-5 space-y-3 text-sm font-medium text-[#f3f0e8]/60">
+              <a href="#home" class="block hover:text-[#f3f0e8] transition">Top</a>
+              <a href="#work" class="block hover:text-[#f3f0e8] transition">Works</a>
+              <a href="#studio" class="block hover:text-[#f3f0e8] transition">About</a>
+              <a href="#pricing" class="block hover:text-[#f3f0e8] transition">Toolkit</a>
             </div>
           </div>
         </div>
 
         <div class="md:col-span-12">
-          <div class="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-[#f3f0e8]/12 pt-5">
-            <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#f3f0e8]/34">
-              © 2026 Gading Utama
+          <div class="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-[#f3f0e8]/12 pt-6">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#f3f0e8]/40">
+              © 2026 Gading Utama. All rights reserved.
             </p>
-            <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#f3f0e8]/34">
-              Jakarta / Remote Worldwide
+            <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#f3f0e8]/40">
+              Jakarta / Worldwide Remote
             </p>
           </div>
         </div>
@@ -1389,6 +1511,38 @@
   <script>
     lucide.createIcons({ attrs: { "stroke-width": 1.5 } });
 
+    // --- Mobile Drawer Navigation Logic ---
+    const openDrawerBtn = document.getElementById("openDrawerBtn");
+    const closeDrawerBtn = document.getElementById("closeDrawerBtn");
+    const mobileDrawer = document.getElementById("mobileDrawer");
+    const drawerBackdrop = document.getElementById("drawerBackdrop");
+    const drawerPanel = document.getElementById("drawerPanel");
+    const drawerLinks = document.querySelectorAll(".mobile-drawer-link");
+
+    function openMenu() {
+      if (!mobileDrawer) return;
+      mobileDrawer.classList.remove("pointer-events-none", "opacity-0");
+      mobileDrawer.classList.add("pointer-events-auto", "opacity-100");
+      drawerPanel.classList.remove("translate-x-full");
+      drawerPanel.classList.add("translate-x-0");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeMenu() {
+      if (!mobileDrawer) return;
+      drawerPanel.classList.remove("translate-x-0");
+      drawerPanel.classList.add("translate-x-full");
+      mobileDrawer.classList.remove("pointer-events-auto", "opacity-100");
+      mobileDrawer.classList.add("pointer-events-none", "opacity-0");
+      document.body.style.overflow = "";
+    }
+
+    if (openDrawerBtn) openDrawerBtn.addEventListener("click", openMenu);
+    if (closeDrawerBtn) closeDrawerBtn.addEventListener("click", closeMenu);
+    if (drawerBackdrop) drawerBackdrop.addEventListener("click", closeMenu);
+    drawerLinks.forEach(link => link.addEventListener("click", closeMenu));
+
+    // --- GSAP and Lenis Animations ---
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (!prefersReducedMotion && window.gsap && window.ScrollTrigger && window.Lenis) {
@@ -1417,8 +1571,8 @@
 
       loadTl
         .from("header", { y: -24, opacity: 0, duration: 0.75 })
-        .from(".hero-copy > *", { y: 28, opacity: 0, stagger: 0.09, duration: 0.8 }, "-=0.35")
-        .from(".hero-card", { y: 90, opacity: 0, rotate: 0, scale: 0.94, stagger: 0.08, duration: 1.05 }, "-=0.55")
+        .from(".hero-copy > *", { y: 28, opacity: 0, stagger: 0.08, duration: 0.8 }, "-=0.35")
+        .from(".hero-card", { y: 60, opacity: 0, scale: 0.94, stagger: 0.08, duration: 1 }, "-=0.55")
         .from(".hero-cta", { scale: 0, opacity: 0, duration: 0.6 }, "-=0.45")
         .from(".hero-wordmark", { yPercent: 18, opacity: 0, duration: 1 }, "-=0.7")
         .from(".hero-meta", { y: 24, opacity: 0, duration: 0.75 }, "-=0.65");
@@ -1465,66 +1619,144 @@
           duration: .9,
           scrollTrigger: {
             trigger: item,
-            start: "top 84%",
+            start: "top 85%",
             toggleActions: "play none none reverse"
           }
         });
       });
 
-      // Hero pinned cinematic transformation
-      const hero = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".hero-section",
-          start: "top top",
-          end: "+=115%",
-          scrub: 1,
-          pin: true,
-          anticipatePin: 1
-        }
+      // MatchMedia for Responsive GSAP
+      let mm = gsap.matchMedia();
+
+      // DESKTOP (>= 1024px): Pinned sections and full 3D choreography
+      mm.add("(min-width: 1024px)", () => {
+        // Hero pinned cinematic transformation
+        const hero = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".hero-section",
+            start: "top top",
+            end: "+=100%",
+            scrub: 1,
+            pin: true,
+            anticipatePin: 1
+          }
+        });
+
+        hero
+          .to(".hero-wordmark", { yPercent: -40, scale: 1.05, opacity: .7, duration: 1 }, 0)
+          .to(".hero-copy", { y: -50, opacity: .4, duration: 1 }, 0)
+          .to(".hero-meta", { y: -30, opacity: .7, duration: 1 }, 0)
+          .to(".hero-stack", { y: -50, scale: .95, duration: 1 }, 0)
+          .to(".hero-card:nth-child(1)", { x: -35, y: 25, rotate: -20, duration: 1 }, 0)
+          .to(".hero-card:nth-child(2)", { x: 35, y: -25, rotate: 18, duration: 1 }, 0)
+          .to(".hero-card:nth-child(3)", { x: 45, y: 15, rotate: 20, duration: 1 }, 0)
+          .to(".hero-card:nth-child(4)", { x: 5, y: 10, rotate: 0, duration: 1 }, 0);
+
+        // Studio pinned word rhythm
+        const brand = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".brand-section",
+            start: "top top",
+            end: "+=100%",
+            scrub: 1,
+            pin: true,
+            anticipatePin: 1
+          }
+        });
+
+        brand
+          .fromTo(".brand-drift", { xPercent: 2 }, { xPercent: -15, duration: 1 }, 0)
+          .fromTo(".brand-word", {
+            opacity: 0,
+            y: 70,
+            x: (i) => (i % 2 ? -60 : 60)
+          }, {
+            opacity: 1,
+            y: 0,
+            x: 0,
+            stagger: .08,
+            duration: .6
+          }, .08);
+
+        // Work pinned number
+        const work = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".work-section",
+            start: "top top",
+            end: "+=110%",
+            scrub: 1,
+            pin: true,
+            anticipatePin: 1
+          }
+        });
+
+        work
+          .from(".work-copy", { x: -60, opacity: 0, duration: .4 }, 0)
+          .fromTo(".masked-number", { scale: .85, y: 60, backgroundPosition: "50% 30%" }, { scale: 1.08, y: -40, backgroundPosition: "50% 70%", duration: 1 }, 0)
+          .from(".project-card", { y: 60, opacity: 0, rotate: 0, stagger: .1, duration: .4 }, .15)
+          .to(".project-card", { y: -30, x: (i) => (i ? 35 : -30), duration: .8 }, .45);
+
+        // Pricing pin on desktop
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: ".pricing-section",
+            start: "top top",
+            end: "+=70%",
+            scrub: 1,
+            pin: true,
+            anticipatePin: 1
+          }
+        })
+          .from(".pricing-copy", { y: 40, opacity: 0, duration: .35 }, 0)
+          .from(".pricing-card", { x: 80, opacity: 0, stagger: .16, duration: .55 }, .12);
       });
 
-      hero
-        .to(".hero-wordmark", { yPercent: -50, scale: 1.07, opacity: .86, duration: 1 }, 0)
-        .to(".hero-copy", { y: -60, opacity: .42, duration: 1 }, 0)
-        .to(".hero-meta", { y: -34, opacity: .72, duration: 1 }, 0)
-        .to(".hero-stack", { y: -70, scale: .94, duration: 1 }, 0)
-        .to(".hero-card:nth-child(1)", { x: -46, y: 34, rotate: -24, duration: 1 }, 0)
-        .to(".hero-card:nth-child(2)", { x: 42, y: -34, rotate: 20, duration: 1 }, 0)
-        .to(".hero-card:nth-child(3)", { x: 54, y: 22, rotate: 22, duration: 1 }, 0)
-        .to(".hero-card:nth-child(4)", { x: 8, y: 12, rotate: 0, duration: 1 }, 0);
+      // MOBILE & TABLET (< 1024px): NO PINNING, VERTICAL FLOW, ZERO HORIZONTAL SPILL
+      mm.add("(max-width: 1023px)", () => {
+        // Hero natural soft entrance
+        gsap.to(".hero-stack", {
+          y: -25,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".hero-section",
+            start: "top top",
+            end: "bottom top",
+            scrub: 0.5
+          }
+        });
 
-      // Studio pinned word rhythm
-      const brand = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".brand-section",
-          start: "top top",
-          end: "+=110%",
-          scrub: 1,
-          pin: true,
-          anticipatePin: 1
-        }
+        // Brand words vertical-only staggered reveals
+        gsap.utils.toArray(".brand-word").forEach((word, idx) => {
+          gsap.from(word, {
+            y: 40,
+            opacity: 0,
+            duration: 0.7,
+            delay: idx * 0.05,
+            scrollTrigger: {
+              trigger: word,
+              start: "top 88%",
+              toggleActions: "play none none reverse"
+            }
+          });
+        });
+
+        // Work masked number vertical parallax
+        gsap.fromTo(".masked-number", 
+          { scale: 0.9, opacity: 0.6 }, 
+          { 
+            scale: 1, 
+            opacity: 1, 
+            duration: 0.8,
+            scrollTrigger: {
+              trigger: ".work-section",
+              start: "top 75%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
       });
 
-      brand
-        .fromTo(".brand-drift", { xPercent: 4 }, { xPercent: -22, duration: 1 }, 0)
-        .fromTo(".brand-word", {
-          opacity: 0,
-          y: 80,
-          x: (i) => (i % 2 ? -90 : 90)
-        }, {
-          opacity: 1,
-          y: 0,
-          x: 0,
-          stagger: .08,
-          duration: .6
-        }, .08)
-        .to(".brand-word", {
-          x: (i) => (i % 2 ? -34 : 34),
-          stagger: .04,
-          duration: .45
-        }, .64);
-
-      // Services reveal and image strip motion
+      // Common: Services reveal and image strip motion
       gsap.timeline({
         scrollTrigger: {
           trigger: ".services-section",
@@ -1533,17 +1765,17 @@
           scrub: 1
         }
       })
-        .from(".services-copy", { y: 90, opacity: 0, duration: .35 })
-        .from(".service-card", { y: 42, opacity: 0, stagger: .08, duration: .45 }, .16)
-        .to(".strip-image", { xPercent: -14, scale: 1.22, duration: .8 }, 0);
+        .from(".services-copy", { y: 60, opacity: 0, duration: .35 })
+        .from(".service-card", { y: 35, opacity: 0, stagger: .08, duration: .45 }, .16)
+        .to(".strip-image", { xPercent: -10, scale: 1.15, duration: .8 }, 0);
 
       // Parallax media
       gsap.utils.toArray(".parallax-image").forEach((item) => {
         const isFast = item.classList.contains("parallax-fast");
         const section = item.closest("section");
 
-        gsap.fromTo(item, { y: isFast ? 90 : 50 }, {
-          y: isFast ? -120 : -70,
+        gsap.fromTo(item, { y: isFast ? 60 : 35 }, {
+          y: isFast ? -80 : -45,
           ease: "none",
           scrollTrigger: {
             trigger: section,
@@ -1552,75 +1784,39 @@
             scrub: true
           }
         });
-
-        const img = item.querySelector("img");
-        if (img) {
-          gsap.fromTo(img, { scale: 1.18, yPercent: isFast ? -8 : -5 }, {
-            scale: 1.04,
-            yPercent: isFast ? 8 : 5,
-            ease: "none",
-            scrollTrigger: {
-              trigger: section,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: true
-            }
-          });
-        }
       });
 
       // Stats stagger
       gsap.from(".stat-grid .note-card", {
-        y: 52,
+        y: 45,
         opacity: 0,
         stagger: .08,
         duration: .8,
         scrollTrigger: {
           trigger: ".numbers-intro",
-          start: "top 58%",
+          start: "top 65%",
           toggleActions: "play none none reverse"
         }
       });
 
-      // Archive scroll
+      // Archive gallery scroll
       gsap.timeline({
         scrollTrigger: {
           trigger: ".archive-scroll-section",
           start: "top 75%",
-          end: "bottom 20%",
+          end: "bottom 25%",
           scrub: 1
         }
       })
-        .from(".archive-title", { y: 80, opacity: 0, duration: 0.45 }, 0)
+        .from(".archive-title", { y: 60, opacity: 0, duration: 0.45 }, 0)
         .from(".archive-card", {
-          y: 100,
+          y: 70,
           opacity: 0,
-          rotate: (i) => [-3, 2, -2, 3, -1][i],
           stagger: 0.08,
           duration: 0.65
-        }, 0.12)
-        .to(".archive-gallery", { xPercent: -18, duration: 1 }, 0.25)
-        .to(".archive-card img", { scale: 1.18, duration: 1 }, 0.25);
+        }, 0.12);
 
-      // Work pinned number
-      const work = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".work-section",
-          start: "top top",
-          end: "+=120%",
-          scrub: 1,
-          pin: true,
-          anticipatePin: 1
-        }
-      });
-
-      work
-        .from(".work-copy", { x: -80, opacity: 0, duration: .4 }, 0)
-        .fromTo(".masked-number", { scale: .82, y: 80, backgroundPosition: "50% 28%" }, { scale: 1.1, y: -50, backgroundPosition: "50% 74%", duration: 1 }, 0)
-        .from(".project-card", { y: 80, opacity: 0, rotate: 0, stagger: .1, duration: .4 }, .15)
-        .to(".project-card", { y: -40, x: (i) => (i ? 42 : -34), duration: .8 }, .45);
-
-      // Field notes editorial
+      // Partners section notes
       gsap.timeline({
         scrollTrigger: {
           trigger: ".partners-section",
@@ -1629,72 +1825,37 @@
           scrub: 1
         }
       })
-        .fromTo(".partners-heading", { yPercent: 10, opacity: 0.06 }, { yPercent: -16, opacity: 0.12, duration: 1 }, 0)
-        .from(".partners-section .section-label", { y: 24, opacity: 0, duration: 0.35 }, 0.08)
-        .from(".partners-section h2:not(.partners-heading)", { y: 70, opacity: 0, duration: 0.55 }, 0.12)
+        .fromTo(".partners-heading", { yPercent: 10, opacity: 0.04 }, { yPercent: -10, opacity: 0.08, duration: 1 }, 0)
         .from(".partner-logos .note-card", {
-          y: 100,
+          y: 60,
           opacity: 0,
-          rotate: (i) => [-2, 2, -1, 1, -2][i],
           stagger: 0.08,
           duration: 0.7
-        }, 0.2)
-        .to(".partner-logos .note-card", {
-          y: (i) => [-24, 18, -12, 14, -18][i],
-          stagger: 0.04,
-          duration: 0.55
-        }, 0.62);
+        }, 0.15);
 
       // Timeline process
       gsap.timeline({
         scrollTrigger: {
           trigger: ".process-section",
-          start: "top 60%",
+          start: "top 65%",
           end: "bottom 40%",
           scrub: 1
         }
       })
         .to(".timeline-bar", { scaleX: 1, stagger: .12, duration: .6 }, 0)
-        .from(".process-columns > div", { y: 38, opacity: 0, stagger: .08, duration: .45 }, .25);
+        .from(".process-columns > div", { y: 30, opacity: 0, stagger: .08, duration: .45 }, .25);
 
-      // Pricing pin on desktop only
-      gsap.timeline({
-        scrollTrigger: {
-          trigger: ".pricing-section",
-          start: "top top",
-          end: "+=80%",
-          scrub: 1,
-          pin: window.innerWidth >= 768,
-          anticipatePin: 1
-        }
-      })
-        .from(".pricing-copy", { y: 50, opacity: 0, duration: .35 }, 0)
-        .from(".pricing-card", { x: 110, opacity: 0, stagger: .16, duration: .55 }, .12);
-
-      // Contact / footer
-      gsap.timeline({
-        scrollTrigger: {
-          trigger: ".contact-section",
-          start: "top 62%",
-          end: "bottom 34%",
-          scrub: 1
-        }
-      })
-        .from(".contact-form > *", { y: 36, opacity: 0, stagger: .07, duration: .45 }, 0)
-        .from(".faq-row", { y: 38, opacity: 0, stagger: .08, duration: .45 }, .12);
-
+      // Footer
       gsap.timeline({
         scrollTrigger: {
           trigger: ".footer-section",
-          start: "top 72%",
+          start: "top 75%",
           end: "bottom bottom",
           scrub: 1
         }
       })
-        .fromTo(".footer-wordmark", { scale: 0.9, y: 120, opacity: 0.35 }, { scale: 1, y: 0, opacity: 1, duration: 0.9 }, 0)
-        .from(".footer-links", { y: 80, opacity: 0, duration: 0.5 }, 0.2)
-        .from(".footer-links h3", { y: 60, opacity: 0, letterSpacing: "-0.12em", duration: 0.45 }, 0.3)
-        .from(".footer-links a", { y: 18, opacity: 0, stagger: 0.04, duration: 0.3 }, 0.45);
+        .fromTo(".footer-wordmark", { scale: 0.95, y: 60, opacity: 0.35 }, { scale: 1, y: 0, opacity: 1, duration: 0.8 }, 0)
+        .from(".footer-links", { y: 50, opacity: 0, duration: 0.5 }, 0.2);
 
       window.addEventListener("load", () => ScrollTrigger.refresh());
       window.addEventListener("resize", () => ScrollTrigger.refresh());
