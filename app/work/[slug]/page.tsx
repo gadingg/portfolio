@@ -4,10 +4,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getPublishedProjectBySlug, getRelatedProjects, getNextProject } from '@/lib/db/public-projects';
+import { StudyCaseHeader } from '@/components/public/study-case/StudyCaseHeader';
 import { StudyCaseRenderer } from '@/components/public/study-case/StudyCaseRenderer';
 import { RelatedProjects } from '@/components/public/study-case/RelatedProjects';
 import { NextProjectNav } from '@/components/public/study-case/NextProjectNav';
-import { Footer } from '@/components/public/Footer';
+import { AuraFooter } from '@/components/public/study-case/AuraFooter';
 
 export async function generateMetadata({
   params,
@@ -19,15 +20,15 @@ export async function generateMetadata({
 
   if (!project) {
     return {
-      title: 'Project Not Found | Gading Portfolio',
+      title: 'Project Not Found · Gading Portfolio',
     };
   }
 
   return {
-    title: `${project.title} — Gading Utama`,
+    title: `${project.title} · Gading Utama`,
     description: project.description,
     openGraph: {
-      title: `${project.title} — Study Case`,
+      title: `${project.title} · Case Study`,
       description: project.description,
       images: [
         {
@@ -58,136 +59,113 @@ export default async function StudyCasePage({
 
   return (
     <>
-      <article style={{ minHeight: '100vh', paddingTop: '120px', paddingBottom: '80px' }}>
-        <div className="wrap" style={{ maxWidth: '840px' }}>
-          {/* Back Navigation */}
-          <Link
-            href="/#recent-works"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '11px',
-              fontWeight: 700,
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              color: 'var(--muted)',
-              marginBottom: '32px',
-            }}
-          >
-            ← BACK TO WORKS
-          </Link>
+      <StudyCaseHeader projectTitle={project.title} />
 
-          {/* Header */}
-          <header style={{ marginBottom: '40px' }}>
-            <p className="eyebrow" style={{ marginBottom: '12px' }}>
-              {project.category}
-            </p>
-            <h1
-              style={{
-                fontSize: 'clamp(2.8rem, 5.5vw, 4.8rem)',
-                fontWeight: 600,
-                letterSpacing: '-0.05em',
-                lineHeight: 1.05,
-                margin: '0 0 16px',
-                color: 'var(--ink)',
-              }}
+      <main className="min-h-screen pt-24 sm:pt-32 pb-16">
+        <article className="mx-auto w-full max-w-4xl px-5 sm:px-8 lg:px-12">
+          {/* Back Navigation Pill */}
+          <div className="mb-6">
+            <Link
+              href="/#work"
+              className="inline-flex items-center gap-2 rounded-full border border-[#f3f0e8]/15 bg-white/[0.03] px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#f3f0e8]/75 hover:border-[#ff5a1f] hover:text-[#ff5a1f] hover:bg-[#ff5a1f]/10 transition min-h-[44px]"
             >
+              <span>←</span>
+              <span>Back to Works</span>
+            </Link>
+          </div>
+
+          {/* Header Section */}
+          <header className="mb-8">
+            <div className="section-label mb-3">
+              {project.category}
+            </div>
+
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-[-0.05em] text-[#f3f0e8] leading-[1.08] mb-4">
               {project.title}
             </h1>
+
             {project.subtitle && (
-              <p
-                style={{
-                  fontSize: 'clamp(18px, 2vw, 22px)',
-                  lineHeight: 1.6,
-                  color: 'var(--muted)',
-                  margin: '0 0 28px',
-                }}
-              >
+              <p className="text-lg sm:text-xl font-medium leading-[1.5] text-[#f3f0e8]/75 mb-6">
                 {project.subtitle}
               </p>
             )}
 
-            {/* Metadata Bar */}
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '24px 36px',
-                paddingTop: '20px',
-                borderTop: '1px solid var(--border)',
-                borderBottom: '1px solid var(--border)',
-                paddingBottom: '20px',
-              }}
-            >
-              {project.year && (
+            {/* Metadata Bar Glass Card */}
+            <div className="glass rounded-[24px] p-5 sm:p-6 my-6 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 border border-[#f3f0e8]/10">
+              {project.client && (
                 <div>
-                  <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.15em' }}>
-                    YEAR
+                  <span className="block text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#f3f0e8]/45">
+                    Client
                   </span>
-                  <span style={{ fontSize: '13px', fontWeight: 600 }}>{project.year}</span>
+                  <span className="text-xs sm:text-sm font-bold text-[#f3f0e8] mt-1 block truncate">
+                    {project.client}
+                  </span>
                 </div>
               )}
               {project.role && (
                 <div>
-                  <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.15em' }}>
-                    ROLE
+                  <span className="block text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#f3f0e8]/45">
+                    Role
                   </span>
-                  <span style={{ fontSize: '13px', fontWeight: 600 }}>{project.role}</span>
-                </div>
-              )}
-              {project.client && (
-                <div>
-                  <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.15em' }}>
-                    CLIENT
+                  <span className="text-xs sm:text-sm font-bold text-[#f3f0e8] mt-1 block truncate">
+                    {project.role}
                   </span>
-                  <span style={{ fontSize: '13px', fontWeight: 600 }}>{project.client}</span>
                 </div>
               )}
               {project.duration && (
                 <div>
-                  <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.15em' }}>
-                    DURATION
+                  <span className="block text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#f3f0e8]/45">
+                    Timeline
                   </span>
-                  <span style={{ fontSize: '13px', fontWeight: 600 }}>{project.duration}</span>
+                  <span className="text-xs sm:text-sm font-bold text-[#f3f0e8] mt-1 block truncate">
+                    {project.duration}
+                  </span>
+                </div>
+              )}
+              {project.year && (
+                <div>
+                  <span className="block text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#f3f0e8]/45">
+                    Year
+                  </span>
+                  <span className="text-xs sm:text-sm font-bold text-[#ff5a1f] mt-1 block truncate">
+                    {project.year}
+                  </span>
                 </div>
               )}
             </div>
+
+            {/* Services Tags */}
+            {project.services && project.services.length > 0 && (
+              <div className="flex flex-wrap gap-2 pt-2">
+                {project.services.map((svc, idx) => (
+                  <span
+                    key={idx}
+                    className="rounded-full border border-[#f3f0e8]/10 bg-white/[0.03] px-3.5 py-1 text-xs font-semibold text-[#f3f0e8]/65"
+                  >
+                    {svc}
+                  </span>
+                ))}
+              </div>
+            )}
           </header>
 
           {/* Hero Cover Image */}
-          <div
-            style={{
-              position: 'relative',
-              width: '100%',
-              aspectRatio: '16 / 9',
-              borderRadius: '1.75rem',
-              overflow: 'hidden',
-              marginBottom: '48px',
-              border: '1px solid var(--border-strong)',
-            }}
-          >
-            <Image
-              src={project.cover_image_url}
-              alt={project.cover_image_alt || project.title}
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 840px"
-              style={{ objectFit: 'cover' }}
-            />
+          <div className="glass rounded-[24px] sm:rounded-[32px] p-2 sm:p-3 border border-[#f3f0e8]/12 mb-10 overflow-hidden shadow-2xl">
+            <div className="relative w-full aspect-[16/9] rounded-[18px] sm:rounded-[24px] overflow-hidden bg-[#10110f]">
+              <Image
+                src={project.cover_image_url}
+                alt={project.cover_image_alt || project.title}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 1000px"
+                className="object-cover"
+              />
+            </div>
           </div>
 
-          {/* Overview Paragraph */}
-          <div style={{ marginBottom: '40px' }}>
-            <p
-              style={{
-                fontSize: 'clamp(18px, 1.8vw, 21px)',
-                lineHeight: 1.75,
-                color: 'var(--ink)',
-                fontWeight: 400,
-                letterSpacing: '-0.01em',
-              }}
-            >
+          {/* Overview Callout Paragraph */}
+          <div className="mb-10 pb-8 border-b border-[#f3f0e8]/10">
+            <p className="text-lg sm:text-xl font-normal leading-[1.75] text-[#f3f0e8]/85 tracking-[-0.01em]">
               {project.description}
             </p>
           </div>
@@ -202,10 +180,10 @@ export default async function StudyCasePage({
 
           {/* Related Case Studies */}
           <RelatedProjects projects={related} />
-        </div>
-      </article>
+        </article>
+      </main>
 
-      <Footer />
+      <AuraFooter />
     </>
   );
 }

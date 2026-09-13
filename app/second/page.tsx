@@ -1,4 +1,5 @@
 import React from 'react';
+import { Header } from '@/components/public/Header';
 import { Hero } from '@/components/public/Hero';
 import { About } from '@/components/public/About';
 import { RecentWorks } from '@/components/public/RecentWorks';
@@ -14,6 +15,11 @@ export default async function HomePage() {
 
   return (
     <>
+      <Header />
+      <div className="ambient-layer" aria-hidden="true">
+        <div className="ambient-orb ambient-orb--amber" />
+        <div className="ambient-orb ambient-orb--teal" />
+      </div>
       <Hero />
       <About />
       <RecentWorks projects={projects} />

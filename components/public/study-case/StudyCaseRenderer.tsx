@@ -7,7 +7,7 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
   if (!blocks || blocks.length === 0) return null;
 
   return (
-    <div className="study-case-blocks" style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+    <div className="study-case-blocks flex flex-col gap-2">
       {blocks.map((block, index) => {
         const { block_type, content_json } = block;
         const content = (content_json || {}) as any;
@@ -15,20 +15,23 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
         switch (block_type) {
           case 'heading': {
             const level = content.level || 2;
-            const Tag = level === 3 ? 'h3' : 'h2';
+            if (level === 3) {
+              return (
+                <h3
+                  key={block.id || index}
+                  className="text-xl sm:text-2xl font-bold tracking-[-0.03em] text-[#f3f0e8] mt-8 mb-3 leading-snug"
+                >
+                  {content.text}
+                </h3>
+              );
+            }
             return (
-              <Tag
+              <h2
                 key={block.id || index}
-                style={{
-                  fontSize: level === 3 ? 'clamp(1.4rem, 2.5vw, 1.8rem)' : 'clamp(2rem, 3.5vw, 2.6rem)',
-                  fontWeight: 600,
-                  letterSpacing: '-0.04em',
-                  margin: '32px 0 8px',
-                  color: 'var(--ink)',
-                }}
+                className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-[-0.04em] text-[#f3f0e8] mt-12 mb-4 leading-tight"
               >
                 {content.text}
-              </Tag>
+              </h2>
             );
           }
 
@@ -36,13 +39,7 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
             return (
               <p
                 key={block.id || index}
-                style={{
-                  fontSize: 'clamp(16px, 1.3vw, 18px)',
-                  lineHeight: 1.85,
-                  color: 'var(--muted)',
-                  margin: '0 0 16px',
-                  letterSpacing: '-0.005em',
-                }}
+                className="text-base sm:text-lg leading-[1.8] text-[#f3f0e8]/75 mb-6 tracking-normal"
               >
                 {content.text}
               </p>
@@ -52,34 +49,27 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
           case 'image': {
             const widthMode = content.width_mode || 'standard';
             return (
-              <figure
-                key={block.id || index}
-                style={{
-                  margin: widthMode === 'full' ? '40px -8vw' : '32px 0',
-                  borderRadius: widthMode === 'full' ? 0 : '1.5rem',
-                  overflow: 'hidden',
-                }}
-              >
-                <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9' }}>
-                  <Image
-                    src={content.url || 'https://picsum.photos/id/1/1200/800'}
-                    alt={content.alt || 'Case study illustration'}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 1200px"
-                    style={{ objectFit: 'cover' }}
-                    loading="lazy"
-                  />
+              <figure key={block.id || index} className="my-8 sm:my-10">
+                <div
+                  className={`glass overflow-hidden p-2 sm:p-3 border border-[#f3f0e8]/10 ${
+                    widthMode === 'full'
+                      ? 'rounded-none sm:rounded-[32px] -mx-4 sm:mx-0'
+                      : 'rounded-[20px] sm:rounded-[28px]'
+                  }`}
+                >
+                  <div className="relative w-full aspect-[16/9] rounded-[14px] sm:rounded-[22px] overflow-hidden bg-[#10110f]">
+                    <Image
+                      src={content.url || 'https://picsum.photos/id/1/1200/800'}
+                      alt={content.alt || 'Case study visual preview'}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 1000px"
+                      className="object-cover"
+                      loading="lazy"
+                    />
+                  </div>
                 </div>
                 {content.caption && (
-                  <figcaption
-                    style={{
-                      fontSize: '12px',
-                      color: 'var(--muted)',
-                      textAlign: 'center',
-                      marginTop: '10px',
-                      letterSpacing: '0.02em',
-                    }}
-                  >
+                  <figcaption className="text-center text-xs font-medium text-[#f3f0e8]/50 mt-3 tracking-wide">
                     {content.caption}
                   </figcaption>
                 )}
@@ -95,37 +85,14 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
             return (
               <blockquote
                 key={block.id || index}
-                style={{
-                  margin: '36px 0',
-                  padding: '24px 32px',
-                  borderLeft: '3px solid var(--amber)',
-                  background: 'var(--surface)',
-                  borderRadius: '0 1rem 1rem 0',
-                }}
+                className="glass rounded-[24px] p-6 sm:p-8 my-8 border-l-4 border-l-[#ff5a1f] border-t border-r border-b border-[#f3f0e8]/10"
               >
-                <p
-                  style={{
-                    fontSize: 'clamp(18px, 2vw, 22px)',
-                    fontStyle: 'italic',
-                    lineHeight: 1.6,
-                    color: 'var(--ink)',
-                    margin: 0,
-                  }}
-                >
+                <p className="text-lg sm:text-xl md:text-2xl italic font-medium leading-relaxed text-[#f3f0e8]">
                   &ldquo;{content.quote}&rdquo;
                 </p>
                 {content.attribution && (
-                  <cite
-                    style={{
-                      display: 'block',
-                      marginTop: '12px',
-                      fontSize: '13px',
-                      fontWeight: 600,
-                      color: 'var(--muted)',
-                      fontStyle: 'normal',
-                    }}
-                  >
-                    — {content.attribution} {content.role ? `(${content.role})` : ''}
+                  <cite className="block mt-4 text-xs sm:text-sm font-bold uppercase tracking-wider text-[#ff5a1f] not-italic">
+                    · {content.attribution} {content.role ? `(${content.role})` : ''}
                   </cite>
                 )}
               </blockquote>
@@ -137,31 +104,23 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
             return (
               <div
                 key={block.id || index}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr)) ',
-                  gap: '16px',
-                  margin: '32px 0',
-                }}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 my-8"
               >
                 {images.map((img: any, i: number) => (
                   <div
                     key={i}
-                    style={{
-                      position: 'relative',
-                      aspectRatio: '4 / 3',
-                      borderRadius: '1rem',
-                      overflow: 'hidden',
-                    }}
+                    className="glass rounded-[20px] p-2 border border-[#f3f0e8]/10 overflow-hidden"
                   >
-                    <Image
-                      src={img.url}
-                      alt={img.alt || `Gallery item ${i + 1}`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      style={{ objectFit: 'cover' }}
-                      loading="lazy"
-                    />
+                    <div className="relative aspect-[4/3] rounded-[14px] overflow-hidden bg-[#10110f]">
+                      <Image
+                        src={img.url}
+                        alt={img.alt || `Gallery item ${i + 1}`}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover"
+                        loading="lazy"
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -172,23 +131,19 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
             return (
               <div
                 key={block.id || index}
-                style={{
-                  margin: '32px 0',
-                  borderRadius: '1.5rem',
-                  overflow: 'hidden',
-                  position: 'relative',
-                  aspectRatio: '16 / 9',
-                }}
+                className="glass rounded-[20px] sm:rounded-[28px] p-2 sm:p-3 border border-[#f3f0e8]/10 overflow-hidden my-8"
               >
-                <video
-                  controls
-                  muted
-                  playsInline
-                  poster={content.poster}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                >
-                  <source src={content.url} type="video/mp4" />
-                </video>
+                <div className="relative aspect-[16/9] rounded-[14px] sm:rounded-[22px] overflow-hidden bg-[#10110f]">
+                  <video
+                    controls
+                    muted
+                    playsInline
+                    poster={content.poster}
+                    className="w-full h-full object-cover"
+                  >
+                    <source src={content.url} type="video/mp4" />
+                  </video>
+                </div>
               </div>
             );
           }
@@ -196,10 +151,14 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
           case 'list': {
             const items = content.items || [];
             return (
-              <ul key={block.id || index} style={{ paddingLeft: '24px', margin: '16px 0', lineHeight: 1.8 }}>
+              <ul key={block.id || index} className="space-y-3 my-6 pl-1">
                 {items.map((item: string, i: number) => (
-                  <li key={i} style={{ color: 'var(--muted)', fontSize: '16px' }}>
-                    {item}
+                  <li
+                    key={i}
+                    className="flex items-start gap-3 text-base sm:text-lg text-[#f3f0e8]/75 leading-relaxed"
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#ff5a1f] mt-2.5 shrink-0 shadow-[0_0_8px_rgba(255,90,31,0.6)]" />
+                    <span>{item}</span>
                   </li>
                 ))}
               </ul>
@@ -210,25 +169,22 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
             return (
               <hr
                 key={block.id || index}
-                style={{
-                  border: 'none',
-                  borderTop: '1px solid var(--border)',
-                  margin: '48px 0',
-                }}
+                className="border-none border-t border-[#f3f0e8]/10 my-10"
               />
             );
           }
 
           case 'link': {
             return (
-              <div key={block.id || index} style={{ margin: '24px 0' }}>
+              <div key={block.id || index} className="my-6">
                 <a
                   href={content.url}
                   target={content.target || '_blank'}
                   rel="noreferrer"
-                  className="button button--secondary"
+                  className="inline-flex items-center gap-2 rounded-full border border-[#f3f0e8]/20 bg-white/[0.04] px-6 py-3 text-xs font-bold uppercase tracking-wider text-[#f3f0e8] hover:border-[#ff5a1f] hover:text-[#ff5a1f] hover:bg-[#ff5a1f]/10 transition min-h-[44px]"
                 >
-                  {content.label || 'Open Link'} ↗
+                  <span>{content.label || 'Open Link'}</span>
+                  <span aria-hidden="true">↗</span>
                 </a>
               </div>
             );
