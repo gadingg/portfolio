@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Script from 'next/script';
 import './globals.css';
 import { ThemeProvider } from '@/context/ThemeContext';
 
@@ -33,45 +32,14 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                const saved = localStorage.getItem('theme');
-                const theme = saved || 'dark';
-                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', 'dark');
+                document.documentElement.setAttribute('data-theme', 'dark');
               } catch (e) {}
             `,
           }}
         />
       </head>
-      <body className="relative bg-[#060706] text-[#f3f0e8] antialiased selection:bg-[#f3f0e8] selection:text-[#060706]">
-        {/* Load Tailwind CDN before interactive */}
-        <Script
-          src="https://cdn.tailwindcss.com"
-          strategy="beforeInteractive"
-        />
-        <Script
-          id="tailwind-config"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              tailwind.config = {
-                theme: {
-                  extend: {
-                    colors: {
-                      bg: '#060706',
-                      panel: '#10110f',
-                      'panel-2': '#151713',
-                      cream: '#f3f0e8',
-                      orange: '#ff5a1f',
-                    },
-                    fontFamily: {
-                      sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-                    },
-                  },
-                },
-              };
-            `,
-          }}
-        />
-
+      <body className="relative bg-[#060706] text-[#f3f0e8] font-sans antialiased selection:bg-[#f3f0e8] selection:text-[#060706]">
         <ThemeProvider>
           <a className="skip-link" href="#main-content">
             Skip to content

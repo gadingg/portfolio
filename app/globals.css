@@ -1,6 +1,10 @@
 /* Google Fonts: Inter, Plus Jakarta Sans, Mona Sans, Caveat */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&family=Mona+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   /* Aura Design Language Tokens */
   --bg: #060706;
@@ -28,6 +32,25 @@
   --ease-in-out-smooth: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-drawer-apple: cubic-bezier(0.32, 0.72, 0, 1);
   --ease-button-press: cubic-bezier(0.2, 0, 0, 1);
+}
+
+html {
+  background-color: #060706 !important;
+  color-scheme: dark !important;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  background-color: #060706 !important;
+  background-image:
+    radial-gradient(circle at 70% 10%, rgba(255, 90, 31, 0.12), transparent 34rem),
+    radial-gradient(circle at 15% 45%, rgba(243, 240, 232, 0.05), transparent 26rem) !important;
+  background-attachment: fixed;
+  color: #f3f0e8 !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Aura Glass & Effects */
@@ -169,8 +192,8 @@ html:not([data-theme="light"]) {
   --admin-sidebar-bg: rgba(12, 16, 21, 0.95);
 }
 
-/* Light Theme */
-html[data-theme="light"] {
+/* Light Theme - Scoped to Second Template Only */
+.second-template[data-theme="light"] {
   color-scheme: light;
   --ink: oklch(14% 0.02 220);
   --muted: rgba(14, 22, 30, 0.76);
