@@ -18,15 +18,13 @@ AI and technology are supporting capabilities that amplify his creative and prob
 
 ## 2. Current Professional Role
 
-### Xavier Marks Tjandra Patos
+### Career Wall of Fame: Enterprise Brokerage & PropTech Lead
 
-**Marketing Communication | Creative Marketing & Tech**
+**Marketing Communication | PropTech & Creative Growth**
 
-Gading works in Marketing Communication with a broad scope spanning creative marketing, graphic design, digital marketing, technology, web-app development, campaign ideation, and internal business support.
+Gading spearheads Marketing Communication and PropTech initiatives with a broad scope spanning creative marketing, web-app development, Meta Ads campaigns, and operational tooling. This represents one of several proven chapters across his career, bridging marketing strategy with practical engineering.
 
-He contributes not only as a designer but also as a creative thinker who helps develop ideas for office campaigns, programs, games, and events.
-
-He also builds digital solutions that help employees, agents, and administrators work more efficiently.
+He contributes not only as a designer but also as a creative thinker who develops campaign concepts, interactive marketing tools, and internal automation.
 
 ---
 

@@ -34,6 +34,15 @@ export interface GalleryItem {
   caption?: string;
 }
 
+export interface VisualArchiveItem {
+  id: string;
+  url: string;
+  alt: string;
+  caption?: string;
+  category?: string;
+  display_order: number;
+}
+
 export interface GalleryBlockContent {
   images: GalleryItem[];
   layout?: 'grid' | 'carousel';

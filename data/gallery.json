@@ -1,0 +1,42 @@
+[
+  {
+    "id": "gallery-02",
+    "url": "https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/c543a9e1-f226-4ced-80b0-feb8445a75b9_1600w.jpg",
+    "alt": "Archive fragment 02",
+    "caption": "Editorial design composition",
+    "category": "Editorial",
+    "display_order": 1
+  },
+  {
+    "id": "gallery-01",
+    "url": "https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4734259a-bad7-422f-981e-ce01e79184f2_1600w.jpg",
+    "alt": "Archive fragment 01",
+    "caption": "Minimalist monochrome aesthetic study",
+    "category": "Visual Identity",
+    "display_order": 2
+  },
+  {
+    "id": "gallery-03",
+    "url": "https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg",
+    "alt": "Archive fragment 03",
+    "caption": "High-contrast typographic structure",
+    "category": "Typography",
+    "display_order": 3
+  },
+  {
+    "id": "gallery-04",
+    "url": "https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4734259a-bad7-422f-981e-ce01e79184f2_1600w.jpg",
+    "alt": "Archive fragment 04",
+    "caption": "Conceptual motion framing",
+    "category": "Motion Experiment",
+    "display_order": 4
+  },
+  {
+    "id": "gallery-05",
+    "url": "https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/c543a9e1-f226-4ced-80b0-feb8445a75b9_1600w.jpg",
+    "alt": "Archive fragment 05",
+    "caption": "Digital layout fragment",
+    "category": "Interface Art",
+    "display_order": 5
+  }
+]
