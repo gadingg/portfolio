@@ -1,131 +1,35 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html lang="en" class="scroll-smooth">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description"
-    content="Portfolio of R. Gading Utama. Creative Marketer and Digital Problem Solver bridging marketing, design, technology, and AI to build practical business solutions.">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>R. Gading Utama · Creative Marketer &amp; Digital Problem Solver</title>
+  <meta name="description" content="Portfolio of R. Gading Utama. Creative Marketer and Digital Problem Solver bridging marketing, design, technology, and AI to build practical business solutions." />
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap"
+    rel="stylesheet" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet">
   <style>
     :root {
-      --night: oklch(15% 0.04 220);
-      --tealwood: oklch(24% 0.05 220);
-      --sunset: oklch(64% 0.16 54);
-      --amber: oklch(76% 0.15 75);
-      --indigo: oklch(23% 0.08 275);
-      --easing: cubic-bezier(.16, 1, .3, 1);
-      --accent: oklch(72% 0.15 75);
-    }
-
-    /* Dark Theme Variables (Default) */
-    html:not([data-theme="light"]) {
-      color-scheme: dark;
-      --ink: oklch(96% 0.01 220);
-      --muted: rgba(255, 255, 255, 0.68);
-      --border: rgba(255, 255, 255, 0.08);
-      --border-strong: rgba(255, 255, 255, 0.12);
-      --surface: rgba(255, 255, 255, 0.04);
-      --bg-gradient: radial-gradient(circle at 50% 0%, rgba(255, 154, 90, .26), transparent 24%),
-        radial-gradient(circle at 20% 14%, rgba(61, 145, 142, .16), transparent 20%),
-        linear-gradient(180deg, oklch(18% 0.05 28) 0%, oklch(15% 0.04 220) 42%, oklch(13% 0.04 240) 100%);
-      --grid-line: rgba(255, 255, 255, 0.03);
-      --grid-opacity: 0.18;
-      --bg-hero: #080d14;
-      --hero-overlay-gradient: radial-gradient(ellipse at 50% 48%, rgba(8, 13, 20, 0.65) 0%, rgba(8, 13, 20, 0.35) 45%, rgba(8, 13, 20, 0.15) 75%),
-        linear-gradient(180deg, rgba(8, 13, 20, 0.4) 0%, rgba(8, 13, 20, 0.12) 30%, rgba(8, 13, 20, 0.70) 75%, #080d14 100%);
-      --hero-title-shadow: 0 18px 40px rgba(0, 0, 0, .45);
-      --hero-subtitle-shadow: 0 5px 16px rgba(0, 0, 0, .8);
-      --button-primary-bg: linear-gradient(180deg, rgba(24, 27, 30, .96), rgba(10, 12, 15, .94));
-      --button-secondary-bg: rgba(255, 255, 255, .07);
-      --button-secondary-hover-border: rgba(255, 205, 127, .28);
-      --chip-bg: rgba(255, 255, 255, .08);
-      --chip-border: rgba(255, 255, 255, .1);
-      --chip-color: rgba(255, 255, 255, .84);
-      --brief-bg: linear-gradient(180deg, rgba(11, 15, 20, .96), rgba(11, 17, 22, .88));
-      --brief-orb: rgba(62, 145, 139, .11);
-      --projects-bg: radial-gradient(circle at 10% 0%, rgba(255, 179, 109, .11), transparent 17%),
-        linear-gradient(180deg, rgba(27, 35, 40, .94), rgba(10, 14, 18, 1));
-      --project-card-bg: linear-gradient(180deg, rgba(255, 255, 255, .055), rgba(255, 255, 255, .018));
-      --project-card-border: rgba(255, 255, 255, .08);
-      --project-card-inner-glow: radial-gradient(circle at 72% 26%, rgba(255, 197, 113, .1), transparent 20%);
-      --project-card-glow: rgba(255, 164, 72, .2);
-      --gallery-bg: radial-gradient(circle at 82% 18%, rgba(61, 145, 142, .11), transparent 18%),
-        linear-gradient(180deg, rgba(7, 14, 21, 1), rgba(8, 13, 18, 1));
-      --gallery-overlay: linear-gradient(180deg, transparent, rgba(3, 7, 11, .22) 24%, rgba(3, 7, 11, .88));
-      --apps-bg: radial-gradient(circle at 14% 12%, rgba(255, 174, 94, .09), transparent 16%),
-        linear-gradient(180deg, rgba(8, 13, 18, 1), rgba(5, 10, 14, 1));
-      --app-card-bg: linear-gradient(180deg, rgba(22, 39, 40, .91), rgba(10, 17, 19, .92));
-      --app-card-glow: rgba(255, 185, 102, .07);
-      --contact-bg: radial-gradient(circle at 18% 12%, rgba(255, 171, 89, .1), transparent 17%),
-        linear-gradient(180deg, rgba(5, 10, 14, 1), rgba(8, 10, 13, 1));
-      --contact-shell-bg: linear-gradient(180deg, rgba(255, 255, 255, .035), rgba(255, 255, 255, .014));
-      --contact-link-bg: rgba(255, 255, 255, .045);
-      --contact-link-color: rgba(255, 255, 255, .72);
-      --roofline-color: rgba(255, 255, 255, .07);
-      --roofline-bg: rgba(255, 255, 255, .035);
-      --carousel-progress-bg: rgba(255, 255, 255, .09);
-      --ambient-orb-amber: rgba(255, 180, 102, .16);
-      --ambient-orb-teal: rgba(62, 145, 139, .12);
-      --hero-fallback-bg: url("assets/images/hero-dark.jpg") center / cover no-repeat;
-    }
-
-    /* Light Theme Variables (Morning Theme) */
-    html[data-theme="light"] {
-      color-scheme: light;
-      --ink: #0f172a;
-      --muted: #334155;
-      --border: rgba(15, 23, 42, 0.08);
-      --border-strong: rgba(15, 23, 42, 0.14);
-      --surface: rgba(255, 255, 255, 0.92);
-      --bg-gradient: radial-gradient(circle at 50% 0%, rgba(255, 180, 120, .14), transparent 30%),
-        radial-gradient(circle at 20% 14%, rgba(61, 180, 170, .10), transparent 25%),
-        linear-gradient(180deg, #f8fafc 0%, #f1f5f9 42%, #e2e8f0 100%);
-      --grid-line: rgba(15, 23, 42, 0.035);
-      --grid-opacity: 0.12;
-      --bg-hero: #f4f6f8;
-      --hero-overlay-gradient: radial-gradient(ellipse at 50% 48%, rgba(255, 255, 255, 0.68) 0%, rgba(255, 255, 255, 0.38) 45%, rgba(244, 246, 248, 0.12) 75%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.08) 30%, rgba(244, 246, 248, 0.60) 75%, #f4f6f8 100%);
-      --hero-title-shadow: 0 2px 20px rgba(255, 255, 255, .9);
-      --hero-subtitle-shadow: 0 1px 12px rgba(255, 255, 255, .8);
-      --button-primary-bg: #0f172a;
-      --button-secondary-bg: rgba(255, 255, 255, 0.92);
-      --button-secondary-hover-border: #0f172a;
-      --chip-bg: rgba(255, 255, 255, 0.90);
-      --chip-border: rgba(15, 23, 42, 0.12);
-      --chip-color: #0f172a;
-      --brief-bg: linear-gradient(180deg, rgba(238, 243, 246, .98), rgba(230, 236, 240, .95));
-      --brief-orb: rgba(61, 180, 170, .08);
-      --projects-bg: radial-gradient(circle at 10% 0%, rgba(255, 180, 120, .12), transparent 25%),
-        linear-gradient(180deg, #f1f5f9, #e2e8f0);
-      --project-card-bg: linear-gradient(180deg, rgba(255, 255, 255, .96), rgba(255, 255, 255, .88));
-      --project-card-border: rgba(15, 23, 42, 0.08);
-      --project-card-inner-glow: radial-gradient(circle at 72% 26%, rgba(255, 180, 120, .08), transparent 30%);
-      --project-card-glow: rgba(255, 180, 120, .15);
-      --gallery-bg: radial-gradient(circle at 82% 18%, rgba(61, 180, 170, .08), transparent 25%),
-        linear-gradient(180deg, #e2e8f0, #f1f5f9);
-      --gallery-overlay: linear-gradient(180deg, transparent, rgba(3, 7, 11, .28) 28%, rgba(2, 6, 10, .94) 100%);
-      --apps-bg: radial-gradient(circle at 14% 12%, rgba(255, 180, 120, .08), transparent 25%),
-        linear-gradient(180deg, #f1f5f9, #e2e8f0);
-      --app-card-bg: linear-gradient(180deg, rgba(255, 255, 255, .96), rgba(255, 255, 255, .88));
-      --app-card-glow: rgba(255, 180, 100, .04);
-      --contact-bg: radial-gradient(circle at 18% 12%, rgba(255, 180, 120, .1), transparent 25%),
-        linear-gradient(180deg, #e2e8f0, #f8fafc);
-      --contact-shell-bg: linear-gradient(180deg, rgba(255, 255, 255, .95), rgba(255, 255, 255, .90));
-      --contact-link-bg: rgba(15, 23, 42, 0.05);
-      --contact-link-color: #0f172a;
-      --roofline-color: rgba(15, 23, 42, 0.08);
-      --roofline-bg: rgba(15, 23, 42, 0.04);
-      --carousel-progress-bg: rgba(15, 23, 42, 0.08);
-      --ambient-orb-amber: rgba(255, 180, 102, .12);
-      --ambient-orb-teal: rgba(62, 145, 139, .09);
-      --hero-fallback-bg: url("assets/images/hero-light.jpg?v=light2") center / cover no-repeat;
-      --accent: oklch(52% 0.18 64);
+      --bg: #060706;
+      --panel: #10110f;
+      --panel-2: #151713;
+      --cream: #f3f0e8;
+      --muted: rgba(243, 240, 232, 0.65);
+      --soft: rgba(243, 240, 232, 0.12);
+      --line: rgba(243, 240, 232, 0.10);
+      --orange: #ff5a1f;
+      --orange-soft: rgba(255, 90, 31, 0.22);
+      --ease: cubic-bezier(.22, 1, .36, 1);
     }
 
     * {
@@ -133,2521 +37,2163 @@
     }
 
     html {
-      scroll-behavior: smooth;
-      scrollbar-color: var(--muted) var(--surface);
-      transition: background-color 0.4s ease;
+      background: var(--bg);
+      color-scheme: dark;
+      scroll-behavior: auto;
     }
 
     body {
       margin: 0;
-      min-width: 320px;
       overflow-x: hidden;
-      font-family: "Plus Jakarta Sans", sans-serif;
-      color: var(--ink);
-      background: var(--bg-gradient);
-      transition: color 0.4s ease, background 0.4s ease;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      pointer-events: none;
-      background-image:
-        linear-gradient(var(--grid-line) 1px, transparent 1px),
-        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-      background-size: 104px 104px;
-      opacity: var(--grid-opacity);
-      mask-image: radial-gradient(circle at center, black 35%, transparent 88%);
-      -webkit-mask-image: radial-gradient(circle at center, black 35%, transparent 88%);
-      transition: opacity 0.4s ease, background-image 0.4s ease;
-    }
-
-    img,
-    video {
-      display: block;
-      max-width: 100%;
+      background:
+        radial-gradient(circle at 70% 10%, rgba(255, 90, 31, 0.12), transparent 34rem),
+        radial-gradient(circle at 15% 45%, rgba(243, 240, 232, 0.05), transparent 26rem),
+        var(--bg);
+      color: var(--cream);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
     }
 
     a {
       color: inherit;
+      text-decoration: none;
     }
 
-    button,
-    a {
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    button,
-    input,
-    textarea,
-    select {
-      font: inherit;
+    img {
+      display: block;
+      max-width: 100%;
     }
 
     ::selection {
-      color: #101315;
-      background: var(--amber);
+      background: var(--cream);
+      color: var(--bg);
     }
 
-    .skip-link {
-      position: fixed;
-      top: 12px;
-      left: 12px;
-      z-index: 100;
-      transform: translateY(-160%);
-      padding: 12px 16px;
-      border-radius: 999px;
-      background: #fff;
-      color: #111;
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 700;
-      transition: transform .25s ease;
-    }
-
-    .skip-link:focus {
-      transform: translateY(0);
-    }
-
-    .ambient-layer {
+    .noise {
       position: fixed;
       inset: 0;
-      z-index: -1;
-      overflow: hidden;
+      z-index: 1;
       pointer-events: none;
+      opacity: .18;
+      background-image: radial-gradient(rgba(255, 255, 255, .18) 1px, transparent 1px);
+      background-size: 4px 4px;
+      mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
     }
 
-    .ambient-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(72px);
-      transition: background 0.4s ease;
-    }
-
-    .ambient-orb--amber {
-      left: 7%;
-      top: 8%;
-      width: 28rem;
-      height: 28rem;
-      background: radial-gradient(circle, var(--ambient-orb-amber), transparent 70%);
-    }
-
-    .ambient-orb--teal {
-      right: 4%;
-      bottom: 10%;
-      width: 34rem;
-      height: 34rem;
-      background: radial-gradient(circle, var(--ambient-orb-teal), transparent 70%);
-    }
-
-    .wrap {
-      width: min(1600px, calc(100% - 32px));
-      margin-inline: auto;
-    }
-
-    .section,
-    .apps-section {
-      padding: 124px 0;
-    }
-
-    .eyebrow,
-    .card-label {
-      margin: 0;
-      color: var(--muted);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .31em;
-      line-height: 1.6;
-      text-transform: uppercase;
-      transition: color 0.4s ease;
-    }
-
-    .section-heading {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 32px;
-      margin-bottom: 38px;
-    }
-
-    .section-heading>div {
-      flex: 1 1 64%;
-      max-width: 1030px;
-    }
-
-    .section-heading h2,
-    .contact-grid h2 {
-      margin: 22px 0 0;
-      font-size: clamp(3rem, 5.7vw, 6.45rem);
-      font-weight: 500;
-      letter-spacing: -.075em;
-      line-height: .94;
-      text-wrap: balance;
-    }
-
-    .section-intro,
-    .contact-grid>div>p:last-child {
-      flex: 0 1 470px;
-      margin: 0;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.9;
-    }
-
-    /* Header Navbar */
-    .site-header {
+    .grid-veil {
       position: fixed;
-      top: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-      width: min(720px, calc(100% - 32px));
-      height: 60px;
-      border-radius: 999px;
-      background: var(--surface);
-      border: 1px solid var(--border-strong);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-      transition: transform 0.4s var(--easing), background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      opacity: .13;
+      background-image:
+        linear-gradient(rgba(243, 240, 232, .09) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(243, 240, 232, .09) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 84%, transparent);
     }
 
-    .site-header.is-hidden {
-      transform: translate(-50%, -120px);
-    }
-
-    .header-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 100%;
-      padding-inline: 24px;
-    }
-
-    .logo {
-      font-size: 13px;
+    .page-rail {
+      position: fixed;
+      left: 22px;
+      bottom: 28px;
+      z-index: 45;
+      pointer-events: none;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      color: rgba(243, 240, 232, .38);
+      font-size: 10px;
       font-weight: 800;
-      letter-spacing: .2em;
-      text-decoration: none;
-      color: var(--ink);
-      transition: color 0.4s ease;
+      letter-spacing: .14em;
+      text-transform: uppercase;
     }
 
-    .nav-menu {
-      display: flex;
-      align-items: center;
-      gap: 20px;
+    .wordmark {
+      letter-spacing: -0.07em;
+      white-space: nowrap;
+      overflow-wrap: normal;
     }
 
-    .nav-menu a {
-      text-decoration: none;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      color: var(--ink);
-      opacity: 0.7;
-      transition: opacity 0.3s ease, transform 0.3s var(--easing), color 0.4s ease;
-    }
-
-    html[data-theme="light"] .nav-menu a {
-      opacity: 0.88;
-      color: #0f172a;
-    }
-
-    .nav-menu a:hover {
-      opacity: 1;
-      transform: translateY(-1px);
-    }
-
-    html[data-theme="light"] .nav-menu a:hover {
-      color: #c2410c;
-    }
-
-    .theme-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-strong);
-      color: var(--ink);
-      cursor: pointer;
-      overflow: hidden;
+    .nav-link {
       position: relative;
-      transition: background 0.3s, border-color 0.3s, transform 0.4s var(--easing), color 0.4s ease;
+      text-transform: uppercase;
+      letter-spacing: .02em;
     }
 
-    html[data-theme="light"] .theme-toggle {
-      background: rgba(0, 0, 0, 0.04);
-    }
-
-    .theme-toggle:hover {
-      transform: scale(1.08) rotate(8deg);
-      border-color: rgba(255, 205, 127, .4);
-    }
-
-    .theme-toggle svg {
+    .nav-link::after {
+      content: "";
       position: absolute;
-      width: 18px;
-      height: 18px;
-      transition: transform 0.5s var(--easing), opacity 0.4s ease;
+      left: 0;
+      right: 0;
+      bottom: -8px;
+      height: 1px;
+      transform: scaleX(0);
+      transform-origin: right;
+      background: currentColor;
+      transition: transform .45s var(--ease);
     }
 
-    /* Hide/show sun/moon icons based on theme */
-    html,
-    html[data-theme="dark"] {
-      .theme-toggle .sun-icon {
-        opacity: 0;
-        transform: scale(0.5) rotate(-90deg);
-      }
-
-      .theme-toggle .moon-icon {
-        opacity: 1;
-        transform: scale(1) rotate(0);
-      }
+    .nav-link:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
     }
 
-    html[data-theme="light"] {
-      .theme-toggle .sun-icon {
-        opacity: 1;
-        transform: scale(1) rotate(0);
-      }
-
-      .theme-toggle .moon-icon {
-        opacity: 0;
-        transform: scale(0.5) rotate(90deg);
-      }
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: .7rem;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(243, 240, 232, .65);
     }
 
-    /* Hero */
-    .hero {
-      position: relative;
-      min-height: 100svh;
-      overflow: hidden;
-      isolation: isolate;
-      background: var(--bg-hero);
-      transition: background 0.4s ease;
+    .section-label::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--orange);
+      box-shadow: 0 0 20px rgba(255, 90, 31, .5);
     }
 
-    .hero-media,
-    .hero-fallback,
-    .hero-bg-layer,
-    .hero-video,
-    .hero-overlay {
+    .reveal,
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(32px);
+      will-change: opacity, transform;
+    }
+
+    /* 3D and GPU-accelerated layer styles */
+    .hero-stack-container {
+      perspective: 1200px;
+    }
+
+    .hero-stack {
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    .hero-card {
+      transform-origin: center;
+      will-change: transform;
+      border: 1px solid var(--line);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, .65);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .glass {
+      border: 1px solid var(--line);
+      background: rgba(18, 20, 18, 0.65);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .magnetic-button {
+      transition: transform .4s var(--ease), background .4s var(--ease), border-color .4s var(--ease);
+      min-height: 44px;
+      will-change: transform;
+    }
+
+    .magnetic-button:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 90, 31, .45);
+      background: rgba(255, 90, 31, .13);
+    }
+
+    .service-card,
+    .pricing-card,
+    .note-card,
+    .archive-card {
+      transition: transform .45s var(--ease), border-color .45s var(--ease), background .45s var(--ease);
+      will-change: transform;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
+    }
+
+    .service-card:hover,
+    .pricing-card:hover,
+    .note-card:hover,
+    .archive-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255, 90, 31, .34);
+      background: rgba(255, 255, 255, .06);
+    }
+
+    .note-card::after {
+      content: "";
       position: absolute;
       inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      background: linear-gradient(135deg, rgba(243, 240, 232, 0.14), transparent 42%);
+      transition: opacity 400ms var(--ease);
     }
 
-    .hero-media {
-      overflow: hidden;
+    .note-card:hover::after {
+      opacity: 1;
     }
 
-    .hero-fallback {
-      background: var(--hero-fallback-bg);
-      transform: scale(1.03);
-      transition: background 0.4s ease;
+    .masked-number {
+      color: transparent;
+      background-image: var(--number-image);
+      background-position: 50% 50%;
+      background-size: 118%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      filter: saturate(.85) brightness(1.06);
+      will-change: transform, background-position;
+      transform: translate3d(0, 0, 0);
     }
 
-    .hero-bg-layer {
+    .strip-image,
+    .archive-card img {
+      will-change: transform;
+      transform: scale(1.06) translate3d(0, 0, 0);
+      transition: transform .6s var(--ease);
+    }
+
+    .archive-card:hover img {
+      transform: scale(1.14) translate3d(0, 0, 0);
+      opacity: 0.95;
+    }
+
+    .parallax-image {
       position: absolute;
-      inset: -24px;
-      background-size: cover;
-      background-position: center;
-      transition: opacity 0.8s ease, transform 1.2s var(--easing);
-      will-change: opacity, transform;
-      animation: heroAmbientMotion 28s ease-in-out infinite alternate;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #101310;
+      opacity: .68;
+      will-change: transform;
+      transform: translate3d(0, 0, 0);
     }
 
-    @keyframes heroAmbientMotion {
-      0% {
-        transform: scale(1.02) translate(0, 0);
-      }
-      50% {
-        transform: scale(1.05) translate(-8px, -6px);
-      }
-      100% {
-        transform: scale(1.03) translate(6px, -10px);
-      }
-    }
-
-    .hero-bg-dark {
-      background-image: url("assets/images/hero-dark.jpg");
-      opacity: 1;
-    }
-
-    .hero-bg-light {
-      background-image: url("assets/images/hero-light.jpg?v=light2");
-      opacity: 0;
-    }
-
-    html[data-theme="light"] .hero-bg-dark {
-      opacity: 0;
-    }
-
-    html[data-theme="light"] .hero-bg-light {
-      opacity: 1;
-    }
-
-    .hero-video {
+    .parallax-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 0;
-      transform: scale(1.07);
-      transition: opacity 1s ease, transform 1s ease;
+      filter: saturate(.72) brightness(.72);
+      transform: scale(1.14) translate3d(0, 0, 0);
+      will-change: transform;
+    }
+
+    .timeline-bar {
+      transform: scaleX(0);
+      transform-origin: left center;
+      background: linear-gradient(90deg, var(--orange), rgba(243, 240, 232, .82));
+      will-change: transform;
+    }
+
+    .brand-word {
       will-change: transform, opacity;
-      mask-image: radial-gradient(circle at center, black 0 52%, rgba(0, 0, 0, .92) 64%, rgba(0, 0, 0, .62) 78%, transparent 96%);
-      -webkit-mask-image: radial-gradient(circle at center, black 0 52%, rgba(0, 0, 0, .92) 64%, rgba(0, 0, 0, .62) 78%, transparent 96%);
-      z-index: 1;
-    }
-
-    /* Visibility control by theme */
-    #heroVideoDark,
-    #heroVideoLight {
-      opacity: 0;
-    }
-
-    html:not([data-theme="light"]) #heroVideoDark.is-ready {
-      opacity: 1;
-    }
-
-    html[data-theme="light"] #heroVideoLight.is-ready {
-      opacity: 1;
-    }
-
-    .hero-overlay {
-      z-index: 2;
-      background: var(--hero-overlay-gradient);
-      pointer-events: none;
-      backdrop-filter: blur(2px);
-      -webkit-backdrop-filter: blur(2px);
-      transition: background 0.5s ease;
-    }
-
-    .hero-center {
-      position: relative;
-      z-index: 3;
-      min-height: 100svh;
-      display: grid;
-      place-items: center;
-      padding: 92px 24px 110px;
-      text-align: center;
-    }
-
-    .hero-shell {
-      width: min(980px, 100%);
-    }
-
-    .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 11px;
-      padding: 12px 18px;
-      border: 1px solid var(--border-strong);
-      border-radius: 999px;
-      background: var(--surface);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 14px 38px rgba(0, 0, 0, .18);
-      color: var(--ink);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      transition: border-color 0.4s, background 0.4s, color 0.4s;
-    }
-
-    html[data-theme="light"] .hero-eyebrow {
-      background: rgba(255, 255, 255, 0.94);
-      border-color: rgba(15, 23, 42, 0.12);
-      color: #0f172a;
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
-    }
-
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      flex: 0 0 7px;
-      background: var(--accent);
-      border-radius: 50%;
-      box-shadow: 0 0 18px var(--accent);
-      transition: background 0.4s, box-shadow 0.4s;
-    }
-
-    .hero-title {
-      margin: 24px 0 0;
-      font-size: clamp(4rem, 9vw, 8.4rem);
-      font-weight: 700;
-      letter-spacing: -.065em;
-      line-height: .88;
-      transition: color 0.4s, text-shadow 0.4s, filter 0.4s;
-    }
-
-    html:not([data-theme="light"]) .hero-title {
-      color: #ffffff;
-      background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 60%, #fdba74 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 4px 28px rgba(0, 0, 0, 0.75));
-    }
-
-    html[data-theme="light"] .hero-title {
-      color: #0b1320;
-      background: linear-gradient(135deg, #090e18 0%, #16243b 55%, #c2410c 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 2px 14px rgba(255, 255, 255, 0.95));
-    }
-
-    .hero-subtitle {
-      max-width: 760px;
-      margin: 28px auto 0;
-      color: var(--ink);
-      opacity: 0.92;
-      font-size: clamp(15px, 1.4vw, 18px);
-      line-height: 1.85;
-      text-shadow: var(--hero-subtitle-shadow);
-      transition: color 0.4s, text-shadow 0.4s;
-    }
-
-    html[data-theme="light"] .hero-subtitle {
-      color: #1e293b;
-      opacity: 0.96;
-      font-weight: 500;
-      text-shadow: 0 1px 12px rgba(255, 255, 255, 0.9);
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 14px;
-      margin-top: 34px;
-    }
-
-    .button {
-      min-height: 56px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 24px;
-      border: 1px solid var(--border-strong);
-      border-radius: 999px;
-      color: var(--ink);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .24em;
-      text-decoration: none;
-      text-transform: uppercase;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 18px 50px rgba(0, 0, 0, .15);
-      transition: transform .4s var(--easing), border-color .35s ease, background .35s ease, box-shadow .4s ease, color 0.4s ease;
-    }
-
-    /* Light mode buttons */
-    html[data-theme="light"] .button--primary {
-      background: #0f172a;
-      color: #ffffff;
-      border-color: #0f172a;
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.22);
-    }
-
-    html[data-theme="light"] .button--secondary {
-      background: rgba(255, 255, 255, 0.92);
-      color: #0f172a;
-      border-color: rgba(15, 23, 42, 0.18);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
-    }
-
-    .button--primary {
-      position: relative;
-      overflow: hidden;
-      background: var(--button-primary-bg);
-    }
-
-    .button--primary::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 50% 50%, rgba(255, 189, 98, .16), transparent 48%);
-      opacity: 0;
-      transition: opacity .4s ease;
-    }
-
-    .button--secondary {
-      background: var(--button-secondary-bg);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
-
-    .button:hover,
-    .button:focus-visible {
-      transform: translateY(-3px);
-      border-color: var(--button-secondary-hover-border);
-    }
-
-    .button--primary:hover,
-    .button--primary:focus-visible {
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 0 0 1px rgba(255, 189, 98, .12), 0 24px 58px rgba(0, 0, 0, .25);
-    }
-
-    .button--primary:hover::before,
-    .button--primary:focus-visible::before {
-      opacity: 1;
-    }
-
-    .hero-chips {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 24px;
-    }
-
-    .hero-chips span {
-      padding: 10px 13px;
-      border: 1px solid var(--chip-border);
-      border-radius: 999px;
-      background: var(--chip-bg);
-      color: var(--chip-color);
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      transition: background 0.4s, border-color 0.4s, color 0.4s;
-    }
-
-    html[data-theme="light"] .hero-chips span {
-      background: rgba(255, 255, 255, 0.90);
-      border-color: rgba(15, 23, 42, 0.12);
-      color: #0f172a;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-    }
-
-    .hero-contact {
-      position: absolute;
-      right: 28px;
-      bottom: 25px;
-      left: 28px;
-      z-index: 3;
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      color: var(--muted);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      transition: color 0.4s ease;
-    }
-
-    html[data-theme="light"] .hero-contact {
-      color: #334155;
-      font-weight: 700;
-      text-shadow: 0 1px 8px rgba(255, 255, 255, 0.95);
-    }
-
-    .hero-contact a {
-      text-decoration: none;
-      transition: color .3s ease;
-    }
-
-    .hero-contact a:hover,
-    .hero-contact a:focus-visible {
-      color: var(--ink);
-    }
-
-    /* Brief */
-    .section--brief {
-      position: relative;
-      padding-top: 152px;
-      padding-bottom: 152px;
-      background: var(--brief-bg);
-      transition: background 0.4s ease;
-    }
-
-    .section--brief::after {
-      content: "";
-      position: absolute;
-      inset: auto 8% 24% 52%;
-      height: 180px;
-      background: radial-gradient(circle, rgba(62, 145, 139, .11), transparent 68%);
-      filter: blur(40px);
-      pointer-events: none;
-    }
-
-    /* Recent works */
-    .projects-section {
-      padding: 124px 0;
-      background: var(--projects-bg);
-      transition: background 0.4s ease;
-    }
-
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-      gap: 16px;
-      perspective: 1200px;
+      transform: translate3d(0, 0, 0);
     }
 
     .project-card {
-      position: relative;
-      min-height: 255px;
-      grid-column: span 4;
-      overflow: hidden;
-      border: 1px solid var(--project-card-border);
-      border-radius: 2rem;
-      background: var(--project-card-bg);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04), 0 18px 50px rgba(0, 0, 0, .05);
-      text-decoration: none;
-      transform-style: preserve-3d;
       will-change: transform;
-      transition: border-color .4s ease, box-shadow .45s ease, background 0.4s ease;
+      transform: translate3d(0, 0, 0);
     }
 
-    .project-preview {
-      position: relative;
-      aspect-ratio: 16 / 7;
-      overflow: hidden;
-      margin: 14px 14px 0;
-      border: 1px solid var(--border-strong);
-      border-radius: 1.55rem;
-      background: rgba(0, 0, 0, 0.03);
-      transition: border-color 0.4s ease;
-    }
-
-    .project-preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform .55s var(--easing);
-    }
-
-    .project-card:hover .project-preview img,
-    .project-card:focus-visible .project-preview img {
-      transform: scale(1.025);
-    }
-
-    .project-card::before {
-      content: "";
-      position: absolute;
+    /* Brand preloader */
+    .ax-loader {
+      position: fixed;
       inset: 0;
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, .05), transparent 32%),
-        var(--project-card-inner-glow);
-      pointer-events: none;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      will-change: transform;
     }
 
-    .project-card--wide {
-      grid-column: span 8;
-    }
-
-    .project-card--tall {
-      min-height: 330px;
-    }
-
-    .project-card__inner {
-      position: relative;
-      z-index: 2;
-      min-height: inherit;
+    .ax-loader__inner {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      gap: 32px;
-      padding: 28px;
-    }
-
-    .project-card h3 {
-      max-width: 19ch;
-      margin: 18px 0 0;
-      font-size: clamp(1.75rem, 2.75vw, 3.15rem);
-      font-weight: 500;
-      letter-spacing: -.055em;
-      line-height: 1.02;
-      text-wrap: balance;
-      color: var(--ink);
-      transition: color 0.4s ease;
-    }
-
-    .project-card--wide h3 {
-      max-width: 27ch;
-    }
-
-    .project-card p:not(.card-label) {
-      max-width: 47ch;
-      margin: 14px 0 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.85;
-      transition: color 0.4s ease;
-    }
-
-    .card-link {
-      align-self: flex-start;
-      color: var(--accent);
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: .22em;
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity .35s ease, transform .35s ease, color 0.4s ease;
-    }
-
-    .card-link span {
-      display: inline-block;
-      margin-left: 4px;
-      transition: transform .35s var(--easing);
-    }
-
-    .card-glow {
-      position: absolute;
-      right: -12%;
-      bottom: -40%;
-      width: 280px;
-      height: 280px;
-      border-radius: 50%;
-      background: radial-gradient(circle, var(--project-card-glow), transparent 68%);
-      filter: blur(24px);
-      opacity: .45;
-      pointer-events: none;
-      transition: opacity .45s ease, transform .45s var(--easing), background-color 0.4s ease;
-    }
-
-    .project-card:hover,
-    .project-card:focus-visible {
-      transform: translateY(-5px) scale(1.015);
-      border-color: var(--accent);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 28px 65px rgba(0, 0, 0, .2);
-    }
-
-    .project-card:hover .card-link,
-    .project-card:focus-visible .card-link {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .project-card:hover .card-link span,
-    .project-card:focus-visible .card-link span {
-      transform: translate(3px, -2px);
-    }
-
-    .project-card:hover .card-glow,
-    .project-card:focus-visible .card-glow {
-      opacity: .8;
-      transform: scale(1.08);
-    }
-
-    /* Gallery */
-    .gallery-section {
-      overflow: hidden;
-      background: var(--gallery-bg);
-      transition: background 0.4s ease;
-    }
-
-    .carousel {
-      position: relative;
-      outline: none;
-    }
-
-    .carousel-track {
-      display: flex;
-      gap: 22px;
-      overflow-x: auto;
-      padding: 6px max(16px, calc((100vw - min(58vw, 940px)) / 2)) 26px;
-      scroll-behavior: smooth;
-      scroll-snap-type: x mandatory;
-      scrollbar-width: none;
-      cursor: grab;
-      touch-action: pan-y;
-    }
-
-    .carousel-track::-webkit-scrollbar {
-      display: none;
-    }
-
-    .carousel-track.is-dragging {
-      cursor: grabbing;
-      scroll-behavior: auto;
-      scroll-snap-type: none;
-      user-select: none;
-    }
-
-    .gallery-slide {
-      flex: 0 0 min(58vw, 940px);
-      scroll-snap-align: center;
-      opacity: .5;
-      transform: scale(.96);
-      transition: opacity .55s ease, transform .55s var(--easing);
-    }
-
-    .gallery-slide.is-active {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .gallery-media {
-      position: relative;
-      aspect-ratio: 16 / 9;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      border-radius: 2rem;
-      background: rgba(255, 255, 255, .03);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 26px 70px rgba(0, 0, 0, .35);
-    }
-
-    .gallery-media::after {
-      content: "";
-      position: absolute;
-      inset: 32% 0 0;
-      z-index: 2;
-      background: linear-gradient(180deg, transparent 0%, rgba(3, 7, 11, .28) 28%, rgba(2, 6, 10, .94) 100%);
-      pointer-events: none;
-    }
-
-    .gallery-media img,
-    .gallery-media video {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .gallery-media video {
-      z-index: 1;
-      opacity: 0;
-      transition: opacity .5s ease;
-    }
-
-    .gallery-media video.is-ready {
-      opacity: 1;
-    }
-
-    .gallery-caption {
-      position: absolute;
-      right: 28px;
-      bottom: 26px;
-      left: 28px;
-      z-index: 3;
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 24px;
-    }
-
-    .gallery-caption .card-label {
-      color: rgba(255, 255, 255, 0.88) !important;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
-      letter-spacing: .25em;
-    }
-
-    .gallery-caption h3 {
-      margin: 8px 0 0;
-      font-size: clamp(1.55rem, 2.6vw, 2.8rem);
-      font-weight: 600;
-      letter-spacing: -.04em;
-      line-height: 1.1;
-      color: #ffffff !important;
-      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.75);
-    }
-
-    .gallery-caption>span {
-      color: rgba(255, 255, 255, 0.88) !important;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .2em;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
-    }
-
-    .carousel-footer {
-      display: grid;
-      grid-template-columns: 1fr auto;
       align-items: center;
-      gap: 28px;
-      margin-top: 12px;
+      gap: 24px;
+      padding: 0 24px;
     }
 
-    .carousel-progress {
+    .ax-loader__brand {
+      display: inline-flex;
+      align-items: center;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.08em;
+      color: var(--cream);
+      font-size: clamp(2.8rem, 9vw, 6.4rem);
+      opacity: 0;
+      transform: translateY(18px);
+      filter: blur(8px);
+      will-change: transform, opacity, filter;
+    }
+
+    .ax-loader__brand sup {
+      font-size: 0.26em;
+      font-weight: 800;
+      letter-spacing: 0;
+      align-self: flex-start;
+      margin-left: 0.02em;
+    }
+
+    .ax-dot {
+      width: 0.14em;
+      height: 0.14em;
+      margin-left: 0.14em;
+      border-radius: 999px;
+      background: var(--orange);
+      box-shadow: 0 0 28px rgba(255, 90, 31, 0.65);
+    }
+
+    .ax-loader__track {
+      width: min(280px, 64vw);
       height: 2px;
       overflow: hidden;
-      background: rgba(255, 255, 255, .09);
+      border-radius: 999px;
+      background: rgba(243, 240, 232, 0.12);
     }
 
-    .carousel-progress span {
-      display: block;
-      width: 20%;
-      height: 100%;
-      background: linear-gradient(90deg, rgba(255, 193, 103, .62), rgba(255, 255, 255, .7));
-      transform-origin: left;
-      transition: transform .45s var(--easing);
-    }
-
-    .carousel-controls {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .carousel-controls button {
-      width: 48px;
-      height: 48px;
-      border: 1px solid var(--border);
-      border-radius: 50%;
-      background: var(--surface);
-      color: var(--ink);
-      cursor: pointer;
-      transition: transform .35s var(--easing), background .35s ease, border-color .35s ease, color 0.4s ease;
-    }
-
-    .carousel-controls button:hover,
-    .carousel-controls button:focus-visible {
-      transform: translateY(-2px);
-      border-color: var(--accent);
-      background: rgba(255, 255, 255, .08);
-    }
-
-    .carousel-count {
-      min-width: 72px;
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .16em;
-      text-align: center;
-      transition: color 0.4s ease;
-    }
-
-    .carousel-count strong {
-      color: var(--ink);
-      font-weight: 700;
-      transition: color 0.4s ease;
-    }
-
-    /* Apps */
-    .apps-section {
-      background: var(--apps-bg);
-      transition: background 0.4s ease;
-    }
-
-    .apps-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 24px;
-      perspective: 1200px;
-    }
-
-    .app-card {
-      overflow: hidden;
-      border: 1px solid var(--border);
-      border-radius: 2.2rem;
-      background: var(--app-card-bg);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .055), 0 24px 68px rgba(0, 0, 0, .05);
-      transform-style: preserve-3d;
-      will-change: transform;
-      transition: border-color .4s ease, box-shadow .45s ease, background 0.4s ease;
-    }
-
-    .app-preview {
-      position: relative;
-      aspect-ratio: 16 / 10;
-      overflow: hidden;
-      margin: 14px 14px 0;
-      border: 1px solid var(--border-strong);
-      border-radius: 1.55rem;
-      background: #0c1417;
-      transition: border-color 0.4s ease;
-    }
-
-    .app-preview::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(255, 255, 255, .04), transparent 24%);
-      pointer-events: none;
-    }
-
-    .app-preview img {
+    .ax-loader__bar {
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      transition: transform .55s var(--easing);
-    }
-
-    .app-card__body {
-      padding: 30px 32px 34px;
-    }
-
-    .app-card h3 {
-      margin: 16px 0 0;
-      font-size: clamp(1.75rem, 2.8vw, 3.2rem);
-      font-weight: 500;
-      letter-spacing: -.055em;
-      line-height: 1.04;
-      color: var(--ink);
-      transition: color 0.4s ease;
-    }
-
-    .app-card dl {
-      display: grid;
-      gap: 14px;
-      margin: 26px 0 0;
-    }
-
-    .app-card dl>div {
-      display: grid;
-      grid-template-columns: 80px 1fr;
-      gap: 18px;
-      padding-top: 14px;
-      border-top: 1px solid var(--border);
-      transition: border-color 0.4s ease;
-    }
-
-    .app-card dt {
-      color: var(--muted);
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      transition: color 0.4s ease;
-    }
-
-    .app-card dd {
-      margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.75;
-      transition: color 0.4s ease;
-    }
-
-    .app-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 28px;
-      color: var(--accent);
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: .22em;
-      text-decoration: none;
-      transition: color 0.4s ease;
-    }
-
-    .app-link span {
-      transition: transform .35s var(--easing);
-    }
-
-    .app-card:hover,
-    .app-card:focus-within {
-      transform: translateY(-5px) scale(1.015);
-      border-color: var(--accent);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 28px 75px rgba(0, 0, 0, .15);
-    }
-
-    .app-card:hover .app-preview img,
-    .app-card:focus-within .app-preview img {
-      transform: scale(1.025);
-    }
-
-    .app-link:hover span,
-    .app-link:focus-visible span {
-      transform: translateX(4px);
-    }
-
-    /* Contact */
-    .contact-section {
-      min-height: 70svh;
-      display: flex;
-      align-items: stretch;
-      padding: 90px 0 72px;
-      background: var(--contact-bg);
-      transition: background 0.4s ease;
-    }
-
-    .contact-shell {
-      position: relative;
-      width: min(1600px, calc(100% - 32px));
-      min-height: 56svh;
-      margin: auto;
-      overflow: hidden;
-      padding: 46px;
-      border: 1px solid var(--border);
-      border-radius: 2.2rem;
-      background: var(--contact-shell-bg);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04), 0 26px 82px rgba(0, 0, 0, .15);
-      transition: background 0.4s ease, border-color 0.4s ease;
-    }
-
-    .contact-grid {
-      position: relative;
-      z-index: 2;
-      display: grid;
-      grid-template-columns: 1.15fr .85fr;
-      align-items: end;
-      gap: 60px;
-    }
-
-    .contact-grid h2 {
-      max-width: 880px;
-    }
-
-    .contact-grid>div>p:last-child {
-      max-width: 720px;
-      margin-top: 22px;
-    }
-
-    .contact-links {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      gap: 12px;
-    }
-
-    .contact-links a {
-      min-height: 46px;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 0 15px;
-      border: 1px solid var(--border);
+      transform: scaleX(0);
+      transform-origin: left center;
       border-radius: 999px;
-      background: var(--contact-link-bg);
-      color: var(--contact-link-color);
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: .2em;
-      text-decoration: none;
-      text-transform: uppercase;
-      transition: transform .35s var(--easing), color .3s ease, background .3s ease, border-color .3s ease;
+      background: linear-gradient(90deg, var(--orange), rgba(243, 240, 232, 0.82));
     }
 
-    .contact-links a span {
-      transition: transform .35s var(--easing);
-    }
-
-    .contact-links a:hover,
-    .contact-links a:focus-visible {
-      transform: translateY(-2px);
-      border-color: var(--accent);
-      background: var(--surface);
-      color: var(--ink);
-    }
-
-    .contact-links a:hover span,
-    .contact-links a:focus-visible span {
-      transform: translate(3px, -2px);
-    }
-
-    .contact-bottom {
-      position: absolute;
-      right: 46px;
-      bottom: 35px;
-      left: 46px;
-      z-index: 2;
+    .ax-loader__meta {
       display: flex;
       justify-content: space-between;
-      gap: 20px;
-      padding-top: 22px;
-      border-top: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: .2em;
+      width: min(280px, 64vw);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      transition: color 0.4s ease, border-color 0.4s ease;
-    }
-
-    .roofline {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      height: 160px;
-      background:
-        linear-gradient(180deg, transparent 0%, var(--roofline-bg) 100%),
-        linear-gradient(90deg,
-          transparent 0 8%, var(--roofline-color) 8% 8.5%,
-          transparent 8.5% 15%, var(--roofline-color) 15% 15.4%,
-          transparent 15.4% 24%, var(--roofline-color) 24% 24.5%,
-          transparent 24.5% 100%);
-      clip-path: polygon(0 100%, 5% 74%, 12% 82%, 19% 58%, 27% 72%, 35% 45%, 42% 61%, 50% 36%, 59% 64%, 69% 43%, 78% 61%, 87% 49%, 96% 71%, 100% 100%);
-      opacity: .55;
-      pointer-events: none;
-      transition: background 0.4s ease, linear-gradient 0.4s ease;
-    }
-
-    /* Motion and focus */
-    .js .reveal {
+      color: rgba(243, 240, 232, 0.45);
       opacity: 0;
-      visibility: hidden;
-      will-change: transform, opacity;
     }
 
-    .js .reveal.in,
-    .no-js .reveal {
-      opacity: 1;
-      visibility: visible;
-      transform: none;
+    /* Scrollbar hide for galleries */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
 
-    :focus-visible {
-      outline: 2px solid rgba(255, 205, 127, .82);
-      outline-offset: 4px;
-    }
-
-    @media (max-width: 1180px) {
-
-      .section,
-      .apps-section,
-      .projects-section {
-        padding-block: 104px;
+    @media (max-width: 767px) {
+      .wordmark {
+        letter-spacing: -0.05em;
       }
 
-      .section-heading {
-        display: grid;
-        grid-template-columns: 1fr;
-        align-items: start;
-      }
-
-      .section-intro {
-        max-width: 660px;
-      }
-
-      .projects-grid {
-        grid-template-columns: repeat(6, minmax(0, 1fr));
-      }
-
-      .project-card,
-      .project-card--wide {
-        grid-column: span 6;
-      }
-
-      .project-card h3,
-      .project-card--wide h3 {
-        max-width: 28ch;
-      }
-
-      .contact-grid {
-        grid-template-columns: 1fr;
-        align-items: start;
-      }
-
-      .contact-links {
-        justify-content: flex-start;
-      }
-    }
-
-    @media (max-width: 880px) {
-      .apps-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .gallery-slide {
-        flex-basis: 76vw;
-      }
-
-      .carousel-track {
-        padding-inline: 12vw;
-      }
-    }
-
-    @media (max-width: 760px) {
-
-      .wrap,
-      .contact-shell {
-        width: min(100% - 20px, 1600px);
-      }
-
-      .section,
-      .apps-section,
-      .projects-section {
-        padding-block: 92px;
-      }
-
-      .section-heading {
-        margin-bottom: 28px;
-      }
-
-      .section-heading h2,
-      .contact-grid h2 {
-        font-size: clamp(2.55rem, 12vw, 4.8rem);
-        letter-spacing: -.065em;
-      }
-
-      .hero-center {
-        padding: 82px 14px 116px;
-      }
-
-      .hero-title {
-        font-size: clamp(3.2rem, 18vw, 5.8rem);
-      }
-
-      .hero-subtitle {
-        max-width: 34ch;
-        font-size: 15px;
-        line-height: 1.75;
-      }
-
-      .hero-eyebrow {
-        max-width: 92vw;
-        justify-content: center;
-        font-size: 8px;
-        letter-spacing: .21em;
-      }
-
-      .hero-actions {
-        flex-direction: column;
-        align-items: stretch;
-        width: min(100%, 320px);
-        margin-inline: auto;
-      }
-
-      .button {
-        width: 100%;
-      }
-
-      .hero-contact {
-        right: 14px;
-        bottom: 20px;
-        left: 14px;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-        font-size: 8px;
-      }
-
-      .projects-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .project-card,
-      .project-card--wide {
-        grid-column: span 1;
-      }
-
-      .project-card,
-      .project-card--tall {
-        min-height: 300px;
-      }
-
-      .project-card__inner {
-        padding: 24px;
-      }
-
-      .card-link {
-        opacity: 1;
-        transform: none;
-      }
-
-      .gallery-slide {
-        flex-basis: 86vw;
-      }
-
-      .carousel-track {
-        gap: 12px;
-        padding-inline: 7vw;
-      }
-
-      .gallery-media {
-        aspect-ratio: 4 / 5;
-        border-radius: 1.55rem;
-      }
-
-      .gallery-caption {
-        right: 20px;
-        bottom: 20px;
-        left: 20px;
-      }
-
-      .gallery-caption h3 {
-        font-size: 1.7rem;
-      }
-
-      .carousel-footer {
-        grid-template-columns: 1fr;
-        gap: 18px;
-      }
-
-      .carousel-controls {
-        justify-content: space-between;
-      }
-
-      .app-card {
-        border-radius: 1.7rem;
-      }
-
-      .app-preview {
-        margin: 10px 10px 0;
-        border-radius: 1.25rem;
-      }
-
-      .app-card__body {
-        padding: 25px 22px 28px;
-      }
-
-      .app-card dl>div {
-        grid-template-columns: 1fr;
-        gap: 7px;
-      }
-
-      .contact-section {
-        min-height: auto;
-        padding: 72px 0 48px;
-      }
-
-      .contact-shell {
-        min-height: 700px;
-        padding: 30px 22px;
-        border-radius: 1.7rem;
-      }
-
-      .contact-grid {
-        gap: 40px;
-      }
-
-      .contact-links {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .contact-links a {
-        justify-content: space-between;
-      }
-
-      .contact-bottom {
-        right: 22px;
-        bottom: 24px;
-        left: 22px;
-        flex-direction: column;
-        gap: 8px;
-      }
-    }
-
-    @media (max-width: 460px) {
-      .contact-links {
-        grid-template-columns: 1fr;
+      .page-rail {
+        display: none;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      html {
-        scroll-behavior: auto;
-      }
-
       *,
       *::before,
       *::after {
-        scroll-behavior: auto !important;
-        animation-duration: .01ms !important;
+        animation-duration: .001ms !important;
         animation-iteration-count: 1 !important;
-        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+        transition-duration: .001ms !important;
       }
 
-      .hero-video {
+      .ax-loader {
+        display: none;
+      }
+
+      .reveal,
+      [data-reveal],
+      .timeline-bar {
+        opacity: 1 !important;
         transform: none !important;
-      }
-
-      .carousel-track {
-        scroll-behavior: auto;
-      }
-
-      .js .reveal {
-        transform: none;
       }
     }
   </style>
-  <script>document.documentElement.classList.replace('no-js', 'js');</script>
 </head>
 
-<body>
-  <a class="skip-link" href="#main-content">Skip to content</a>
+<body class="relative">
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-veil" aria-hidden="true"></div>
+  <div class="page-rail" aria-hidden="true">Creative Marketing · Tech · AI</div>
 
-  <header class="site-header">
-    <div class="header-wrap">
-      <a href="#home" class="logo">GADING</a>
-      <nav class="nav-menu" aria-label="Main Navigation">
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#recent-works">Works</a>
-        <a href="#web-apps">Apps</a>
-        <a href="#contact">Contact</a>
-      </nav>
-      <div class="header-actions">
-        <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark/light theme">
-          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="4"></circle>
-            <path
-              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41">
-            </path>
-          </svg>
-          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
-          </svg>
-        </button>
+  <!-- PRELOADER -->
+  <div id="ax-loader" class="ax-loader" aria-hidden="true">
+    <div class="ax-loader__inner">
+      <div class="ax-loader__brand">
+        <span>Gading</span>
+        <span class="ax-dot"></span>
       </div>
+      <div class="ax-loader__track">
+        <div class="ax-loader__bar"></div>
+      </div>
+      <div class="ax-loader__meta">
+        <span class="ax-loader__pct">000</span>
+        <span>Creative Marketing · Tech · AI</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="fixed inset-x-0 top-0 z-40 flex items-center justify-between px-5 py-4 backdrop-blur-md bg-[#060706]/75 border-b border-[#f3f0e8]/5 md:px-8 lg:px-12 transition-all duration-300">
+    <a href="#home" class="text-lg font-bold tracking-[-0.04em] text-[#f3f0e8] md:text-xl flex items-center gap-2">
+      <span class="h-2 w-2 rounded-full bg-[#ff5a1f]"></span>
+      Gading Utama
+    </a>
+
+    <nav class="hidden items-center gap-8 text-xs font-bold text-[#f3f0e8]/85 md:flex">
+      <a href="#work" class="nav-link">
+        <span class="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-[#ff5a1f] align-middle"></span>
+        Works
+      </a>
+      <a href="#web-apps" class="nav-link">Apps</a>
+      <a href="#studio" class="nav-link">About</a>
+      <a href="#pricing" class="nav-link">Toolkit</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <a href="#contact"
+        class="hidden sm:inline-flex items-center gap-2 rounded-full border border-[#f3f0e8]/15 bg-white/[0.03] px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#f3f0e8] hover:border-[#ff5a1f] hover:text-[#ff5a1f] transition">
+        Hire Me
+      </a>
+      <button id="openDrawerBtn" class="glass flex h-11 w-11 items-center justify-center rounded-full md:hidden text-[#f3f0e8] hover:text-[#ff5a1f] transition" aria-label="Open mobile navigation menu">
+        <i data-lucide="menu" class="h-5 w-5"></i>
+      </button>
     </div>
   </header>
 
-  <div class="ambient-layer" aria-hidden="true">
-    <div class="ambient-orb ambient-orb--amber"></div>
-    <div class="ambient-orb ambient-orb--teal"></div>
+  <!-- MOBILE DRAWER -->
+  <div id="mobileDrawer" class="fixed inset-0 z-50 pointer-events-none opacity-0 transition-opacity duration-300 md:hidden" aria-hidden="true">
+    <!-- Backdrop -->
+    <div id="drawerBackdrop" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
+    
+    <!-- Drawer Panel -->
+    <div id="drawerPanel" class="absolute right-0 top-0 bottom-0 w-[85%] max-w-xs bg-[#0c0e0c] border-l border-[#f3f0e8]/10 p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-out shadow-2xl">
+      <div>
+        <div class="flex items-center justify-between pb-6 border-b border-[#f3f0e8]/10">
+          <span class="text-xs font-extrabold uppercase tracking-widest text-[#f3f0e8]/50">Navigation</span>
+          <button id="closeDrawerBtn" class="glass flex h-11 w-11 items-center justify-center rounded-full text-[#f3f0e8] hover:text-[#ff5a1f]" aria-label="Close navigation menu">
+            <i data-lucide="x" class="h-5 w-5"></i>
+          </button>
+        </div>
+
+        <nav class="mt-8 flex flex-col gap-4 text-xl font-bold">
+          <a href="#home" class="mobile-drawer-link py-3 text-[#f3f0e8] hover:text-[#ff5a1f] transition flex items-center justify-between border-b border-[#f3f0e8]/5">
+            Home <span class="text-sm text-[#ff5a1f]">01</span>
+          </a>
+          <a href="#work" class="mobile-drawer-link py-3 text-[#f3f0e8] hover:text-[#ff5a1f] transition flex items-center justify-between border-b border-[#f3f0e8]/5">
+            Works <span class="text-sm text-[#ff5a1f]">02</span>
+          </a>
+          <a href="#web-apps" class="mobile-drawer-link py-3 text-[#f3f0e8] hover:text-[#ff5a1f] transition flex items-center justify-between border-b border-[#f3f0e8]/5">
+            Web-Apps <span class="text-sm text-[#ff5a1f]">03</span>
+          </a>
+          <a href="#studio" class="mobile-drawer-link py-3 text-[#f3f0e8] hover:text-[#ff5a1f] transition flex items-center justify-between border-b border-[#f3f0e8]/5">
+            About <span class="text-sm text-[#ff5a1f]">04</span>
+          </a>
+          <a href="#pricing" class="mobile-drawer-link py-3 text-[#f3f0e8] hover:text-[#ff5a1f] transition flex items-center justify-between border-b border-[#f3f0e8]/5">
+            Toolkit <span class="text-sm text-[#ff5a1f]">05</span>
+          </a>
+          <a href="#contact" class="mobile-drawer-link py-3 text-[#f3f0e8] hover:text-[#ff5a1f] transition flex items-center justify-between border-b border-[#f3f0e8]/5">
+            Contact <span class="text-sm text-[#ff5a1f]">06</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="pt-6 border-t border-[#f3f0e8]/10">
+        <a href="#contact" class="mobile-drawer-link flex items-center justify-center gap-3 w-full rounded-full bg-[#ff5a1f] py-4 text-xs font-bold uppercase tracking-widest text-[#060706] shadow-lg shadow-[#ff5a1f]/20">
+          <span>Start a Project</span>
+          <i data-lucide="arrow-right" class="h-4 w-4"></i>
+        </a>
+        <p class="mt-4 text-center text-[10px] uppercase tracking-widest text-[#f3f0e8]/40">
+          © 2026 Gading Utama
+        </p>
+      </div>
+    </div>
   </div>
 
-  <main id="main-content">
-    <section class="hero" id="home" aria-labelledby="hero-title">
-      <div class="hero-media" aria-hidden="true">
-        <div class="hero-fallback"></div>
-        <!-- High-res illustration layers with subtle breathing ambient motion -->
-        <div class="hero-bg-layer hero-bg-dark" id="heroBgDark"></div>
-        <div class="hero-bg-layer hero-bg-light" id="heroBgLight"></div>
-        <!-- Video elements ready for Veo mp4 clips with high-res poster fallbacks -->
-        <video class="hero-video" id="heroVideoDark" autoplay muted loop playsinline preload="auto"
-          poster="assets/images/hero-dark.jpg">
-          <source src="assets/videos/hero-dark.mp4" type="video/mp4">
-        </video>
-        <video class="hero-video" id="heroVideoLight" autoplay muted loop playsinline preload="auto"
-          poster="assets/images/hero-light.jpg?v=light2">
-          <source src="assets/videos/hero-light.mp4?v=light2" type="video/mp4">
-        </video>
-      </div>
-      <div class="hero-overlay" aria-hidden="true"></div>
-
-      <div class="hero-center">
-        <div class="hero-shell">
-          <p class="eyebrow hero-eyebrow reveal">
-            <span class="status-dot"></span>
-            MARKETING COMMUNICATION · CREATIVE MARKETING &amp; TECH
+  <main id="home" class="relative z-10 overflow-hidden">
+    <!-- HERO -->
+    <section class="hero-section relative min-h-screen flex items-center overflow-hidden px-5 pt-28 pb-16 md:px-8 lg:px-12">
+      <div class="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8 z-10">
+        <!-- Left: Hero Copy -->
+        <div class="hero-copy relative z-20 flex flex-col justify-center lg:col-span-6">
+          <div class="mb-6 sm:mb-8">
+            <span class="section-label">Marketing Communication · Creative Marketing &amp; Tech</span>
+          </div>
+          
+          <h2 class="mb-6 text-[44px] font-black leading-[0.92] tracking-tight text-[#f3f0e8] sm:text-5xl md:text-6xl lg:text-[70px]">
+            I think.
+            <br />
+            I create.
+            <br />
+            I solve.
+          </h2>
+          
+          <p class="max-w-xl text-lg font-medium leading-relaxed tracking-[-0.02em] text-[#f3f0e8]/75 sm:text-xl lg:text-[22px]">
+            <span class="text-[#f3f0e8] font-semibold">
+              Creative Marketer &amp; Digital Problem Solver.
+            </span>
+            I combine creative marketing, design, technology, and AI to turn business bottlenecks into working systems and measurable campaigns.
           </p>
 
-          <h1 class="hero-title reveal" id="hero-title">R. Gading Utama</h1>
-
-          <p class="hero-subtitle reveal">
-            Creative Marketer &amp; Digital Problem Solver. I combine creative marketing, design, technology, and AI to turn business bottlenecks into working systems and measurable campaigns.
-          </p>
-
-          <div class="hero-actions reveal">
-            <a class="button button--primary" href="#contact">CONTACT ME</a>
-            <a class="button button--secondary" href="#recent-works">VIEW MY WORK</a>
+          <div class="mt-8 sm:mt-10 flex flex-wrap items-center gap-4">
+            <a href="#work"
+              class="magnetic-button inline-flex items-center gap-4 rounded-full border border-[#f3f0e8]/15 bg-white/[0.03] px-6 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#f3f0e8] hover:border-[#ff5a1f] hover:bg-[#ff5a1f]/10 transition">
+              View Selected Works
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-[#ff5a1f] text-[#060706]">
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              </span>
+            </a>
+            <a href="#contact"
+              class="inline-flex items-center gap-2 rounded-full px-5 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#f3f0e8]/65 hover:text-[#f3f0e8] transition min-h-[44px]">
+              Get in touch
+            </a>
           </div>
 
-          <div class="hero-chips reveal" aria-label="Core skills">
-            <span>Creative Marketing</span>
-            <span>Meta Ads</span>
-            <span>Web-App Dev</span>
-            <span>Problem Solving</span>
+          <!-- Mobile Quick Status -->
+          <div class="mt-8 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.12em] text-[#f3f0e8]/45 lg:hidden">
+            <span class="flex h-2 w-2 rounded-full bg-[#ff5a1f] animate-pulse"></span>
+            <span>Xavier Marks Tjandra Patos · 2026</span>
+          </div>
+        </div>
+
+        <!-- Right: 3D Hero Card Stack -->
+        <div class="hero-stack-container relative z-10 flex items-center justify-center lg:col-span-6 py-6 lg:py-0">
+          <div class="hero-stack relative h-[360px] w-[260px] sm:h-[440px] sm:w-[320px] md:h-[500px] md:w-[370px] lg:h-[560px] lg:w-[410px]">
+            <!-- Card 1: Back warm dark layer -->
+            <div
+              class="hero-card absolute inset-0 -translate-x-6 sm:-translate-x-10 translate-y-6 sm:translate-y-8 -rotate-[14deg] rounded-[24px] bg-[#151713]">
+              <div class="h-full w-full rounded-[24px] bg-gradient-to-br from-[#ff5a1f]/30 via-transparent to-black"></div>
+            </div>
+
+            <!-- Card 2: Editorial typography layer -->
+            <div
+              class="hero-card absolute inset-0 translate-x-6 sm:translate-x-10 translate-y-4 sm:translate-y-6 rotate-[10deg] rounded-[24px] bg-[#d8cbb5]">
+              <div class="absolute right-8 top-16 font-serif text-[80px] sm:text-[100px] text-[#ff5a1f]/80 select-none">
+                A
+              </div>
+              <div class="absolute bottom-10 left-8 h-24 w-24 sm:h-28 sm:w-28 rounded-full border border-black/20"></div>
+            </div>
+
+            <!-- Card 3: Deep shadow angle -->
+            <div
+              class="hero-card absolute inset-0 translate-x-10 sm:translate-x-14 translate-y-8 sm:translate-y-12 rotate-[16deg] rounded-[24px] bg-[#080808]">
+              <div class="h-full w-full rounded-[24px] bg-[linear-gradient(135deg,rgba(255,255,255,.16),transparent_45%)]">
+              </div>
+            </div>
+
+            <!-- Card 4: Foreground portrait with rich warm overlay -->
+            <div class="hero-card absolute inset-0 rotate-[3deg] overflow-hidden rounded-[24px] bg-[#201714] shadow-2xl">
+              <img
+                src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg"
+                alt="Editorial portrait of Gading Utama" class="h-full w-full object-cover saturate-125" loading="eager" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-orange-950/10"></div>
+              <div class="absolute inset-0 bg-[#ff5a1f]/10 mix-blend-overlay"></div>
+            </div>
+
+            <!-- CTA Floating trigger -->
+            <a href="#work"
+              class="hero-cta absolute -right-3 sm:-right-5 top-1/2 z-20 flex h-14 w-14 sm:h-16 sm:w-16 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/85 text-white shadow-2xl backdrop-blur transition duration-300 hover:scale-110 hover:bg-[#ff5a1f]"
+              aria-label="Explore Selected Works">
+              <i data-lucide="arrow-right" class="h-6 w-6"></i>
+            </a>
           </div>
         </div>
       </div>
 
-      <div class="hero-contact reveal" aria-label="Quick contact">
-        <span>Xavier Marks Tjandra Patos · Surabaya</span>
-        <a href="mailto:contact@gadingutama.com">contact@gadingutama.com</a>
+      <!-- Giant Fluid Watermark -->
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 z-0 select-none overflow-hidden text-center opacity-70">
+        <h1
+          class="hero-wordmark wordmark inline-block text-[clamp(4.5rem,15vw,13rem)] font-black leading-none text-[#f3f0e8]/[0.04] tracking-[-0.08em]">
+          Gading
+        </h1>
       </div>
-    </section>
 
-    <section class="section section--brief" id="about">
-      <div class="wrap">
-        <header class="section-heading reveal">
-          <div>
-            <p class="eyebrow">CREATIVE PROBLEM SOLVER</p>
-            <h2>A creative thinker who bridges marketing, design, technology, and AI.</h2>
-          </div>
-          <p class="section-intro">
-            I do not just wait for a brief and execute it. I observe workflows, identify bottlenecks, brainstorm campaign concepts, and build the digital tools needed to solve them. From high-converting Meta Ads to custom internal web applications, I connect ideas directly to practical execution.
-          </p>
-        </header>
-      </div>
-    </section>
-
-    <section class="projects-section" id="recent-works" aria-labelledby="recent-title">
-      <div class="wrap">
-        <header class="section-heading reveal">
-          <div>
-            <p class="eyebrow">FEATURED WORKS · VERIFIED IMPACT</p>
-            <h2 id="recent-title">Real campaigns, software tools, and operational systems.</h2>
-          </div>
-          <p class="section-intro">
-            A selection of internal web-apps, performance marketing campaigns, and entrepreneurial ventures built to solve real business bottlenecks.
-          </p>
-        </header>
-
-        <div class="projects-grid">
-          <a class="project-card project-card--wide project-card--tall reveal" href="#web-apps"
-            aria-label="View PROGRAM MBG Real-Time Leaderboard case">
-            <div class="project-preview">
-              <img src="https://picsum.photos/id/60/600/400" alt="PROGRAM MBG Leaderboard Preview" loading="lazy">
-            </div>
-            <div class="project-card__inner">
-              <div>
-                <p class="card-label">GAMIFICATION SYSTEM</p>
-                <h3>PROGRAM MBG Real-Time Leaderboard</h3>
-                <p>A gamified point, activity, and reward system designed to increase agent participation and make progress visible in real time.</p>
-              </div>
-              <span class="card-link">VIEW CASE <span aria-hidden="true">↗</span></span>
-            </div>
-            <span class="card-glow" aria-hidden="true"></span>
-          </a>
-
-          <a class="project-card reveal" href="#portfolio-gallery" aria-label="View Meta Ads Campaign System case">
-            <div class="project-preview">
-              <img src="https://picsum.photos/id/96/600/400" alt="Meta Ads Campaign Preview" loading="lazy">
-            </div>
-            <div class="project-card__inner">
-              <div>
-                <p class="card-label">PERFORMANCE MARKETING</p>
-                <h3>Meta Ads Campaign System</h3>
-                <p>Managed ~Rp20M Meta Ads budget at Xavier Marks, contributing to 3 property closings and Rp118M gross commission.</p>
-              </div>
-              <span class="card-link">VIEW CASE <span aria-hidden="true">↗</span></span>
-            </div>
-            <span class="card-glow" aria-hidden="true"></span>
-          </a>
-
-          <a class="project-card reveal" href="#web-apps"
-            aria-label="View Internal Listing Hub case">
-            <div class="project-preview">
-              <img src="https://picsum.photos/id/1043/600/400" alt="Internal Listing Hub Preview" loading="lazy">
-            </div>
-            <div class="project-card__inner">
-              <div>
-                <p class="card-label">DIGITAL MARKETPLACE</p>
-                <h3>Internal Listing Hub</h3>
-                <p>A digital property listing marketplace designed to streamline listing discovery and sharing for property agents.</p>
-              </div>
-              <span class="card-link">VIEW CASE <span aria-hidden="true">↗</span></span>
-            </div>
-            <span class="card-glow" aria-hidden="true"></span>
-          </a>
-
-          <a class="project-card project-card--wide reveal" href="#web-apps"
-            aria-label="View Kosan Bu Endang Turnaround case">
-            <div class="project-preview">
-              <img src="https://picsum.photos/id/119/600/400" alt="Kosan Bu Endang Turnaround Preview" loading="lazy">
-            </div>
-            <div class="project-card__inner">
-              <div>
-                <p class="card-label">BUSINESS OPERATIONS</p>
-                <h3>Kosan Bu Endang Turnaround</h3>
-                <p>Achieved 100% occupancy in 2 weeks through renovation and targeted marketing, plus built a custom rent collection web-app.</p>
-              </div>
-              <span class="card-link">VIEW CASE <span aria-hidden="true">↗</span></span>
-            </div>
-            <span class="card-glow" aria-hidden="true"></span>
-          </a>
-
-          <a class="project-card reveal" href="#portfolio-gallery"
-            aria-label="View Geektuku and Digital Brands case">
-            <div class="project-preview">
-              <img src="https://picsum.photos/id/122/600/400" alt="Geektuku Digital Brands Preview" loading="lazy">
-            </div>
-            <div class="project-card__inner">
-              <div>
-                <p class="card-label">BRANDING &amp; E-COMMERCE</p>
-                <h3>Geektuku &amp; Digital Brands</h3>
-                <p>Founded and operated three digital retail brands, accumulating 500+ positive customer reviews across Shopee and Tokopedia.</p>
-              </div>
-              <span class="card-link">VIEW CASE <span aria-hidden="true">↗</span></span>
-            </div>
-            <span class="card-glow" aria-hidden="true"></span>
-          </a>
-
-          <a class="project-card reveal" href="#portfolio-gallery" aria-label="View Peduly.com Campaign Content case">
-            <div class="project-preview">
-              <img src="https://picsum.photos/id/48/600/400" alt="Peduly.com Campaign Content Preview" loading="lazy">
-            </div>
-            <div class="project-card__inner">
-              <div>
-                <p class="card-label">VIRAL CONTENT CREATIVE</p>
-                <h3>Peduly.com Campaign Content</h3>
-                <p>Visual and video campaign content reaching 400K+ views, 30K+ likes, and 150K+ Instagram Reels views.</p>
-              </div>
-              <span class="card-link">VIEW CASE <span aria-hidden="true">↗</span></span>
-            </div>
-            <span class="card-glow" aria-hidden="true"></span>
-          </a>
+      <!-- Desktop Hero Meta Floating Widget -->
+      <div
+        class="hero-meta glass absolute bottom-8 right-8 z-20 hidden w-[280px] rounded-[24px] p-6 lg:block border border-[#f3f0e8]/10 bg-black/40 backdrop-blur-xl">
+        <div class="mb-4 flex items-center justify-between text-2xl text-[#ff5a1f]">
+          <span>✳</span>
+          <span class="flex h-2 w-2 rounded-full bg-[#ff5a1f] animate-pulse"></span>
+        </div>
+        <p class="text-[17px] font-semibold leading-[1.3] tracking-[-0.03em] text-[#f3f0e8]">
+          Marketing × Design × Tech, handled by one person.
+        </p>
+        <div
+          class="mt-6 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.14em] text-[#f3f0e8]/45 border-t border-[#f3f0e8]/10 pt-4">
+          <span>Xavier Marks Patos</span>
+          <span class="h-1 w-1 rounded-full bg-[#ff5a1f]"></span>
+          <span>Surabaya / 2026</span>
         </div>
       </div>
     </section>
 
-    <section class="section gallery-section" id="portfolio-gallery" aria-labelledby="gallery-title">
-      <div class="wrap">
-        <header class="section-heading reveal">
-          <div>
-            <p class="eyebrow">VISUAL AND MOTION GALLERY</p>
-            <h2 id="gallery-title">Selected visuals in motion.</h2>
-          </div>
-          <p class="section-intro">
-            A moving gallery of campaign visuals, property advertisements, social content, and experimental animation.
-          </p>
-        </header>
+    <!-- STUDIO / ABOUT -->
+    <section id="studio" data-alias="about"
+      class="brand-section relative flex min-h-screen items-center overflow-hidden px-5 py-24 md:px-8 lg:px-12">
+      <div id="about" class="sr-only"></div>
+      <!-- Watermark Background -->
+      <div class="pointer-events-none absolute inset-x-0 top-6 z-0 select-none overflow-hidden opacity-60">
+        <h2
+          class="brand-drift wordmark text-[clamp(4.5rem,16vw,14rem)] font-black leading-none text-[#f3f0e8]/[0.04]">
+          About
+        </h2>
       </div>
 
-      <div class="carousel reveal" data-carousel tabindex="0" aria-label="Portfolio gallery carousel">
-        <div class="carousel-track" data-carousel-track>
-          <article class="gallery-slide is-active" data-slide>
-            <div class="gallery-media">
-              <img src="https://picsum.photos/id/1029/960/540" alt="Luxury property campaign visual" loading="lazy">
-              <video muted loop playsinline preload="none" poster="https://picsum.photos/id/1029/960/540"
-                aria-hidden="true">
-                <source src="https://vjs.zencdn.net/v/oceans.mp4" type="video/mp4">
-              </video>
-              <div class="gallery-caption">
-                <div>
-                  <p class="card-label">PROPERTY CAMPAIGN</p>
-                  <h3>Luxury Property Campaign</h3>
-                </div>
-                <span>2026</span>
-              </div>
-            </div>
-          </article>
+      <div class="relative z-10 mx-auto grid w-full max-w-6xl gap-12 md:grid-cols-12 items-center">
+        <div class="md:col-span-5">
+          <p class="section-label">About Me</p>
+          <h3 class="mt-6 text-3xl font-black tracking-[-0.04em] text-[#f3f0e8] sm:text-4xl lg:text-[42px] leading-tight">
+            A creative problem solver bridging marketing, design, technology, and AI.
+          </h3>
+          <p data-reveal="" class="mt-6 text-base font-medium leading-[1.75] text-[#f3f0e8]/65">
+            I do not just wait for a brief and execute it. I observe workflows, identify bottlenecks, brainstorm campaign concepts, and build the digital tools needed to solve them. From high-converting Meta Ads and property marketing campaigns to custom internal web applications, I connect ideas directly to practical execution.
+          </p>
 
-          <article class="gallery-slide" data-slide>
-            <div class="gallery-media">
-              <img src="https://picsum.photos/id/1057/960/540" alt="Meta Ads motion creative" loading="lazy">
-              <video muted loop playsinline preload="none" poster="https://picsum.photos/id/1057/960/540"
-                aria-hidden="true">
-                <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
-              </video>
-              <div class="gallery-caption">
-                <div>
-                  <p class="card-label">PERFORMANCE CREATIVE</p>
-                  <h3>Meta Ads Motion Creative</h3>
-                </div>
-                <span>2026</span>
-              </div>
+          <div class="mt-8 flex items-center gap-6 text-xs font-bold uppercase tracking-wider text-[#f3f0e8]/50">
+            <div>
+              <span class="block text-2xl font-black text-[#ff5a1f]">2+</span>
+              <span>Years exp</span>
             </div>
-          </article>
-
-          <article class="gallery-slide" data-slide>
-            <div class="gallery-media">
-              <img src="https://picsum.photos/id/1060/960/540" alt="Internal event animation" loading="lazy">
-              <video muted loop playsinline preload="none" poster="https://picsum.photos/id/1060/960/540"
-                aria-hidden="true">
-                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-              </video>
-              <div class="gallery-caption">
-                <div>
-                  <p class="card-label">INTERNAL CAMPAIGN</p>
-                  <h3>Internal Event Animation</h3>
-                </div>
-                <span>2026</span>
-              </div>
+            <div class="h-8 w-[1px] bg-[#f3f0e8]/10"></div>
+            <div>
+              <span class="block text-2xl font-black text-[#ff5a1f]">10+</span>
+              <span>Web-apps built</span>
             </div>
-          </article>
-
-          <article class="gallery-slide" data-slide>
-            <div class="gallery-media">
-              <img src="https://picsum.photos/id/1080/960/540" alt="AI property transformation visual" loading="lazy">
-              <video muted loop playsinline preload="none" poster="https://picsum.photos/id/1080/960/540"
-                aria-hidden="true">
-                <source src="https://vjs.zencdn.net/v/oceans.mp4" type="video/mp4">
-              </video>
-              <div class="gallery-caption">
-                <div>
-                  <p class="card-label">AI VISUAL</p>
-                  <h3>AI Property Transformation</h3>
-                </div>
-                <span>2026</span>
-              </div>
+            <div class="h-8 w-[1px] bg-[#f3f0e8]/10"></div>
+            <div>
+              <span class="block text-2xl font-black text-[#ff5a1f]">Award</span>
+              <span>Best Sales Support</span>
             </div>
-          </article>
-
-          <article class="gallery-slide" data-slide>
-            <div class="gallery-media">
-              <img src="https://picsum.photos/id/1084/960/540" alt="Social media campaign visual" loading="lazy">
-              <video muted loop playsinline preload="none" poster="https://picsum.photos/id/1084/960/540"
-                aria-hidden="true">
-                <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
-              </video>
-              <div class="gallery-caption">
-                <div>
-                  <p class="card-label">SOCIAL MEDIA</p>
-                  <h3>Social Media Campaign Visual</h3>
-                </div>
-                <span>2026</span>
-              </div>
-            </div>
-          </article>
+          </div>
         </div>
 
-        <div class="carousel-footer wrap">
-          <div class="carousel-progress" aria-hidden="true">
-            <span data-carousel-progress></span>
+        <div class="brand-words grid gap-4 sm:gap-6 md:col-span-7">
+          <p class="brand-word text-[clamp(2.5rem,6vw,5.5rem)] font-black tracking-[-0.07em] leading-none text-[#f3f0e8]">
+            marketing
+          </p>
+          <p class="brand-word text-right text-[clamp(2.5rem,6vw,5.5rem)] font-black tracking-[-0.07em] leading-none text-[#ff5a1f]">
+            design
+          </p>
+          <p class="brand-word text-[clamp(2.5rem,6vw,5.5rem)] font-black tracking-[-0.07em] leading-none text-[#f3f0e8]">
+            tech
+          </p>
+          <p class="brand-word text-right text-[clamp(2.5rem,6vw,5.5rem)] font-black tracking-[-0.07em] leading-none text-[#f3f0e8]/80">
+            automate
+          </p>
+          <p class="brand-word text-[clamp(2.5rem,6vw,5.5rem)] font-black tracking-[-0.07em] leading-none text-[#ff5a1f]">
+            solve
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="services-section relative min-h-screen overflow-hidden px-5 py-24 md:px-8 lg:px-12">
+      <div
+        class="absolute left-1/2 top-0 h-[280px] sm:h-[360px] w-[90%] md:w-[78%] -translate-x-1/2 overflow-hidden rounded-b-[32px] border-x border-b border-[#f3f0e8]/10 md:h-[480px] lg:h-[580px]">
+        <img
+          src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/3b2725ca-5b05-49fe-b2ff-9de382bf26ef_1600w.webp"
+          alt="Green atmospheric strip" class="strip-image h-full w-full object-cover object-center opacity-60" loading="lazy" />
+      </div>
+
+      <div class="relative z-10 grid min-h-screen items-center gap-12 md:grid-cols-12">
+        <div data-reveal="" class="md:col-span-3">
+          <p class="section-label mb-6 md:mb-20">Specialized Skills</p>
+          <p class="max-w-60 text-sm font-medium leading-[1.7] text-[#f3f0e8]/60">
+            Eight practical capabilities I practice daily, from campaign ideation to performance advertising and custom web-app builds.
+          </p>
+        </div>
+
+        <div class="md:col-span-6 md:col-start-4">
+          <p class="services-copy text-3xl font-extrabold leading-[1] tracking-[-0.05em] sm:text-5xl lg:text-6xl text-[#f3f0e8]">
+            Creative marketing, technology, and design in one workflow.
+          </p>
+
+          <div class="mt-10 grid gap-4 sm:grid-cols-2">
+            <div class="service-card glass rounded-[28px] p-6">
+              <p class="mb-10 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f]">
+                01
+              </p>
+              <h3 class="text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+                Creative Marketing
+              </h3>
+              <p class="mt-3 text-sm leading-[1.6] text-[#f3f0e8]/60">
+                Campaign ideation, office programs, games, gamification, and promotional concepts tied to clear business goals.
+              </p>
+            </div>
+            
+            <div class="service-card glass rounded-[28px] p-6">
+              <p class="mb-10 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f]">
+                02
+              </p>
+              <h3 class="text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+                Graphic Design
+              </h3>
+              <p class="mt-3 text-sm leading-[1.6] text-[#f3f0e8]/60">
+                Digital and print collateral, branding, posters, brochures, banners, and marketing visuals with meticulous craft.
+              </p>
+            </div>
+
+            <div class="service-card glass rounded-[28px] p-6">
+              <p class="mb-10 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f]">
+                03
+              </p>
+              <h3 class="text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+                Digital Marketing &amp; Meta Ads
+              </h3>
+              <p class="mt-3 text-sm leading-[1.6] text-[#f3f0e8]/60">
+                Campaign planning, audience targeting, creative testing, lead tracking, and performance reporting.
+              </p>
+            </div>
+
+            <div class="service-card glass rounded-[28px] p-6">
+              <p class="mb-10 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f]">
+                04
+              </p>
+              <h3 class="text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+                Web-App Development
+              </h3>
+              <p class="mt-3 text-sm leading-[1.6] text-[#f3f0e8]/60">
+                Custom internal tools, listing marketplaces, and workflow automation built with Next.js and TailwindCSS.
+              </p>
+            </div>
+
+            <div class="service-card glass rounded-[28px] p-6">
+              <p class="mb-10 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f]">
+                05
+              </p>
+              <h3 class="text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+                Generative AI &amp; Content
+              </h3>
+              <p class="mt-3 text-sm leading-[1.6] text-[#f3f0e8]/60">
+                AI-assisted image and video production, automated workflows, and content systems that accelerate output.
+              </p>
+            </div>
+
+            <div class="service-card glass rounded-[28px] p-6">
+              <p class="mb-10 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f]">
+                06
+              </p>
+              <h3 class="text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+                Problem Solving &amp; Systems
+              </h3>
+              <p class="mt-3 text-sm leading-[1.6] text-[#f3f0e8]/60">
+                Turning manual, repetitive office bottlenecks into structured, automated digital processes.
+              </p>
+            </div>
+
+            <div class="service-card glass rounded-[28px] p-6">
+              <p class="mb-10 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f]">
+                07
+              </p>
+              <h3 class="text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+                UI/UX &amp; Landing Pages
+              </h3>
+              <p class="mt-3 text-sm leading-[1.6] text-[#f3f0e8]/60">
+                Responsive high-fidelity interfaces, wireframes, user flows, and conversion-focused pages.
+              </p>
+            </div>
+
+            <div class="service-card glass rounded-[28px] p-6">
+              <p class="mb-10 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f]">
+                08
+              </p>
+              <h3 class="text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+                Business &amp; Operations
+              </h3>
+              <p class="mt-3 text-sm leading-[1.6] text-[#f3f0e8]/60">
+                E-commerce management, customer engagement, and business operations with 500+ verified customer reviews.
+              </p>
+            </div>
           </div>
-          <div class="carousel-controls">
-            <button type="button" data-carousel-prev aria-label="Previous gallery item">←</button>
-            <span class="carousel-count"><strong data-carousel-current>01</strong> / 05</span>
-            <button type="button" data-carousel-next aria-label="Next gallery item">→</button>
+        </div>
+
+        <div data-reveal="" class="md:col-span-3 md:col-start-10">
+          <div class="glass rounded-[24px] p-6 border border-[#f3f0e8]/10">
+            <p class="mb-4 text-xs font-bold uppercase tracking-[0.12em] text-[#ff5a1f] flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-[#ff5a1f]"></span>
+              Xavier Marks Patos
+            </p>
+            <p class="text-sm font-medium leading-[1.7] text-[#f3f0e8]/70">
+              One collaborator across marketing, design, and code. Fewer handovers, faster decisions, and working tools.
+            </p>
+            <a href="#contact" class="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#f3f0e8] hover:text-[#ff5a1f] transition">
+              Get in touch <span aria-hidden="true">→</span>
+            </a>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="apps-section" id="web-apps" aria-labelledby="apps-title">
-      <div class="wrap">
-        <header class="section-heading reveal">
-          <div>
-            <p class="eyebrow">TOOLS BUILT FOR REAL WORK</p>
-            <h2 id="apps-title">Web apps created to remove repetitive work.</h2>
-          </div>
-          <p class="section-intro">
-            Each tool started from a real operational problem and became a focused system used to organize data, speed
-            up tasks, or improve participation.
+    <!-- TELEMETRY / BY THE NUMBERS -->
+    <section class="numbers-intro relative min-h-screen overflow-hidden px-5 py-24 md:px-8 lg:px-12">
+      <figure
+        class="parallax-image parallax-slow pointer-events-none right-4 top-32 h-28 w-40 rotate-[7deg] md:right-8 md:top-28 md:h-48 md:w-72 rounded-2xl">
+        <img
+          src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4734259a-bad7-422f-981e-ce01e79184f2_1600w.jpg"
+          alt="Abstract architecture detail" loading="lazy" />
+      </figure>
+
+      <figure
+        class="parallax-image parallax-fast pointer-events-none bottom-24 left-4 h-24 w-36 rotate-[-9deg] md:bottom-20 md:left-10 md:h-40 md:w-60 rounded-2xl">
+        <img
+          src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/c543a9e1-f226-4ced-80b0-feb8445a75b9_1600w.jpg"
+          alt="Landscape color field" loading="lazy" />
+      </figure>
+
+      <div class="grid min-h-screen items-center gap-12 md:grid-cols-12">
+        <div data-reveal="" class="md:col-span-3">
+          <p class="section-label mb-8">By the Numbers</p>
+          <p class="max-w-72 text-sm font-medium leading-[1.7] text-[#f3f0e8]/60">
+            Verified milestones across internal software tools, performance advertising, and digital operations.
           </p>
-        </header>
+          <a href="#contact" class="mt-8 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#ff5a1f] hover:underline">
+            Start a project
+            <i data-lucide="arrow-right" class="h-4 w-4"></i>
+          </a>
+        </div>
 
-        <div class="apps-grid">
-          <article class="app-card reveal">
-            <div class="app-preview">
-              <img src="https://picsum.photos/id/1/600/400" alt="PROGRAM MBG leaderboard interface preview"
-                loading="lazy">
+        <div data-reveal="" class="md:col-span-5 md:col-start-5">
+          <h2 class="text-[clamp(3rem,8vw,7rem)] font-black leading-[0.92] tracking-[-0.07em] text-[#f3f0e8]">
+            By the
+            <br />
+            Numbers
+          </h2>
+        </div>
+
+        <div class="stat-grid md:col-span-4 md:col-start-10">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="note-card glass rounded-[24px] p-5 border border-[#f3f0e8]/10">
+              <p class="text-4xl sm:text-5xl font-black tracking-[-0.06em] text-[#ff5a1f]">10+</p>
+              <p class="mt-4 text-xs font-semibold text-[#f3f0e8]/60 uppercase tracking-wider">
+                internal web-apps
+              </p>
             </div>
-            <div class="app-card__body">
-              <p class="card-label">GAMIFICATION TOOL</p>
-              <h3>PROGRAM MBG Leaderboard</h3>
-              <dl>
-                <div>
-                  <dt>Problem</dt>
-                  <dd>Agent activities, leaderboards, and reward points were difficult to track manually across the office.</dd>
-                </div>
-                <div>
-                  <dt>Solution</dt>
-                  <dd>A real-time gamification dashboard with activity tracking, leaderboards, and point redemption.</dd>
-                </div>
-              </dl>
-              <a href="#" class="app-link" aria-label="Open PROGRAM MBG Leaderboard preview">OPEN PREVIEW <span
-                  aria-hidden="true">→</span></a>
+            <div class="note-card glass rounded-[24px] p-5 border border-[#f3f0e8]/10">
+              <p class="text-3xl sm:text-4xl font-black tracking-[-0.06em] text-[#f3f0e8]">Rp118M</p>
+              <p class="mt-4 text-xs font-semibold text-[#f3f0e8]/60 uppercase tracking-wider">
+                gross commission
+              </p>
+            </div>
+            <div class="note-card glass rounded-[24px] p-5 border border-[#f3f0e8]/10">
+              <p class="text-4xl sm:text-5xl font-black tracking-[-0.06em] text-[#f3f0e8]">500+</p>
+              <p class="mt-4 text-xs font-semibold text-[#f3f0e8]/60 uppercase tracking-wider">
+                positive reviews
+              </p>
+            </div>
+            <div class="note-card glass rounded-[24px] p-5 border border-[#f3f0e8]/10">
+              <p class="text-4xl sm:text-5xl font-black tracking-[-0.06em] text-[#ff5a1f]">100%</p>
+              <p class="mt-4 text-xs font-semibold text-[#f3f0e8]/60 uppercase tracking-wider">
+                occupancy in 2 wks
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISUAL ARCHIVE -->
+    <section id="portfolio-gallery" class="archive-scroll-section relative overflow-hidden px-5 py-24 md:px-8 lg:px-12">
+      <div id="archive" class="sr-only"></div>
+      <div class="mx-auto grid max-w-6xl gap-8 md:grid-cols-12 items-center">
+        <div class="md:col-span-4">
+          <p class="section-label">Visual Archive</p>
+          <p class="mt-6 max-w-sm text-sm font-medium leading-[1.7] text-[#f3f0e8]/60">
+            Selected visual assets, AI-assisted property posters, campaign creatives, and digital interface experiments.
+          </p>
+        </div>
+
+        <div class="md:col-span-8">
+          <h2
+            class="archive-title text-[clamp(2.5rem,6vw,5.5rem)] font-black leading-[0.95] tracking-[-0.06em] text-[#f3f0e8]">
+            Things I made while figuring things out.
+          </h2>
+        </div>
+      </div>
+
+      <div class="archive-gallery mt-16 flex gap-6 will-change-transform overflow-x-auto pb-6 no-scrollbar md:overflow-visible">
+        <figure
+          class="archive-card h-[380px] w-[280px] sm:h-[480px] sm:w-[360px] md:h-[560px] md:w-[420px] shrink-0 overflow-hidden rounded-[30px] border border-[#f3f0e8]/10 bg-[#101310]">
+          <img
+            src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4734259a-bad7-422f-981e-ce01e79184f2_1600w.jpg"
+            alt="Archive fragment 01" class="h-full w-full object-cover opacity-80" loading="lazy" />
+        </figure>
+
+        <figure
+          class="archive-card md:mt-16 h-[340px] w-[260px] sm:h-[420px] sm:w-[320px] md:h-[480px] md:w-[360px] shrink-0 overflow-hidden rounded-[30px] border border-[#f3f0e8]/10 bg-[#101310]">
+          <img
+            src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/c543a9e1-f226-4ced-80b0-feb8445a75b9_1600w.jpg"
+            alt="Archive fragment 02" class="h-full w-full object-cover opacity-80" loading="lazy" />
+        </figure>
+
+        <figure
+          class="archive-card h-[380px] w-[280px] sm:h-[480px] sm:w-[360px] md:h-[560px] md:w-[420px] shrink-0 overflow-hidden rounded-[30px] border border-[#f3f0e8]/10 bg-[#101310]">
+          <img
+            src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg"
+            alt="Archive fragment 03" class="h-full w-full object-cover opacity-80" loading="lazy" />
+        </figure>
+
+        <figure
+          class="archive-card md:mt-24 h-[340px] w-[260px] sm:h-[420px] sm:w-[320px] md:h-[480px] md:w-[360px] shrink-0 overflow-hidden rounded-[30px] border border-[#f3f0e8]/10 bg-[#101310]">
+          <img
+            src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4734259a-bad7-422f-981e-ce01e79184f2_1600w.jpg"
+            alt="Archive fragment 04" class="h-full w-full object-cover opacity-80" loading="lazy" />
+        </figure>
+
+        <figure
+          class="archive-card h-[380px] w-[280px] sm:h-[480px] sm:w-[360px] md:h-[560px] md:w-[420px] shrink-0 overflow-hidden rounded-[30px] border border-[#f3f0e8]/10 bg-[#101310]">
+          <img
+            src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/c543a9e1-f226-4ced-80b0-feb8445a75b9_1600w.jpg"
+            alt="Archive fragment 05" class="h-full w-full object-cover opacity-80" loading="lazy" />
+        </figure>
+      </div>
+    </section>
+
+    <!-- SELECTED WORKS -->
+    <section id="work" class="work-section relative min-h-screen overflow-hidden px-5 py-24 md:px-8 lg:px-12">
+      <div id="recent-works" class="sr-only"></div>
+      <div class="grid min-h-screen items-center gap-12 md:grid-cols-12">
+        <div class="work-copy md:col-span-3">
+          <p class="section-label mb-8">Selected Works</p>
+          <h2 id="workCountHeading" class="text-4xl font-black leading-[0.95] tracking-[-0.06em] sm:text-5xl md:text-6xl text-[#f3f0e8]">
+            06 Featured Works
+          </h2>
+          <p class="mt-6 max-w-72 text-sm font-medium leading-[1.7] text-[#f3f0e8]/60">
+            Selected case studies: custom internal tools, performance marketing systems, and operational solutions built for real business challenges.
+          </p>
+          <a href="#web-apps"
+            class="magnetic-button mt-8 inline-flex items-center gap-3 rounded-full border border-[#f3f0e8]/15 px-6 py-3.5 text-xs font-bold uppercase tracking-[0.14em] hover:border-[#ff5a1f] hover:text-[#ff5a1f] transition">
+            View Web-Apps
+            <i data-lucide="arrow-down" class="h-4 w-4"></i>
+          </a>
+        </div>
+
+        <div class="relative md:col-span-6 md:col-start-4">
+          <div class="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center overflow-hidden">
+            <span id="workMaskedNumber"
+              class="masked-number text-[clamp(7.5rem,20vw,26rem)] font-black leading-none tracking-[-0.09em]"
+              style="--number-image: url('https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&amp;fit=crop&amp;w=1600&amp;q=90')">
+              06
+            </span>
+            <img id="workPreviewImg1"
+              src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/5bab247f-35d9-400d-a82b-fd87cfe913d2_1600w.webp"
+              alt="Project preview one"
+              class="project-card absolute left-0 top-14 hidden h-44 w-72 rotate-[-14deg] rounded-[18px] border border-[#f3f0e8]/10 object-cover md:block shadow-2xl transition-all duration-500" loading="lazy" />
+            <img id="workPreviewImg2"
+              src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/30104e3c-5eea-4b93-93e9-5313698a7156_1600w.webp"
+              alt="Project preview two"
+              class="project-card absolute right-4 top-6 hidden h-44 w-72 rotate-[10deg] rounded-[18px] border border-[#f3f0e8]/10 object-cover md:block shadow-2xl transition-all duration-500" loading="lazy" />
+          </div>
+        </div>
+
+        <div data-reveal="" class="md:col-span-3">
+          <p class="text-xs font-extrabold uppercase tracking-[0.14em] text-[#ff5a1f]">
+            Project Index · Case Studies
+          </p>
+          <ul id="projectListContainer" class="mt-6 space-y-4 text-sm font-medium text-[#f3f0e8]/65">
+            <li class="border-b border-[#f3f0e8]/10 pb-3 group transition hover:text-[#f3f0e8]"
+                data-cover="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/5bab247f-35d9-400d-a82b-fd87cfe913d2_1600w.webp">
+              <a href="/work/internal-listing-hub" class="block">
+                <span class="font-bold text-[#f3f0e8] group-hover:text-[#ff5a1f] transition flex items-center justify-between">
+                  <span>01 · Internal Listing Hub</span>
+                  <span class="text-xs opacity-0 group-hover:opacity-100 transition text-[#ff5a1f]">↗</span>
+                </span>
+                <span class="block text-xs text-[#f3f0e8]/45 mt-0.5">Property Marketplace Web-App</span>
+              </a>
+            </li>
+            <li class="border-b border-[#f3f0e8]/10 pb-3 group transition hover:text-[#f3f0e8]"
+                data-cover="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/30104e3c-5eea-4b93-93e9-5313698a7156_1600w.webp">
+              <a href="/work/meta-ads-campaign-workflow" class="block">
+                <span class="font-bold text-[#f3f0e8] group-hover:text-[#ff5a1f] transition flex items-center justify-between">
+                  <span>02 · Meta Ads Campaign System</span>
+                  <span class="text-xs opacity-0 group-hover:opacity-100 transition text-[#ff5a1f]">↗</span>
+                </span>
+                <span class="block text-xs text-[#f3f0e8]/45 mt-0.5">Performance Marketing &amp; Rp118M Commission</span>
+              </a>
+            </li>
+            <li class="border-b border-[#f3f0e8]/10 pb-3 group transition hover:text-[#f3f0e8]"
+                data-cover="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4734259a-bad7-422f-981e-ce01e79184f2_1600w.jpg">
+              <a href="/work/program-mbg-real-time-leaderboard" class="block">
+                <span class="font-bold text-[#f3f0e8] group-hover:text-[#ff5a1f] transition flex items-center justify-between">
+                  <span>03 · PROGRAM MBG Leaderboard</span>
+                  <span class="text-xs opacity-0 group-hover:opacity-100 transition text-[#ff5a1f]">↗</span>
+                </span>
+                <span class="block text-xs text-[#f3f0e8]/45 mt-0.5">Real-Time Gamification &amp; Rewards</span>
+              </a>
+            </li>
+            <li class="border-b border-[#f3f0e8]/10 pb-3 group transition hover:text-[#f3f0e8]"
+                data-cover="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/c543a9e1-f226-4ced-80b0-feb8445a75b9_1600w.jpg">
+              <a href="/work/kosan-bu-endang-rent-app" class="block">
+                <span class="font-bold text-[#f3f0e8] group-hover:text-[#ff5a1f] transition flex items-center justify-between">
+                  <span>04 · Kosan Bu Endang</span>
+                  <span class="text-xs opacity-0 group-hover:opacity-100 transition text-[#ff5a1f]">↗</span>
+                </span>
+                <span class="block text-xs text-[#f3f0e8]/45 mt-0.5">Turnaround Marketing &amp; Rent App</span>
+              </a>
+            </li>
+            <li class="border-b border-[#f3f0e8]/10 pb-3 group transition hover:text-[#f3f0e8]"
+                data-cover="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg">
+              <a href="/work/geektuku-digital-brands" class="block">
+                <span class="font-bold text-[#f3f0e8] group-hover:text-[#ff5a1f] transition flex items-center justify-between">
+                  <span>05 · Geektuku &amp; Digital Brands</span>
+                  <span class="text-xs opacity-0 group-hover:opacity-100 transition text-[#ff5a1f]">↗</span>
+                </span>
+                <span class="block text-xs text-[#f3f0e8]/45 mt-0.5">E-Commerce Operations (500+ Reviews)</span>
+              </a>
+            </li>
+            <li class="group transition hover:text-[#f3f0e8]"
+                data-cover="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/3b2725ca-5b05-49fe-b2ff-9de382bf26ef_1600w.webp">
+              <a href="/work/peduly-campaign-content" class="block">
+                <span class="font-bold text-[#f3f0e8] group-hover:text-[#ff5a1f] transition flex items-center justify-between">
+                  <span>06 · Peduly.com Campaign Content</span>
+                  <span class="text-xs opacity-0 group-hover:opacity-100 transition text-[#ff5a1f]">↗</span>
+                </span>
+                <span class="block text-xs text-[#f3f0e8]/45 mt-0.5">Viral Social Media (400K+ Views)</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- WEB APPS SECTION -->
+    <section id="web-apps" class="apps-section relative min-h-screen overflow-hidden px-5 py-24 md:px-8 lg:px-12 border-t border-[#f3f0e8]/5">
+      <div class="relative z-10 mx-auto w-full max-w-7xl">
+        <div class="mb-16 flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+          <div data-reveal="">
+            <p class="section-label mb-4">Web-Apps &amp; Internal Tools</p>
+            <h2 class="text-4xl font-black leading-[0.95] tracking-[-0.06em] sm:text-5xl md:text-6xl text-[#f3f0e8]">
+              Tools built for real work.
+            </h2>
+          </div>
+          <p data-reveal="" class="max-w-md text-sm font-medium leading-[1.7] text-[#f3f0e8]/65">
+            Web applications created to remove repetitive operational tasks, automate data tracking, and improve daily team performance.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <!-- App 1: PROGRAM MBG -->
+          <article data-reveal="" class="glass group relative overflow-hidden rounded-[32px] border border-[#f3f0e8]/10 p-8 hover:border-[#ff5a1f]/40 transition duration-500">
+            <div class="flex items-start justify-between gap-4">
+              <span class="rounded-full bg-[#ff5a1f]/15 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-[#ff5a1f]">
+                Gamification Tool
+              </span>
+              <span class="text-xs font-bold text-[#f3f0e8]/40">2024 · Office System</span>
+            </div>
+            <h3 class="mt-6 text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8] group-hover:text-[#ff5a1f] transition">
+              PROGRAM MBG Leaderboard
+            </h3>
+            <div class="mt-6 space-y-4 text-sm leading-[1.65]">
+              <div class="rounded-[20px] bg-white/[0.025] p-4 border border-[#f3f0e8]/5">
+                <span class="block text-[11px] font-bold uppercase tracking-widest text-[#ff5a1f]">Problem</span>
+                <p class="mt-1 text-[#f3f0e8]/70">Agent activities, leaderboards, and reward points were difficult to track manually across the office.</p>
+              </div>
+              <div class="rounded-[20px] bg-white/[0.025] p-4 border border-[#f3f0e8]/5">
+                <span class="block text-[11px] font-bold uppercase tracking-widest text-[#ff5a1f]">Solution</span>
+                <p class="mt-1 text-[#f3f0e8]/70">A real-time gamification dashboard with live activity tracking, rank shifting, and automated point redemption.</p>
+              </div>
+            </div>
+            <div class="mt-8 flex items-center justify-between pt-4 border-t border-[#f3f0e8]/10">
+              <span class="text-xs font-semibold text-[#f3f0e8]/45">Real-time sync · Mobile &amp; TV display</span>
+              <a href="/work/program-mbg-real-time-leaderboard" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f] hover:underline">
+                Open Case Study
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              </a>
             </div>
           </article>
 
-          <article class="app-card reveal">
-            <div class="app-preview">
-              <img src="https://picsum.photos/id/2/600/400" alt="Internal Listing Hub interface preview"
-                loading="lazy">
+          <!-- App 2: Internal Listing Hub -->
+          <article data-reveal="" class="glass group relative overflow-hidden rounded-[32px] border border-[#f3f0e8]/10 p-8 hover:border-[#ff5a1f]/40 transition duration-500">
+            <div class="flex items-start justify-between gap-4">
+              <span class="rounded-full bg-[#ff5a1f]/15 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-[#ff5a1f]">
+                Marketplace Tool
+              </span>
+              <span class="text-xs font-bold text-[#f3f0e8]/40">2024–2026 · Daily Use</span>
             </div>
-            <div class="app-card__body">
-              <p class="card-label">MARKETPLACE TOOL</p>
-              <h3>Internal Listing Hub</h3>
-              <dl>
-                <div>
-                  <dt>Problem</dt>
-                  <dd>Property listings and marketing collaterals were scattered across WhatsApp chats and hard to find.</dd>
-                </div>
-                <div>
-                  <dt>Solution</dt>
-                  <dd>A digital property listing hub allowing agents to search, filter, and share verified listings instantly.</dd>
-                </div>
-              </dl>
-              <a href="#" class="app-link" aria-label="Open Internal Listing Hub preview">OPEN PREVIEW <span
-                  aria-hidden="true">→</span></a>
+            <h3 class="mt-6 text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8] group-hover:text-[#ff5a1f] transition">
+              Internal Listing Hub
+            </h3>
+            <div class="mt-6 space-y-4 text-sm leading-[1.65]">
+              <div class="rounded-[20px] bg-white/[0.025] p-4 border border-[#f3f0e8]/5">
+                <span class="block text-[11px] font-bold uppercase tracking-widest text-[#ff5a1f]">Problem</span>
+                <p class="mt-1 text-[#f3f0e8]/70">Property listings and marketing collaterals were scattered across WhatsApp chats and hard to locate.</p>
+              </div>
+              <div class="rounded-[20px] bg-white/[0.025] p-4 border border-[#f3f0e8]/5">
+                <span class="block text-[11px] font-bold uppercase tracking-widest text-[#ff5a1f]">Solution</span>
+                <p class="mt-1 text-[#f3f0e8]/70">A digital property listing hub allowing 50+ agents to search, filter, and share verified inventory instantly.</p>
+              </div>
             </div>
-          </article>
-
-          <article class="app-card reveal">
-            <div class="app-preview">
-              <img src="https://picsum.photos/id/3/600/400" alt="Meta Ads recap dashboard interface preview"
-                loading="lazy">
-            </div>
-            <div class="app-card__body">
-              <p class="card-label">REPORTING TOOL</p>
-              <h3>Meta Ads Reporting Dashboard</h3>
-              <dl>
-                <div>
-                  <dt>Problem</dt>
-                  <dd>Campaign metrics across ad sets required repetitive, slow manual recap in spreadsheets.</dd>
-                </div>
-                <div>
-                  <dt>Solution</dt>
-                  <dd>A web application for reviewing Meta Ads spend, leads, CTR, CPM, CPC, and creative performance.</dd>
-                </div>
-              </dl>
-              <a href="#" class="app-link" aria-label="Open Meta Ads Reporting Dashboard preview">OPEN PREVIEW <span
-                  aria-hidden="true">→</span></a>
+            <div class="mt-8 flex items-center justify-between pt-4 border-t border-[#f3f0e8]/10">
+              <span class="text-xs font-semibold text-[#f3f0e8]/45">50+ daily users · Reduced search to &lt; 5s</span>
+              <a href="/work/internal-listing-hub" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f] hover:underline">
+                Open Case Study
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              </a>
             </div>
           </article>
 
-          <article class="app-card reveal">
-            <div class="app-preview">
-              <img src="https://picsum.photos/id/4/600/400" alt="Kosan Bu Endang rent collection app preview" loading="lazy">
+          <!-- App 3: Meta Ads Reporting Dashboard -->
+          <article data-reveal="" class="glass group relative overflow-hidden rounded-[32px] border border-[#f3f0e8]/10 p-8 hover:border-[#ff5a1f]/40 transition duration-500">
+            <div class="flex items-start justify-between gap-4">
+              <span class="rounded-full bg-[#ff5a1f]/15 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-[#ff5a1f]">
+                Reporting Tool
+              </span>
+              <span class="text-xs font-bold text-[#f3f0e8]/40">2023–2026 · Marketing</span>
             </div>
-            <div class="app-card__body">
-              <p class="card-label">OPERATIONS TOOL</p>
-              <h3>Kosan Bu Endang Rent App</h3>
-              <dl>
-                <div>
-                  <dt>Problem</dt>
-                  <dd>Manual rent collection and expense logging created administrative delays and reconciliation errors.</dd>
-                </div>
-                <div>
-                  <dt>Solution</dt>
-                  <dd>A custom web application for tenant records, automated rent reminders, and digitized accounting.</dd>
-                </div>
-              </dl>
-              <a href="#" class="app-link" aria-label="Open Kosan Bu Endang Rent App preview">OPEN PREVIEW <span
-                  aria-hidden="true">→</span></a>
+            <h3 class="mt-6 text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8] group-hover:text-[#ff5a1f] transition">
+              Meta Ads Reporting Dashboard
+            </h3>
+            <div class="mt-6 space-y-4 text-sm leading-[1.65]">
+              <div class="rounded-[20px] bg-white/[0.025] p-4 border border-[#f3f0e8]/5">
+                <span class="block text-[11px] font-bold uppercase tracking-widest text-[#ff5a1f]">Problem</span>
+                <p class="mt-1 text-[#f3f0e8]/70">Campaign metrics across ad sets required repetitive, slow manual recap in complex spreadsheets.</p>
+              </div>
+              <div class="rounded-[20px] bg-white/[0.025] p-4 border border-[#f3f0e8]/5">
+                <span class="block text-[11px] font-bold uppercase tracking-widest text-[#ff5a1f]">Solution</span>
+                <p class="mt-1 text-[#f3f0e8]/70">A web application for reviewing Meta Ads spend, leads, CTR, CPM, CPC, and creative performance in real time.</p>
+              </div>
+            </div>
+            <div class="mt-8 flex items-center justify-between pt-4 border-t border-[#f3f0e8]/10">
+              <span class="text-xs font-semibold text-[#f3f0e8]/45">Rp118M gross commission generated</span>
+              <a href="/work/meta-ads-campaign-workflow" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f] hover:underline">
+                Open Case Study
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              </a>
+            </div>
+          </article>
+
+          <!-- App 4: Kosan Bu Endang Rent App -->
+          <article data-reveal="" class="glass group relative overflow-hidden rounded-[32px] border border-[#f3f0e8]/10 p-8 hover:border-[#ff5a1f]/40 transition duration-500">
+            <div class="flex items-start justify-between gap-4">
+              <span class="rounded-full bg-[#ff5a1f]/15 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-[#ff5a1f]">
+                Operations Tool
+              </span>
+              <span class="text-xs font-bold text-[#f3f0e8]/40">2023–Present · Property</span>
+            </div>
+            <h3 class="mt-6 text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8] group-hover:text-[#ff5a1f] transition">
+              Kosan Bu Endang Rent App
+            </h3>
+            <div class="mt-6 space-y-4 text-sm leading-[1.65]">
+              <div class="rounded-[20px] bg-white/[0.025] p-4 border border-[#f3f0e8]/5">
+                <span class="block text-[11px] font-bold uppercase tracking-widest text-[#ff5a1f]">Problem</span>
+                <p class="mt-1 text-[#f3f0e8]/70">Manual rent collection and expense logging created administrative delays and reconciliation errors.</p>
+              </div>
+              <div class="rounded-[20px] bg-white/[0.025] p-4 border border-[#f3f0e8]/5">
+                <span class="block text-[11px] font-bold uppercase tracking-widest text-[#ff5a1f]">Solution</span>
+                <p class="mt-1 text-[#f3f0e8]/70">A custom web application for tenant records, automated rent reminders via WhatsApp, and digitized accounting.</p>
+              </div>
+            </div>
+            <div class="mt-8 flex items-center justify-between pt-4 border-t border-[#f3f0e8]/10">
+              <span class="text-xs font-semibold text-[#f3f0e8]/45">100% occupancy · 0 billing delays</span>
+              <a href="/work/kosan-bu-endang-rent-app" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f] hover:underline">
+                Open Case Study
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              </a>
             </div>
           </article>
         </div>
       </div>
     </section>
 
-    <footer class="contact-section" id="contact">
-      <div class="contact-shell reveal">
-        <div class="roofline" aria-hidden="true"></div>
-        <div class="contact-grid">
-          <div>
-            <p class="eyebrow">LET'S WORK TOGETHER</p>
-            <h2>Have a campaign, visual concept, or digital problem to solve?</h2>
-            <p>Let us turn it into a clear campaign, an automated workflow, or a working web application.</p>
+    <!-- FIELD NOTES / SOFT SKILLS -->
+    <section class="partners-section relative min-h-screen overflow-hidden px-5 py-24 md:px-8 lg:px-12">
+      <div class="pointer-events-none absolute inset-x-0 top-8 z-0 select-none overflow-hidden opacity-50">
+        <h2
+          class="partners-heading wordmark text-[clamp(4.5rem,16vw,14rem)] font-black leading-none tracking-[-0.08em] text-[#f3f0e8]/[0.04]">
+          Soft Skills
+        </h2>
+      </div>
+
+      <figure
+        class="parallax-image parallax-slow pointer-events-none absolute right-5 top-28 hidden h-44 w-72 rotate-[5deg] overflow-hidden rounded-[28px] border border-[#f3f0e8]/10 md:block lg:right-14 lg:h-56 lg:w-96">
+        <img
+          src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4734259a-bad7-422f-981e-ce01e79184f2_1600w.jpg"
+          alt="Studio workspace detail" class="h-full w-full object-cover" loading="lazy" />
+      </figure>
+
+      <div class="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center">
+        <div class="mb-16 grid gap-8 md:grid-cols-12 items-center">
+          <div class="md:col-span-4">
+            <p class="section-label">Work Principles</p>
           </div>
 
-          <nav class="contact-links" aria-label="Contact links">
-            <a href="https://wa.me/62XXXXXXXXXXX" target="_blank" rel="noreferrer">WhatsApp <span
-                aria-hidden="true">↗</span></a>
-            <a href="mailto:contact@gadingutama.com">Email <span aria-hidden="true">↗</span></a>
-            <a href="https://linkedin.com" target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
-            <a href="https://instagram.com" target="_blank" rel="noreferrer">Instagram <span aria-hidden="true">↗</span></a>
-            <a href="assets/cv/gading-cv.pdf" download>Download CV <span aria-hidden="true">↓</span></a>
-          </nav>
+          <div class="md:col-span-8">
+            <h2
+              class="text-[clamp(2.5rem,6vw,5.5rem)] font-black leading-[0.95] tracking-[-0.06em] text-[#f3f0e8]">
+              Five principles behind every project I build.
+            </h2>
+          </div>
         </div>
 
-        <div class="contact-bottom">
-          <span>R. GADING UTAMA</span>
-          <span>CREATIVE MARKETING · TECH · AI</span>
-          <span id="currentYear">2026</span>
+        <div class="partner-logos grid grid-cols-1 gap-5 md:grid-cols-12">
+          <!-- Principle 1 -->
+          <article
+            class="note-card group relative min-h-[380px] sm:min-h-[430px] overflow-hidden rounded-[34px] border border-[#f3f0e8]/10 bg-[#f3f0e8] p-8 text-[#060706] md:col-span-5">
+            <div
+              class="absolute -right-6 -top-8 text-[160px] font-black leading-none tracking-[-0.12em] text-[#060706]/[0.06] select-none">
+              01
+            </div>
+            <div class="relative z-10 flex h-full flex-col justify-between">
+              <div>
+                <p class="text-xs font-black uppercase tracking-[0.18em] text-[#060706]/50">
+                  01 / Observe &amp; Identify
+                </p>
+                <h3 class="mt-10 max-w-sm text-[clamp(2.2rem,5vw,3.6rem)] font-black leading-[0.92] tracking-[-0.07em]">
+                  Spot the real bottleneck first.
+                </h3>
+              </div>
+              <p class="max-w-sm text-base font-semibold leading-[1.55] text-[#060706]/70">
+                I dig into the workflow, the users, and the numbers before opening a design file or writing code.
+              </p>
+            </div>
+          </article>
+
+          <!-- Principle 2 -->
+          <article
+            class="note-card group relative min-h-[380px] sm:min-h-[430px] overflow-hidden rounded-[34px] border border-[#f3f0e8]/10 bg-[#111612] md:col-span-4">
+            <img
+              src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg"
+              alt="Structural facade detail"
+              class="h-full w-full object-cover opacity-70 transition duration-700 group-hover:scale-105 group-hover:opacity-90" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#060706] via-[#060706]/35 to-transparent"></div>
+            <div class="absolute bottom-7 left-7 right-7">
+              <p class="text-xs font-black uppercase tracking-[0.18em] text-[#f3f0e8]/60">
+                02 / Brainstorm &amp; Concept
+              </p>
+              <h3 class="mt-4 text-[clamp(1.8rem,4vw,2.5rem)] font-black leading-[0.95] tracking-[-0.06em] text-[#f3f0e8]">
+                Ideas tied directly to business goals.
+              </h3>
+            </div>
+          </article>
+
+          <!-- Principle 3 -->
+          <article
+            class="note-card relative min-h-[380px] sm:min-h-[430px] overflow-hidden rounded-[34px] border border-[#f3f0e8]/10 bg-white/[0.035] p-7 md:col-span-3">
+            <p class="text-xs font-black uppercase tracking-[0.18em] text-[#f3f0e8]/50">
+              03 / Build &amp; Prototype
+            </p>
+            <div class="mt-8 space-y-4">
+              <div class="border-b border-[#f3f0e8]/10 pb-4">
+                <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[#ff5a1f]">01</p>
+                <p class="mt-1 text-xl font-bold tracking-[-0.04em] text-[#f3f0e8]">Workflow Analysis</p>
+              </div>
+              <div class="border-b border-[#f3f0e8]/10 pb-4">
+                <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[#ff5a1f]">02</p>
+                <p class="mt-1 text-xl font-bold tracking-[-0.04em] text-[#f3f0e8]">Rapid Prototype</p>
+              </div>
+              <div>
+                <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[#ff5a1f]">03</p>
+                <p class="mt-1 text-xl font-bold tracking-[-0.04em] text-[#f3f0e8]">Deployed Tool</p>
+              </div>
+            </div>
+            <div class="absolute bottom-7 left-7 right-7">
+              <p class="text-xs font-medium leading-[1.6] text-[#f3f0e8]/60">
+                Developing web-apps and automated workflows instead of leaving concepts on paper.
+              </p>
+            </div>
+          </article>
+
+          <!-- Principle 4 -->
+          <article
+            class="note-card group relative overflow-hidden rounded-[34px] border border-[#f3f0e8]/10 bg-[#0c0f0c] p-8 md:col-span-7">
+            <div class="absolute right-8 top-8 h-24 w-24 rounded-full border border-[#f3f0e8]/10"></div>
+            <div class="relative z-10 grid gap-6 md:grid-cols-12 items-center">
+              <div class="md:col-span-4">
+                <p class="text-xs font-black uppercase tracking-[0.18em] text-[#ff5a1f]">
+                  04 / Collaboration
+                </p>
+              </div>
+              <div class="md:col-span-8">
+                <h3
+                  class="text-[clamp(2rem,4.5vw,3.5rem)] font-black leading-[0.95] tracking-[-0.06em] text-[#f3f0e8]">
+                  Work with the team, not in isolation.
+                </h3>
+                <p class="mt-5 text-sm font-medium leading-[1.7] text-[#f3f0e8]/65">
+                  I partner closely with agents, administrators, and leadership so digital tools get adopted in daily operations.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Principle 5 -->
+          <article
+            class="note-card relative overflow-hidden rounded-[34px] border border-[#f3f0e8]/10 bg-[#ff5a1f] p-8 text-[#060706] md:col-span-5">
+            <div class="absolute -right-8 -top-8 h-36 w-36 rounded-full bg-[#060706]/10"></div>
+            <p class="text-xs font-black uppercase tracking-[0.18em] text-[#060706]/60">
+              05 / Ownership
+            </p>
+            <h3 class="mt-8 text-[clamp(2rem,4.5vw,3.2rem)] font-black leading-[0.95] tracking-[-0.06em]">
+              Own the outcome, not the file.
+            </h3>
+            <p class="mt-6 text-sm font-semibold leading-[1.65] text-[#060706]/75">
+              A campaign or tool is successful when it performs, saves time, or drives measurable revenue.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE / TIMELINE -->
+    <section class="process-section relative min-h-screen overflow-hidden px-5 py-24 md:px-8 lg:px-12">
+      <figure
+        class="parallax-image parallax-slow pointer-events-none right-4 top-24 h-28 w-44 rotate-[4deg] md:right-8 md:top-20 md:h-56 md:w-80 rounded-2xl">
+        <img
+          src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/c543a9e1-f226-4ced-80b0-feb8445a75b9_1600w.jpg"
+          alt="Collaborative planning table" loading="lazy" />
+      </figure>
+
+      <div data-reveal="" class="mb-16 max-w-2xl">
+        <p class="section-label mb-6">Experience</p>
+        <h2 class="text-4xl font-black leading-[0.95] tracking-[-0.06em] sm:text-6xl md:text-7xl text-[#f3f0e8]">
+          Experience
+        </h2>
+        <p class="mt-6 max-w-md text-sm font-medium leading-[1.7] text-[#f3f0e8]/65">
+          Professional experience moving across digital entrepreneurship, content production, property marketing, and web application development.
+        </p>
+      </div>
+
+      <div class="relative h-64 overflow-hidden rounded-[28px] border border-[#f3f0e8]/10 bg-white/[0.025]">
+        <div class="timeline-bar absolute left-0 top-8 h-7 w-1/4 rounded-r-full text-[#060706]">
+          <span class="ml-4 text-xs font-bold leading-7">2021</span>
+        </div>
+        <div class="timeline-bar absolute left-[18%] top-20 h-7 w-1/4 rounded-r-full text-[#060706]">
+          <span class="ml-4 text-xs font-bold leading-7">2022</span>
+        </div>
+        <div class="timeline-bar absolute left-[36%] top-32 h-7 w-1/3 rounded-r-full text-[#060706]">
+          <span class="ml-4 text-xs font-bold leading-7">2023</span>
+        </div>
+        <div class="timeline-bar absolute left-[62%] top-44 h-7 w-1/3 rounded-r-full text-[#060706]">
+          <span class="ml-4 text-xs font-bold leading-7">Present</span>
+        </div>
+        <div class="grid h-full grid-cols-4 divide-x divide-[#f3f0e8]/10"></div>
+      </div>
+
+      <div class="process-columns mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
+        <div class="glass rounded-[28px] p-6">
+          <h3 class="text-xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+            Marketing Communication
+          </h3>
+          <p class="mt-4 text-sm leading-[1.65] text-[#f3f0e8]/60">
+            2023–Present · Xavier Marks Tjandra Patos. Built 10+ internal web-apps, managed Meta Ads campaigns, and recognized as Best Sales Support of the Year within 8 months.
+          </p>
+        </div>
+        <div class="glass rounded-[28px] p-6">
+          <h3 class="text-xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+            Owner &amp; Marketing Lead
+          </h3>
+          <p class="mt-4 text-sm leading-[1.65] text-[#f3f0e8]/60">
+            2023–Present · Kosan Bu Endang. Achieved 100% occupancy in 2 weeks through renovation and targeted social media marketing; developed custom rent collection web-app.
+          </p>
+        </div>
+        <div class="glass rounded-[28px] p-6">
+          <h3 class="text-xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+            Founder &amp; Operator
+          </h3>
+          <p class="mt-4 text-sm leading-[1.65] text-[#f3f0e8]/60">
+            2021–2023 · Geektuku, akkc.id, &amp; Diskonlicious. Managed branding, marketing, and business operations, collecting 500+ positive customer reviews on Shopee and Tokopedia.
+          </p>
+        </div>
+        <div class="glass rounded-[28px] p-6">
+          <h3 class="text-xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+            Creative Content &amp; UI/UX
+          </h3>
+          <p class="mt-4 text-sm leading-[1.65] text-[#f3f0e8]/60">
+            2022–2023 · Peduly.com &amp; Freelance. Created campaign visuals and video content reaching 400K+ views and 30K+ likes, laying the foundation for tech-driven creative marketing.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOOLKIT -->
+    <section id="pricing" class="pricing-section relative min-h-screen px-5 py-24 md:px-8 lg:px-12">
+      <div class="grid gap-12 md:grid-cols-12">
+        <div class="pricing-copy md:col-span-4">
+          <p class="section-label mb-6">Toolkit</p>
+          <h2 class="text-4xl font-black leading-[0.95] tracking-[-0.06em] sm:text-6xl md:text-7xl text-[#f3f0e8]">
+            Toolkit
+          </h2>
+          <p class="mt-6 max-w-72 text-sm font-medium leading-[1.7] text-[#f3f0e8]/65">
+            The software, frameworks, and tools I keep open every day, split between craft and build.
+          </p>
+        </div>
+
+        <div class="pricing-list grid gap-6 md:col-span-8">
+          <div class="pricing-card glass rounded-[34px] p-8 border border-[#f3f0e8]/10">
+            <div class="mb-8 flex flex-wrap gap-2">
+              <span class="rounded-full border border-[#f3f0e8]/15 px-3 py-1 text-xs font-semibold text-[#f3f0e8]/75">
+                Daily driver
+              </span>
+              <span class="rounded-full bg-[#ff5a1f] px-3 py-1 text-xs font-bold text-[#060706]">
+                Design
+              </span>
+            </div>
+            <p class="text-xs font-extrabold uppercase tracking-[0.14em] text-[#ff5a1f]">
+              01 / Craft
+            </p>
+            <h3 class="mt-6 text-3xl sm:text-4xl font-bold tracking-[-0.05em] text-[#f3f0e8]">
+              Design &amp; Visual Content
+            </h3>
+            <div class="mt-8 grid gap-4 sm:grid-cols-2">
+              <p class="flex items-center gap-3 text-sm font-medium text-[#f3f0e8]/85">
+                <i data-lucide="check" class="h-4 w-4 text-[#ff5a1f]"></i>
+                Figma &amp; Design Systems
+              </p>
+              <p class="flex items-center gap-3 text-sm font-medium text-[#f3f0e8]/85">
+                <i data-lucide="check" class="h-4 w-4 text-[#ff5a1f]"></i>
+                Adobe Creative Suite
+              </p>
+              <p class="flex items-center gap-3 text-sm font-medium text-[#f3f0e8]/85">
+                <i data-lucide="check" class="h-4 w-4 text-[#ff5a1f]"></i>
+                After Effects Motion
+              </p>
+              <p class="flex items-center gap-3 text-sm font-medium text-[#f3f0e8]/85">
+                <i data-lucide="check" class="h-4 w-4 text-[#ff5a1f]"></i>
+                CapCut &amp; Canva Pro
+              </p>
+            </div>
+          </div>
+
+          <div class="pricing-card glass rounded-[34px] p-8 border border-[#f3f0e8]/10">
+            <div class="flex items-baseline gap-3">
+              <p class="text-xs font-extrabold uppercase tracking-[0.14em] text-[#ff5a1f]">
+                02 / Build
+              </p>
+            </div>
+            <h3 class="mt-6 text-3xl sm:text-4xl font-bold tracking-[-0.05em] text-[#f3f0e8]">
+              Marketing, Code &amp; Automation
+            </h3>
+            <div class="mt-8 grid gap-4 sm:grid-cols-2">
+              <p class="flex items-center gap-3 text-sm font-medium text-[#f3f0e8]/85">
+                <i data-lucide="check" class="h-4 w-4 text-[#ff5a1f]"></i>
+                Meta Ads Manager &amp; Pixel
+              </p>
+              <p class="flex items-center gap-3 text-sm font-medium text-[#f3f0e8]/85">
+                <i data-lucide="check" class="h-4 w-4 text-[#ff5a1f]"></i>
+                GA4 &amp; Looker Studio
+              </p>
+              <p class="flex items-center gap-3 text-sm font-medium text-[#f3f0e8]/85">
+                <i data-lucide="check" class="h-4 w-4 text-[#ff5a1f]"></i>
+                Next.js / TailwindCSS / GSAP
+              </p>
+              <p class="flex items-center gap-3 text-sm font-medium text-[#f3f0e8]/85">
+                <i data-lucide="check" class="h-4 w-4 text-[#ff5a1f]"></i>
+                n8n Automation &amp; OpenAI API
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="contact-section relative min-h-screen px-5 py-24 md:px-8 lg:px-12">
+      <div class="grid gap-14 md:grid-cols-12">
+        <div class="contact-form md:col-span-5">
+          <p class="section-label mb-8">Contact</p>
+          
+          <h2 class="text-4xl font-black tracking-[-0.06em] text-[#f3f0e8] sm:text-5xl mb-6">
+            Have a campaign, visual concept, or digital problem to solve?
+          </h2>
+
+          <p class="mb-8 max-w-md text-base font-medium leading-[1.7] text-[#f3f0e8]/65">
+            Let us turn it into a clear campaign, an automated workflow, or a working web application.
+          </p>
+
+          <div class="space-y-4 max-w-md">
+            <a href="mailto:contact@gadingutama.com"
+              class="glass flex items-center justify-between rounded-[22px] px-6 py-4 text-sm font-semibold text-[#f3f0e8] hover:border-[#ff5a1f] transition">
+              <span>contact@gadingutama.com</span>
+              <span class="text-[#ff5a1f]">Email ↗</span>
+            </a>
+            
+            <a href="https://linkedin.com" target="_blank" rel="noopener"
+              class="glass flex items-center justify-between rounded-[22px] px-6 py-4 text-sm font-semibold text-[#f3f0e8] hover:border-[#ff5a1f] transition">
+              <span>Connect on LinkedIn</span>
+              <span class="text-[#ff5a1f]">Connect ↗</span>
+            </a>
+          </div>
+
+          <div class="mt-10">
+            <a href="mailto:contact@gadingutama.com"
+              class="magnetic-button inline-flex items-center gap-4 rounded-full bg-[#ff5a1f] px-8 py-4 text-xs font-bold uppercase tracking-[0.16em] text-[#060706] shadow-lg shadow-[#ff5a1f]/20">
+              Send Message
+              <i data-lucide="send" class="h-4 w-4"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="faq-list md:col-span-7">
+          <p class="mb-6 text-xs font-extrabold uppercase tracking-[0.14em] text-[#ff5a1f]">
+            Frequently Asked Questions
+          </p>
+          
+          <div class="faq-row border-t border-[#f3f0e8]/10 py-8">
+            <h3 class="text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+              What kind of problems do you typically solve?
+            </h3>
+            <p class="mt-4 max-w-2xl text-sm font-medium leading-[1.7] text-[#f3f0e8]/65">
+              I bridge marketing and operations. If your team is stuck with repetitive manual tasks, needs a custom listing hub or reporting tool, or wants higher-performing Meta Ads and campaign concepts, I handle both the creative concept and the technical build.
+            </p>
+          </div>
+          
+          <div class="faq-row border-t border-[#f3f0e8]/10 py-8">
+            <h3 class="text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+              How do you combine marketing, design, and web development?
+            </h3>
+            <p class="mt-4 max-w-2xl text-sm font-medium leading-[1.7] text-[#f3f0e8]/65">
+              Rather than handing off designs to an external team, I build the solutions directly using modern web technologies like Next.js and TailwindCSS. This eliminates communication gaps and ensures the final tool matches the marketing intent.
+            </p>
+          </div>
+          
+          <div class="faq-row border-t border-[#f3f0e8]/10 py-8">
+            <h3 class="text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-[#f3f0e8]">
+              How fast does a typical campaign or web-app take?
+            </h3>
+            <p class="mt-4 max-w-2xl text-sm font-medium leading-[1.7] text-[#f3f0e8]/65">
+              Focused campaign concepts and visual sprints run in one to two weeks. Custom internal web applications, dashboards, or gamification tools typically take two to four weeks from concept to deployment.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="footer" class="footer-section relative min-h-screen flex flex-col justify-between overflow-hidden px-5 py-20 md:px-8 lg:px-12">
+      <!-- Top / Wordmark -->
+      <div class="relative z-10 mx-auto w-full max-w-7xl">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 pb-12 border-b border-[#f3f0e8]/10">
+          <p class="section-label">R. Gading Utama · Digital Portfolio</p>
+          <span class="text-xs font-bold uppercase tracking-[0.14em] text-[#f3f0e8]/45">
+            Xavier Marks Tjandra Patos · 2026
+          </span>
+        </div>
+        
+        <div class="overflow-hidden py-10">
+          <h2
+            class="footer-wordmark wordmark text-[clamp(4.5rem,17vw,13rem)] font-black leading-none tracking-[-0.08em] text-[#f3f0e8]">
+            Gading.
+          </h2>
+        </div>
+      </div>
+
+      <!-- Bottom / Links Grid -->
+      <div
+        class="footer-links relative z-10 mx-auto w-full max-w-7xl grid gap-10 border-t border-[#f3f0e8]/12 pt-12 md:grid-cols-12">
+        <div class="md:col-span-5">
+          <p class="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[#ff5a1f]">
+            Creative Marketer &amp; Digital Problem Solver / 2026
+          </p>
+          <h3
+            class="max-w-xl text-[clamp(2rem,5vw,4.2rem)] font-black leading-[0.95] tracking-[-0.06em] text-[#f3f0e8]">
+            Let us design, build, and solve the next challenge together.
+          </h3>
+
+          <div class="mt-8 grid max-w-lg grid-cols-2 border-y border-[#f3f0e8]/12 py-5">
+            <div>
+              <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#f3f0e8]/40">
+                Name
+              </p>
+              <p class="mt-2 text-sm font-semibold text-[#f3f0e8]/85">
+                R. Gading Utama
+              </p>
+            </div>
+            <div>
+              <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#f3f0e8]/40">
+                Focus
+              </p>
+              <p class="mt-2 text-sm font-semibold text-[#f3f0e8]/85">
+                Creative Marketing · Tech · AI
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="md:col-span-4 md:col-start-7">
+          <p class="text-xs font-bold uppercase tracking-[0.22em] text-[#f3f0e8]/45">
+            About This Practice
+          </p>
+          <p class="mt-5 text-sm font-medium leading-[1.75] text-[#f3f0e8]/65">
+            I help companies, agents, and teams turn operational bottlenecks into working tools, high-converting Meta Ads, and structured marketing campaigns.
+          </p>
+
+          <div class="mt-8 flex flex-col gap-3">
+            <a href="#contact"
+              class="group flex items-center justify-between border-b border-[#f3f0e8]/14 pb-3 text-sm font-bold text-[#f3f0e8] transition hover:border-[#ff5a1f] hover:text-[#ff5a1f]">
+              Start a project
+              <span class="transition duration-300 group-hover:translate-x-1">→</span>
+            </a>
+            <a href="mailto:contact@gadingutama.com"
+              class="group flex items-center justify-between border-b border-[#f3f0e8]/14 pb-3 text-sm font-bold text-[#f3f0e8]/65 transition hover:border-[#f3f0e8]/40 hover:text-[#f3f0e8]">
+              contact@gadingutama.com
+              <span class="transition duration-300 group-hover:translate-x-1">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-8 md:col-span-2 md:col-start-11">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[0.22em] text-[#f3f0e8]/45">
+              Social
+            </p>
+            <div class="mt-5 space-y-3 text-sm font-bold text-[#f3f0e8]/75">
+              <a href="https://linkedin.com" target="_blank" rel="noopener" class="block hover:text-[#ff5a1f] transition">LinkedIn ↗</a>
+              <a href="https://twitter.com" target="_blank" rel="noopener" class="block hover:text-[#ff5a1f] transition">Twitter ↗</a>
+              <a href="https://instagram.com" target="_blank" rel="noopener" class="block hover:text-[#ff5a1f] transition">Instagram ↗</a>
+              <a href="https://github.com" target="_blank" rel="noopener" class="block hover:text-[#ff5a1f] transition">GitHub ↗</a>
+            </div>
+          </div>
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[0.22em] text-[#f3f0e8]/45">
+              Navigation
+            </p>
+            <div class="mt-5 space-y-3 text-sm font-medium text-[#f3f0e8]/60">
+              <a href="#home" class="block hover:text-[#f3f0e8] transition">Top</a>
+              <a href="#work" class="block hover:text-[#f3f0e8] transition">Works</a>
+              <a href="#studio" class="block hover:text-[#f3f0e8] transition">About</a>
+              <a href="#pricing" class="block hover:text-[#f3f0e8] transition">Toolkit</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="md:col-span-12">
+          <div class="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-[#f3f0e8]/12 pt-6">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#f3f0e8]/40">
+              © 2026 R. Gading Utama. All rights reserved.
+            </p>
+            <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#f3f0e8]/40">
+              Surabaya / Remote
+            </p>
+          </div>
         </div>
       </div>
     </footer>
   </main>
 
-  <script src="assets/js/gsap.min.js"></script>
-  <script src="assets/js/ScrollTrigger.min.js"></script>
   <script>
-    (() => {
-      'use strict';
+    lucide.createIcons({ attrs: { "stroke-width": 1.5 } });
 
-      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const heroVideoDark = document.getElementById('heroVideoDark');
-      const heroVideoLight = document.getElementById('heroVideoLight');
-      const year = document.getElementById('currentYear');
-      const themeToggle = document.getElementById('themeToggle');
-      const header = document.querySelector('.site-header');
+    // --- Mobile Drawer Navigation Logic ---
+    const openDrawerBtn = document.getElementById("openDrawerBtn");
+    const closeDrawerBtn = document.getElementById("closeDrawerBtn");
+    const mobileDrawer = document.getElementById("mobileDrawer");
+    const drawerBackdrop = document.getElementById("drawerBackdrop");
+    const drawerPanel = document.getElementById("drawerPanel");
+    const drawerLinks = document.querySelectorAll(".mobile-drawer-link");
 
-      if (year) {
-        year.textContent = String(new Date().getFullYear());
+    function openMenu() {
+      if (!mobileDrawer) return;
+      mobileDrawer.classList.remove("pointer-events-none", "opacity-0");
+      mobileDrawer.classList.add("pointer-events-auto", "opacity-100");
+      drawerPanel.classList.remove("translate-x-full");
+      drawerPanel.classList.add("translate-x-0");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeMenu() {
+      if (!mobileDrawer) return;
+      drawerPanel.classList.remove("translate-x-0");
+      drawerPanel.classList.add("translate-x-full");
+      mobileDrawer.classList.remove("pointer-events-auto", "opacity-100");
+      mobileDrawer.classList.add("pointer-events-none", "opacity-0");
+      document.body.style.overflow = "";
+    }
+
+    if (openDrawerBtn) openDrawerBtn.addEventListener("click", openMenu);
+    if (closeDrawerBtn) closeDrawerBtn.addEventListener("click", closeMenu);
+    if (drawerBackdrop) drawerBackdrop.addEventListener("click", closeMenu);
+    drawerLinks.forEach(link => link.addEventListener("click", closeMenu));
+
+    // --- GSAP and Lenis Animations with 60fps Silk Smoothness ---
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!prefersReducedMotion && window.gsap && window.ScrollTrigger && window.Lenis) {
+      gsap.registerPlugin(ScrollTrigger);
+      gsap.defaults({ ease: "power3.out" });
+
+      // Silky Smooth Lenis setup: responsive, zero spongy drag
+      const lenis = new Lenis({
+        lerp: 0.1,
+        smoothWheel: true,
+        wheelMultiplier: 1.0,
+        touchMultiplier: 1.0,
+        autoResize: true
+      });
+
+      lenis.on("scroll", ScrollTrigger.update);
+      gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+      });
+      // CRITICAL FOR SMOOTHNESS: Keep lagSmoothing active so frame drops don't cause stutter
+      gsap.ticker.lagSmoothing(500, 33);
+
+      // ---- Snappy & Brisk Brand Preloader ----
+      const axLoader = document.getElementById("ax-loader");
+
+      if (lenis && axLoader) {
+        lenis.stop();
       }
 
-      // Floating navbar scroll control
-      let lastScrollY = window.scrollY;
-      window.addEventListener('scroll', () => {
-        if (!header) return;
-        const currentScrollY = window.scrollY;
-        if (currentScrollY > 120 && currentScrollY > lastScrollY) {
-          header.classList.add('is-hidden');
-        } else {
-          header.classList.remove('is-hidden');
-        }
-        lastScrollY = currentScrollY;
-      }, { passive: true });
+      const loadTl = gsap.timeline({ paused: true });
 
-      function markVideoReady(video) {
-        if (!video) return;
+      loadTl
+        .from("header", { y: -20, opacity: 0, duration: 0.6 })
+        .from(".hero-copy > *", { y: 24, opacity: 0, stagger: 0.07, duration: 0.65 }, "-=0.25")
+        .from(".hero-card", { y: 60, opacity: 0, scale: 0.94, stagger: 0.07, duration: 0.8 }, "-=0.45")
+        .from(".hero-cta", { scale: 0, opacity: 0, duration: 0.5 }, "-=0.35")
+        .from(".hero-wordmark", { yPercent: 16, opacity: 0, duration: 0.8 }, "-=0.55")
+        .from(".hero-meta", { y: 20, opacity: 0, duration: 0.6 }, "-=0.5");
 
-        const setReady = () => {
-          video.classList.add('is-ready');
-          const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-          if (!reducedMotion) {
-            if ((currentTheme === 'light' && video.id === 'heroVideoLight') ||
-                (currentTheme !== 'light' && video.id === 'heroVideoDark')) {
-              video.play().catch(() => { });
+      if (axLoader) {
+        const brandEl = axLoader.querySelector(".ax-loader__brand");
+        const barEl = axLoader.querySelector(".ax-loader__bar");
+        const metaEl = axLoader.querySelector(".ax-loader__meta");
+        const pctEl = axLoader.querySelector(".ax-loader__pct");
+        const counter = { v: 0 };
+
+        gsap.timeline({
+          defaults: { ease: "power3.out" },
+          onComplete() {
+            axLoader.remove();
+            lenis.start();
+            ScrollTrigger.refresh();
+          }
+        })
+          .to(brandEl, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power2.out" }, 0)
+          .to(metaEl, { opacity: 1, duration: 0.35 }, 0.1)
+          .to(barEl, { scaleX: 1, duration: 0.65, ease: "power2.inOut" }, 0.1)
+          .to(counter, {
+            v: 100,
+            duration: 0.65,
+            ease: "power2.inOut",
+            onUpdate() {
+              pctEl.textContent = String(Math.round(counter.v)).padStart(3, "0");
             }
-          }
-        };
-        const setFallback = () => {
-          video.classList.remove('is-ready');
-          video.pause();
-        };
-
-        if (video.readyState >= 2) setReady();
-        video.addEventListener('loadeddata', setReady, { once: true });
-        video.addEventListener('canplay', setReady, { once: true });
-        video.addEventListener('error', setFallback);
-      }
-
-      markVideoReady(heroVideoDark);
-      markVideoReady(heroVideoLight);
-
-      document.querySelectorAll('.gallery-media video').forEach(markVideoReady);
-
-      function applyTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-
-        if (theme === 'light') {
-          if (heroVideoLight && !reducedMotion) {
-            heroVideoLight.play().catch(() => { });
-          }
-          if (heroVideoDark) {
-            heroVideoDark.pause();
-          }
-        } else {
-          if (heroVideoDark && !reducedMotion) {
-            heroVideoDark.play().catch(() => { });
-          }
-          if (heroVideoLight) {
-            heroVideoLight.pause();
-          }
-        }
-      }
-
-      // Detect and apply initial theme
-      const savedTheme = localStorage.getItem('theme');
-      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      let activeTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-      applyTheme(activeTheme);
-
-      if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
-          activeTheme = activeTheme === 'dark' ? 'light' : 'dark';
-          applyTheme(activeTheme);
-        });
-      }
-
-      if (reducedMotion) {
-        if (heroVideoDark) {
-          heroVideoDark.pause();
-          heroVideoDark.removeAttribute('autoplay');
-        }
-        if (heroVideoLight) {
-          heroVideoLight.pause();
-          heroVideoLight.removeAttribute('autoplay');
-        }
-      }
-
-      // Initialize GSAP & ScrollTrigger Animations
-      if (window.gsap && window.ScrollTrigger) {
-        gsap.registerPlugin(ScrollTrigger);
-
-        const mm = gsap.matchMedia();
-
-        mm.add("(prefers-reduced-motion: no-preference)", () => {
-          // 1. HERO ENTRANCE ORCHESTRATION
-          const heroTl = gsap.timeline({ defaults: { ease: "power4.out" }, delay: 0.1 });
-
-          heroTl
-            .fromTo('.site-header', 
-              { y: -50, autoAlpha: 0 }, 
-              { y: 0, autoAlpha: 1, duration: 1.0, ease: "power3.out" }
-            )
-            .fromTo('.hero-eyebrow', 
-              { y: 24, autoAlpha: 0, scale: 0.94 }, 
-              { y: 0, autoAlpha: 1, scale: 1, duration: 0.8, ease: "back.out(1.7)" }, 
-              "-=0.6"
-            )
-            .fromTo('.hero-title', 
-              { y: 48, autoAlpha: 0, filter: "blur(6px)" }, 
-              { y: 0, autoAlpha: 1, filter: "blur(0px)", duration: 1.1, ease: "power4.out" }, 
-              "-=0.5"
-            )
-            .fromTo('.hero-subtitle', 
-              { y: 22, autoAlpha: 0 }, 
-              { y: 0, autoAlpha: 1, duration: 0.85, ease: "power3.out" }, 
-              "-=0.7"
-            )
-            .fromTo('.hero-actions .button', 
-              { y: 18, autoAlpha: 0, scale: 0.95 }, 
-              { y: 0, autoAlpha: 1, scale: 1, duration: 0.65, stagger: 0.12, ease: "back.out(1.5)" }, 
-              "-=0.5"
-            )
-            .fromTo('.hero-chips span', 
-              { y: 16, autoAlpha: 0, scale: 0.86 }, 
-              { y: 0, autoAlpha: 1, scale: 1, duration: 0.55, stagger: 0.08, ease: "back.out(1.6)" }, 
-              "-=0.4"
-            )
-            .fromTo('.hero-contact', 
-              { autoAlpha: 0, y: 12 }, 
-              { autoAlpha: 1, y: 0, duration: 0.8 }, 
-              "-=0.3"
-            );
-
-          // 2. HERO SCROLL PARALLAX & RETREAT (GSAP Scrub)
-          gsap.to('.hero-media', {
-            scale: 1.14,
-            y: 80,
-            ease: "none",
-            scrollTrigger: {
-              trigger: '.hero',
-              start: 'top top',
-              end: 'bottom top',
-              scrub: 1.2
-            }
-          });
-
-          gsap.to('.hero-shell', {
-            y: -75,
-            autoAlpha: 0,
-            ease: "none",
-            scrollTrigger: {
-              trigger: '.hero',
-              start: 'top top',
-              end: '60% top',
-              scrub: 0.8
-            }
-          });
-
-          // 3. AMBIENT ORBS ORGANIC DRIFT
-          gsap.to('.ambient-orb--amber', {
-            x: 60,
-            y: -45,
-            duration: 11,
-            repeat: -1,
-            yoyo: true,
-            ease: "sine.inOut"
-          });
-          gsap.to('.ambient-orb--teal', {
-            x: -65,
-            y: 55,
-            duration: 14,
-            repeat: -1,
-            yoyo: true,
-            ease: "sine.inOut"
-          });
-
-          // 4. SECTION REVEALS ON SCROLL (BATCHED)
-          ScrollTrigger.batch('.reveal:not(.hero .reveal)', {
-            start: "top 88%",
-            once: true,
-            onEnter: (batch) => {
-              gsap.fromTo(batch, 
-                { y: 38, autoAlpha: 0 }, 
-                { y: 0, autoAlpha: 1, duration: 0.85, stagger: 0.12, ease: "power3.out", overwrite: "auto" }
-              );
-            }
-          });
-
-          // 5. WEB APPS 3D CARD TILT & DEPTH
-          const appCards = document.querySelectorAll('.app-card');
-          gsap.fromTo(appCards, 
-            { y: 65, rotationX: 10, autoAlpha: 0 }, 
-            {
-              y: 0,
-              rotationX: 0,
-              autoAlpha: 1,
-              duration: 1.0,
-              stagger: 0.2,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: '.apps-section',
-                start: 'top 82%',
-                once: true
-              }
-            }
-          );
-
-          appCards.forEach((card) => {
-            const previewImg = card.querySelector('.app-preview img');
-            card.addEventListener('mousemove', (e) => {
-              const rect = card.getBoundingClientRect();
-              const normX = (e.clientX - rect.left) / rect.width - 0.5;
-              const normY = (e.clientY - rect.top) / rect.height - 0.5;
-
-              gsap.to(card, {
-                rotationY: normX * 9,
-                rotationX: -normY * 9,
-                transformPerspective: 1000,
-                duration: 0.35,
-                ease: "power2.out"
-              });
-
-              if (previewImg) {
-                gsap.to(previewImg, {
-                  x: normX * 12,
-                  y: normY * 12,
-                  scale: 1.04,
-                  duration: 0.35,
-                  ease: "power2.out"
-                });
-              }
-            });
-
-            card.addEventListener('mouseleave', () => {
-              gsap.to(card, {
-                rotationX: 0,
-                rotationY: 0,
-                duration: 0.65,
-                ease: "power3.out"
-              });
-              if (previewImg) {
-                gsap.to(previewImg, {
-                  x: 0,
-                  y: 0,
-                  scale: 1.0,
-                  duration: 0.65,
-                  ease: "power3.out"
-                });
-              }
-            });
-          });
-
-          // 6. PROJECTS GRID 3D HOVER TILT
-          const projectCards = document.querySelectorAll('.project-card');
-          projectCards.forEach((card) => {
-            const cardImg = card.querySelector('.project-preview img');
-            const glow = card.querySelector('.card-glow');
-
-            card.addEventListener('mousemove', (e) => {
-              const rect = card.getBoundingClientRect();
-              const normX = (e.clientX - rect.left) / rect.width - 0.5;
-              const normY = (e.clientY - rect.top) / rect.height - 0.5;
-
-              gsap.to(card, {
-                rotationY: normX * 7,
-                rotationX: -normY * 7,
-                transformPerspective: 950,
-                duration: 0.35,
-                ease: "power2.out"
-              });
-
-              if (cardImg) {
-                gsap.to(cardImg, {
-                  scale: 1.05,
-                  x: normX * 8,
-                  y: normY * 8,
-                  duration: 0.35,
-                  ease: "power2.out"
-                });
-              }
-
-              if (glow) {
-                gsap.to(glow, {
-                  x: normX * 35,
-                  y: normY * 35,
-                  opacity: 0.75,
-                  duration: 0.3,
-                  ease: "power2.out"
-                });
-              }
-            });
-
-            card.addEventListener('mouseleave', () => {
-              gsap.to(card, {
-                rotationX: 0,
-                rotationY: 0,
-                duration: 0.6,
-                ease: "power3.out"
-              });
-              if (cardImg) {
-                gsap.to(cardImg, {
-                  scale: 1.0,
-                  x: 0,
-                  y: 0,
-                  duration: 0.6,
-                  ease: "power3.out"
-                });
-              }
-              if (glow) {
-                gsap.to(glow, {
-                  x: 0,
-                  y: 0,
-                  opacity: 0.45,
-                  duration: 0.5,
-                  ease: "power2.out"
-                });
-              }
-            });
-          });
-
-          // 7. TACTILE MAGNETIC BUTTONS
-          const magneticButtons = document.querySelectorAll('.button--primary, .button--secondary, .theme-toggle');
-          magneticButtons.forEach((btn) => {
-            btn.addEventListener('mousemove', (e) => {
-              const rect = btn.getBoundingClientRect();
-              const x = (e.clientX - (rect.left + rect.width / 2)) * 0.32;
-              const y = (e.clientY - (rect.top + rect.height / 2)) * 0.32;
-              gsap.to(btn, { x, y, duration: 0.28, ease: "power2.out" });
-            });
-            btn.addEventListener('mouseleave', () => {
-              gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1, 0.4)" });
-            });
-          });
-
-          // 8. THEME TOGGLE CLICK 360 BOUNCE
-          if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-              gsap.fromTo(themeToggle, 
-                { rotate: 0, scale: 0.8 }, 
-                { rotate: 360, scale: 1, duration: 0.55, ease: "back.out(2)" }
-              );
-            });
-          }
-        });
+          }, 0.1)
+          .to([brandEl, metaEl], { opacity: 0, y: -16, filter: "blur(6px)", duration: 0.3, ease: "power2.in" }, "+=0.08")
+          .to(axLoader, { yPercent: -100, duration: 0.6, ease: "power3.inOut" }, "<0.05")
+          .add(() => { loadTl.play(); }, "<0.2");
       } else {
-        // Fallback for non-GSAP environments
-        document.querySelectorAll('.reveal').forEach((item) => item.classList.add('in'));
+        loadTl.play();
+        lenis.start();
       }
 
-      const carousel = document.querySelector('[data-carousel]');
-      const track = document.querySelector('[data-carousel-track]');
-      const slides = Array.from(document.querySelectorAll('[data-slide]'));
-      const prevButton = document.querySelector('[data-carousel-prev]');
-      const nextButton = document.querySelector('[data-carousel-next]');
-      const currentLabel = document.querySelector('[data-carousel-current]');
-      const progress = document.querySelector('[data-carousel-progress]');
+      // Universal soft reveals
+      gsap.utils.toArray("[data-reveal], .reveal").forEach((item) => {
+        gsap.to(item, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          scrollTrigger: {
+            trigger: item,
+            start: "top 85%",
+            toggleActions: "play none none reverse"
+          }
+        });
+      });
 
-      if (!carousel || !track || slides.length === 0) return;
+      // Responsive GSAP MatchMedia
+      let mm = gsap.matchMedia();
 
-      let activeIndex = 0;
-      let scrollFrame = 0;
-      let pointerDown = false;
-      let pointerStartX = 0;
-      let pointerStartScroll = 0;
-      let draggedDistance = 0;
+      // ==========================================
+      // DESKTOP (>= 1024px): FULL ORIGINAL AURA MOTION
+      // ==========================================
+      mm.add("(min-width: 1024px)", () => {
+        // 1. Hero pinned cinematic transformation & 3D card fanning
+        const hero = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".hero-section",
+            start: "top top",
+            end: "+=115%",
+            scrub: 0.6,
+            pin: true,
+            anticipatePin: 1
+          }
+        });
 
-      function formatIndex(index) {
-        return String(index + 1).padStart(2, '0');
-      }
+        hero
+          .to(".hero-wordmark", { yPercent: -50, scale: 1.07, opacity: .75, duration: 1 }, 0)
+          .to(".hero-copy", { y: -60, opacity: .42, duration: 1 }, 0)
+          .to(".hero-meta", { y: -34, opacity: .72, duration: 1 }, 0)
+          .to(".hero-stack", { y: -70, scale: .94, duration: 1 }, 0)
+          .to(".hero-card:nth-child(1)", { x: -46, y: 34, rotate: -24, duration: 1 }, 0)
+          .to(".hero-card:nth-child(2)", { x: 42, y: -34, rotate: 20, duration: 1 }, 0)
+          .to(".hero-card:nth-child(3)", { x: 54, y: 22, rotate: 22, duration: 1 }, 0)
+          .to(".hero-card:nth-child(4)", { x: 8, y: 12, rotate: 0, duration: 1 }, 0);
 
-      function playActiveVideo() {
-        slides.forEach((slide, index) => {
-          const video = slide.querySelector('video');
-          if (!video) return;
+        // 2. Studio pinned brand word rhythm (original signature alternating drift & settle)
+        const brand = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".brand-section",
+            start: "top top",
+            end: "+=110%",
+            scrub: 0.6,
+            pin: true,
+            anticipatePin: 1
+          }
+        });
 
-          if (index === activeIndex && !reducedMotion && video.classList.contains('is-ready')) {
-            const playPromise = video.play();
-            if (playPromise && typeof playPromise.catch === 'function') {
-              playPromise.catch(() => { });
+        brand
+          .fromTo(".brand-drift", { xPercent: 4 }, { xPercent: -20, duration: 1 }, 0)
+          .fromTo(".brand-word", {
+            opacity: 0,
+            y: 80,
+            x: (i) => (i % 2 ? -75 : 75)
+          }, {
+            opacity: 1,
+            y: 0,
+            x: 0,
+            stagger: .08,
+            duration: .6
+          }, .08)
+          .to(".brand-word", {
+            x: (i) => (i % 2 ? -30 : 30),
+            stagger: .04,
+            duration: .45
+          }, .64);
+
+        // 3. Work section: pinned masked number & flying project cards
+        const work = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".work-section",
+            start: "top top",
+            end: "+=120%",
+            scrub: 0.6,
+            pin: true,
+            anticipatePin: 1
+          }
+        });
+
+        work
+          .from(".work-copy", { x: -70, opacity: 0, duration: .4 }, 0)
+          .fromTo(".masked-number", { scale: .82, y: 70, backgroundPosition: "50% 28%" }, { scale: 1.1, y: -45, backgroundPosition: "50% 74%", duration: 1 }, 0)
+          .from(".project-card", { y: 70, opacity: 0, rotate: 0, stagger: .1, duration: .4 }, .15)
+          .to(".project-card", { y: -35, x: (i) => (i ? 40 : -32), duration: .8 }, .45);
+
+        // 4. Pricing section pin
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: ".pricing-section",
+            start: "top top",
+            end: "+=80%",
+            scrub: 0.6,
+            pin: true,
+            anticipatePin: 1
+          }
+        })
+          .from(".pricing-copy", { y: 45, opacity: 0, duration: .35 }, 0)
+          .from(".pricing-card", { x: 90, opacity: 0, stagger: .16, duration: .55 }, .12);
+      });
+
+      // ==========================================
+      // MOBILE & TABLET (< 1024px): AURA CHARACTER WITHOUT LAYOUT CRASH
+      // ==========================================
+      mm.add("(max-width: 1023px)", () => {
+        // Hero cards 3D fan on scroll (scaled for narrow width)
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: ".hero-section",
+            start: "top top",
+            end: "bottom top",
+            scrub: 0.5
+          }
+        })
+          .to(".hero-stack", { y: -30, scale: 0.96, duration: 1 }, 0)
+          .to(".hero-card:nth-child(1)", { x: -18, y: 16, rotate: -18, duration: 1 }, 0)
+          .to(".hero-card:nth-child(2)", { x: 18, y: -16, rotate: 16, duration: 1 }, 0)
+          .to(".hero-card:nth-child(3)", { x: 22, y: 10, rotate: 18, duration: 1 }, 0);
+
+        // Studio brand word glide (scaled horizontal offsets so 0 overflow)
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: ".brand-section",
+            start: "top 75%",
+            end: "bottom 25%",
+            scrub: 0.5
+          }
+        })
+          .fromTo(".brand-drift", { xPercent: 2 }, { xPercent: -12, duration: 1 }, 0)
+          .fromTo(".brand-word", {
+            opacity: 0,
+            y: 50,
+            x: (i) => (i % 2 ? -24 : 24)
+          }, {
+            opacity: 1,
+            y: 0,
+            x: 0,
+            stagger: 0.08,
+            duration: 0.6
+          }, 0)
+          .to(".brand-word", {
+            x: (i) => (i % 2 ? -14 : 14),
+            stagger: 0.04,
+            duration: 0.4
+          }, 0.55);
+
+        // Work masked number scrub
+        gsap.fromTo(".masked-number", 
+          { scale: 0.88, backgroundPosition: "50% 30%" }, 
+          { 
+            scale: 1.06, 
+            backgroundPosition: "50% 70%", 
+            scrollTrigger: {
+              trigger: ".work-section",
+              start: "top 80%",
+              end: "bottom 20%",
+              scrub: 0.5
             }
-          } else {
-            video.pause();
           }
-        });
-      }
+        );
+      });
 
-      function updateActiveSlide(index) {
-        const nextIndex = Math.max(0, Math.min(index, slides.length - 1));
-        if (nextIndex === activeIndex && slides[nextIndex].classList.contains('is-active')) {
-          playActiveVideo();
-          return;
+      // ==========================================
+      // COMMON CORE ANIMATIONS (BOTH DESKTOP & MOBILE)
+      // ==========================================
+
+      // Services reveal and image strip motion
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: ".services-section",
+          start: "top 65%",
+          end: "bottom 30%",
+          scrub: 0.6
         }
+      })
+        .from(".services-copy", { y: 80, opacity: 0, duration: .35 })
+        .from(".service-card", { y: 40, opacity: 0, stagger: .08, duration: .45 }, .16)
+        .to(".strip-image", { xPercent: -14, scale: 1.2, duration: .8 }, 0);
 
-        activeIndex = nextIndex;
+      // Parallax media with image counter-zoom
+      gsap.utils.toArray(".parallax-image").forEach((item) => {
+        const isFast = item.classList.contains("parallax-fast");
+        const section = item.closest("section");
 
-        slides.forEach((slide, slideIndex) => {
-          slide.classList.toggle('is-active', slideIndex === activeIndex);
-          slide.setAttribute('aria-hidden', slideIndex === activeIndex ? 'false' : 'true');
-        });
-
-        if (currentLabel) currentLabel.textContent = formatIndex(activeIndex);
-        if (progress) progress.style.transform = `scaleX(${(activeIndex + 1) / slides.length})`;
-
-        playActiveVideo();
-      }
-
-      function getClosestSlideIndex() {
-        const trackRect = track.getBoundingClientRect();
-        const trackCenter = trackRect.left + trackRect.width / 2;
-        let closestIndex = 0;
-        let closestDistance = Number.POSITIVE_INFINITY;
-
-        slides.forEach((slide, index) => {
-          const rect = slide.getBoundingClientRect();
-          const slideCenter = rect.left + rect.width / 2;
-          const distance = Math.abs(trackCenter - slideCenter);
-          if (distance < closestDistance) {
-            closestDistance = distance;
-            closestIndex = index;
+        gsap.fromTo(item, { y: isFast ? 80 : 45 }, {
+          y: isFast ? -100 : -60,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.5
           }
         });
 
-        return closestIndex;
-      }
-
-      function goToSlide(index) {
-        const nextIndex = Math.max(0, Math.min(index, slides.length - 1));
-        const slide = slides[nextIndex];
-        const targetLeft = slide.offsetLeft - (track.clientWidth - slide.clientWidth) / 2;
-
-        track.scrollTo({
-          left: targetLeft,
-          behavior: reducedMotion ? 'auto' : 'smooth'
-        });
-
-        updateActiveSlide(nextIndex);
-      }
-
-      function onTrackScroll() {
-        cancelAnimationFrame(scrollFrame);
-        scrollFrame = requestAnimationFrame(() => {
-          updateActiveSlide(getClosestSlideIndex());
-        });
-      }
-
-      track.addEventListener('scroll', onTrackScroll, { passive: true });
-
-      prevButton?.addEventListener('click', () => goToSlide(activeIndex - 1));
-      nextButton?.addEventListener('click', () => goToSlide(activeIndex + 1));
-
-      carousel.addEventListener('keydown', (event) => {
-        if (event.key === 'ArrowLeft') {
-          event.preventDefault();
-          goToSlide(activeIndex - 1);
-        }
-
-        if (event.key === 'ArrowRight') {
-          event.preventDefault();
-          goToSlide(activeIndex + 1);
+        const img = item.querySelector("img");
+        if (img) {
+          gsap.fromTo(img, { scale: 1.18, yPercent: isFast ? -8 : -5 }, {
+            scale: 1.04,
+            yPercent: isFast ? 8 : 5,
+            ease: "none",
+            scrollTrigger: {
+              trigger: section,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 0.5
+            }
+          });
         }
       });
 
-      track.addEventListener('pointerdown', (event) => {
-        if (event.pointerType === 'mouse' && event.button !== 0) return;
-        pointerDown = true;
-        draggedDistance = 0;
-        pointerStartX = event.clientX;
-        pointerStartScroll = track.scrollLeft;
-        track.classList.add('is-dragging');
-        track.setPointerCapture(event.pointerId);
+      // Stats stagger
+      gsap.from(".stat-grid .note-card", {
+        y: 50,
+        opacity: 0,
+        stagger: .08,
+        duration: .8,
+        scrollTrigger: {
+          trigger: ".numbers-intro",
+          start: "top 60%",
+          toggleActions: "play none none reverse"
+        }
       });
 
-      track.addEventListener('pointermove', (event) => {
-        if (!pointerDown) return;
-        const distance = event.clientX - pointerStartX;
-        draggedDistance = Math.max(draggedDistance, Math.abs(distance));
-        track.scrollLeft = pointerStartScroll - distance;
+      // Archive gallery scroll & cards rotation
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: ".archive-scroll-section",
+          start: "top 75%",
+          end: "bottom 20%",
+          scrub: 0.6
+        }
+      })
+        .from(".archive-title", { y: 80, opacity: 0, duration: 0.45 }, 0)
+        .from(".archive-card", {
+          y: 90,
+          opacity: 0,
+          rotate: (i) => [-3, 2, -2, 3, -1][i],
+          stagger: 0.08,
+          duration: 0.65
+        }, 0.12)
+        .to(".archive-gallery", { xPercent: -16, duration: 1 }, 0.25)
+        .to(".archive-card img", { scale: 1.18, duration: 1 }, 0.25);
+
+      // Partners section notes: tilts & staggered vertical drift
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: ".partners-section",
+          start: "top 72%",
+          end: "bottom 28%",
+          scrub: 0.6
+        }
+      })
+        .fromTo(".partners-heading", { yPercent: 10, opacity: 0.05 }, { yPercent: -15, opacity: 0.10, duration: 1 }, 0)
+        .from(".partners-section .section-label", { y: 24, opacity: 0, duration: 0.35 }, 0.08)
+        .from(".partners-section h2:not(.partners-heading)", { y: 65, opacity: 0, duration: 0.55 }, 0.12)
+        .from(".partner-logos .note-card", {
+          y: 90,
+          opacity: 0,
+          rotate: (i) => [-2, 2, -1, 1, -2][i],
+          stagger: 0.08,
+          duration: 0.7
+        }, 0.2)
+        .to(".partner-logos .note-card", {
+          y: (i) => [-22, 16, -10, 14, -16][i],
+          stagger: 0.04,
+          duration: 0.55
+        }, 0.62);
+
+      // Timeline process
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: ".process-section",
+          start: "top 60%",
+          end: "bottom 40%",
+          scrub: 0.6
+        }
+      })
+        .to(".timeline-bar", { scaleX: 1, stagger: .12, duration: .6 }, 0)
+        .from(".process-columns > div", { y: 36, opacity: 0, stagger: .08, duration: .45 }, .25);
+
+      // Contact & Footer
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: ".contact-section",
+          start: "top 62%",
+          end: "bottom 34%",
+          scrub: 0.6
+        }
+      })
+        .from(".contact-form > *", { y: 35, opacity: 0, stagger: .07, duration: .45 }, 0)
+        .from(".faq-row", { y: 35, opacity: 0, stagger: .08, duration: .45 }, .12);
+
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: ".footer-section",
+          start: "top 72%",
+          end: "bottom bottom",
+          scrub: 0.6
+        }
+      })
+        .fromTo(".footer-wordmark", { scale: 0.9, y: 90, opacity: 0.35 }, { scale: 1, y: 0, opacity: 1, duration: 0.9 }, 0)
+        .from(".footer-links", { y: 70, opacity: 0, duration: 0.5 }, 0.2)
+        .from(".footer-links h3", { y: 50, opacity: 0, duration: 0.45 }, 0.3)
+        .from(".footer-links a", { y: 16, opacity: 0, stagger: 0.04, duration: 0.3 }, 0.45);
+
+      // Debounced refresh on window resize
+      let resizeTimer;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          ScrollTrigger.refresh();
+        }, 200);
+      });
+      window.addEventListener("load", () => ScrollTrigger.refresh());
+
+    } else {
+      document.getElementById("ax-loader")?.remove();
+
+      document.querySelectorAll(".reveal, [data-reveal]").forEach((item) => {
+        item.style.opacity = "1";
+        item.style.transform = "none";
       });
 
-      function endPointerDrag(event) {
-        if (!pointerDown) return;
-        pointerDown = false;
-        track.classList.remove('is-dragging');
+      document.querySelectorAll(".timeline-bar").forEach((item) => {
+        item.style.transform = "scaleX(1)";
+      });
+    }
 
-        if (track.hasPointerCapture?.(event.pointerId)) {
-          track.releasePointerCapture(event.pointerId);
+    // ---- DYNAMIC CMS PROJECTS SYNC ----
+    async function syncCmsProjects() {
+      try {
+        const res = await fetch('/api/projects');
+        if (!res.ok) return;
+        const data = await res.json();
+        const projects = data.projects;
+        if (!projects || !Array.isArray(projects) || projects.length === 0) return;
+
+        // 1. Update project count metrics
+        const countStr = String(projects.length).padStart(2, '0');
+        const countHeading = document.getElementById('workCountHeading');
+        const maskedNumber = document.getElementById('workMaskedNumber');
+        if (countHeading) countHeading.textContent = `${countStr} Featured Works`;
+        if (maskedNumber) maskedNumber.textContent = countStr;
+
+        // 2. Render dynamic project list in #work
+        const listEl = document.getElementById('projectListContainer');
+        const preview1 = document.getElementById('workPreviewImg1');
+        const preview2 = document.getElementById('workPreviewImg2');
+
+        if (listEl) {
+          listEl.innerHTML = projects.map((p, idx) => {
+            const num = String(idx + 1).padStart(2, '0');
+            const borderCls = idx < projects.length - 1 ? 'border-b border-[#f3f0e8]/10 pb-3' : '';
+            const cover = p.cover_image_url || '';
+            const subtitle = p.subtitle || p.category || '';
+            return `
+              <li class="${borderCls} group transition hover:text-[#f3f0e8]" data-cover="${cover}">
+                <a href="/work/${p.slug}" class="block">
+                  <span class="font-bold text-[#f3f0e8] group-hover:text-[#ff5a1f] transition flex items-center justify-between">
+                    <span>${num} · ${p.title}</span>
+                    <span class="text-xs opacity-0 group-hover:opacity-100 transition text-[#ff5a1f]">↗</span>
+                  </span>
+                  <span class="block text-xs text-[#f3f0e8]/45 mt-0.5">${subtitle}</span>
+                </a>
+              </li>
+            `;
+          }).join('');
+
+          // Attach hover preview listeners
+          listEl.querySelectorAll('li').forEach((item) => {
+            item.addEventListener('mouseenter', () => {
+              const cover = item.getAttribute('data-cover');
+              if (cover && preview1) {
+                preview1.src = cover;
+              }
+            });
+          });
+
+          // Set initial preview images from first two projects
+          if (projects[0]?.cover_image_url && preview1) {
+            preview1.src = projects[0].cover_image_url;
+          }
+          if (projects[1]?.cover_image_url && preview2) {
+            preview2.src = projects[1].cover_image_url;
+          }
         }
 
-        goToSlide(getClosestSlideIndex());
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+          window.lucide.createIcons();
+        }
+      } catch (err) {
+        console.log('Using static verified projects fallback:', err);
       }
+    }
 
-      track.addEventListener('pointerup', endPointerDrag);
-      track.addEventListener('pointercancel', endPointerDrag);
-      track.addEventListener('pointerleave', (event) => {
-        if (pointerDown && event.pointerType === 'mouse') endPointerDrag(event);
-      });
-
-      track.addEventListener('click', (event) => {
-        if (draggedDistance > 8) event.preventDefault();
-      }, true);
-
-      window.addEventListener('resize', () => {
-        window.clearTimeout(window.__portfolioCarouselResizeTimer);
-        window.__portfolioCarouselResizeTimer = window.setTimeout(() => goToSlide(activeIndex), 120);
-      });
-
-      updateActiveSlide(0);
-      requestAnimationFrame(() => goToSlide(0));
-    })();
-
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', syncCmsProjects);
+    } else {
+      syncCmsProjects();
+    }
   </script>
 </body>
 

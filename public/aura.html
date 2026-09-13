@@ -449,11 +449,12 @@
       Gading Utama
     </a>
 
-    <nav class="hidden items-center gap-10 text-xs font-bold text-[#f3f0e8]/85 md:flex">
+    <nav class="hidden items-center gap-8 text-xs font-bold text-[#f3f0e8]/85 md:flex">
       <a href="#work" class="nav-link">
         <span class="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-[#ff5a1f] align-middle"></span>
         Works
       </a>
+      <a href="#web-apps" class="nav-link">Apps</a>
       <a href="#studio" class="nav-link">About</a>
       <a href="#pricing" class="nav-link">Toolkit</a>
       <a href="#contact" class="nav-link">Contact</a>
@@ -492,14 +493,17 @@
           <a href="#work" class="mobile-drawer-link py-3 text-[#f3f0e8] hover:text-[#ff5a1f] transition flex items-center justify-between border-b border-[#f3f0e8]/5">
             Works <span class="text-sm text-[#ff5a1f]">02</span>
           </a>
+          <a href="#web-apps" class="mobile-drawer-link py-3 text-[#f3f0e8] hover:text-[#ff5a1f] transition flex items-center justify-between border-b border-[#f3f0e8]/5">
+            Web-Apps <span class="text-sm text-[#ff5a1f]">03</span>
+          </a>
           <a href="#studio" class="mobile-drawer-link py-3 text-[#f3f0e8] hover:text-[#ff5a1f] transition flex items-center justify-between border-b border-[#f3f0e8]/5">
-            About <span class="text-sm text-[#ff5a1f]">03</span>
+            About <span class="text-sm text-[#ff5a1f]">04</span>
           </a>
           <a href="#pricing" class="mobile-drawer-link py-3 text-[#f3f0e8] hover:text-[#ff5a1f] transition flex items-center justify-between border-b border-[#f3f0e8]/5">
-            Toolkit <span class="text-sm text-[#ff5a1f]">04</span>
+            Toolkit <span class="text-sm text-[#ff5a1f]">05</span>
           </a>
           <a href="#contact" class="mobile-drawer-link py-3 text-[#f3f0e8] hover:text-[#ff5a1f] transition flex items-center justify-between border-b border-[#f3f0e8]/5">
-            Contact <span class="text-sm text-[#ff5a1f]">05</span>
+            Contact <span class="text-sm text-[#ff5a1f]">06</span>
           </a>
         </nav>
       </div>
@@ -634,8 +638,9 @@
     </section>
 
     <!-- STUDIO / ABOUT -->
-    <section id="studio"
+    <section id="studio" data-alias="about"
       class="brand-section relative flex min-h-screen items-center overflow-hidden px-5 py-24 md:px-8 lg:px-12">
+      <div id="about" class="sr-only"></div>
       <!-- Watermark Background -->
       <div class="pointer-events-none absolute inset-x-0 top-6 z-0 select-none overflow-hidden opacity-60">
         <h2
@@ -898,7 +903,8 @@
     </section>
 
     <!-- VISUAL ARCHIVE -->
-    <section class="archive-scroll-section relative overflow-hidden px-5 py-24 md:px-8 lg:px-12">
+    <section id="portfolio-gallery" class="archive-scroll-section relative overflow-hidden px-5 py-24 md:px-8 lg:px-12">
+      <div id="archive" class="sr-only"></div>
       <div class="mx-auto grid max-w-6xl gap-8 md:grid-cols-12 items-center">
         <div class="md:col-span-4">
           <p class="section-label">Visual Archive</p>
@@ -955,70 +961,246 @@
 
     <!-- SELECTED WORKS -->
     <section id="work" class="work-section relative min-h-screen overflow-hidden px-5 py-24 md:px-8 lg:px-12">
+      <div id="recent-works" class="sr-only"></div>
       <div class="grid min-h-screen items-center gap-12 md:grid-cols-12">
         <div class="work-copy md:col-span-3">
           <p class="section-label mb-8">Selected Works</p>
-          <h2 class="text-4xl font-black leading-[0.95] tracking-[-0.06em] sm:text-5xl md:text-6xl text-[#f3f0e8]">
+          <h2 id="workCountHeading" class="text-4xl font-black leading-[0.95] tracking-[-0.06em] sm:text-5xl md:text-6xl text-[#f3f0e8]">
             06 Featured Works
           </h2>
           <p class="mt-6 max-w-72 text-sm font-medium leading-[1.7] text-[#f3f0e8]/60">
             Selected case studies: custom internal tools, performance marketing systems, and operational solutions built for real business challenges.
           </p>
-          <a href="#contact"
+          <a href="#web-apps"
             class="magnetic-button mt-8 inline-flex items-center gap-3 rounded-full border border-[#f3f0e8]/15 px-6 py-3.5 text-xs font-bold uppercase tracking-[0.14em] hover:border-[#ff5a1f] hover:text-[#ff5a1f] transition">
-            View Case Studies
-            <i data-lucide="arrow-right" class="h-4 w-4"></i>
+            View Web-Apps
+            <i data-lucide="arrow-down" class="h-4 w-4"></i>
           </a>
         </div>
 
         <div class="relative md:col-span-6 md:col-start-4">
           <div class="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center overflow-hidden">
-            <span
+            <span id="workMaskedNumber"
               class="masked-number text-[clamp(7.5rem,20vw,26rem)] font-black leading-none tracking-[-0.09em]"
               style="--number-image: url('https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&amp;fit=crop&amp;w=1600&amp;q=90')">
               06
             </span>
-            <img
+            <img id="workPreviewImg1"
               src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/5bab247f-35d9-400d-a82b-fd87cfe913d2_1600w.webp"
               alt="Project preview one"
-              class="project-card absolute left-0 top-14 hidden h-44 w-72 rotate-[-14deg] rounded-[18px] border border-[#f3f0e8]/10 object-cover md:block shadow-2xl" loading="lazy" />
-            <img
+              class="project-card absolute left-0 top-14 hidden h-44 w-72 rotate-[-14deg] rounded-[18px] border border-[#f3f0e8]/10 object-cover md:block shadow-2xl transition-all duration-500" loading="lazy" />
+            <img id="workPreviewImg2"
               src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/30104e3c-5eea-4b93-93e9-5313698a7156_1600w.webp"
               alt="Project preview two"
-              class="project-card absolute right-4 top-6 hidden h-44 w-72 rotate-[10deg] rounded-[18px] border border-[#f3f0e8]/10 object-cover md:block shadow-2xl" loading="lazy" />
+              class="project-card absolute right-4 top-6 hidden h-44 w-72 rotate-[10deg] rounded-[18px] border border-[#f3f0e8]/10 object-cover md:block shadow-2xl transition-all duration-500" loading="lazy" />
           </div>
         </div>
 
         <div data-reveal="" class="md:col-span-3">
           <p class="text-xs font-extrabold uppercase tracking-[0.14em] text-[#ff5a1f]">
-            Project Index
+            Project Index · Case Studies
           </p>
-          <ul class="mt-6 space-y-4 text-sm font-medium text-[#f3f0e8]/65">
-            <li class="border-b border-[#f3f0e8]/10 pb-3 hover:text-[#f3f0e8] transition">
-              <span class="font-bold text-[#f3f0e8]">01 · Internal Listing Hub</span>
-              <span class="block text-xs text-[#f3f0e8]/45">Property Marketplace Web-App</span>
+          <ul id="projectListContainer" class="mt-6 space-y-4 text-sm font-medium text-[#f3f0e8]/65">
+            <li class="border-b border-[#f3f0e8]/10 pb-3 group transition hover:text-[#f3f0e8]"
+                data-cover="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/5bab247f-35d9-400d-a82b-fd87cfe913d2_1600w.webp">
+              <a href="/work/internal-listing-hub" class="block">
+                <span class="font-bold text-[#f3f0e8] group-hover:text-[#ff5a1f] transition flex items-center justify-between">
+                  <span>01 · Internal Listing Hub</span>
+                  <span class="text-xs opacity-0 group-hover:opacity-100 transition text-[#ff5a1f]">↗</span>
+                </span>
+                <span class="block text-xs text-[#f3f0e8]/45 mt-0.5">Property Marketplace Web-App</span>
+              </a>
             </li>
-            <li class="border-b border-[#f3f0e8]/10 pb-3 hover:text-[#f3f0e8] transition">
-              <span class="font-bold text-[#f3f0e8]">02 · Meta Ads Campaign System</span>
-              <span class="block text-xs text-[#f3f0e8]/45">Performance Marketing &amp; Rp118M Commission</span>
+            <li class="border-b border-[#f3f0e8]/10 pb-3 group transition hover:text-[#f3f0e8]"
+                data-cover="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/30104e3c-5eea-4b93-93e9-5313698a7156_1600w.webp">
+              <a href="/work/meta-ads-campaign-workflow" class="block">
+                <span class="font-bold text-[#f3f0e8] group-hover:text-[#ff5a1f] transition flex items-center justify-between">
+                  <span>02 · Meta Ads Campaign System</span>
+                  <span class="text-xs opacity-0 group-hover:opacity-100 transition text-[#ff5a1f]">↗</span>
+                </span>
+                <span class="block text-xs text-[#f3f0e8]/45 mt-0.5">Performance Marketing &amp; Rp118M Commission</span>
+              </a>
             </li>
-            <li class="border-b border-[#f3f0e8]/10 pb-3 hover:text-[#f3f0e8] transition">
-              <span class="font-bold text-[#f3f0e8]">03 · PROGRAM MBG Leaderboard</span>
-              <span class="block text-xs text-[#f3f0e8]/45">Real-Time Gamification &amp; Rewards</span>
+            <li class="border-b border-[#f3f0e8]/10 pb-3 group transition hover:text-[#f3f0e8]"
+                data-cover="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4734259a-bad7-422f-981e-ce01e79184f2_1600w.jpg">
+              <a href="/work/program-mbg-real-time-leaderboard" class="block">
+                <span class="font-bold text-[#f3f0e8] group-hover:text-[#ff5a1f] transition flex items-center justify-between">
+                  <span>03 · PROGRAM MBG Leaderboard</span>
+                  <span class="text-xs opacity-0 group-hover:opacity-100 transition text-[#ff5a1f]">↗</span>
+                </span>
+                <span class="block text-xs text-[#f3f0e8]/45 mt-0.5">Real-Time Gamification &amp; Rewards</span>
+              </a>
             </li>
-            <li class="border-b border-[#f3f0e8]/10 pb-3 hover:text-[#f3f0e8] transition">
-              <span class="font-bold text-[#f3f0e8]">04 · Kosan Bu Endang</span>
-              <span class="block text-xs text-[#f3f0e8]/45">Turnaround Marketing &amp; Rent App</span>
+            <li class="border-b border-[#f3f0e8]/10 pb-3 group transition hover:text-[#f3f0e8]"
+                data-cover="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/c543a9e1-f226-4ced-80b0-feb8445a75b9_1600w.jpg">
+              <a href="/work/kosan-bu-endang-rent-app" class="block">
+                <span class="font-bold text-[#f3f0e8] group-hover:text-[#ff5a1f] transition flex items-center justify-between">
+                  <span>04 · Kosan Bu Endang</span>
+                  <span class="text-xs opacity-0 group-hover:opacity-100 transition text-[#ff5a1f]">↗</span>
+                </span>
+                <span class="block text-xs text-[#f3f0e8]/45 mt-0.5">Turnaround Marketing &amp; Rent App</span>
+              </a>
             </li>
-            <li class="border-b border-[#f3f0e8]/10 pb-3 hover:text-[#f3f0e8] transition">
-              <span class="font-bold text-[#f3f0e8]">05 · Geektuku &amp; Digital Brands</span>
-              <span class="block text-xs text-[#f3f0e8]/45">E-Commerce Operations (500+ Reviews)</span>
+            <li class="border-b border-[#f3f0e8]/10 pb-3 group transition hover:text-[#f3f0e8]"
+                data-cover="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg">
+              <a href="/work/geektuku-digital-brands" class="block">
+                <span class="font-bold text-[#f3f0e8] group-hover:text-[#ff5a1f] transition flex items-center justify-between">
+                  <span>05 · Geektuku &amp; Digital Brands</span>
+                  <span class="text-xs opacity-0 group-hover:opacity-100 transition text-[#ff5a1f]">↗</span>
+                </span>
+                <span class="block text-xs text-[#f3f0e8]/45 mt-0.5">E-Commerce Operations (500+ Reviews)</span>
+              </a>
             </li>
-            <li class="hover:text-[#f3f0e8] transition">
-              <span class="font-bold text-[#f3f0e8]">06 · Peduly.com Campaign Content</span>
-              <span class="block text-xs text-[#f3f0e8]/45">Viral Social Media (400K+ Views)</span>
+            <li class="group transition hover:text-[#f3f0e8]"
+                data-cover="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/3b2725ca-5b05-49fe-b2ff-9de382bf26ef_1600w.webp">
+              <a href="/work/peduly-campaign-content" class="block">
+                <span class="font-bold text-[#f3f0e8] group-hover:text-[#ff5a1f] transition flex items-center justify-between">
+                  <span>06 · Peduly.com Campaign Content</span>
+                  <span class="text-xs opacity-0 group-hover:opacity-100 transition text-[#ff5a1f]">↗</span>
+                </span>
+                <span class="block text-xs text-[#f3f0e8]/45 mt-0.5">Viral Social Media (400K+ Views)</span>
+              </a>
             </li>
           </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- WEB APPS SECTION -->
+    <section id="web-apps" class="apps-section relative min-h-screen overflow-hidden px-5 py-24 md:px-8 lg:px-12 border-t border-[#f3f0e8]/5">
+      <div class="relative z-10 mx-auto w-full max-w-7xl">
+        <div class="mb-16 flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+          <div data-reveal="">
+            <p class="section-label mb-4">Web-Apps &amp; Internal Tools</p>
+            <h2 class="text-4xl font-black leading-[0.95] tracking-[-0.06em] sm:text-5xl md:text-6xl text-[#f3f0e8]">
+              Tools built for real work.
+            </h2>
+          </div>
+          <p data-reveal="" class="max-w-md text-sm font-medium leading-[1.7] text-[#f3f0e8]/65">
+            Web applications created to remove repetitive operational tasks, automate data tracking, and improve daily team performance.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <!-- App 1: PROGRAM MBG -->
+          <article data-reveal="" class="glass group relative overflow-hidden rounded-[32px] border border-[#f3f0e8]/10 p-8 hover:border-[#ff5a1f]/40 transition duration-500">
+            <div class="flex items-start justify-between gap-4">
+              <span class="rounded-full bg-[#ff5a1f]/15 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-[#ff5a1f]">
+                Gamification Tool
+              </span>
+              <span class="text-xs font-bold text-[#f3f0e8]/40">2024 · Office System</span>
+            </div>
+            <h3 class="mt-6 text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8] group-hover:text-[#ff5a1f] transition">
+              PROGRAM MBG Leaderboard
+            </h3>
+            <div class="mt-6 space-y-4 text-sm leading-[1.65]">
+              <div class="rounded-[20px] bg-white/[0.025] p-4 border border-[#f3f0e8]/5">
+                <span class="block text-[11px] font-bold uppercase tracking-widest text-[#ff5a1f]">Problem</span>
+                <p class="mt-1 text-[#f3f0e8]/70">Agent activities, leaderboards, and reward points were difficult to track manually across the office.</p>
+              </div>
+              <div class="rounded-[20px] bg-white/[0.025] p-4 border border-[#f3f0e8]/5">
+                <span class="block text-[11px] font-bold uppercase tracking-widest text-[#ff5a1f]">Solution</span>
+                <p class="mt-1 text-[#f3f0e8]/70">A real-time gamification dashboard with live activity tracking, rank shifting, and automated point redemption.</p>
+              </div>
+            </div>
+            <div class="mt-8 flex items-center justify-between pt-4 border-t border-[#f3f0e8]/10">
+              <span class="text-xs font-semibold text-[#f3f0e8]/45">Real-time sync · Mobile &amp; TV display</span>
+              <a href="/work/program-mbg-real-time-leaderboard" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f] hover:underline">
+                Open Case Study
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              </a>
+            </div>
+          </article>
+
+          <!-- App 2: Internal Listing Hub -->
+          <article data-reveal="" class="glass group relative overflow-hidden rounded-[32px] border border-[#f3f0e8]/10 p-8 hover:border-[#ff5a1f]/40 transition duration-500">
+            <div class="flex items-start justify-between gap-4">
+              <span class="rounded-full bg-[#ff5a1f]/15 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-[#ff5a1f]">
+                Marketplace Tool
+              </span>
+              <span class="text-xs font-bold text-[#f3f0e8]/40">2024–2026 · Daily Use</span>
+            </div>
+            <h3 class="mt-6 text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8] group-hover:text-[#ff5a1f] transition">
+              Internal Listing Hub
+            </h3>
+            <div class="mt-6 space-y-4 text-sm leading-[1.65]">
+              <div class="rounded-[20px] bg-white/[0.025] p-4 border border-[#f3f0e8]/5">
+                <span class="block text-[11px] font-bold uppercase tracking-widest text-[#ff5a1f]">Problem</span>
+                <p class="mt-1 text-[#f3f0e8]/70">Property listings and marketing collaterals were scattered across WhatsApp chats and hard to locate.</p>
+              </div>
+              <div class="rounded-[20px] bg-white/[0.025] p-4 border border-[#f3f0e8]/5">
+                <span class="block text-[11px] font-bold uppercase tracking-widest text-[#ff5a1f]">Solution</span>
+                <p class="mt-1 text-[#f3f0e8]/70">A digital property listing hub allowing 50+ agents to search, filter, and share verified inventory instantly.</p>
+              </div>
+            </div>
+            <div class="mt-8 flex items-center justify-between pt-4 border-t border-[#f3f0e8]/10">
+              <span class="text-xs font-semibold text-[#f3f0e8]/45">50+ daily users · Reduced search to &lt; 5s</span>
+              <a href="/work/internal-listing-hub" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f] hover:underline">
+                Open Case Study
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              </a>
+            </div>
+          </article>
+
+          <!-- App 3: Meta Ads Reporting Dashboard -->
+          <article data-reveal="" class="glass group relative overflow-hidden rounded-[32px] border border-[#f3f0e8]/10 p-8 hover:border-[#ff5a1f]/40 transition duration-500">
+            <div class="flex items-start justify-between gap-4">
+              <span class="rounded-full bg-[#ff5a1f]/15 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-[#ff5a1f]">
+                Reporting Tool
+              </span>
+              <span class="text-xs font-bold text-[#f3f0e8]/40">2023–2026 · Marketing</span>
+            </div>
+            <h3 class="mt-6 text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8] group-hover:text-[#ff5a1f] transition">
+              Meta Ads Reporting Dashboard
+            </h3>
+            <div class="mt-6 space-y-4 text-sm leading-[1.65]">
+              <div class="rounded-[20px] bg-white/[0.025] p-4 border border-[#f3f0e8]/5">
+                <span class="block text-[11px] font-bold uppercase tracking-widest text-[#ff5a1f]">Problem</span>
+                <p class="mt-1 text-[#f3f0e8]/70">Campaign metrics across ad sets required repetitive, slow manual recap in complex spreadsheets.</p>
+              </div>
+              <div class="rounded-[20px] bg-white/[0.025] p-4 border border-[#f3f0e8]/5">
+                <span class="block text-[11px] font-bold uppercase tracking-widest text-[#ff5a1f]">Solution</span>
+                <p class="mt-1 text-[#f3f0e8]/70">A web application for reviewing Meta Ads spend, leads, CTR, CPM, CPC, and creative performance in real time.</p>
+              </div>
+            </div>
+            <div class="mt-8 flex items-center justify-between pt-4 border-t border-[#f3f0e8]/10">
+              <span class="text-xs font-semibold text-[#f3f0e8]/45">Rp118M gross commission generated</span>
+              <a href="/work/meta-ads-campaign-workflow" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f] hover:underline">
+                Open Case Study
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              </a>
+            </div>
+          </article>
+
+          <!-- App 4: Kosan Bu Endang Rent App -->
+          <article data-reveal="" class="glass group relative overflow-hidden rounded-[32px] border border-[#f3f0e8]/10 p-8 hover:border-[#ff5a1f]/40 transition duration-500">
+            <div class="flex items-start justify-between gap-4">
+              <span class="rounded-full bg-[#ff5a1f]/15 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-[#ff5a1f]">
+                Operations Tool
+              </span>
+              <span class="text-xs font-bold text-[#f3f0e8]/40">2023–Present · Property</span>
+            </div>
+            <h3 class="mt-6 text-2xl font-bold tracking-[-0.04em] text-[#f3f0e8] group-hover:text-[#ff5a1f] transition">
+              Kosan Bu Endang Rent App
+            </h3>
+            <div class="mt-6 space-y-4 text-sm leading-[1.65]">
+              <div class="rounded-[20px] bg-white/[0.025] p-4 border border-[#f3f0e8]/5">
+                <span class="block text-[11px] font-bold uppercase tracking-widest text-[#ff5a1f]">Problem</span>
+                <p class="mt-1 text-[#f3f0e8]/70">Manual rent collection and expense logging created administrative delays and reconciliation errors.</p>
+              </div>
+              <div class="rounded-[20px] bg-white/[0.025] p-4 border border-[#f3f0e8]/5">
+                <span class="block text-[11px] font-bold uppercase tracking-widest text-[#ff5a1f]">Solution</span>
+                <p class="mt-1 text-[#f3f0e8]/70">A custom web application for tenant records, automated rent reminders via WhatsApp, and digitized accounting.</p>
+              </div>
+            </div>
+            <div class="mt-8 flex items-center justify-between pt-4 border-t border-[#f3f0e8]/10">
+              <span class="text-xs font-semibold text-[#f3f0e8]/45">100% occupancy · 0 billing delays</span>
+              <a href="/work/kosan-bu-endang-rent-app" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#ff5a1f] hover:underline">
+                Open Case Study
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              </a>
+            </div>
+          </article>
         </div>
       </div>
     </section>
@@ -1938,6 +2120,79 @@
       document.querySelectorAll(".timeline-bar").forEach((item) => {
         item.style.transform = "scaleX(1)";
       });
+    }
+
+    // ---- DYNAMIC CMS PROJECTS SYNC ----
+    async function syncCmsProjects() {
+      try {
+        const res = await fetch('/api/projects');
+        if (!res.ok) return;
+        const data = await res.json();
+        const projects = data.projects;
+        if (!projects || !Array.isArray(projects) || projects.length === 0) return;
+
+        // 1. Update project count metrics
+        const countStr = String(projects.length).padStart(2, '0');
+        const countHeading = document.getElementById('workCountHeading');
+        const maskedNumber = document.getElementById('workMaskedNumber');
+        if (countHeading) countHeading.textContent = `${countStr} Featured Works`;
+        if (maskedNumber) maskedNumber.textContent = countStr;
+
+        // 2. Render dynamic project list in #work
+        const listEl = document.getElementById('projectListContainer');
+        const preview1 = document.getElementById('workPreviewImg1');
+        const preview2 = document.getElementById('workPreviewImg2');
+
+        if (listEl) {
+          listEl.innerHTML = projects.map((p, idx) => {
+            const num = String(idx + 1).padStart(2, '0');
+            const borderCls = idx < projects.length - 1 ? 'border-b border-[#f3f0e8]/10 pb-3' : '';
+            const cover = p.cover_image_url || '';
+            const subtitle = p.subtitle || p.category || '';
+            return `
+              <li class="${borderCls} group transition hover:text-[#f3f0e8]" data-cover="${cover}">
+                <a href="/work/${p.slug}" class="block">
+                  <span class="font-bold text-[#f3f0e8] group-hover:text-[#ff5a1f] transition flex items-center justify-between">
+                    <span>${num} · ${p.title}</span>
+                    <span class="text-xs opacity-0 group-hover:opacity-100 transition text-[#ff5a1f]">↗</span>
+                  </span>
+                  <span class="block text-xs text-[#f3f0e8]/45 mt-0.5">${subtitle}</span>
+                </a>
+              </li>
+            `;
+          }).join('');
+
+          // Attach hover preview listeners
+          listEl.querySelectorAll('li').forEach((item) => {
+            item.addEventListener('mouseenter', () => {
+              const cover = item.getAttribute('data-cover');
+              if (cover && preview1) {
+                preview1.src = cover;
+              }
+            });
+          });
+
+          // Set initial preview images from first two projects
+          if (projects[0]?.cover_image_url && preview1) {
+            preview1.src = projects[0].cover_image_url;
+          }
+          if (projects[1]?.cover_image_url && preview2) {
+            preview2.src = projects[1].cover_image_url;
+          }
+        }
+
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+          window.lucide.createIcons();
+        }
+      } catch (err) {
+        console.log('Using static verified projects fallback:', err);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', syncCmsProjects);
+    } else {
+      syncCmsProjects();
     }
   </script>
 </body>
