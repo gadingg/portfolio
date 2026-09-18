@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { getGalleryItems } from '@/lib/db/gallery';
+import { getPublicGalleryItems } from '@/lib/db/gallery';
 
 export const revalidate = 60;
 
 export async function GET() {
   try {
-    const items = await getGalleryItems();
+    const items = await getPublicGalleryItems();
     return NextResponse.json(
       { items },
       {

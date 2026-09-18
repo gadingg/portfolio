@@ -37,14 +37,15 @@ export async function PATCH(
     const body = await request.json();
     const validatedData = ProjectSchema.partial().parse({ ...body, id });
 
-    const result = await saveProject(validatedData as any, body.blocks);
+    const result = await saveProject(validatedData, validatedData.blocks);
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
     return NextResponse.json({ success: true, project: result.data });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Validation error' }, { status: 400 });
+  } catch (error) {
+    console.error('Project update error:', error);
+    return NextResponse.json({ error: 'Project could not be updated. Check the fields and try again.' }, { status: 400 });
   }
 }
 

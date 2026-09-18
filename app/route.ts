@@ -8,7 +8,6 @@ export async function GET() {
   try {
     const candidatePaths = [
       path.join(process.cwd(), 'public', 'index.html'),
-      path.join(process.cwd(), 'index.html'),
       path.resolve(process.cwd(), '.next', 'server', 'public', 'index.html'),
     ];
 

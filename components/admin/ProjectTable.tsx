@@ -83,7 +83,9 @@ export function ProjectTable({ initialProjects }: { initialProjects: Project[] }
       >
         {/* Search */}
         <input
-          type="text"
+          className="admin-search"
+          aria-label="Search projects"
+          type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by title or category..."
@@ -102,6 +104,7 @@ export function ProjectTable({ initialProjects }: { initialProjects: Project[] }
         {/* Filters */}
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           <select
+            aria-label="Filter by status"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as any)}
             style={{
@@ -122,6 +125,7 @@ export function ProjectTable({ initialProjects }: { initialProjects: Project[] }
           </select>
 
           <select
+            aria-label="Filter by category"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
             style={{
@@ -145,8 +149,31 @@ export function ProjectTable({ initialProjects }: { initialProjects: Project[] }
         </div>
       </div>
 
+      <div className="admin-project-cards">
+        {filteredProjects.length === 0 ? (
+          <p className="admin-empty-state">No projects match these filters. Clear a filter or create a new project.</p>
+        ) : filteredProjects.map((project) => (
+          <article className="admin-project-card" key={project.id}>
+            <div>
+              <p className="admin-project-category">{project.category}</p>
+              <h2>{project.title}</h2>
+              <p>{project.status}{project.is_featured ? ' · Featured' : ''}</p>
+            </div>
+            <div className="admin-card-actions">
+              <button type="button" onClick={() => handleTogglePublish(project.id, project.status)} disabled={actionLoading === project.id}>
+                {project.status === 'published' ? 'Unpublish' : 'Publish'}
+              </button>
+              <Link href={`/admintgadink/dashboard/portfolio/${project.id}`}>Edit</Link>
+              <Link href={`/work/${project.slug}`} target="_blank">View</Link>
+              <button type="button" className="danger" onClick={() => setDeleteTarget(project)}>Delete</button>
+            </div>
+          </article>
+        ))}
+      </div>
+
       {/* Projects Table */}
       <div
+        className="admin-table-wrap"
         style={{
           borderRadius: '1.25rem',
           background: 'var(--admin-card)',

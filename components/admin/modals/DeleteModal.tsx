@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Project } from '@/types/portfolio';
 
 interface DeleteModalProps {
@@ -13,10 +13,37 @@ interface DeleteModalProps {
 export function DeleteModal({ project, isOpen, onClose, onConfirm }: DeleteModalProps) {
   const [confirmInput, setConfirmInput] = useState('');
   const [deleting, setDeleting] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    inputRef.current?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !deleting) onClose();
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [isOpen, deleting, onClose]);
 
   if (!isOpen || !project) return null;
 
   const isMatched = confirmInput.trim().toLowerCase() === project.title.trim().toLowerCase();
+
+  const keepFocusInside = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Tab') return;
+    const focusable = dialogRef.current?.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), a[href]');
+    if (!focusable?.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
 
   const handleDelete = async () => {
     if (!isMatched || deleting) return;
@@ -32,6 +59,12 @@ export function DeleteModal({ project, isOpen, onClose, onConfirm }: DeleteModal
 
   return (
     <div
+      ref={dialogRef}
+      onKeyDown={keepFocusInside}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delete-dialog-title"
+      aria-describedby="delete-dialog-description"
       style={{
         position: 'fixed',
         inset: 0,
@@ -56,10 +89,10 @@ export function DeleteModal({ project, isOpen, onClose, onConfirm }: DeleteModal
           color: '#fff',
         }}
       >
-        <h2 style={{ fontSize: '1.4rem', fontWeight: 700, margin: '0 0 8px', color: '#ef4444' }}>
+        <h2 id="delete-dialog-title" style={{ fontSize: '1.4rem', fontWeight: 700, margin: '0 0 8px', color: '#ff8b8b' }}>
           Delete Study Case?
         </h2>
-        <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, margin: '0 0 20px' }}>
+        <p id="delete-dialog-description" style={{ fontSize: '13px', color: 'rgba(255,255,255,0.78)', lineHeight: 1.6, margin: '0 0 20px' }}>
           This action is permanent and cannot be undone. To confirm, please type the project title below:
         </p>
 
@@ -79,6 +112,8 @@ export function DeleteModal({ project, isOpen, onClose, onConfirm }: DeleteModal
         </p>
 
         <input
+          ref={inputRef}
+          aria-label="Type the project title to confirm deletion"
           type="text"
           value={confirmInput}
           onChange={(e) => setConfirmInput(e.target.value)}
@@ -92,7 +127,6 @@ export function DeleteModal({ project, isOpen, onClose, onConfirm }: DeleteModal
             border: '1px solid rgba(255, 255, 255, 0.15)',
             color: '#fff',
             fontSize: '13px',
-            outline: 'none',
             marginBottom: '24px',
           }}
         />

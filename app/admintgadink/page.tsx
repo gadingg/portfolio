@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { PinLoginForm } from '@/components/admin/PinLoginForm';
+import { AdminLoginForm } from '@/components/admin/AdminLoginForm';
 
 export const metadata: Metadata = {
   title: 'Admin Access | Gading Portfolio',
@@ -22,7 +22,7 @@ export default function AdminLoginPage() {
         background: 'var(--bg-hero)',
       }}
     >
-      <PinLoginForm />
+      <AdminLoginForm />
     </div>
   );
 }

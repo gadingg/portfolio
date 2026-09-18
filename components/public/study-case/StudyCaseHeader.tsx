@@ -91,12 +91,14 @@ export function StudyCaseHeader({ projectTitle }: StudyCaseHeaderProps) {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
-          <Link
-            href="/#contact"
+          <a
+            href="https://wa.me/6289653484274?text=Hi%20Gading%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20talk."
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full border border-[#f3f0e8]/15 bg-white/[0.04] px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#f3f0e8] hover:border-[#ff5a1f] hover:text-[#ff5a1f] hover:bg-[#ff5a1f]/10 transition min-h-[44px]"
           >
-            Start Project
-          </Link>
+            WhatsApp
+          </a>
 
           <button
             type="button"
@@ -214,13 +216,15 @@ export function StudyCaseHeader({ projectTitle }: StudyCaseHeaderProps) {
           </div>
 
           <div className="pt-6 border-t border-[#f3f0e8]/10">
-            <Link
-              href="/#contact"
+            <a
+              href="https://wa.me/6289653484274?text=Hi%20Gading%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20talk."
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => setIsDrawerOpen(false)}
               className="flex w-full items-center justify-center gap-2 rounded-full bg-[#ff5a1f] py-3.5 text-xs font-bold uppercase tracking-wider text-[#060706] shadow-lg shadow-[#ff5a1f]/20 min-h-[44px]"
             >
-              Start a Project
-            </Link>
+              Chat on WhatsApp
+            </a>
           </div>
         </div>
       </div>

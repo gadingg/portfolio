@@ -8,7 +8,7 @@ export default async function AdminPortfolioListPage() {
 
   return (
     <div style={{ maxWidth: '1200px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
+      <div className="admin-page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
         <div>
           <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', color: 'var(--amber)' }}>
             PORTFOLIO MANAGEMENT

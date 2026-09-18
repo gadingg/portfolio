@@ -7,16 +7,8 @@
   <title>R. Gading Utama · Creative Marketer &amp; Digital Problem Solver</title>
   <meta name="description" content="Portfolio of R. Gading Utama. Creative Marketer and Digital Problem Solver bridging marketing, design, technology, and AI to build practical business solutions." />
   
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap"
-    rel="stylesheet" />
+  <link rel="stylesheet" href="./assets/css/portfolio.css" />
+  <link rel="preconnect" href="https://hoirqrkdgbmvpwutwuwj.supabase.co" crossorigin="" />
 
   <style>
     :root {
@@ -297,86 +289,6 @@
       transform: translate3d(0, 0, 0);
     }
 
-    /* Brand preloader */
-    .ax-loader {
-      position: fixed;
-      inset: 0;
-      z-index: 200;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--bg);
-      will-change: transform;
-    }
-
-    .ax-loader__inner {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 24px;
-      padding: 0 24px;
-    }
-
-    .ax-loader__brand {
-      display: inline-flex;
-      align-items: center;
-      line-height: 1;
-      font-weight: 900;
-      letter-spacing: -0.08em;
-      color: var(--cream);
-      font-size: clamp(2.8rem, 9vw, 6.4rem);
-      opacity: 0;
-      transform: translateY(18px);
-      filter: blur(8px);
-      will-change: transform, opacity, filter;
-    }
-
-    .ax-loader__brand sup {
-      font-size: 0.26em;
-      font-weight: 800;
-      letter-spacing: 0;
-      align-self: flex-start;
-      margin-left: 0.02em;
-    }
-
-    .ax-dot {
-      width: 0.14em;
-      height: 0.14em;
-      margin-left: 0.14em;
-      border-radius: 999px;
-      background: var(--orange);
-      box-shadow: 0 0 28px rgba(255, 90, 31, 0.65);
-    }
-
-    .ax-loader__track {
-      width: min(280px, 64vw);
-      height: 2px;
-      overflow: hidden;
-      border-radius: 999px;
-      background: rgba(243, 240, 232, 0.12);
-    }
-
-    .ax-loader__bar {
-      width: 100%;
-      height: 100%;
-      transform: scaleX(0);
-      transform-origin: left center;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--orange), rgba(243, 240, 232, 0.82));
-    }
-
-    .ax-loader__meta {
-      display: flex;
-      justify-content: space-between;
-      width: min(280px, 64vw);
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(243, 240, 232, 0.45);
-      opacity: 0;
-    }
-
     /* Scrollbar hide for galleries */
     .no-scrollbar::-webkit-scrollbar {
       display: none;
@@ -387,13 +299,16 @@
     }
 
     @media (max-width: 767px) {
-      .wordmark {
-        letter-spacing: -0.05em;
-      }
-
-      .page-rail {
-        display: none;
-      }
+      .wordmark { letter-spacing: -0.05em; }
+      .page-rail { display: none; }
+      .hero-section { width: 100%; max-width: 100vw; }
+      .hero-section > div, .hero-copy, .hero-stack-container { min-width: 0; width: 100%; max-width: calc(100vw - 40px); }
+      .hero-copy > *, .hero-copy p, .hero-copy h2 { min-width: 0; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+      .section-label { display: flex; width: 100%; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+      .hero-actions-mobile { display: grid; grid-template-columns: minmax(0, 1fr); width: 100%; max-width: 100%; }
+      .hero-actions-mobile > :where(a, button) { width: 100%; max-width: 100%; justify-content: center; }
+      header { width: 100%; max-width: 100vw; }
+      #openDrawerBtn { position: absolute; top: 10px; right: 20px; display: flex !important; z-index: 2; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -404,10 +319,6 @@
         animation-iteration-count: 1 !important;
         scroll-behavior: auto !important;
         transition-duration: .001ms !important;
-      }
-
-      .ax-loader {
-        display: none;
       }
 
       .reveal,
@@ -425,22 +336,7 @@
   <div class="grid-veil" aria-hidden="true"></div>
   <div class="page-rail" aria-hidden="true">Creative Marketing · Tech · AI</div>
 
-  <!-- PRELOADER -->
-  <div id="ax-loader" class="ax-loader" aria-hidden="true">
-    <div class="ax-loader__inner">
-      <div class="ax-loader__brand">
-        <span>Gading</span>
-        <span class="ax-dot"></span>
-      </div>
-      <div class="ax-loader__track">
-        <div class="ax-loader__bar"></div>
-      </div>
-      <div class="ax-loader__meta">
-        <span class="ax-loader__pct">000</span>
-        <span>Creative Marketing · Tech · AI</span>
-      </div>
-    </div>
-  </div>
+  <a href="#home" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-[#f3f0e8] focus:px-4 focus:py-3 focus:text-[#060706]">Skip to content</a>
 
   <!-- HEADER -->
   <header class="fixed inset-x-0 top-0 z-40 flex items-center justify-between px-5 py-4 backdrop-blur-md bg-[#060706]/75 border-b border-[#f3f0e8]/5 md:px-8 lg:px-12 transition-all duration-300">
@@ -461,12 +357,12 @@
     </nav>
 
     <div class="flex items-center gap-3">
-      <a href="#contact"
+      <a href="https://wa.me/6289653484274?text=Hi%20Gading%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20talk." target="_blank" rel="noopener noreferrer"
         class="hidden sm:inline-flex items-center gap-2 rounded-full border border-[#f3f0e8]/15 bg-white/[0.03] px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#f3f0e8] hover:border-[#ff5a1f] hover:text-[#ff5a1f] transition">
-        Hire Me
+        Chat on WhatsApp
       </a>
-      <button id="openDrawerBtn" class="glass flex h-11 w-11 items-center justify-center rounded-full md:hidden text-[#f3f0e8] hover:text-[#ff5a1f] transition" aria-label="Open mobile navigation menu">
-        <i data-lucide="menu" class="h-5 w-5"></i>
+      <button id="openDrawerBtn" class="glass flex min-h-11 shrink-0 items-center justify-center rounded-full px-4 text-[11px] font-bold uppercase tracking-wider text-[#f3f0e8] hover:text-[#ff5a1f] transition md:hidden" aria-label="Open mobile navigation menu">
+        Menu
       </button>
     </div>
   </header>
@@ -481,8 +377,8 @@
       <div>
         <div class="flex items-center justify-between pb-6 border-b border-[#f3f0e8]/10">
           <span class="text-xs font-extrabold uppercase tracking-widest text-[#f3f0e8]/50">Navigation</span>
-          <button id="closeDrawerBtn" class="glass flex h-11 w-11 items-center justify-center rounded-full text-[#f3f0e8] hover:text-[#ff5a1f]" aria-label="Close navigation menu">
-            <i data-lucide="x" class="h-5 w-5"></i>
+          <button id="closeDrawerBtn" class="glass flex min-h-11 items-center justify-center rounded-full px-4 text-[11px] font-bold uppercase text-[#f3f0e8] hover:text-[#ff5a1f]" aria-label="Close navigation menu">
+            Close
           </button>
         </div>
 
@@ -509,8 +405,8 @@
       </div>
 
       <div class="pt-6 border-t border-[#f3f0e8]/10">
-        <a href="#contact" class="mobile-drawer-link flex items-center justify-center gap-3 w-full rounded-full bg-[#ff5a1f] py-4 text-xs font-bold uppercase tracking-widest text-[#060706] shadow-lg shadow-[#ff5a1f]/20">
-          <span>Start a Project</span>
+        <a href="https://wa.me/6289653484274?text=Hi%20Gading%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20talk." target="_blank" rel="noopener noreferrer" class="mobile-drawer-link flex items-center justify-center gap-3 w-full rounded-full bg-[#ff5a1f] py-4 text-xs font-bold uppercase tracking-widest text-[#060706] shadow-lg shadow-[#ff5a1f]/20">
+          <span>Chat on WhatsApp</span>
           <i data-lucide="arrow-right" class="h-4 w-4"></i>
         </a>
         <p class="mt-4 text-center text-[10px] uppercase tracking-widest text-[#f3f0e8]/40">
@@ -542,10 +438,10 @@
             <span class="text-[#f3f0e8] font-semibold">
               Creative Marketer &amp; Digital Problem Solver.
             </span>
-            I combine creative marketing, design, technology, and AI to turn business bottlenecks into working systems and measurable campaigns.
+            Saya menggabungkan creative marketing, design, technology, dan AI untuk mengubah bottleneck bisnis menjadi sistem kerja dan campaign yang bisa diukur.
           </p>
 
-          <div class="mt-8 sm:mt-10 flex flex-wrap items-center gap-4">
+          <div class="hero-actions-mobile mt-8 sm:mt-10 flex flex-wrap items-center gap-4">
             <a href="#work"
               class="magnetic-button inline-flex items-center gap-4 rounded-full border border-[#f3f0e8]/15 bg-white/[0.03] px-6 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#f3f0e8] hover:border-[#ff5a1f] hover:bg-[#ff5a1f]/10 transition">
               View Selected Works
@@ -553,10 +449,13 @@
                 <i data-lucide="arrow-right" class="h-4 w-4"></i>
               </span>
             </a>
-            <a href="#contact"
-              class="inline-flex items-center gap-2 rounded-full px-5 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#f3f0e8]/65 hover:text-[#f3f0e8] transition min-h-[44px]">
-              Get in touch
+            <a href="https://wa.me/6289653484274?text=Hi%20Gading%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20talk." target="_blank" rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 rounded-full px-5 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#f3f0e8]/75 hover:text-[#f3f0e8] transition min-h-[44px]">
+              WhatsApp Me
             </a>
+            <button type="button" class="open-cv inline-flex min-h-[44px] items-center rounded-full border border-[#f3f0e8]/20 px-5 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#f3f0e8] hover:border-[#ff5a1f]">
+              See CV
+            </button>
           </div>
 
           <!-- Mobile Quick Status -->
@@ -656,7 +555,7 @@
             A creative problem solver bridging marketing, design, technology, and AI.
           </h3>
           <p data-reveal="" class="mt-6 text-base font-medium leading-[1.75] text-[#f3f0e8]/65">
-            I do not just wait for a brief and execute it. I observe workflows, identify bottlenecks, brainstorm campaign concepts, and build the digital tools needed to solve them. From high-converting Meta Ads and property marketing campaigns to custom internal web applications, I connect ideas directly to practical execution.
+            Saya tidak berhenti di brief. Saya ikut membaca workflow, mencari titik yang bikin kerja lambat, menyusun ide campaign, lalu membangun digital tool bila itu solusi yang paling masuk akal. Ide kreatifnya nyambung langsung ke eksekusi, bukan berhenti di deck.
           </p>
 
           <div class="mt-8 flex items-center gap-6 text-xs font-bold uppercase tracking-wider text-[#f3f0e8]/50">
@@ -710,7 +609,7 @@
         <div data-reveal="" class="md:col-span-3">
           <p class="section-label mb-6 md:mb-20">Specialized Skills</p>
           <p class="max-w-60 text-sm font-medium leading-[1.7] text-[#f3f0e8]/60">
-            Eight practical capabilities I practice daily, from campaign ideation to performance advertising and custom web-app builds.
+            Delapan kemampuan yang saya pakai sehari-hari, dari merancang ide campaign dan visual sampai menjalankan performance ads serta membangun web app internal.
           </p>
         </div>
 
@@ -842,7 +741,7 @@
         <div class="md:col-span-4">
           <p class="section-label">Visual Archive</p>
           <p class="mt-6 max-w-sm text-sm font-medium leading-[1.7] text-[#f3f0e8]/60">
-            Selected visual assets, AI-assisted property posters, campaign creatives, and digital interface experiments.
+            Kumpulan visual pilihan: property poster berbantuan AI, materi campaign, dan eksperimen digital interface yang saya kerjakan untuk berbagai kebutuhan.
           </p>
         </div>
 
@@ -902,7 +801,7 @@
             06 Featured Works
           </h2>
           <p class="mt-6 max-w-72 text-sm font-medium leading-[1.7] text-[#f3f0e8]/60">
-            Selected case studies: custom internal tools, performance marketing systems, and operational solutions built for real business challenges.
+            Pilihan studi kasus tentang internal tools, performance marketing, dan solusi operasional yang dibuat dari masalah kerja sehari-hari.
           </p>
           <a href="#web-apps"
             class="magnetic-button mt-8 inline-flex items-center gap-3 rounded-full border border-[#f3f0e8]/15 px-6 py-3.5 text-xs font-bold uppercase tracking-[0.14em] hover:border-[#ff5a1f] hover:text-[#ff5a1f] transition">
@@ -1291,7 +1190,7 @@
           Experience
         </h2>
         <p class="mt-6 max-w-md text-sm font-medium leading-[1.7] text-[#f3f0e8]/65">
-          Professional experience moving across digital entrepreneurship, content production, property marketing, and web application development.
+          Pengalaman profesional lintas digital entrepreneurship, content production, property marketing, hingga pengembangan web application.
         </p>
       </div>
 
@@ -1419,33 +1318,33 @@
           <p class="section-label mb-8">Contact</p>
           
           <h2 class="text-4xl font-black tracking-[-0.06em] text-[#f3f0e8] sm:text-5xl mb-6">
-            Have a campaign, visual concept, or digital problem to solve?
+            Need a creative who can think past the brief?
           </h2>
 
-          <p class="mb-8 max-w-md text-base font-medium leading-[1.7] text-[#f3f0e8]/65">
-            Let us turn it into a clear campaign, an automated workflow, or a working web application.
+          <p class="mb-8 max-w-md text-base font-medium leading-[1.7] text-[#f3f0e8]/70">
+            Punya campaign, visual, atau workflow yang masih berantakan? Ceritakan konteksnya. Saya bisa bantu dari ide sampai eksekusi yang benar-benar jalan.
           </p>
 
           <div class="space-y-4 max-w-md">
-            <a href="mailto:contact@gadingutama.com"
-              class="glass flex items-center justify-between rounded-[22px] px-6 py-4 text-sm font-semibold text-[#f3f0e8] hover:border-[#ff5a1f] transition">
-              <span>contact@gadingutama.com</span>
-              <span class="text-[#ff5a1f]">Email ↗</span>
+            <a href="https://wa.me/6289653484274?text=Hi%20Gading%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20talk." target="_blank" rel="noopener noreferrer"
+              class="glass flex min-h-[56px] items-center justify-between rounded-[22px] px-6 py-4 text-sm font-semibold text-[#f3f0e8] hover:border-[#ff5a1f] transition">
+              <span>WhatsApp · +62 896-5348-4274</span>
+              <span class="text-[#ff8a5c]">Chat ↗</span>
             </a>
-            
-            <a href="https://linkedin.com" target="_blank" rel="noopener"
-              class="glass flex items-center justify-between rounded-[22px] px-6 py-4 text-sm font-semibold text-[#f3f0e8] hover:border-[#ff5a1f] transition">
-              <span>Connect on LinkedIn</span>
-              <span class="text-[#ff5a1f]">Connect ↗</span>
+            <a href="https://instagram.com/gadingg_" target="_blank" rel="noopener noreferrer"
+              class="glass flex min-h-[56px] items-center justify-between rounded-[22px] px-6 py-4 text-sm font-semibold text-[#f3f0e8] hover:border-[#ff5a1f] transition">
+              <span>Instagram · @gadingg_</span>
+              <span class="text-[#ff8a5c]">View ↗</span>
             </a>
           </div>
 
-          <div class="mt-10">
-            <a href="mailto:contact@gadingutama.com"
+          <div class="mt-10 flex flex-wrap gap-3">
+            <a href="https://wa.me/6289653484274?text=Hi%20Gading%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20talk." target="_blank" rel="noopener noreferrer"
               class="magnetic-button inline-flex items-center gap-4 rounded-full bg-[#ff5a1f] px-8 py-4 text-xs font-bold uppercase tracking-[0.16em] text-[#060706] shadow-lg shadow-[#ff5a1f]/20">
-              Send Message
-              <i data-lucide="send" class="h-4 w-4"></i>
+              Start a WhatsApp Chat
+              <span aria-hidden="true">→</span>
             </a>
+            <button type="button" class="open-cv inline-flex min-h-[48px] items-center rounded-full border border-[#f3f0e8]/20 px-6 text-xs font-bold uppercase tracking-[0.14em]">See CV</button>
           </div>
         </div>
 
@@ -1510,25 +1409,19 @@
 
                 <!-- Tagline -->
                 <h4 class="mt-6 text-2xl sm:text-3xl lg:text-[32px] font-black leading-[1.15] tracking-[-0.05em] text-[#f3f0e8]">
-                  Imaginative minds for high-growth brands.
+                  Creative thinking that ships.
                 </h4>
                 <p class="mt-3 text-xs sm:text-sm font-medium leading-[1.7] text-[#f3f0e8]/65 max-w-md">
-                  Turning operational bottlenecks into custom software tools, high-converting Meta Ads, and creative campaigns.
+                  Dari ide campaign sampai digital tool, saya bantu mengubah masalah kerja menjadi eksekusi yang bisa dipakai tim.
                 </p>
               </div>
 
-              <!-- CTA: Contact ME -->
               <div class="mt-8 pt-6 border-t border-[#f3f0e8]/10 flex flex-wrap items-center gap-3">
-                <a href="#contact"
-                  class="inline-flex items-center gap-2.5 rounded-full bg-[#ff5a1f] px-6 py-3.5 text-xs sm:text-sm font-black uppercase tracking-[0.08em] text-white shadow-lg shadow-[#ff5a1f]/25 hover:bg-[#ff733f] hover:shadow-[#ff5a1f]/40 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200">
-                  <span>Contact ME</span>
-                  <span class="text-sm font-bold">→</span>
+                <a href="https://wa.me/6289653484274?text=Hi%20Gading%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20talk." target="_blank" rel="noopener noreferrer"
+                  class="inline-flex min-h-[48px] items-center gap-2.5 rounded-full bg-[#ff5a1f] px-6 py-3.5 text-xs sm:text-sm font-black uppercase tracking-[0.08em] text-[#060706]">
+                  <span>Chat on WhatsApp</span><span aria-hidden="true">→</span>
                 </a>
-                <a href="mailto:contact@gadingutama.com"
-                  class="inline-flex items-center gap-2 rounded-full border border-[#f3f0e8]/15 bg-white/[0.04] px-5 py-3.5 text-xs sm:text-sm font-semibold text-[#f3f0e8]/80 hover:border-[#f3f0e8]/30 hover:bg-white/[0.08] hover:text-[#f3f0e8] transition-all duration-200">
-                  <span>contact@gadingutama.com</span>
-                  <span class="text-xs text-[#ff5a1f]">↗</span>
-                </a>
+                <button type="button" class="open-cv inline-flex min-h-[48px] items-center rounded-full border border-[#f3f0e8]/20 px-5 text-xs sm:text-sm font-semibold text-[#f3f0e8]">See CV</button>
               </div>
             </div>
 
@@ -1551,7 +1444,7 @@
                 </p>
                 <ul class="space-y-3 text-sm font-medium text-[#f3f0e8]/70">
                   <li><a href="#studio" class="hover:text-[#ff5a1f] transition duration-150">About Me</a></li>
-                  <li><a href="#testimonials" class="hover:text-[#ff5a1f] transition duration-150">Reviews</a></li>
+                  <li><a href="https://instagram.com/gadingg_" target="_blank" rel="noopener noreferrer" class="hover:text-[#ff5a1f] transition duration-150">Instagram</a></li>
                   <li><a href="#contact" class="hover:text-[#ff5a1f] transition duration-150">Contact</a></li>
                   <li><a href="#home" class="hover:text-[#ff5a1f] transition duration-150">Back to Top ↑</a></li>
                 </ul>
@@ -1564,24 +1457,24 @@
                 Connect
               </p>
               
-              <!-- Dribbble -->
-              <a href="https://dribbble.com" target="_blank" rel="noopener noreferrer" aria-label="Dribbble" title="Dribbble"
-                class="group flex h-12 w-12 items-center justify-center rounded-full border border-[#f3f0e8]/15 bg-white/[0.04] text-[#f3f0e8]/75 hover:bg-[#ea4c89] hover:border-[#ea4c89] hover:text-white hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm">
+              <a href="/cv" target="_blank" rel="noopener noreferrer" aria-label="Open CV" title="Open CV"
+                class="group flex h-12 w-12 items-center justify-center rounded-full border border-[#f3f0e8]/15 bg-white/[0.04] text-[#f3f0e8]/75 hover:border-[#ff5a1f] hover:text-white hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm">
+                <span class="text-[10px] font-black">CV</span><span class="hidden">
                 <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24">
                   <path fill-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.51 0 10-4.48 10-10S17.51 2 12 2zm6.605 4.61a8.502 8.502 0 0 1 1.93 5.314c-.281-.054-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.445a25.416 25.416 0 0 0-.565-1.238c3.14-1.274 4.542-3.14 4.762-3.36zm-6.444-2.454c2.25 0 4.305.86 5.856 2.27-.196.206-1.5 1.967-4.52 3.194-1.39-2.553-2.91-4.781-3.23-5.244.606-.142 1.24-.22 1.894-.22zm-3.953 1.258c.28.406 1.77 2.613 3.17 5.127-3.98 1.09-7.51.98-7.94.97a8.528 8.528 0 0 1 4.77-6.097zm-4.747 8.046c.39.01 3.25.07 6.94-.85.34.87.65 1.76.92 2.64-3.79 2.05-5.32 5.09-5.46 5.38a8.507 8.507 0 0 1-2.4-7.17zm8.47 8.44c.14-.26 1.48-2.96 5.07-4.88 1.01 2.64 1.45 5.01 1.55 5.59a8.497 8.497 0 0 1-6.62-.71zm8.26-2.02c-.11-.47-.52-2.61-1.45-5.1 2.63-.39 4.95.27 5.25.36a8.517 8.517 0 0 1-3.8 4.74z" clip-rule="evenodd"/>
-                </svg>
+                </svg></span>
               </a>
 
-              <!-- LinkedIn -->
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"
-                class="group flex h-12 w-12 items-center justify-center rounded-full border border-[#f3f0e8]/15 bg-white/[0.04] text-[#f3f0e8]/75 hover:bg-[#0077b5] hover:border-[#0077b5] hover:text-white hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm">
+              <a href="https://wa.me/6289653484274" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp"
+                class="group flex h-12 w-12 items-center justify-center rounded-full border border-[#f3f0e8]/15 bg-white/[0.04] text-[#f3f0e8]/75 hover:border-[#ff5a1f] hover:text-white hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm">
+                <span class="text-[10px] font-black">WA</span><span class="hidden">
                 <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24">
                   <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
-                </svg>
+                </svg></span>
               </a>
 
               <!-- Instagram -->
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram"
+              <a href="https://instagram.com/gadingg_" target="_blank" rel="noopener noreferrer" aria-label="Instagram @gadingg_" title="Instagram @gadingg_"
                 class="group flex h-12 w-12 items-center justify-center rounded-full border border-[#f3f0e8]/15 bg-white/[0.04] text-[#f3f0e8]/75 hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] hover:border-transparent hover:text-white hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm">
                 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
@@ -1602,10 +1495,54 @@
     </footer>
   </main>
 
-  <script>
-    lucide.createIcons({ attrs: { "stroke-width": 1.5 } });
+  <dialog id="cvDialog" class="m-auto h-[min(88vh,820px)] w-[min(94vw,980px)] overflow-hidden rounded-[24px] border border-[#f3f0e8]/20 bg-[#10110f] p-0 text-[#f3f0e8] backdrop:bg-black/80">
+    <div class="flex h-full flex-col">
+      <div class="flex items-center justify-between gap-4 border-b border-[#f3f0e8]/10 px-5 py-4">
+        <div>
+          <p class="text-[10px] font-bold uppercase tracking-[.16em] text-[#ff8a5c]">Curriculum Vitae</p>
+          <h2 class="mt-1 text-lg font-bold">R. Gading Utama</h2>
+        </div>
+        <button id="closeCvDialog" type="button" class="min-h-[44px] rounded-full border border-[#f3f0e8]/20 px-4 text-xs font-bold uppercase" aria-label="Close CV preview">Close</button>
+      </div>
+      <div class="min-h-0 flex-1 overflow-y-auto bg-[#f3f0e8] p-6 text-[#11130f] sm:p-10">
+        <p class="text-xs font-black uppercase tracking-[.16em] text-[#b93608]">Creative Marketing · Design · Technology</p>
+        <h3 class="mt-3 text-4xl font-black tracking-[-.05em] sm:text-6xl">R. Gading Utama</h3>
+        <p class="mt-2 text-lg font-bold">Creative Marketer &amp; Digital Problem Solver</p>
+        <div class="mt-8 grid gap-7 border-t border-black/20 pt-7 sm:grid-cols-2">
+          <section><h4 class="text-xs font-black uppercase tracking-[.14em]">Profile</h4><p class="mt-3 text-sm leading-7">Menggabungkan marketing, design, technology, dan AI untuk membuat campaign, workflow, serta digital tool yang dapat dipakai.</p></section>
+          <section><h4 class="text-xs font-black uppercase tracking-[.14em]">Core capabilities</h4><p class="mt-3 text-sm leading-7">Creative marketing, graphic design, Meta Ads, web app development, workflow automation, dan generative AI.</p></section>
+        </div>
+        <section class="mt-8 border-t border-black/20 pt-7"><h4 class="text-xs font-black uppercase tracking-[.14em]">Selected experience</h4><ul class="mt-4 space-y-3 text-sm leading-6"><li><strong>2023–present</strong> · Marketing Communication, PropTech &amp; Creative Growth</li><li><strong>2023–present</strong> · Owner &amp; Marketing Lead, Kosan Bu Endang</li><li><strong>2021–2023</strong> · Founder, Geektuku, akkc.id, and Diskonlicious</li></ul></section>
+      </div>
+      <div class="flex flex-wrap justify-end gap-3 border-t border-[#f3f0e8]/10 p-4">
+        <a href="/cv" target="_blank" rel="noopener" class="inline-flex min-h-[44px] items-center rounded-full border border-[#f3f0e8]/20 px-5 text-xs font-bold uppercase">Open full preview</a>
+        <a href="/api/cv" class="inline-flex min-h-[44px] items-center rounded-full bg-[#ff5a1f] px-5 text-xs font-bold uppercase text-[#060706]">Download PDF</a>
+      </div>
+    </div>
+  </dialog>
 
-    // --- Mobile Drawer Navigation Logic ---
+  <script src="./assets/js/gsap.min.js"></script>
+  <script src="./assets/js/ScrollTrigger.min.js"></script>
+  <script>
+    const iconText = { menu: 'Menu', x: 'Close', 'arrow-right': '→', 'arrow-down': '↓', check: '✓', send: '→' };
+    document.querySelectorAll('[data-lucide]').forEach((icon) => {
+      const name = icon.getAttribute('data-lucide');
+      icon.textContent = iconText[name] || '';
+      icon.setAttribute('aria-hidden', 'true');
+      if (name === 'menu' || name === 'x') icon.classList.add('text-[10px]', 'font-bold', 'uppercase');
+    });
+
+    const cvDialog = document.getElementById('cvDialog');
+    const closeCvDialog = document.getElementById('closeCvDialog');
+    document.querySelectorAll('.open-cv').forEach((button) => {
+      button.addEventListener('click', () => cvDialog?.showModal());
+    });
+    closeCvDialog?.addEventListener('click', () => cvDialog?.close());
+    cvDialog?.addEventListener('click', (event) => {
+      if (event.target === cvDialog) cvDialog.close();
+    });
+
+    // Mobile drawer
     const openDrawerBtn = document.getElementById("openDrawerBtn");
     const closeDrawerBtn = document.getElementById("closeDrawerBtn");
     const mobileDrawer = document.getElementById("mobileDrawer");
@@ -1614,101 +1551,51 @@
     const drawerLinks = document.querySelectorAll(".mobile-drawer-link");
 
     function openMenu() {
-      if (!mobileDrawer) return;
+      if (!mobileDrawer || !drawerPanel) return;
       mobileDrawer.classList.remove("pointer-events-none", "opacity-0");
       mobileDrawer.classList.add("pointer-events-auto", "opacity-100");
       drawerPanel.classList.remove("translate-x-full");
       drawerPanel.classList.add("translate-x-0");
+      mobileDrawer.setAttribute('aria-hidden', 'false');
+      openDrawerBtn?.setAttribute('aria-expanded', 'true');
       document.body.style.overflow = "hidden";
+      closeDrawerBtn?.focus();
     }
 
-    function closeMenu() {
-      if (!mobileDrawer) return;
+    function closeMenu({ restoreFocus = true } = {}) {
+      if (!mobileDrawer || !drawerPanel) return;
       drawerPanel.classList.remove("translate-x-0");
       drawerPanel.classList.add("translate-x-full");
       mobileDrawer.classList.remove("pointer-events-auto", "opacity-100");
       mobileDrawer.classList.add("pointer-events-none", "opacity-0");
+      mobileDrawer.setAttribute('aria-hidden', 'true');
+      openDrawerBtn?.setAttribute('aria-expanded', 'false');
       document.body.style.overflow = "";
+      if (restoreFocus) openDrawerBtn?.focus();
     }
 
-    if (openDrawerBtn) openDrawerBtn.addEventListener("click", openMenu);
-    if (closeDrawerBtn) closeDrawerBtn.addEventListener("click", closeMenu);
-    if (drawerBackdrop) drawerBackdrop.addEventListener("click", closeMenu);
-    drawerLinks.forEach(link => link.addEventListener("click", closeMenu));
+    openDrawerBtn?.setAttribute('aria-expanded', 'false');
+    openDrawerBtn?.addEventListener("click", openMenu);
+    closeDrawerBtn?.addEventListener("click", () => closeMenu());
+    drawerBackdrop?.addEventListener("click", () => closeMenu());
+    drawerLinks.forEach((link) => link.addEventListener("click", () => closeMenu({ restoreFocus: false })));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && mobileDrawer?.getAttribute('aria-hidden') === 'false') closeMenu();
+    });
 
-    // --- GSAP and Lenis Animations with 60fps Silk Smoothness ---
+    // GSAP motion
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    if (!prefersReducedMotion && window.gsap && window.ScrollTrigger && window.Lenis) {
+    if (!prefersReducedMotion && window.gsap && window.ScrollTrigger) {
       gsap.registerPlugin(ScrollTrigger);
       gsap.defaults({ ease: "power3.out" });
 
-      // Silky Smooth Lenis setup: responsive, zero spongy drag
-      const lenis = new Lenis({
-        lerp: 0.1,
-        smoothWheel: true,
-        wheelMultiplier: 1.0,
-        touchMultiplier: 1.0,
-        autoResize: true
-      });
-
-      lenis.on("scroll", ScrollTrigger.update);
-      gsap.ticker.add((time) => {
-        lenis.raf(time * 1000);
-      });
-      // CRITICAL FOR SMOOTHNESS: Keep lagSmoothing active so frame drops don't cause stutter
-      gsap.ticker.lagSmoothing(500, 33);
-
-      // ---- Snappy & Brisk Brand Preloader ----
-      const axLoader = document.getElementById("ax-loader");
-
-      if (lenis && axLoader) {
-        lenis.stop();
-      }
-
-      const loadTl = gsap.timeline({ paused: true });
-
-      loadTl
-        .from("header", { y: -20, opacity: 0, duration: 0.6 })
-        .from(".hero-copy > *", { y: 24, opacity: 0, stagger: 0.07, duration: 0.65 }, "-=0.25")
-        .from(".hero-card", { y: 60, opacity: 0, scale: 0.94, stagger: 0.07, duration: 0.8 }, "-=0.45")
-        .from(".hero-cta", { scale: 0, opacity: 0, duration: 0.5 }, "-=0.35")
-        .from(".hero-wordmark", { yPercent: 16, opacity: 0, duration: 0.8 }, "-=0.55")
-        .from(".hero-meta", { y: 20, opacity: 0, duration: 0.6 }, "-=0.5");
-
-      if (axLoader) {
-        const brandEl = axLoader.querySelector(".ax-loader__brand");
-        const barEl = axLoader.querySelector(".ax-loader__bar");
-        const metaEl = axLoader.querySelector(".ax-loader__meta");
-        const pctEl = axLoader.querySelector(".ax-loader__pct");
-        const counter = { v: 0 };
-
-        gsap.timeline({
-          defaults: { ease: "power3.out" },
-          onComplete() {
-            axLoader.remove();
-            lenis.start();
-            ScrollTrigger.refresh();
-          }
-        })
-          .to(brandEl, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power2.out" }, 0)
-          .to(metaEl, { opacity: 1, duration: 0.35 }, 0.1)
-          .to(barEl, { scaleX: 1, duration: 0.65, ease: "power2.inOut" }, 0.1)
-          .to(counter, {
-            v: 100,
-            duration: 0.65,
-            ease: "power2.inOut",
-            onUpdate() {
-              pctEl.textContent = String(Math.round(counter.v)).padStart(3, "0");
-            }
-          }, 0.1)
-          .to([brandEl, metaEl], { opacity: 0, y: -16, filter: "blur(6px)", duration: 0.3, ease: "power2.in" }, "+=0.08")
-          .to(axLoader, { yPercent: -100, duration: 0.6, ease: "power3.inOut" }, "<0.05")
-          .add(() => { loadTl.play(); }, "<0.2");
-      } else {
-        loadTl.play();
-        lenis.start();
-      }
+      gsap.timeline()
+        .from("header", { y: -20, duration: 0.35 })
+        .from(".hero-copy > *", { y: 18, stagger: 0.05, duration: 0.45 }, "-=0.18")
+        .from(".hero-card", { y: 38, scale: 0.97, stagger: 0.05, duration: 0.55 }, "-=0.32")
+        .from(".hero-cta", { scale: 0.9, duration: 0.3 }, "-=0.25")
+        .from(".hero-wordmark, .hero-meta", { y: 14, stagger: 0.04, duration: 0.35 }, "-=0.2");
 
       // Universal soft reveals
       gsap.utils.toArray("[data-reveal], .reveal").forEach((item) => {
@@ -2029,15 +1916,30 @@
       window.addEventListener("load", () => ScrollTrigger.refresh());
 
     } else {
-      document.getElementById("ax-loader")?.remove();
-
       document.querySelectorAll(".reveal, [data-reveal]").forEach((item) => {
         item.style.opacity = "1";
         item.style.transform = "none";
       });
     }
 
-    // ---- DYNAMIC CMS PROJECTS & GALLERY SYNC ----
+    // CMS content is rendered with DOM APIs so stored text never becomes markup.
+    function safeMediaUrl(value) {
+      try {
+        const url = new URL(String(value || ''), window.location.origin);
+        return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+      } catch {
+        return '';
+      }
+    }
+
+    function appendText(parent, tag, text, className) {
+      const element = document.createElement(tag);
+      element.textContent = String(text || '');
+      if (className) element.className = className;
+      parent.appendChild(element);
+      return element;
+    }
+
     async function syncCmsProjects() {
       try {
         const res = await fetch('/api/projects');
@@ -2059,46 +1961,32 @@
         const preview2 = document.getElementById('workPreviewImg2');
 
         if (listEl) {
-          listEl.innerHTML = projects.map((p, idx) => {
-            const num = String(idx + 1).padStart(2, '0');
-            const borderCls = idx < projects.length - 1 ? 'border-b border-[#f3f0e8]/10 pb-3' : '';
-            const cover = p.cover_image_url || '';
-            const subtitle = p.subtitle || p.category || '';
-            return `
-              <li class="${borderCls} group transition hover:text-[#f3f0e8]" data-cover="${cover}">
-                <a href="/work/${p.slug}" class="block">
-                  <span class="font-bold text-[#f3f0e8] group-hover:text-[#ff5a1f] transition flex items-center justify-between">
-                    <span>${num} · ${p.title}</span>
-                    <span class="text-xs opacity-0 group-hover:opacity-100 transition text-[#ff5a1f]">↗</span>
-                  </span>
-                  <span class="block text-xs text-[#f3f0e8]/45 mt-0.5">${subtitle}</span>
-                </a>
-              </li>
-            `;
-          }).join('');
-
-          // Attach hover preview listeners
-          listEl.querySelectorAll('li').forEach((item) => {
-            item.addEventListener('mouseenter', () => {
-              const cover = item.getAttribute('data-cover');
-              if (cover && preview1) {
-                preview1.src = cover;
-              }
-            });
+          listEl.replaceChildren();
+          projects.forEach((project, index) => {
+            const item = document.createElement('li');
+            item.className = `${index < projects.length - 1 ? 'border-b border-[#f3f0e8]/10 pb-3 ' : ''}group transition hover:text-[#f3f0e8]`;
+            const link = document.createElement('a');
+            link.className = 'block';
+            link.href = `/work/${encodeURIComponent(String(project.slug || ''))}`;
+            const titleRow = document.createElement('span');
+            titleRow.className = 'font-bold text-[#f3f0e8] group-hover:text-[#ff5a1f] transition flex items-center justify-between';
+            appendText(titleRow, 'span', `${String(index + 1).padStart(2, '0')} · ${project.title}`);
+            appendText(titleRow, 'span', '↗', 'text-xs opacity-0 group-hover:opacity-100 transition text-[#ff5a1f]');
+            appendText(link, 'span', project.subtitle || project.category || '', 'block text-xs text-[#f3f0e8]/45 mt-0.5');
+            link.prepend(titleRow);
+            item.appendChild(link);
+            const cover = safeMediaUrl(project.cover_image_url);
+            if (cover) item.addEventListener('mouseenter', () => { if (preview1) preview1.src = cover; });
+            listEl.appendChild(item);
           });
 
           // Set initial preview images from first two projects
-          if (projects[0]?.cover_image_url && preview1) {
-            preview1.src = projects[0].cover_image_url;
-          }
-          if (projects[1]?.cover_image_url && preview2) {
-            preview2.src = projects[1].cover_image_url;
-          }
+          const firstCover = safeMediaUrl(projects[0]?.cover_image_url);
+          const secondCover = safeMediaUrl(projects[1]?.cover_image_url);
+          if (firstCover && preview1) preview1.src = firstCover;
+          if (secondCover && preview2) preview2.src = secondCover;
         }
 
-        if (window.lucide && typeof window.lucide.createIcons === 'function') {
-          window.lucide.createIcons();
-        }
       } catch (err) {
         console.log('Using static verified projects fallback:', err);
       }
@@ -2114,24 +2002,25 @@
 
         const galleryEl = document.getElementById('archiveGalleryContainer');
         if (galleryEl) {
-          galleryEl.innerHTML = items.map((item, idx) => {
-            const isAlt = idx % 2 === 1;
-            const isFourth = idx % 4 === 3;
-            let cardClasses = "archive-card shrink-0 overflow-hidden rounded-[30px] border border-[#f3f0e8]/10 bg-[#101310] transition duration-300 hover:border-[#ff5a1f]/40 ";
-            if (isFourth) {
-              cardClasses += "md:mt-24 h-[340px] w-[260px] sm:h-[420px] sm:w-[320px] md:h-[480px] md:w-[360px]";
-            } else if (isAlt) {
-              cardClasses += "md:mt-16 h-[340px] w-[260px] sm:h-[420px] sm:w-[320px] md:h-[480px] md:w-[360px]";
-            } else {
-              cardClasses += "h-[380px] w-[280px] sm:h-[480px] sm:w-[360px] md:h-[560px] md:w-[420px]";
-            }
-            const alt = item.alt || `Archive fragment ${idx + 1}`;
-            return `
-              <figure class="${cardClasses}">
-                <img src="${item.url}" alt="${alt}" class="h-full w-full object-cover opacity-80 hover:opacity-100 transition duration-500" loading="lazy" />
-              </figure>
-            `;
-          }).join('');
+          const fragment = document.createDocumentFragment();
+          items.forEach((item, index) => {
+            const url = safeMediaUrl(item.url);
+            if (!url) return;
+            const figure = document.createElement('figure');
+            const offset = index % 4 === 3 ? 'md:mt-24' : index % 2 === 1 ? 'md:mt-16' : '';
+            const size = index % 2 === 1 || index % 4 === 3
+              ? 'h-[340px] w-[260px] sm:h-[420px] sm:w-[320px] md:h-[480px] md:w-[360px]'
+              : 'h-[380px] w-[280px] sm:h-[480px] sm:w-[360px] md:h-[560px] md:w-[420px]';
+            figure.className = `archive-card ${offset} ${size} shrink-0 overflow-hidden rounded-[30px] border border-[#f3f0e8]/10 bg-[#101310] transition duration-300 hover:border-[#ff5a1f]/40`;
+            const image = document.createElement('img');
+            image.src = url;
+            image.alt = String(item.alt || `Archive fragment ${index + 1}`);
+            image.loading = 'lazy';
+            image.className = 'h-full w-full object-cover opacity-80 hover:opacity-100 transition duration-500';
+            figure.appendChild(image);
+            fragment.appendChild(figure);
+          });
+          galleryEl.replaceChildren(fragment);
 
           if (window.ScrollTrigger) {
             window.ScrollTrigger.refresh();

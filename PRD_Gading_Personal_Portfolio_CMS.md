@@ -144,7 +144,7 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 
 SUPABASE_SERVICE_ROLE_KEY=
 
-ADMIN_PIN_HASH=
+ADMIN_EMAIL=
 
 NEXT_PUBLIC_SITE_URL=
 ```
@@ -194,43 +194,26 @@ Visual direction:
 Content:
 
 ```text
-GADING
-PRIVATE ACCESS
+GADING ADMIN
+PRIVATE CMS
 
-Enter your access PIN
+Email
+Password
 
-[ • • • • • • ]
-
-[ ENTER DASHBOARD ]
+[ OPEN CMS ]
 ```
 
-PIN input:
+Login inputs:
 
-- type=password
-- numeric input
-- maximum length 6
-- autofocus
-- allow Enter key
-- hide actual PIN characters
-- clear error state after retry if appropriate
+- use email and password credentials from Supabase Auth
+- autofocus the email field
+- allow Enter key submission
+- use appropriate autocomplete attributes
+- show errors without revealing whether an email is allowlisted
 
-## 5.3 PIN
+## 5.3 Admin account
 
-The initial configured PIN is:
-
-`170402`
-
-IMPORTANT:
-
-This value is only the initial secret configuration.
-
-Do not put the literal PIN in frontend code.
-
-Store a secure hash in:
-
-`ADMIN_PIN_HASH`
-
-The backend must verify the submitted PIN against the server-side hash.
+Create one email/password user in Supabase Auth. Store the exact allowed email in the server-only `ADMIN_EMAIL` environment variable. The application must fail closed when it is missing. Every protected page and API route must verify the Supabase user before any service-role query.
 
 ## 5.4 Authentication Flow
 
@@ -2254,7 +2237,7 @@ Production environment must have:
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 SUPABASE_SERVICE_ROLE_KEY
-ADMIN_PIN_HASH
+ADMIN_EMAIL
 NEXT_PUBLIC_SITE_URL
 ```
 

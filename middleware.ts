@@ -1,31 +1,51 @@
+import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
-import { SESSION_COOKIE_NAME } from './lib/auth/constants';
 
-export function middleware(request: NextRequest) {
+function copyCookies(from: NextResponse, to: NextResponse) {
+  from.cookies.getAll().forEach((cookie) => to.cookies.set(cookie));
+  return to;
+}
+
+export async function middleware(request: NextRequest) {
+  let response = NextResponse.next({ request });
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const allowedEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  let isAdmin = false;
+
+  if (url && key && allowedEmail) {
+    const supabase = createServerClient(url, key, {
+      cookies: {
+        getAll: () => request.cookies.getAll(),
+        setAll(cookiesToSet: Array<{ name: string; value: string; options?: any }>) {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          response = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+        },
+      },
+    });
+
+    const { data, error } = await supabase.auth.getUser();
+    isAdmin = !error && data.user?.email?.toLowerCase() === allowedEmail;
+  }
+
   const { pathname } = request.nextUrl;
-
-  // Protect admin dashboard routes
-  if (pathname.startsWith('/admintgadink/dashboard')) {
-    const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME);
-
-    if (!sessionCookie?.value) {
-      const loginUrl = new URL('/admintgadink', request.url);
-      return NextResponse.redirect(loginUrl);
-    }
+  if (pathname.startsWith('/admintgadink/dashboard') && !isAdmin) {
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = '/admintgadink';
+    loginUrl.search = '';
+    return copyCookies(response, NextResponse.redirect(loginUrl));
   }
 
-  // If already logged in and visiting /admintgadink, redirect to dashboard
-  if (pathname === '/admintgadink') {
-    const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME);
-    if (sessionCookie?.value) {
-      const dashboardUrl = new URL('/admintgadink/dashboard', request.url);
-      return NextResponse.redirect(dashboardUrl);
-    }
+  if (pathname === '/admintgadink' && isAdmin) {
+    const dashboardUrl = request.nextUrl.clone();
+    dashboardUrl.pathname = '/admintgadink/dashboard';
+    return copyCookies(response, NextResponse.redirect(dashboardUrl));
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
-  matcher: ['/admintgadink/:path*'],
+  matcher: ['/admintgadink/:path*', '/api/admin/:path*'],
 };

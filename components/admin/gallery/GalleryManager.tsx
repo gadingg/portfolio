@@ -215,7 +215,7 @@ export function GalleryManager({ initialItems }: GalleryManagerProps) {
   return (
     <div style={{ maxWidth: '1100px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
+      <div className="admin-page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
         <div>
           <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', color: 'var(--amber)' }}>
             VISUAL ARCHIVE CMS
@@ -260,6 +260,8 @@ export function GalleryManager({ initialItems }: GalleryManagerProps) {
       {/* Notification Toast */}
       {statusMessage && (
         <div
+          role={statusMessage.type === 'error' ? 'alert' : 'status'}
+          aria-live="polite"
           style={{
             padding: '12px 20px',
             borderRadius: '12px',
@@ -284,6 +286,15 @@ export function GalleryManager({ initialItems }: GalleryManagerProps) {
         onDragLeave={() => setIsDraggingFile(false)}
         onDrop={handleFileDrop}
         onClick={() => fileInputRef.current?.click()}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            fileInputRef.current?.click();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label="Upload gallery images"
         style={{
           border: `2px dashed ${isDraggingFile ? 'var(--amber)' : 'var(--border-strong)'}`,
           borderRadius: '1.25rem',
@@ -342,6 +353,7 @@ export function GalleryManager({ initialItems }: GalleryManagerProps) {
 
             return (
               <div
+                className="admin-gallery-card"
                 key={item.id}
                 draggable
                 onDragStart={() => handleCardDragStart(index)}
@@ -363,7 +375,7 @@ export function GalleryManager({ initialItems }: GalleryManagerProps) {
                 }}
               >
                 {/* Drag Handle & Order Badge */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: '70px' }}>
+                <div className="admin-gallery-order" style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: '70px' }}>
                   <span style={{ color: 'var(--muted)', cursor: 'grab', fontSize: '18px' }} title="Drag to reorder">
                     ⋮⋮
                   </span>
@@ -387,6 +399,7 @@ export function GalleryManager({ initialItems }: GalleryManagerProps) {
 
                 {/* Thumbnail Preview */}
                 <div
+                  className="admin-gallery-thumb"
                   style={{
                     width: '80px',
                     height: '96px',
@@ -405,16 +418,16 @@ export function GalleryManager({ initialItems }: GalleryManagerProps) {
                 </div>
 
                 {/* Edit Fields */}
-                <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                <div className="admin-gallery-fields" style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '4px', letterSpacing: '0.1em' }}>
                       Alt / Title
                     </label>
                     <input
                       type="text"
+                      aria-label={`Alt text for gallery item ${index + 1}`}
                       value={item.alt || ''}
                       onChange={(e) => updateField(item.id, 'alt', e.target.value)}
-                      onBlur={() => saveAll(items, 'Saved')}
                       style={{
                         width: '100%',
                         padding: '8px 12px',
@@ -433,9 +446,9 @@ export function GalleryManager({ initialItems }: GalleryManagerProps) {
                     </label>
                     <input
                       type="text"
+                      aria-label={`Caption for gallery item ${index + 1}`}
                       value={item.caption || ''}
                       onChange={(e) => updateField(item.id, 'caption', e.target.value)}
-                      onBlur={() => saveAll(items, 'Saved')}
                       placeholder="Optional caption..."
                       style={{
                         width: '100%',
@@ -455,9 +468,9 @@ export function GalleryManager({ initialItems }: GalleryManagerProps) {
                     </label>
                     <input
                       type="text"
+                      aria-label={`Category for gallery item ${index + 1}`}
                       value={item.category || ''}
                       onChange={(e) => updateField(item.id, 'category', e.target.value)}
-                      onBlur={() => saveAll(items, 'Saved')}
                       placeholder="e.g. Visual Identity"
                       style={{
                         width: '100%',
@@ -473,7 +486,7 @@ export function GalleryManager({ initialItems }: GalleryManagerProps) {
                 </div>
 
                 {/* Move Controls & Delete */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div className="admin-gallery-actions" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <button
                     type="button"
                     onClick={() => moveItem(index, 'up')}
@@ -492,6 +505,7 @@ export function GalleryManager({ initialItems }: GalleryManagerProps) {
                       fontSize: '14px',
                     }}
                     title="Move up"
+                    aria-label={`Move gallery item ${index + 1} up`}
                   >
                     ↑
                   </button>
@@ -513,6 +527,7 @@ export function GalleryManager({ initialItems }: GalleryManagerProps) {
                       fontSize: '14px',
                     }}
                     title="Move down"
+                    aria-label={`Move gallery item ${index + 1} down`}
                   >
                     ↓
                   </button>
@@ -534,6 +549,7 @@ export function GalleryManager({ initialItems }: GalleryManagerProps) {
                       marginLeft: '4px',
                     }}
                     title="Delete image"
+                    aria-label={`Delete gallery item ${index + 1}`}
                   >
                     ✕
                   </button>
