@@ -62,6 +62,15 @@ export function MediaUploader({ label = 'Cover Image', value, onChange, folder =
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            fileInputRef.current?.click();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label={`${label}. Choose a file to upload.`}
         style={{
           position: 'relative',
           width: '100%',
@@ -121,7 +130,7 @@ export function MediaUploader({ label = 'Cover Image', value, onChange, folder =
         )}
       </div>
 
-      {error && <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '6px' }}>{error}</p>}
+      {error && <p role="alert" style={{ color: '#ff8b8b', fontSize: '12px', marginTop: '6px' }}>{error}</p>}
     </div>
   );
 }

@@ -23,15 +23,5 @@ CREATE POLICY "Public can view gallery items"
     ON portfolio_gallery FOR SELECT
     USING (true);
 
--- Service role / authenticated admin can manage gallery items
-CREATE POLICY "Admin can insert gallery items"
-    ON portfolio_gallery FOR INSERT
-    WITH CHECK (true);
-
-CREATE POLICY "Admin can update gallery items"
-    ON portfolio_gallery FOR UPDATE
-    USING (true);
-
-CREATE POLICY "Admin can delete gallery items"
-    ON portfolio_gallery FOR DELETE
-    USING (true);
+-- Writes use the server-only service role, which bypasses RLS.
+-- Browser roles receive no mutation policy.

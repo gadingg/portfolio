@@ -1,52 +1,33 @@
 # Gading Utama — Personal Portfolio
 
+## Secure CMS setup
+
+1. Create one email/password user in Supabase Auth.
+2. Copy `.env.example` to `.env.local` and set `ADMIN_EMAIL` to that exact email.
+3. Keep `SUPABASE_SERVICE_ROLE_KEY` server-only.
+4. Apply `supabase/migrations/004_secure_cms.sql` to the production project.
+5. Run `npm run audit:supabase` and Supabase Security Advisor. Confirm browser roles cannot mutate portfolio rows, call CMS RPCs, or write Storage objects.
+
+If `ADMIN_EMAIL` is missing, admin access fails closed. Set the same value in `.env.local` and the deployment environment.
+
+The CMS uses Supabase as its only runtime data source. Admin writes go through authenticated Next.js API routes and atomic PostgreSQL functions.
+
+
 Repositori portofolio digital interaktif karya **Gading Utama** (Marketing Communication & Creative Systems).
 
-## 🚀 Pilihan Halaman Portofolio
+## Architecture
 
-Repositori ini menyediakan 2 variasi desain portofolio interaktif:
+- Next.js App Router serves the portfolio, case studies, CV, API routes, and private CMS.
+- `public/index.html` is the current homepage template and is served by `app/route.ts`.
+- Tailwind is compiled at build time to `public/assets/css/portfolio.css`.
+- GSAP and ScrollTrigger load from local assets. The homepage respects `prefers-reduced-motion`.
+- Supabase is the only runtime source for projects, content blocks, gallery items, and media.
 
-### 1. `index.html` — Dynamic 3D Workstation Portfolio (Primary)
-- **Karakter & Nuansa 3D Interaktif**: Dilengkapi video looping 3D character workstation dengan transisi mulus antara **Light Mode** (suasana siang produktif) dan **Dark Mode** (nuansa remang-remang hangat 2700K).
-- **Animasi GSAP 3.12 & ScrollTrigger**:
-  - Hero entrance timeline orchestration
-  - 3D interactive card tilt dengan layer parallax mouse-tracking
-  - Tactile magnetic buttons (tarikan magnetik dan elastic snap-back)
-  - Ambient floating orbs berulang halus
-- **Performa & Aksesibilitas**: Sepenuhnya mematuhi prinsip anti-slop dan `prefers-reduced-motion`.
-
-### 2. `aura.html` — Aura Bento & Kinetic Portfolio
-- **Aesthetic**: Warm dark cream & vibrant orange palette.
-- **Fitur**: Bento grid layout, kinetic typography, integrasi Lenis smooth scrolling, dan micro-interactions modern.
-
----
-
-## 📂 Struktur Berkas
-
-```
-├── index.html            # Halaman portofolio utama
-├── aura.html             # Halaman portofolio variasi Aura
-├── assets/
-│   ├── images/           # Fallback poster hero light & dark
-│   ├── videos/           # Video looping hero-light.mp4 & hero-dark.mp4
-│   └── js/               # Skrip lokal GSAP & ScrollTrigger
-└── README.md
-```
-
----
-
-## 💻 Cara Menjalankan Secara Lokal
-
-Cukup buka berkas `index.html` atau `aura.html` langsung di browser modern, atau gunakan web server lokal sederhana:
+## Local development
 
 ```bash
-# Menggunakan Python
-python -m http.server 3000
-
-# Atau menggunakan npx serve
-npx serve .
+npm install
+npm run dev
 ```
 
-Buka di browser:
-- `http://localhost:3000/index.html`
-- `http://localhost:3000/aura.html`
+Open `http://localhost:3000`. Use `npm run typecheck` and `npm run build` before deployment.

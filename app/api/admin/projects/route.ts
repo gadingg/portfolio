@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = ProjectSchema.parse(body);
 
-    const result = await saveProject(validatedData, body.blocks);
+    const result = await saveProject(validatedData, validatedData.blocks);
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
@@ -31,6 +31,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, project: result.data });
   } catch (error: any) {
     console.error('Project create error:', error);
-    return NextResponse.json({ error: error.message || 'Validation error' }, { status: 400 });
+    return NextResponse.json({ error: 'Project could not be saved. Check the required fields and try again.' }, { status: 400 });
   }
 }

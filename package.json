@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "build:portfolio": "tailwindcss -i ./styles/portfolio.css -o ./public/assets/css/portfolio.css --minify",
+    "dev": "npm run build:portfolio && next dev",
+    "build": "npm run build:portfolio && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "audit:supabase": "node scripts/audit-supabase-security.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",

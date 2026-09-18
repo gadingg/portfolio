@@ -1,12 +1,30 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
 export function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => setIsOpen(false), [pathname]);
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 820px)');
+    const update = () => setIsMobile(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+  useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsOpen(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -26,18 +44,19 @@ export function AdminSidebar() {
   ];
 
   return (
-    <aside
-      style={{
-        width: '260px',
-        minHeight: '100vh',
-        background: 'var(--admin-sidebar-bg)',
-        borderRight: '1px solid var(--border)',
-        padding: '32px 20px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-      }}
-    >
+    <>
+      <header className="admin-mobile-header">
+        <div><strong>Gading Admin</strong><span>Portfolio CMS</span></div>
+        <button type="button" onClick={() => setIsOpen(true)} aria-expanded={isOpen} aria-controls="admin-navigation">Menu</button>
+      </header>
+      {isOpen && <button type="button" className="admin-nav-backdrop" onClick={() => setIsOpen(false)} aria-label="Close admin navigation" />}
+      <aside
+        id="admin-navigation"
+        className={`admin-sidebar ${isOpen ? 'is-open' : ''}`}
+        aria-label="CMS navigation"
+        aria-hidden={isMobile && !isOpen}
+        inert={isMobile && !isOpen}
+      >
       <div>
         {/* Brand */}
         <div style={{ paddingBottom: '28px', borderBottom: '1px solid var(--border)', marginBottom: '28px' }}>
@@ -110,6 +129,7 @@ export function AdminSidebar() {
           LOGOUT
         </button>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }

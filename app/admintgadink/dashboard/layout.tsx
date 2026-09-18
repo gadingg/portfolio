@@ -1,6 +1,8 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
+import { verifyAdminSession } from '@/lib/auth/session';
 
 export const metadata: Metadata = {
   title: 'Admin Dashboard | Gading Portfolio CMS',
@@ -10,17 +12,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AdminDashboardLayout({
+export default async function AdminDashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  if (!(await verifyAdminSession())) redirect('/admintgadink');
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--admin-bg)' }}>
+    <div className="admin-shell">
       <AdminSidebar />
-      <main style={{ flexGrow: 1, padding: '40px 48px', overflowY: 'auto', maxHeight: '100vh' }}>
-        {children}
-      </main>
+      <main className="admin-main">{children}</main>
     </div>
   );
 }

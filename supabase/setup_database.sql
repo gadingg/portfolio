@@ -21,8 +21,8 @@ CREATE TABLE IF NOT EXISTS portfolio_projects (
     category TEXT NOT NULL,
     cover_image_url TEXT NOT NULL,
     cover_image_alt TEXT,
-    year TEXT DEFAULT '2024–2026',
-    status TEXT NOT NULL DEFAULT 'published' CHECK (status IN ('draft', 'published')),
+    year TEXT DEFAULT '2026',
+    status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'published')),
     is_featured BOOLEAN NOT NULL DEFAULT false,
     display_order INTEGER NOT NULL DEFAULT 0,
     client TEXT,
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS portfolio_projects (
     services TEXT[],
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    published_at TIMESTAMPTZ DEFAULT NOW()
+    published_at TIMESTAMPTZ
 );
 
 -- Indexes for Projects
@@ -103,13 +103,20 @@ CREATE TABLE IF NOT EXISTS portfolio_media (
 -- =====================================================================
 -- 3. TIMESTAMP TRIGGERS
 -- =====================================================================
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION public.update_updated_at_column()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY INVOKER
+SET search_path = ''
+AS $$
 BEGIN
     NEW.updated_at = NOW();
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
+
+REVOKE ALL ON FUNCTION public.update_updated_at_column() FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.update_updated_at_column() TO service_role;
 
 DROP TRIGGER IF EXISTS trigger_projects_updated_at ON portfolio_projects;
 CREATE TRIGGER trigger_projects_updated_at
@@ -130,83 +137,172 @@ CREATE TRIGGER trigger_gallery_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 -- =====================================================================
--- 4. ROW LEVEL SECURITY (RLS) POLICIES
+-- 4. ROW LEVEL SECURITY, GRANTS, AND SERVER-ONLY RPCS
 -- =====================================================================
-ALTER TABLE portfolio_projects ENABLE ROW LEVEL SECURITY;
-ALTER TABLE portfolio_content_blocks ENABLE ROW LEVEL SECURITY;
-ALTER TABLE portfolio_gallery ENABLE ROW LEVEL SECURITY;
-ALTER TABLE portfolio_tags ENABLE ROW LEVEL SECURITY;
-ALTER TABLE portfolio_project_tags ENABLE ROW LEVEL SECURITY;
-ALTER TABLE portfolio_media ENABLE ROW LEVEL SECURITY;
-
--- Clean existing policies to avoid duplicates
 DO $$
+DECLARE policy_record RECORD;
 BEGIN
-    -- Projects
-    DROP POLICY IF EXISTS "Public can view published projects" ON portfolio_projects;
-    DROP POLICY IF EXISTS "Admin can manage projects" ON portfolio_projects;
-    -- Blocks
-    DROP POLICY IF EXISTS "Public can view published blocks" ON portfolio_content_blocks;
-    DROP POLICY IF EXISTS "Admin can manage blocks" ON portfolio_content_blocks;
-    -- Gallery
-    DROP POLICY IF EXISTS "Public can view gallery items" ON portfolio_gallery;
-    DROP POLICY IF EXISTS "Admin can manage gallery items" ON portfolio_gallery;
-    -- Tags
-    DROP POLICY IF EXISTS "Public can view tags" ON portfolio_tags;
-    DROP POLICY IF EXISTS "Admin can manage tags" ON portfolio_tags;
-    -- Media
-    DROP POLICY IF EXISTS "Public can view media" ON portfolio_media;
-    DROP POLICY IF EXISTS "Admin can manage media" ON portfolio_media;
-EXCEPTION WHEN OTHERS THEN
-    NULL;
+    FOR policy_record IN
+        SELECT schemaname, tablename, policyname
+        FROM pg_policies
+        WHERE schemaname = 'public'
+          AND tablename IN (
+              'portfolio_projects', 'portfolio_content_blocks', 'portfolio_gallery',
+              'portfolio_tags', 'portfolio_project_tags', 'portfolio_media'
+          )
+    LOOP
+        EXECUTE format(
+            'DROP POLICY IF EXISTS %I ON %I.%I',
+            policy_record.policyname,
+            policy_record.schemaname,
+            policy_record.tablename
+        );
+    END LOOP;
 END $$;
 
--- Public Read Policies
-CREATE POLICY "Public can view published projects" 
-    ON portfolio_projects FOR SELECT 
-    USING (status = 'published');
+ALTER TABLE public.portfolio_projects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.portfolio_content_blocks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.portfolio_gallery ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.portfolio_tags ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.portfolio_project_tags ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.portfolio_media ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Admin can manage projects" 
-    ON portfolio_projects FOR ALL 
-    USING (true) WITH CHECK (true);
+REVOKE ALL ON TABLE public.portfolio_projects FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON TABLE public.portfolio_content_blocks FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON TABLE public.portfolio_gallery FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON TABLE public.portfolio_tags FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON TABLE public.portfolio_project_tags FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON TABLE public.portfolio_media FROM PUBLIC, anon, authenticated;
 
-CREATE POLICY "Public can view published blocks" 
-    ON portfolio_content_blocks FOR SELECT 
-    USING (
-        EXISTS (
-            SELECT 1 FROM portfolio_projects 
-            WHERE portfolio_projects.id = portfolio_content_blocks.project_id 
-            AND portfolio_projects.status = 'published'
-        )
-    );
+CREATE POLICY "Public reads published projects" ON public.portfolio_projects
+    FOR SELECT TO anon, authenticated USING (status = 'published');
+CREATE POLICY "Public reads published blocks" ON public.portfolio_content_blocks
+    FOR SELECT TO anon, authenticated USING (EXISTS (
+        SELECT 1 FROM public.portfolio_projects p
+        WHERE p.id = portfolio_content_blocks.project_id
+          AND p.status = 'published'
+    ));
+CREATE POLICY "Public reads gallery" ON public.portfolio_gallery
+    FOR SELECT TO anon, authenticated USING (true);
 
-CREATE POLICY "Admin can manage blocks" 
-    ON portfolio_content_blocks FOR ALL 
-    USING (true) WITH CHECK (true);
+GRANT SELECT ON TABLE public.portfolio_projects TO anon, authenticated;
+GRANT SELECT ON TABLE public.portfolio_content_blocks TO anon, authenticated;
+GRANT SELECT ON TABLE public.portfolio_gallery TO anon, authenticated;
 
-CREATE POLICY "Public can view gallery items" 
-    ON portfolio_gallery FOR SELECT 
-    USING (true);
+GRANT ALL ON TABLE public.portfolio_projects TO service_role;
+GRANT ALL ON TABLE public.portfolio_content_blocks TO service_role;
+GRANT ALL ON TABLE public.portfolio_gallery TO service_role;
+GRANT ALL ON TABLE public.portfolio_tags TO service_role;
+GRANT ALL ON TABLE public.portfolio_project_tags TO service_role;
+GRANT ALL ON TABLE public.portfolio_media TO service_role;
 
-CREATE POLICY "Admin can manage gallery items" 
-    ON portfolio_gallery FOR ALL 
-    USING (true) WITH CHECK (true);
+CREATE OR REPLACE FUNCTION public.save_portfolio_project(
+    project_data JSONB,
+    blocks_data JSONB DEFAULT '[]'::JSONB
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY INVOKER
+SET search_path = ''
+AS $$
+DECLARE
+    saved public.portfolio_projects;
+    target_id UUID;
+BEGIN
+    IF jsonb_typeof(blocks_data) <> 'array' THEN
+        RAISE EXCEPTION 'blocks_data must be an array';
+    END IF;
 
-CREATE POLICY "Public can view tags" 
-    ON portfolio_tags FOR SELECT 
-    USING (true);
+    target_id := nullif(project_data->>'id', '')::UUID;
+    IF target_id IS NULL THEN
+        INSERT INTO public.portfolio_projects (
+            title, slug, subtitle, description, category, cover_image_url, cover_image_alt,
+            year, status, is_featured, display_order, client, role, duration, services, published_at
+        ) VALUES (
+            project_data->>'title', project_data->>'slug', nullif(project_data->>'subtitle', ''),
+            project_data->>'description', project_data->>'category', project_data->>'cover_image_url',
+            nullif(project_data->>'cover_image_alt', ''), nullif(project_data->>'year', ''),
+            coalesce(project_data->>'status', 'draft'), coalesce((project_data->>'is_featured')::BOOLEAN, false),
+            coalesce((project_data->>'display_order')::INTEGER, 0), nullif(project_data->>'client', ''),
+            nullif(project_data->>'role', ''), nullif(project_data->>'duration', ''),
+            CASE WHEN project_data ? 'services'
+                THEN ARRAY(SELECT jsonb_array_elements_text(coalesce(project_data->'services', '[]')))
+                ELSE NULL
+            END,
+            CASE WHEN project_data->>'status' = 'published' THEN now() ELSE NULL END
+        ) RETURNING * INTO saved;
+    ELSE
+        UPDATE public.portfolio_projects SET
+            title = coalesce(project_data->>'title', title),
+            slug = coalesce(project_data->>'slug', slug),
+            subtitle = CASE WHEN project_data ? 'subtitle' THEN nullif(project_data->>'subtitle', '') ELSE subtitle END,
+            description = coalesce(project_data->>'description', description),
+            category = coalesce(project_data->>'category', category),
+            cover_image_url = coalesce(project_data->>'cover_image_url', cover_image_url),
+            cover_image_alt = CASE WHEN project_data ? 'cover_image_alt' THEN nullif(project_data->>'cover_image_alt', '') ELSE cover_image_alt END,
+            year = CASE WHEN project_data ? 'year' THEN nullif(project_data->>'year', '') ELSE year END,
+            status = coalesce(project_data->>'status', status),
+            is_featured = coalesce((project_data->>'is_featured')::BOOLEAN, is_featured),
+            display_order = coalesce((project_data->>'display_order')::INTEGER, display_order),
+            client = CASE WHEN project_data ? 'client' THEN nullif(project_data->>'client', '') ELSE client END,
+            role = CASE WHEN project_data ? 'role' THEN nullif(project_data->>'role', '') ELSE role END,
+            duration = CASE WHEN project_data ? 'duration' THEN nullif(project_data->>'duration', '') ELSE duration END,
+            services = CASE WHEN project_data ? 'services'
+                THEN ARRAY(SELECT jsonb_array_elements_text(coalesce(project_data->'services', '[]')))
+                ELSE services
+            END,
+            published_at = CASE
+                WHEN project_data->>'status' = 'published' THEN coalesce(published_at, now())
+                WHEN project_data->>'status' = 'draft' THEN NULL
+                ELSE published_at
+            END
+        WHERE id = target_id
+        RETURNING * INTO saved;
 
-CREATE POLICY "Admin can manage tags" 
-    ON portfolio_tags FOR ALL 
-    USING (true) WITH CHECK (true);
+        IF saved.id IS NULL THEN
+            RAISE EXCEPTION 'Project not found';
+        END IF;
+    END IF;
 
-CREATE POLICY "Public can view media" 
-    ON portfolio_media FOR SELECT 
-    USING (true);
+    DELETE FROM public.portfolio_content_blocks WHERE project_id = saved.id;
+    INSERT INTO public.portfolio_content_blocks (project_id, block_type, block_order, content_json)
+    SELECT
+        saved.id,
+        coalesce(block->>'block_type', 'paragraph'),
+        coalesce((block->>'block_order')::INTEGER, ordinality::INTEGER),
+        coalesce(block->'content_json', '{}')
+    FROM jsonb_array_elements(blocks_data) WITH ORDINALITY AS item(block, ordinality);
 
-CREATE POLICY "Admin can manage media" 
-    ON portfolio_media FOR ALL 
-    USING (true) WITH CHECK (true);
+    RETURN to_jsonb(saved);
+END $$;
+
+CREATE OR REPLACE FUNCTION public.replace_portfolio_gallery(gallery_data JSONB)
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY INVOKER
+SET search_path = ''
+AS $$
+BEGIN
+    IF jsonb_typeof(gallery_data) <> 'array' THEN
+        RAISE EXCEPTION 'gallery_data must be an array';
+    END IF;
+
+    DELETE FROM public.portfolio_gallery;
+    INSERT INTO public.portfolio_gallery (id, url, alt, caption, category, display_order)
+    SELECT
+        item->>'id',
+        item->>'url',
+        coalesce(item->>'alt', ''),
+        coalesce(item->>'caption', ''),
+        coalesce(item->>'category', 'Visual'),
+        coalesce((item->>'display_order')::INTEGER, ordinality::INTEGER)
+    FROM jsonb_array_elements(gallery_data) WITH ORDINALITY AS entry(item, ordinality);
+END $$;
+
+REVOKE ALL ON FUNCTION public.save_portfolio_project(JSONB, JSONB) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.replace_portfolio_gallery(JSONB) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.save_portfolio_project(JSONB, JSONB) TO service_role;
+GRANT EXECUTE ON FUNCTION public.replace_portfolio_gallery(JSONB) TO service_role;
 
 -- =====================================================================
 -- 5. STORAGE BUCKET & STORAGE POLICIES
@@ -225,21 +321,11 @@ EXCEPTION WHEN OTHERS THEN
     NULL;
 END $$;
 
-CREATE POLICY "Public Read Access" 
-ON storage.objects FOR SELECT 
+CREATE POLICY "Public Read Access"
+ON storage.objects FOR SELECT TO anon, authenticated
 USING (bucket_id = 'portfolio-public');
 
-CREATE POLICY "Admin Upload Access" 
-ON storage.objects FOR INSERT 
-WITH CHECK (bucket_id = 'portfolio-public');
-
-CREATE POLICY "Admin Update Access" 
-ON storage.objects FOR UPDATE 
-USING (bucket_id = 'portfolio-public');
-
-CREATE POLICY "Admin Delete Access" 
-ON storage.objects FOR DELETE 
-USING (bucket_id = 'portfolio-public');
+-- Storage writes use the server-only service role. Browser roles receive no mutation policy.
 
 -- =====================================================================
 -- 6. INITIAL SEED DATA (Career Wall of Fame & Verified Case Studies)

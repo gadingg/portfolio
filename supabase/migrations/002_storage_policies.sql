@@ -12,15 +12,5 @@ CREATE POLICY "Public Read Access"
 ON storage.objects FOR SELECT 
 USING (bucket_id = 'portfolio-public');
 
--- Allow service role / authenticated admin uploads
-CREATE POLICY "Admin Upload Access" 
-ON storage.objects FOR INSERT 
-WITH CHECK (bucket_id = 'portfolio-public');
-
-CREATE POLICY "Admin Update Access" 
-ON storage.objects FOR UPDATE 
-USING (bucket_id = 'portfolio-public');
-
-CREATE POLICY "Admin Delete Access" 
-ON storage.objects FOR DELETE 
-USING (bucket_id = 'portfolio-public');
+-- Writes use the server-only service role, which bypasses RLS.
+-- No INSERT, UPDATE, or DELETE policy is granted to browser roles.

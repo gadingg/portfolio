@@ -35,10 +35,13 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
   const [subtitle, setSubtitle] = useState(initialProject?.subtitle || '');
   const [description, setDescription] = useState(initialProject?.description || '');
   const [category, setCategory] = useState(initialProject?.category || CATEGORIES[0]);
-  const [coverImageUrl, setCoverImageUrl] = useState(initialProject?.cover_image_url || 'https://picsum.photos/id/60/1200/800');
+  const [coverImageUrl, setCoverImageUrl] = useState(initialProject?.cover_image_url || '');
+  const [coverImageAlt, setCoverImageAlt] = useState(initialProject?.cover_image_alt || '');
   const [year, setYear] = useState(initialProject?.year || '2026');
   const [client, setClient] = useState(initialProject?.client || '');
   const [role, setRole] = useState(initialProject?.role || '');
+  const [duration, setDuration] = useState(initialProject?.duration || '');
+  const [servicesText, setServicesText] = useState((initialProject?.services || []).join(', '));
   const [isFeatured, setIsFeatured] = useState(initialProject?.is_featured || false);
   const [displayOrder, setDisplayOrder] = useState(initialProject?.display_order || 0);
 
@@ -80,13 +83,14 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
     let initialJson: any = {};
     if (type === 'heading') initialJson = { level: 2, text: 'New Section' };
     else if (type === 'paragraph') initialJson = { text: 'Enter paragraph text...' };
-    else if (type === 'image') initialJson = { url: 'https://picsum.photos/id/1043/1200/800', alt: 'Image description', width_mode: 'standard' };
+    else if (type === 'image') initialJson = { url: '', alt: '', caption: '', width_mode: 'standard' };
+    else if (type === 'gallery') initialJson = { images: [{ url: '', alt: '', caption: '' }], layout: 'grid' };
     else if (type === 'metrics') initialJson = { items: [{ value: '+45%', label: 'Metric Label', description: 'Growth measurement' }] };
     else if (type === 'quote') initialJson = { quote: 'Inspiring project takeaway', attribution: 'Gading Utama' };
-    else if (type === 'video') initialJson = { url: 'https://vjs.zencdn.net/v/oceans.mp4', poster: '' };
-    else if (type === 'list') initialJson = { items: ['Key takeaway item 1', 'Key takeaway item 2'] };
+    else if (type === 'video') initialJson = { url: '', poster: '', caption: '', autoplay: false };
+    else if (type === 'list') initialJson = { items: ['Key takeaway'], ordered: false };
     else if (type === 'divider') initialJson = { style: 'line' };
-    else if (type === 'link') initialJson = { label: 'Open Live Demo', url: 'https://example.com' };
+    else if (type === 'link') initialJson = { label: 'Open Live Demo', url: '', description: '' };
 
     setBlocks((prev) => [
       ...prev,
@@ -155,9 +159,12 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
         description,
         category,
         cover_image_url: coverImageUrl,
+        cover_image_alt: coverImageAlt,
         year,
         client,
         role,
+        duration,
+        services: servicesText.split(',').map((service) => service.trim()).filter(Boolean),
         status,
         is_featured: isFeatured,
         display_order: Number(displayOrder) || 0,
@@ -198,9 +205,12 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
     subtitle,
     category,
     coverImageUrl,
+    coverImageAlt,
     year,
     client,
     role,
+    duration,
+    servicesText,
     isFeatured,
     displayOrder,
     blocks,
@@ -226,7 +236,7 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
     return () => {
       if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
     };
-  }, [title, slug, subtitle, description, category, coverImageUrl, year, client, role, isFeatured, displayOrder, blocks, isNew, initialProject?.status, handleSave]);
+  }, [title, slug, subtitle, description, category, coverImageUrl, coverImageAlt, year, client, role, duration, servicesText, isFeatured, displayOrder, blocks, isNew, initialProject?.status, handleSave]);
 
   const handlePublishToggle = async () => {
     setPublishing(true);
@@ -239,6 +249,7 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
     <div style={{ maxWidth: '960px', margin: '0 auto', paddingBottom: '80px' }}>
       {/* Header action bar */}
       <div
+        className="admin-editor-toolbar"
         style={{
           position: 'sticky',
           top: '20px',
@@ -379,7 +390,7 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
         </div>
 
         {/* Category & Year */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+        <div className="admin-metadata-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
           <div>
             <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px', color: 'var(--muted)' }}>
               Category
@@ -484,8 +495,24 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
           folder="covers"
         />
 
+        <div className="admin-metadata-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <label className="admin-field-label">
+            Cover image alt text
+            <input type="text" value={coverImageAlt} onChange={(event) => setCoverImageAlt(event.target.value)} placeholder="Describe what the cover image shows" />
+          </label>
+          <label className="admin-field-label">
+            Project duration
+            <input type="text" value={duration} onChange={(event) => setDuration(event.target.value)} placeholder="e.g. 3 weeks" />
+          </label>
+        </div>
+        <label className="admin-field-label" style={{ marginTop: '16px' }}>
+          Services
+          <input type="text" value={servicesText} onChange={(event) => setServicesText(event.target.value)} placeholder="UI/UX Design, Web Development, Campaign Strategy" />
+          <small>Separate each service with a comma.</small>
+        </label>
+
         {/* Client, Role & Featured */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginTop: '20px' }}>
+        <div className="admin-metadata-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginTop: '20px' }}>
           <div>
             <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px', color: 'var(--muted)' }}>
               Client / Division
@@ -597,6 +624,7 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
                   <div style={{ display: 'flex', gap: '6px' }}>
                     <button
                       type="button"
+                      aria-label={`Move block ${index + 1} up`}
                       onClick={() => moveBlock(index, 'up')}
                       disabled={index === 0}
                       style={{ padding: '4px 8px', borderRadius: '6px', background: 'var(--surface)', border: 'none', color: 'var(--ink)', cursor: 'pointer' }}
@@ -605,6 +633,7 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
                     </button>
                     <button
                       type="button"
+                      aria-label={`Move block ${index + 1} down`}
                       onClick={() => moveBlock(index, 'down')}
                       disabled={index === blocks.length - 1}
                       style={{ padding: '4px 8px', borderRadius: '6px', background: 'var(--surface)', border: 'none', color: 'var(--ink)', cursor: 'pointer' }}
@@ -613,6 +642,7 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
                     </button>
                     <button
                       type="button"
+                      aria-label={`Duplicate block ${index + 1}`}
                       onClick={() => duplicateBlock(index)}
                       style={{ padding: '4px 8px', borderRadius: '6px', background: 'var(--surface)', border: 'none', color: 'var(--ink)', cursor: 'pointer', fontSize: '11px' }}
                     >
@@ -620,6 +650,7 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
                     </button>
                     <button
                       type="button"
+                      aria-label={`Remove block ${index + 1}`}
                       onClick={() => removeBlock(index)}
                       style={{ padding: '4px 8px', borderRadius: '6px', background: 'rgba(239,68,68,0.1)', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '11px' }}
                     >
@@ -694,6 +725,17 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
                     />
                     <input
                       type="text"
+                      value={content.alt || ''}
+                      onChange={(e) => updateBlockContent(index, { ...content, alt: e.target.value })}
+                      placeholder="Alt text describing the image..."
+                      style={{
+                        width: '100%', padding: '8px 12px', borderRadius: '8px',
+                        background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)',
+                        color: 'var(--ink)', fontSize: '12px', marginBottom: '8px'
+                      }}
+                    />
+                    <input
+                      type="text"
                       value={content.caption || ''}
                       onChange={(e) => updateBlockContent(index, { ...content, caption: e.target.value })}
                       placeholder="Caption (optional)..."
@@ -711,13 +753,32 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
                   </div>
                 )}
 
+                {block.block_type === 'gallery' && (
+                  <label className="admin-field-label">
+                    Gallery images
+                    <textarea
+                      rows={5}
+                      value={(content.images || []).map((image: any) => [image.url, image.alt, image.caption].filter(Boolean).join(' | ')).join('\n')}
+                      onChange={(event) => updateBlockContent(index, {
+                        ...content,
+                        images: event.target.value.split('\n').filter(Boolean).map((line) => {
+                          const [url, alt = '', caption = ''] = line.split('|').map((part) => part.trim());
+                          return { url, alt, caption };
+                        }),
+                      })}
+                      placeholder="https://image-url.com/file.jpg | Alt text | Optional caption"
+                    />
+                    <small>One image per line. Use URL | alt text | caption.</small>
+                  </label>
+                )}
+
                 {block.block_type === 'metrics' && (
                   <div>
                     <p style={{ fontSize: '12px', color: 'var(--muted)', margin: '0 0 10px' }}>
                       Metrics Items (Value & Label)
                     </p>
                     {(content.items || []).map((m: any, mIdx: number) => (
-                      <div key={mIdx} style={{ display: 'grid', gridTemplateColumns: '120px 1fr 1fr', gap: '8px', marginBottom: '8px' }}>
+                      <div className="admin-metrics-grid" key={mIdx} style={{ display: 'grid', gridTemplateColumns: '120px 1fr 1fr', gap: '8px', marginBottom: '8px' }}>
                         <input
                           type="text"
                           value={m.value}
@@ -763,6 +824,49 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
                     >
                       + Add Metric Point
                     </button>
+                  </div>
+                )}
+
+                {block.block_type === 'video' && (
+                  <div className="admin-metadata-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    <label className="admin-field-label">Video URL
+                      <input type="url" value={content.url || ''} onChange={(event) => updateBlockContent(index, { ...content, url: event.target.value })} placeholder="https://..." />
+                    </label>
+                    <label className="admin-field-label">Poster URL
+                      <input type="url" value={content.poster || ''} onChange={(event) => updateBlockContent(index, { ...content, poster: event.target.value })} placeholder="https://..." />
+                    </label>
+                    <label className="admin-field-label" style={{ gridColumn: '1 / -1' }}>Caption
+                      <input type="text" value={content.caption || ''} onChange={(event) => updateBlockContent(index, { ...content, caption: event.target.value })} />
+                    </label>
+                  </div>
+                )}
+
+                {block.block_type === 'list' && (
+                  <label className="admin-field-label">List items
+                    <textarea rows={5} value={(content.items || []).join('\n')} onChange={(event) => updateBlockContent(index, { ...content, items: event.target.value.split('\n').filter(Boolean) })} placeholder={'First item\nSecond item'} />
+                    <span><input type="checkbox" checked={Boolean(content.ordered)} onChange={(event) => updateBlockContent(index, { ...content, ordered: event.target.checked })} /> Numbered list</span>
+                  </label>
+                )}
+
+                {block.block_type === 'divider' && (
+                  <label className="admin-field-label">Divider style
+                    <select value={content.style || 'line'} onChange={(event) => updateBlockContent(index, { ...content, style: event.target.value })}>
+                      <option value="line">Line</option><option value="dots">Dots</option><option value="space">Space</option>
+                    </select>
+                  </label>
+                )}
+
+                {block.block_type === 'link' && (
+                  <div className="admin-metadata-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    <label className="admin-field-label">Button label
+                      <input type="text" value={content.label || ''} onChange={(event) => updateBlockContent(index, { ...content, label: event.target.value })} />
+                    </label>
+                    <label className="admin-field-label">URL
+                      <input type="url" value={content.url || ''} onChange={(event) => updateBlockContent(index, { ...content, url: event.target.value })} placeholder="https://..." />
+                    </label>
+                    <label className="admin-field-label" style={{ gridColumn: '1 / -1' }}>Description
+                      <input type="text" value={content.description || ''} onChange={(event) => updateBlockContent(index, { ...content, description: event.target.value })} />
+                    </label>
                   </div>
                 )}
 
@@ -823,6 +927,9 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
             </button>
             <button type="button" onClick={() => addBlock('image')} className="button button--secondary" style={{ padding: '8px 16px', fontSize: '11px' }}>
               + Image
+            </button>
+            <button type="button" onClick={() => addBlock('gallery')} className="button button--secondary" style={{ padding: '8px 16px', fontSize: '11px' }}>
+              + Gallery
             </button>
             <button type="button" onClick={() => addBlock('metrics')} className="button button--secondary" style={{ padding: '8px 16px', fontSize: '11px' }}>
               + Metrics

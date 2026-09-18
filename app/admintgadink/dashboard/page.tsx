@@ -9,7 +9,7 @@ export default async function AdminDashboardOverviewPage() {
 
   return (
     <div style={{ maxWidth: '1100px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '36px' }}>
+      <div className="admin-page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '36px' }}>
         <div>
           <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', color: 'var(--amber)' }}>
             OVERVIEW

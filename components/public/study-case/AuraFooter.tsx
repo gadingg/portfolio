@@ -30,29 +30,16 @@ export function AuraFooter() {
 
                 {/* Tagline */}
                 <h4 className="mt-6 text-2xl sm:text-3xl lg:text-[32px] font-black leading-[1.15] tracking-[-0.05em] text-[#f3f0e8]">
-                  Imaginative minds for high-growth brands.
+                  Creative thinking that ships.
                 </h4>
                 <p className="mt-3 text-xs sm:text-sm font-medium leading-[1.7] text-[#f3f0e8]/65 max-w-md">
-                  Turning operational bottlenecks into custom software tools, high-converting Meta Ads, and creative campaigns.
+                  Dari ide campaign sampai digital tool, saya bantu mengubah masalah kerja menjadi eksekusi yang bisa dipakai tim.
                 </p>
               </div>
 
-              {/* CTA: Contact ME */}
               <div className="mt-8 pt-6 border-t border-[#f3f0e8]/10 flex flex-wrap items-center gap-3">
-                <Link
-                  href="/#contact"
-                  className="inline-flex items-center gap-2.5 rounded-full bg-[#ff5a1f] px-6 py-3.5 text-xs sm:text-sm font-black uppercase tracking-[0.08em] text-white shadow-lg shadow-[#ff5a1f]/25 hover:bg-[#ff733f] hover:shadow-[#ff5a1f]/40 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200"
-                >
-                  <span>Contact ME</span>
-                  <span className="text-sm font-bold">→</span>
-                </Link>
-                <a
-                  href="mailto:contact@gadingutama.com"
-                  className="inline-flex items-center gap-2 rounded-full border border-[#f3f0e8]/15 bg-white/[0.04] px-5 py-3.5 text-xs sm:text-sm font-semibold text-[#f3f0e8]/80 hover:border-[#f3f0e8]/30 hover:bg-white/[0.08] hover:text-[#f3f0e8] transition-all duration-200"
-                >
-                  <span>contact@gadingutama.com</span>
-                  <span className="text-xs text-[#ff5a1f]">↗</span>
-                </a>
+                <a href="https://wa.me/6289653484274" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-[48px] items-center rounded-full bg-[#ff5a1f] px-6 text-xs font-black uppercase text-[#060706]">Chat on WhatsApp</a>
+                <Link href="/cv" className="inline-flex min-h-[48px] items-center rounded-full border border-[#f3f0e8]/20 px-5 text-xs font-semibold text-[#f3f0e8]">See CV</Link>
               </div>
             </div>
 
@@ -88,37 +75,35 @@ export function AuraFooter() {
                 Connect
               </p>
               
-              {/* Dribbble */}
               <a
-                href="https://dribbble.com"
+                href="/cv"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Dribbble"
-                title="Dribbble"
-                className="group flex h-12 w-12 items-center justify-center rounded-full border border-[#f3f0e8]/15 bg-white/[0.04] text-[#f3f0e8]/75 hover:bg-[#ea4c89] hover:border-[#ea4c89] hover:text-white hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm"
+                aria-label="Open CV"
+                title="Open CV"
+                className="group flex h-12 w-12 items-center justify-center rounded-full border border-[#f3f0e8]/15 bg-white/[0.04] text-[#f3f0e8] hover:border-[#ff5a1f] hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm"
               >
-                <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                <span className="text-[10px] font-black">CV</span><svg className="hidden" viewBox="0 0 24 24">
                   <path fillRule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.51 0 10-4.48 10-10S17.51 2 12 2zm6.605 4.61a8.502 8.502 0 0 1 1.93 5.314c-.281-.054-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.445a25.416 25.416 0 0 0-.565-1.238c3.14-1.274 4.542-3.14 4.762-3.36zm-6.444-2.454c2.25 0 4.305.86 5.856 2.27-.196.206-1.5 1.967-4.52 3.194-1.39-2.553-2.91-4.781-3.23-5.244.606-.142 1.24-.22 1.894-.22zm-3.953 1.258c.28.406 1.77 2.613 3.17 5.127-3.98 1.09-7.51.98-7.94.97a8.528 8.528 0 0 1 4.77-6.097zm-4.747 8.046c.39.01 3.25.07 6.94-.85.34.87.65 1.76.92 2.64-3.79 2.05-5.32 5.09-5.46 5.38a8.507 8.507 0 0 1-2.4-7.17zm8.47 8.44c.14-.26 1.48-2.96 5.07-4.88 1.01 2.64 1.45 5.01 1.55 5.59a8.497 8.497 0 0 1-6.62-.71zm8.26-2.02c-.11-.47-.52-2.61-1.45-5.1 2.63-.39 4.95.27 5.25.36a8.517 8.517 0 0 1-3.8 4.74z" clipRule="evenodd" />
                 </svg>
               </a>
 
-              {/* LinkedIn */}
               <a
-                href="https://linkedin.com"
+                href="https://wa.me/6289653484274"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                title="LinkedIn"
-                className="group flex h-12 w-12 items-center justify-center rounded-full border border-[#f3f0e8]/15 bg-white/[0.04] text-[#f3f0e8]/75 hover:bg-[#0077b5] hover:border-[#0077b5] hover:text-white hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm"
+                aria-label="WhatsApp"
+                title="WhatsApp"
+                className="group flex h-12 w-12 items-center justify-center rounded-full border border-[#f3f0e8]/15 bg-white/[0.04] text-[#f3f0e8] hover:border-[#ff5a1f] hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm"
               >
-                <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                <span className="text-[10px] font-black">WA</span><svg className="hidden" viewBox="0 0 24 24">
                   <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
                 </svg>
               </a>
 
               {/* Instagram */}
               <a
-                href="https://instagram.com"
+                href="https://instagram.com/gadingg_"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
