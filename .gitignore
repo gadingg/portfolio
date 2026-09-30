@@ -14,10 +14,13 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Agent metadata
+.agents/
+
 # Temp & Cache
 .next/
 dist/
 build/
 out/
 *.tsbuildinfo
-
+.vercel/
