@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Project, ContentBlock, ContentBlockType } from '@/types/portfolio';
 import { MediaUploader } from '../MediaUploader';
+import { MediaLibraryModal } from '../modals/MediaLibraryModal';
 import { generateSlug } from '@/lib/utils/slug';
 
 const CATEGORIES = [
@@ -64,6 +65,7 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [saveMessage, setSaveMessage] = useState('');
   const [publishing, setPublishing] = useState(false);
+  const [mediaModalBlockIndex, setMediaModalBlockIndex] = useState<number | null>(null);
   const autosaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Auto-generate slug from title for new projects
@@ -675,28 +677,106 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
 
                 {block.block_type === 'image' && (
                   <div>
-                    <input
-                      type="text"
-                      value={content.url || ''}
-                      onChange={(e) => updateBlockContent(index, { ...content, url: e.target.value })}
-                      placeholder="Image URL..."
-                      style={{
-                        width: '100%',
-                        padding: '10px 14px',
-                        borderRadius: '8px',
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid var(--border)',
-                        color: 'var(--ink)',
-                        fontSize: '13px',
-                        marginBottom: '8px',
-                        outline: 'none',
-                      }}
-                    />
+                    {content.url ? (
+                      <div
+                        style={{
+                          position: 'relative',
+                          width: '100%',
+                          aspectRatio: '16 / 9',
+                          borderRadius: '12px',
+                          overflow: 'hidden',
+                          border: '1px solid var(--border)',
+                          marginBottom: '10px',
+                          background: '#000',
+                        }}
+                      >
+                        <img
+                          src={content.url}
+                          alt={content.caption || 'Block preview'}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setMediaModalBlockIndex(index)}
+                          style={{
+                            position: 'absolute',
+                            bottom: '10px',
+                            right: '10px',
+                            background: 'rgba(15, 23, 42, 0.88)',
+                            backdropFilter: 'blur(8px)',
+                            border: '1px solid rgba(255, 255, 255, 0.25)',
+                            color: '#fff',
+                            borderRadius: '8px',
+                            padding: '6px 14px',
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          🔄 Ganti Gambar (Media Library)
+                        </button>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => setMediaModalBlockIndex(index)}
+                        style={{
+                          padding: '24px',
+                          borderRadius: '12px',
+                          border: '2px dashed var(--border-strong)',
+                          textAlign: 'center',
+                          cursor: 'pointer',
+                          marginBottom: '10px',
+                          background: 'rgba(255,255,255,0.02)',
+                        }}
+                      >
+                        <span style={{ fontSize: '24px', display: 'block', marginBottom: '6px' }}>🖼️</span>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
+                          Pilih Gambar dari Media Library / 16:9 Presets
+                        </span>
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                      <input
+                        type="text"
+                        value={content.url || ''}
+                        onChange={(e) => updateBlockContent(index, { ...content, url: e.target.value })}
+                        placeholder="Image URL (atau pilih dari library)..."
+                        style={{
+                          flex: 1,
+                          padding: '10px 14px',
+                          borderRadius: '8px',
+                          background: 'rgba(255,255,255,0.04)',
+                          border: '1px solid var(--border)',
+                          color: 'var(--ink)',
+                          fontSize: '13px',
+                          outline: 'none',
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setMediaModalBlockIndex(index)}
+                        style={{
+                          padding: '0 14px',
+                          borderRadius: '8px',
+                          background: 'rgba(99, 102, 241, 0.15)',
+                          border: '1px solid rgba(99, 102, 241, 0.3)',
+                          color: '#818CF8',
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        🖼️ Buka Library
+                      </button>
+                    </div>
+
                     <input
                       type="text"
                       value={content.caption || ''}
                       onChange={(e) => updateBlockContent(index, { ...content, caption: e.target.value })}
-                      placeholder="Caption (optional)..."
+                      placeholder="Caption / Keterangan gambar (opsional)..."
                       style={{
                         width: '100%',
                         padding: '8px 12px',
@@ -845,6 +925,24 @@ export function ContentEditor({ initialProject, isNew = false }: ContentEditorPr
           </div>
         </div>
       </div>
+
+      {/* Media Library Modal for Blocks */}
+      <MediaLibraryModal
+        isOpen={mediaModalBlockIndex !== null}
+        onClose={() => setMediaModalBlockIndex(null)}
+        onSelect={(newUrl) => {
+          if (mediaModalBlockIndex !== null) {
+            const currentBlock = blocks[mediaModalBlockIndex];
+            updateBlockContent(mediaModalBlockIndex, {
+              ...currentBlock?.content_json,
+              url: newUrl,
+            });
+          }
+        }}
+        currentUrl={mediaModalBlockIndex !== null ? ((blocks[mediaModalBlockIndex]?.content_json as any)?.url || '') : ''}
+        folder="blocks"
+        title="Pilih Gambar untuk Content Block"
+      />
     </div>
   );
 }

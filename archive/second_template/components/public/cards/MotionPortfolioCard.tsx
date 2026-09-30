@@ -40,7 +40,7 @@ export function MotionPortfolioCard({ project, videoUrl }: { project: Project; v
       className="project-card"
       aria-label={`View ${project.title} motion case`}
     >
-      <div className="project-preview" style={{ position: 'relative' }}>
+      <div className="project-preview" style={{ position: 'relative', aspectRatio: '16 / 9' }}>
         {videoUrl ? (
           <video
             ref={videoRef}
@@ -55,7 +55,7 @@ export function MotionPortfolioCard({ project, videoUrl }: { project: Project; v
           </video>
         ) : (
           <Image
-            src={project.cover_image_url || 'https://picsum.photos/id/1043/600/400'}
+            src={project.cover_image_url || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1280&h=720&q=80'}
             alt={project.cover_image_alt || project.title}
             fill
             sizes="(max-width: 768px) 100vw, 33vw"

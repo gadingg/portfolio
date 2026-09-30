@@ -758,7 +758,7 @@ html[data-theme="light"] .hero-video.is-ready {
 .project-preview {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   background: #111;
 }

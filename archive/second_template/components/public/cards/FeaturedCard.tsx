@@ -12,7 +12,7 @@ export function FeaturedCard({ project }: { project: Project }) {
     >
       <div className="project-preview" style={{ aspectRatio: '16 / 9' }}>
         <Image
-          src={project.cover_image_url || 'https://picsum.photos/id/60/1200/800'}
+          src={project.cover_image_url || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1280&h=720&q=80'}
           alt={project.cover_image_alt || project.title}
           fill
           sizes="(max-width: 768px) 100vw, 66vw"
