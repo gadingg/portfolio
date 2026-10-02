@@ -7,10 +7,10 @@ export function RelatedProjects({ projects }: { projects: Project[] }) {
   if (!projects || projects.length === 0) return null;
 
   return (
-    <section className="mt-20 pt-12 border-t border-[#f3f0e8]/10">
-      <div className="section-label mb-3">Explore More Work</div>
-      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-[-0.04em] text-[#f3f0e8] mb-8">
-        Related Case Studies
+    <section className="mt-20 border-t border-[#f3f0e8]/10 pt-12">
+      <div className="section-label mb-3">More selected work</div>
+      <h2 className="mb-8 text-2xl font-black tracking-[-0.04em] text-[#f3f0e8] sm:text-3xl lg:text-4xl">
+        Keep exploring
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -18,10 +18,10 @@ export function RelatedProjects({ projects }: { projects: Project[] }) {
           <Link
             key={p.id || p.slug}
             href={`/work/${p.slug}`}
-            className="glass rounded-[24px] sm:rounded-[30px] p-4 sm:p-5 border border-[#f3f0e8]/10 hover:border-[#ff5a1f]/40 transition duration-300 group flex flex-col justify-between"
+            className="group flex flex-col justify-between border-t border-[#f3f0e8]/12 pt-4 transition duration-300 hover:border-[#ff5a1f]/60"
           >
             <div>
-              <div className="relative w-full aspect-[16/10] rounded-[18px] sm:rounded-[22px] overflow-hidden bg-[#10110f] mb-4">
+              <div className="relative mb-4 aspect-[16/10] w-full overflow-hidden rounded-[16px] bg-[#10110f]">
                 <Image
                   src={p.cover_image_url || 'https://picsum.photos/id/60/600/400'}
                   alt={p.cover_image_alt || p.title}

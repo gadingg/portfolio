@@ -5,8 +5,8 @@ export function MetricsBlock({ content }: { content: MetricsBlockContent }) {
   if (!content?.items || content.items.length === 0) return null;
 
   return (
-    <div className="glass rounded-[24px] sm:rounded-[32px] p-6 sm:p-8 my-10 border border-[#f3f0e8]/10">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 divide-y sm:divide-y-0 sm:divide-x divide-[#f3f0e8]/10">
+    <section aria-label="Project outcomes" className="case-outcomes my-12 border-y border-[#f3f0e8]/15 py-8 sm:py-10">
+      <div className="grid grid-cols-1 gap-7 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-[#f3f0e8]/12">
         {content.items.map((item, idx) => (
           <div
             key={idx}
@@ -26,6 +26,6 @@ export function MetricsBlock({ content }: { content: MetricsBlockContent }) {
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

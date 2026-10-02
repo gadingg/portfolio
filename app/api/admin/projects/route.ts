@@ -1,3 +1,4 @@
+import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminSession } from '@/lib/auth/session';
 import { getAllProjectsForAdmin, saveProject } from '@/lib/db/projects';
@@ -28,6 +29,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
+    revalidateTag('portfolio-projects');
     return NextResponse.json({ success: true, project: result.data });
   } catch (error: any) {
     console.error('Project create error:', error);

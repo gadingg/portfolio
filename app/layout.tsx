@@ -33,9 +33,9 @@ export default function RootLayout({
           <div className="grid-veil" aria-hidden="true" />
           <div className="page-rail" aria-hidden="true">Creative Marketing · Tech · AI</div>
 
-          <main id="main-content">
+          <div id="main-content">
             {children}
-          </main>
+          </div>
         </ThemeProvider>
       </body>
     </html>

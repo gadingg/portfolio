@@ -1,3 +1,4 @@
+import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminSession } from '@/lib/auth/session';
 import { getAdminProjectById, saveProject, deleteProject } from '@/lib/db/projects';
@@ -42,6 +43,7 @@ export async function PATCH(
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
+    revalidateTag('portfolio-projects');
     return NextResponse.json({ success: true, project: result.data });
   } catch (error) {
     console.error('Project update error:', error);
@@ -65,5 +67,6 @@ export async function DELETE(
     return NextResponse.json({ error: result.error }, { status: 400 });
   }
 
+  revalidateTag('portfolio-projects');
   return NextResponse.json({ success: true });
 }

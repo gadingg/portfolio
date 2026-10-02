@@ -1,9 +1,16 @@
 import { MetadataRoute } from 'next';
 import { getPublishedProjects } from '@/lib/db/public-projects';
+import type { Project } from '@/types/portfolio';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-  const projects = await getPublishedProjects();
+  let projects: Project[] = [];
+
+  try {
+    projects = await getPublishedProjects();
+  } catch (error) {
+    console.error('Sitemap project lookup failed; returning the homepage entry only.', error);
+  }
 
   const projectUrls = projects.map((p) => ({
     url: `${baseUrl}/work/${p.slug}`,
