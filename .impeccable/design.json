@@ -1,0 +1,274 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-12T09:58:51.9062084Z",
+  "title": "Design System: Gading Public Showcase",
+  "extensions": {
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(.16,1,.3,1)",
+        "purpose": "Artwork and control transform easing."
+      },
+      {
+        "name": "control",
+        "value": ".2s",
+        "purpose": "Color and button state transitions."
+      },
+      {
+        "name": "artwork",
+        "value": ".6s–.7s",
+        "purpose": "Image transitions; disabled under reduced motion."
+      }
+    ],
+    "shadows": [
+      {
+        "name": "captured-interface",
+        "value": "0 18px 40px #172c2233",
+        "purpose": "Listing Hub screenshot composition only."
+      }
+    ],
+    "typographyMeta": {
+      "body": {
+        "purpose": "Readable project and section explanations.",
+        "displayName": "Explanation"
+      },
+      "display": {
+        "purpose": "The main homepage headline.",
+        "displayName": "Hero display"
+      }
+    },
+    "breakpoints": [
+      {
+        "name": "multi-column",
+        "value": "600px"
+      },
+      {
+        "name": "desktop",
+        "value": "960px"
+      }
+    ],
+    "colorMeta": {
+      "canvas": {
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0036 145.36)",
+          "oklch(26.43% 0.0036 145.36)",
+          "oklch(37.86% 0.0036 145.36)",
+          "oklch(49.29% 0.0036 145.36)",
+          "oklch(60.71% 0.0036 145.36)",
+          "oklch(72.14% 0.0036 145.36)",
+          "oklch(83.57% 0.0036 145.36)",
+          "oklch(95% 0.0036 145.36)"
+        ],
+        "displayName": "Near-black Canvas"
+      },
+      "surface": {
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0067 135.00)",
+          "oklch(26.43% 0.0067 135.00)",
+          "oklch(37.86% 0.0067 135.00)",
+          "oklch(49.29% 0.0067 135.00)",
+          "oklch(60.71% 0.0067 135.00)",
+          "oklch(72.14% 0.0067 135.00)",
+          "oklch(83.57% 0.0067 135.00)",
+          "oklch(95% 0.0067 135.00)"
+        ],
+        "displayName": "Deep Olive Surface"
+      },
+      "ink": {
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0111 89.72)",
+          "oklch(26.43% 0.0111 89.72)",
+          "oklch(37.86% 0.0111 89.72)",
+          "oklch(49.29% 0.0111 89.72)",
+          "oklch(60.71% 0.0111 89.72)",
+          "oklch(72.14% 0.0111 89.72)",
+          "oklch(83.57% 0.0111 89.72)",
+          "oklch(95% 0.0111 89.72)"
+        ],
+        "displayName": "Warm White"
+      },
+      "secondary": {
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0141 115.91)",
+          "oklch(26.43% 0.0141 115.91)",
+          "oklch(37.86% 0.0141 115.91)",
+          "oklch(49.29% 0.0141 115.91)",
+          "oklch(60.71% 0.0141 115.91)",
+          "oklch(72.14% 0.0141 115.91)",
+          "oklch(83.57% 0.0141 115.91)",
+          "oklch(95% 0.0141 115.91)"
+        ],
+        "displayName": "Quiet Sage"
+      },
+      "accent": {
+        "role": "primary",
+        "tonalRamp": [
+          "oklch(15% 0.2108 37.70)",
+          "oklch(26.43% 0.2108 37.70)",
+          "oklch(37.86% 0.2108 37.70)",
+          "oklch(49.29% 0.2108 37.70)",
+          "oklch(60.71% 0.2108 37.70)",
+          "oklch(72.14% 0.2108 37.70)",
+          "oklch(83.57% 0.2108 37.70)",
+          "oklch(95% 0.2108 37.70)"
+        ],
+        "displayName": "Signal Orange"
+      },
+      "line": {
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0148 128.97)",
+          "oklch(26.43% 0.0148 128.97)",
+          "oklch(37.86% 0.0148 128.97)",
+          "oklch(49.29% 0.0148 128.97)",
+          "oklch(60.71% 0.0148 128.97)",
+          "oklch(72.14% 0.0148 128.97)",
+          "oklch(83.57% 0.0148 128.97)",
+          "oklch(95% 0.0148 128.97)"
+        ],
+        "displayName": "Structural Olive"
+      },
+      "control-line": {
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0202 124.20)",
+          "oklch(26.43% 0.0202 124.20)",
+          "oklch(37.86% 0.0202 124.20)",
+          "oklch(49.29% 0.0202 124.20)",
+          "oklch(60.71% 0.0202 124.20)",
+          "oklch(72.14% 0.0202 124.20)",
+          "oklch(83.57% 0.0202 124.20)",
+          "oklch(95% 0.0202 124.20)"
+        ],
+        "displayName": "Control Olive"
+      },
+      "accent-hover": {
+        "role": "primary",
+        "tonalRamp": [
+          "oklch(15% 0.1653 40.22)",
+          "oklch(26.43% 0.1653 40.22)",
+          "oklch(37.86% 0.1653 40.22)",
+          "oklch(49.29% 0.1653 40.22)",
+          "oklch(60.71% 0.1653 40.22)",
+          "oklch(72.14% 0.1653 40.22)",
+          "oklch(83.57% 0.1653 40.22)",
+          "oklch(95% 0.1653 40.22)"
+        ],
+        "displayName": "Light Signal Orange"
+      },
+      "dark-hover": {
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(15% 0.0150 124.13)",
+          "oklch(26.43% 0.0150 124.13)",
+          "oklch(37.86% 0.0150 124.13)",
+          "oklch(49.29% 0.0150 124.13)",
+          "oklch(60.71% 0.0150 124.13)",
+          "oklch(72.14% 0.0150 124.13)",
+          "oklch(83.57% 0.0150 124.13)",
+          "oklch(95% 0.0150 124.13)"
+        ],
+        "displayName": "Lifted Olive"
+      }
+    }
+  },
+  "components": [
+    {
+      "description": "The main action on a dark surface.",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "html": "<button class=\"ds-button ds-primary\">View selected works</button>",
+      "name": "Primary button",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:48px;padding:12px 18px;border:1px solid transparent;border-radius:8px;font:700 14px/1.4 Manrope,Arial,sans-serif;text-decoration:none;text-align:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .2s cubic-bezier(.16,1,.3,1)}.ds-button:active{transform:translateY(1px)}.ds-button:focus-visible{outline:3px solid #ff5a1f;outline-offset:5px}.ds-button:disabled{opacity:.4;cursor:default;transform:none}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}.ds-primary{background:#ff5a1f;color:#060706}.ds-primary:hover{background:#ff8153}"
+    },
+    {
+      "description": "Secondary actions and case-study links.",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "html": "<button class=\"ds-button ds-outline\">View case study</button>",
+      "name": "Outline button",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:48px;padding:12px 18px;border:1px solid transparent;border-radius:8px;font:700 14px/1.4 Manrope,Arial,sans-serif;text-decoration:none;text-align:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .2s cubic-bezier(.16,1,.3,1)}.ds-button:active{transform:translateY(1px)}.ds-button:focus-visible{outline:3px solid #ff5a1f;outline-offset:5px}.ds-button:disabled{opacity:.4;cursor:default;transform:none}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}.ds-outline{background:transparent;color:#f3f0e8;border-color:#7b8073}.ds-outline:hover{background:#f3f0e8;color:#060706;border-color:#f3f0e8}"
+    },
+    {
+      "description": "Contact action on the orange contact surface.",
+      "kind": "button",
+      "refersTo": "button-dark",
+      "html": "<div class=\"ds-contact\"><button class=\"ds-button ds-dark\">Chat on WhatsApp</button></div>",
+      "name": "Dark button",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:48px;padding:12px 18px;border:1px solid transparent;border-radius:8px;font:700 14px/1.4 Manrope,Arial,sans-serif;text-decoration:none;text-align:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .2s cubic-bezier(.16,1,.3,1)}.ds-button:active{transform:translateY(1px)}.ds-button:focus-visible{outline:3px solid #ff5a1f;outline-offset:5px}.ds-button:disabled{opacity:.4;cursor:default;transform:none}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}.ds-contact{background:#ff5a1f;padding:20px}.ds-dark{background:#060706;color:#f3f0e8}.ds-dark:hover{background:#252820}.ds-dark:focus-visible{outline-color:#060706}"
+    },
+    {
+      "description": "Archive selection uses aria-pressed.",
+      "kind": "chip",
+      "refersTo": "filter",
+      "html": "<button class=\"ds-filter\" aria-pressed=\"true\">All work</button><button class=\"ds-filter\" aria-pressed=\"false\">Design</button>",
+      "name": "Archive filter",
+      "css": ".ds-filter{min-height:44px;border:1px solid #7b8073;border-radius:6px;background:transparent;color:#f3f0e8;font:400 12px/1.65 Manrope,Arial,sans-serif;padding:9px 14px;cursor:pointer;transition:background .2s,color .2s}.ds-filter[aria-pressed=\"true\"]{background:#f3f0e8;color:#060706;border-color:#f3f0e8}.ds-filter:hover{border-color:#f3f0e8}.ds-filter:focus-visible{outline:3px solid #ff5a1f;outline-offset:5px}@media(prefers-reduced-motion:reduce){.ds-filter{transition:none}}"
+    },
+    {
+      "name": "Desktop navigation",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Main navigation\"><a href=\"#work\">Selected works</a><a href=\"#visuals\">Visual archive</a><a href=\"#about\">About</a></nav>",
+      "kind": "nav",
+      "css": ".ds-nav{display:flex;gap:32px;background:#060706;padding:16px;font:400 13px/1.65 Manrope,Arial,sans-serif}.ds-nav a{display:flex;align-items:center;min-height:44px;color:#b6b8ae;text-decoration:none}.ds-nav a:hover{color:#f3f0e8}.ds-nav a:focus-visible{outline:3px solid #ff5a1f;outline-offset:5px}",
+      "description": "Compact opaque navigation with quiet links."
+    },
+    {
+      "name": "Recovery container",
+      "html": "<div class=\"ds-notice\"><p>Konten belum bisa dimuat.</p><button class=\"ds-link\">Try again</button></div>",
+      "kind": "card",
+      "css": ".ds-notice{padding:20px;border:1px solid #33372f;border-radius:8px;background:#060706;color:#b6b8ae;font:400 14px/1.65 Manrope,Arial,sans-serif}.ds-notice p{margin:0}.ds-link{display:inline-flex;align-items:center;min-height:44px;margin-top:10px;padding:8px 0;border:0;background:none;color:#f3f0e8;font:700 14px/1.65 Manrope,Arial,sans-serif;text-decoration:underline;text-decoration-color:#7b8073;text-underline-offset:6px;cursor:pointer;transition:color .2s}.ds-link:hover{color:#ff5a1f}.ds-link:focus-visible{outline:3px solid #ff5a1f;outline-offset:5px}@media(prefers-reduced-motion:reduce){.ds-link{transition:none}}",
+      "description": "Readable recovery text with an explicit retry action."
+    },
+    {
+      "name": "Capability disclosure",
+      "html": "<details class=\"ds-capability\"><summary>Creative marketing<svg class=\"ds-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 5v14M5 12h14\"/></svg></summary><p>Campaign, visual execution, and practical workflows.</p></details>",
+      "kind": "custom",
+      "css": ".ds-capability{border-block:1px solid #33372f;background:#171914;font-family:Manrope,Arial,sans-serif;color:#f3f0e8}.ds-capability summary{display:flex;align-items:center;justify-content:space-between;gap:20px;list-style:none;cursor:pointer;min-height:64px;padding:18px 0;font-size:16px;font-weight:700;line-height:1.5}.ds-capability summary::-webkit-details-marker{display:none}.ds-icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;transition:transform .25s cubic-bezier(.16,1,.3,1)}.ds-capability[open] summary{color:#ff5a1f}.ds-capability[open] .ds-icon{transform:rotate(45deg)}.ds-capability p{max-width:62ch;color:#b6b8ae;font-size:14px;line-height:1.65;margin:0;padding-bottom:22px}.ds-capability summary:focus-visible{outline:3px solid #ff5a1f;outline-offset:5px}@media(prefers-reduced-motion:reduce){.ds-icon{transition:none}}",
+      "description": "Native disclosure with an open-state accent and rotating line icon."
+    }
+  ],
+  "narrative": {
+    "dos": [
+      "**Do** preserve separate structural and interactive border colors.",
+      "**Do** keep actual artwork prominent, with captions outside its frame.",
+      "**Do** retain visible action labels, keyboard focus, and explicit loading or failure messages.",
+      "**Do** respect reduced motion and let mobile action groups wrap."
+    ],
+    "rules": [
+      {
+        "name": "The Action and Emphasis Rule",
+        "body": "Use orange for intentional emphasis and interaction, including the existing full-color contact surface; it is not a blanket restriction to small accents.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Family Rule",
+        "body": "Keep display, explanation, navigation, and controls in Manrope; hierarchy comes from scale, weight, spacing, and color.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Interface Rule",
+        "body": "Keep interface surfaces flat; preserve the soft screenshot shadow where it expresses the existing artwork treatment.",
+        "section": "elevation"
+      }
+    ],
+    "keyCharacteristics": [
+      "Large artwork with captions outside its frame.",
+      "Confident sans headings and quieter, readable explanations.",
+      "Flat dark surfaces, thin dividers, and compact rectangular controls.",
+      "Orange actions and emphasis, with an orange contact surface.",
+      "Small interaction responses that respect reduced motion."
+    ],
+    "donts": [
+      "**Don't** turn local artwork colors into new interface accents.",
+      "**Don't** apply the screenshot shadow to ordinary buttons, navigation, or content rows.",
+      "**Don't** import legacy admin or CV styling into the public showcase system.",
+      "**Don't** promote small pre-heading context lines or artwork kickers into a reusable heading pattern; these existing exceptions are not canonized by this document."
+    ],
+    "overview": "A near-black canvas gives actual work the visual space to carry Gading's creative marketing and problem-solving identity. Warm white, broad Manrope lettering, and clear orange actions make the interface confident without competing with the artwork. English headings and action labels sit alongside natural Indonesian explanations.\n\nThis records the implemented public showcase and case-study system, scoped by the showcase body class. It does not govern the legacy admin or CV surfaces. The palette and component rules are extracted from `public/assets/css/showcase.css`, the public homepage, and the public case-study components; page composition remains in the surface brief.",
+    "northStar": "The Work Leads"
+  }
+}

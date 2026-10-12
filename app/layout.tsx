@@ -1,14 +1,15 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import '../public/assets/css/showcase.css';
 import { ThemeProvider } from '@/context/ThemeContext';
 
 export const metadata: Metadata = {
-  title: 'R. Gading Utama · Creative Marketer & Digital Problem Solver',
-  description: "Portfolio of R. Gading Utama. Creative Marketer and Digital Problem Solver bridging marketing, design, technology, and AI to build practical business solutions.",
+  title: 'R. Gading Utama · Creative Marketer & Problem Solver',
+  description: 'Campaign, visual, dan web-app oleh R. Gading Utama. Creative Marketing · Design · Digital Solutions.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   openGraph: {
     title: 'R. Gading Utama · Digital Portfolio',
-    description: 'Creative Marketing, Graphic Design, Meta Ads & Web Development.',
+    description: 'Creative Marketing · Design · Digital Solutions. Think. Create. Build. Improve.',
     type: 'website',
     url: '/',
   },
@@ -28,10 +29,6 @@ export default function RootLayout({
           <a className="skip-link" href="#main-content">
             Skip to content
           </a>
-
-          <div className="noise" aria-hidden="true" />
-          <div className="grid-veil" aria-hidden="true" />
-          <div className="page-rail" aria-hidden="true">Creative Marketing · Tech · AI</div>
 
           <div id="main-content">
             {children}

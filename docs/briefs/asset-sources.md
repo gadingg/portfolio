@@ -1,0 +1,9 @@
+# Portfolio asset sources
+
+- `public/assets/work/listing-hub.jpg`: direct browser capture of https://listinghub-patos.vercel.app/all, 2026-10-12. The public interface was captured at 2x scale, clipped to the actual application column without changing its contents. This is a dated portfolio capture, not live property availability or pricing.
+- Meta Ads and PROGRAM MBG use typographic workflow diagrams grounded in the supplied master brief. They are explicitly captioned as solution flows. The supplied live URLs requested Google authentication during capture, so no app screenshots were fabricated.
+- `public/assets/work/listing-filter.jpg`: direct browser capture of the mobile Filter listing interface on the same live app, 2026-10-12, at 2x scale. The filter was opened without submitting or changing data.
+- Visual archive: custom published items from `/api/gallery`, plus the two real Listing Hub captures. The five unchanged `gallery-01` through `gallery-05` seed records match `supabase/setup_database.sql` and are presentation-filtered, because their placeholder imagery/captions cannot substantiate Gading's work. Detection matches IDs, original alt text, captions, and source filenames. CMS records are not modified; edited/custom items continue to render. Graphic design/campaign work needs authentic assets from the owner.
+- Font: Manrope from Google Fonts, self-hosted regular and extra-bold TTF. SIL Open Font License stored in `public/assets/fonts/OFL-Manrope.txt`.
+- Icons: existing `lucide-react@0.475.0`, rendered into a small SVG symbol sprite by `scripts/build-icons.cjs`. ISC license stored beside the generated sprite. React case-study controls use the same library directly.
+- Homepage and case-study presentation replaces only recognized legacy seed covers with the brief's workflow artwork or Listing Hub capture. Newly uploaded custom CMS covers continue to render.

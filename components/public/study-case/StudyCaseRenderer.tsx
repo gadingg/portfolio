@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import { ExternalLink } from 'lucide-react';
 import {
   ContentBlock,
   GalleryBlockContent,
@@ -204,10 +205,10 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
                   href={link.url}
                   target={link.target || '_blank'}
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-[#f3f0e8]/20 bg-white/[0.04] px-6 py-3 text-xs font-bold uppercase tracking-wider text-[#f3f0e8] hover:border-[#ff5a1f] hover:text-[#ff5a1f] hover:bg-[#ff5a1f]/10 transition min-h-[44px]"
+                  className="button button-outline"
                 >
                   <span>{link.label || 'Open link'}</span>
-                  <span aria-hidden="true">↗</span>
+                  <ExternalLink className="icon" aria-hidden="true" />
                 </a>
               </div>
             );
