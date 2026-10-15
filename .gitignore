@@ -16,6 +16,7 @@ Thumbs.db
 
 # Agent metadata
 .agents/
+.impeccable/review/
 
 # Temp & Cache
 .next/

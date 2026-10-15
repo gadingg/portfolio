@@ -13,7 +13,7 @@ const icons = {
   'image-off': 'ImageOff', search: 'Search', 'bar-chart-3': 'ChartNoAxesCombined',
   trophy: 'Trophy', 'check-check': 'CheckCheck', 'calendar-days': 'CalendarDays',
   'layout-dashboard': 'LayoutDashboard', 'map-pin': 'MapPin',
-  'mouse-pointer-2': 'MousePointer2', 'plus': 'Plus',
+  'mouse-pointer-2': 'MousePointer2', 'plus': 'Plus', play: 'Play', pause: 'Pause',
 };
 
 async function build() {

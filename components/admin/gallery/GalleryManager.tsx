@@ -224,13 +224,13 @@ export function GalleryManager({ initialItems }: GalleryManagerProps) {
             Gallery Manager
           </h1>
           <p style={{ margin: '8px 0 0', fontSize: '13px', color: 'var(--muted)' }}>
-            Drag and drop images to upload or reorder. Changes sync directly to the homepage Visual Archive section.
+            Arsip gambar sebelumnya tetap tersedia di sini. Kelola koleksi yang tampil di homepage melalui menu Works.
           </p>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <Link
-            href="/#portfolio-gallery"
+            href="/design"
             target="_blank"
             style={{
               padding: '10px 18px',

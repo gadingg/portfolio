@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-labelledby="title">
+  <title id="title">Data contoh: LESS. BUT BETTER.</title>
+  <rect width="800" height="1000" fill="#d7df43"/>
+  <g fill="#1b2209" font-family="Arial, sans-serif" font-weight="bold" letter-spacing="-5">
+    <text x="60" y="300" font-size="100">LESS.</text><text x="60" y="430" font-size="140">BUT</text><text x="60" y="570" font-size="112">BETTER.</text>
+  </g>
+  <path d="M60 720H740" stroke="#1b2209" stroke-width="2"/>
+  <text x="60" y="805" fill="#1b2209" font-family="Arial, sans-serif" font-size="26">CONTOH LAYOUT — BUKAN KARYA KLIEN</text>
+  <text x="60" y="850" fill="#1b2209" font-family="Arial, sans-serif" font-size="22">Ganti gambar ini melalui menu Works.</text>
+</svg>

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-12T09:58:51.9062084Z",
+  "generatedAt": "2026-10-15T08:35:29.422Z",
   "title": "Design System: Gading Public Showcase",
   "extensions": {
     "motion": [
@@ -16,7 +16,7 @@
       },
       {
         "name": "artwork",
-        "value": ".6s–.7s",
+        "value": ".5s–.7s",
         "purpose": "Image transitions; disabled under reduced motion."
       }
     ],
@@ -202,16 +202,16 @@
       "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:48px;padding:12px 18px;border:1px solid transparent;border-radius:8px;font:700 14px/1.4 Manrope,Arial,sans-serif;text-decoration:none;text-align:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .2s cubic-bezier(.16,1,.3,1)}.ds-button:active{transform:translateY(1px)}.ds-button:focus-visible{outline:3px solid #ff5a1f;outline-offset:5px}.ds-button:disabled{opacity:.4;cursor:default;transform:none}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}.ds-contact{background:#ff5a1f;padding:20px}.ds-dark{background:#060706;color:#f3f0e8}.ds-dark:hover{background:#252820}.ds-dark:focus-visible{outline-color:#060706}"
     },
     {
-      "description": "Archive selection uses aria-pressed.",
-      "kind": "chip",
-      "refersTo": "filter",
-      "html": "<button class=\"ds-filter\" aria-pressed=\"true\">All work</button><button class=\"ds-filter\" aria-pressed=\"false\">Design</button>",
-      "name": "Archive filter",
-      "css": ".ds-filter{min-height:44px;border:1px solid #7b8073;border-radius:6px;background:transparent;color:#f3f0e8;font:400 12px/1.65 Manrope,Arial,sans-serif;padding:9px 14px;cursor:pointer;transition:background .2s,color .2s}.ds-filter[aria-pressed=\"true\"]{background:#f3f0e8;color:#060706;border-color:#f3f0e8}.ds-filter:hover{border-color:#f3f0e8}.ds-filter:focus-visible{outline:3px solid #ff5a1f;outline-offset:5px}@media(prefers-reduced-motion:reduce){.ds-filter{transition:none}}"
+      "name": "Collection navigation",
+      "kind": "nav",
+      "refersTo": "button-outline",
+      "description": "Wrapping collection destinations with the current page selected.",
+      "html": "<nav class=\"ds-collections\" aria-label=\"Work collections\"><a class=\"ds-button ds-outline\" href=\"/webapp\" aria-current=\"page\">Website / Apps</a><a class=\"ds-button ds-outline\" href=\"/design\">Visual Design</a><a class=\"ds-button ds-outline\" href=\"/video\">Branding &amp; Video</a></nav>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:48px;padding:12px 18px;border:1px solid transparent;border-radius:8px;font:700 14px/1.4 Manrope,Arial,sans-serif;text-decoration:none;text-align:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .2s cubic-bezier(.16,1,.3,1)}.ds-button:active{transform:translateY(1px)}.ds-button:focus-visible{outline:3px solid #ff5a1f;outline-offset:5px}.ds-button:disabled{opacity:.4;cursor:default;transform:none}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}.ds-outline{background:transparent;color:#f3f0e8;border-color:#7b8073}.ds-outline:hover{background:#f3f0e8;color:#060706;border-color:#f3f0e8}.ds-collections{display:flex;gap:12px;flex-wrap:wrap}.ds-collections [aria-current=\"page\"]{background:#f3f0e8;color:#060706;border-color:#f3f0e8}"
     },
     {
       "name": "Desktop navigation",
-      "html": "<nav class=\"ds-nav\" aria-label=\"Main navigation\"><a href=\"#work\">Selected works</a><a href=\"#visuals\">Visual archive</a><a href=\"#about\">About</a></nav>",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Main navigation\"><a href=\"#work\">Selected works</a><a href=\"#about\">About</a></nav>",
       "kind": "nav",
       "css": ".ds-nav{display:flex;gap:32px;background:#060706;padding:16px;font:400 13px/1.65 Manrope,Arial,sans-serif}.ds-nav a{display:flex;align-items:center;min-height:44px;color:#b6b8ae;text-decoration:none}.ds-nav a:hover{color:#f3f0e8}.ds-nav a:focus-visible{outline:3px solid #ff5a1f;outline-offset:5px}",
       "description": "Compact opaque navigation with quiet links."
@@ -234,7 +234,7 @@
   "narrative": {
     "dos": [
       "**Do** preserve separate structural and interactive border colors.",
-      "**Do** keep actual artwork prominent, with captions outside its frame.",
+      "**Do** keep actual artwork prominent, with captions outside its frame except for the video thumbnail's bottom title overlay.",
       "**Do** retain visible action labels, keyboard focus, and explicit loading or failure messages.",
       "**Do** respect reduced motion and let mobile action groups wrap."
     ],
@@ -256,7 +256,7 @@
       }
     ],
     "keyCharacteristics": [
-      "Large artwork with captions outside its frame.",
+      "Large artwork with captions outside its frame; video thumbnails use a bottom title overlay.",
       "Confident sans headings and quieter, readable explanations.",
       "Flat dark surfaces, thin dividers, and compact rectangular controls.",
       "Orange actions and emphasis, with an orange contact surface.",
@@ -268,7 +268,7 @@
       "**Don't** import legacy admin or CV styling into the public showcase system.",
       "**Don't** promote small pre-heading context lines or artwork kickers into a reusable heading pattern; these existing exceptions are not canonized by this document."
     ],
-    "overview": "A near-black canvas gives actual work the visual space to carry Gading's creative marketing and problem-solving identity. Warm white, broad Manrope lettering, and clear orange actions make the interface confident without competing with the artwork. English headings and action labels sit alongside natural Indonesian explanations.\n\nThis records the implemented public showcase and case-study system, scoped by the showcase body class. It does not govern the legacy admin or CV surfaces. The palette and component rules are extracted from `public/assets/css/showcase.css`, the public homepage, and the public case-study components; page composition remains in the surface brief.",
+    "overview": "A near-black canvas gives actual work the visual space to carry Gading's creative marketing and problem-solving identity. Warm white, broad Manrope lettering, and clear orange actions make the interface confident without competing with the artwork. English headings and action labels sit alongside natural Indonesian explanations.\n\nThis records the implemented public showcase, work collections, and case-study system, scoped by the showcase body class. It does not govern the admin or CV surfaces. The palette and component rules are extracted from `public/assets/css/showcase.css`, the public homepage, and the public collection and case-study components; page composition remains in the surface briefs.",
     "northStar": "The Work Leads"
   }
 }

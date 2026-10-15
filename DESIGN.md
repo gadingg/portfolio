@@ -102,10 +102,10 @@ components:
 
 A near-black canvas gives actual work the visual space to carry Gading's creative marketing and problem-solving identity. Warm white, broad Manrope lettering, and clear orange actions make the interface confident without competing with the artwork. English headings and action labels sit alongside natural Indonesian explanations.
 
-This records the implemented public showcase and case-study system, scoped by the showcase body class. It does not govern the legacy admin or CV surfaces. The palette and component rules are extracted from `public/assets/css/showcase.css`, the public homepage, and the public case-study components; page composition remains in the surface brief.
+This records the implemented public showcase, work collections, and case-study system, scoped by the showcase body class. It does not govern the admin or CV surfaces. The palette and component rules are extracted from `public/assets/css/showcase.css`, the public homepage, and the public collection and case-study components; page composition remains in the surface briefs.
 
 **Key Characteristics:**
-- Large artwork with captions outside its frame.
+- Large artwork with captions outside its frame; video thumbnails use a bottom title overlay.
 - Confident sans headings and quieter, readable explanations.
 - Flat dark surfaces, thin dividers, and compact rectangular controls.
 - Orange actions and emphasis, with an orange contact surface.
@@ -153,9 +153,9 @@ Case-study page titles use `clamp(34px,5.5vw,72px)` with 1.12 leading. Supportin
 
 Content shells stop at 1280px. Mobile shells subtract 40px from the viewport; from 600px they subtract 64px. The sticky header is full-width and aligns its desktop contents to the same maximum width.
 
-The system is mobile-first. At 600px, the artwork strip becomes three unequal columns and the archive becomes three columns; below that the archive has two columns and the first strip piece spans both columns. At 960px, desktop navigation replaces the menu button, feature stories become two columns, and alternating features place their artwork on opposite sides. Paragraph columns remain constrained for reading.
+The system is mobile-first. At 600px, the hero artwork strip becomes three unequal columns; below that its first piece spans both columns. Work grids use one column below 600px, two from 600px, and three from 960px. At 960px, desktop navigation replaces the menu button, and existing case-study feature stories become two columns. Paragraph columns remain constrained for reading.
 
-Major work, tools, and process sections move from the mobile section spacing to the desktop section spacing. Archive and about sections use 88px vertical padding on desktop. Repeated gaps and insets use the frontmatter rhythm; section composition can choose larger observed gaps of 70px or 100px.
+Selected Works uses 80px vertical padding below 960px and the desktop section spacing above it. Its child groups use dividers and generous separation. Process sections retain the mobile and desktop section spacing; about uses 88px vertical padding on desktop. Repeated gaps and insets use the frontmatter rhythm. The three collections and homepage grid/carousel composition are specified in `docs/briefs/2026-10-15-works-collections.md`.
 
 ## Elevation & Depth
 
@@ -168,7 +168,7 @@ Depth comes mainly from tonal surfaces, thin borders, artwork cropping, and spac
 
 ## Shapes
 
-Controls are compact rounded rectangles, not pills. The control radius also frames archive imagery; larger artwork and dialogs use the artwork radius. Filters use the smaller filter radius. Borders are one pixel. Large artwork clips to its frame while captions remain outside.
+Controls are compact rounded rectangles, not pills. Work imagery and dialogs use the artwork radius. Retained archive styles use the control radius for imagery and the filter radius for filters. Borders are one pixel. Large artwork clips to its frame; captions remain outside except for the bottom-aligned video title and play label.
 
 Line icons use current color, rounded stroke ends, and a standard 20px size with 1.7 stroke width. Compact contextual icons use 16px or 17px. Pair icons with visible action labels; the lightbox's previous and next controls instead carry accessible names.
 
@@ -180,13 +180,15 @@ Primary, outline, and dark buttons share a minimum 48px height, the button typog
 
 Text links have a persistent underline, at least 44px height, and change to orange on hover. Action groups wrap rather than conceal labels.
 
-### Filter chips
+### Collection selection and retained filters
 
-Archive filters have at least 44px height and a visible outline. `aria-pressed="true"` selects the warm-white fill and dark text. Their appearance represents an actual selectable filter, not decorative metadata.
+Collection navigation uses outline links that wrap; `aria-current="page"` selects the warm-white fill and dark text. Retained archive filter styles use at least 44px height, a visible outline, and `aria-pressed="true"` for the same selected treatment. Collection links are page destinations rather than in-place archive filters.
 
 ### Artwork and content containers
 
-Project imagery forms large standalone surfaces beside story copy. Archive tiles use variable portrait and square proportions, with titles and categories below. The visible “Enlarge image” action sits over the image. Loading, empty, and recovery content retains readable text and a retry action where implemented; missing media gets an explicit message.
+Case-study imagery forms large standalone surfaces beside story copy. Work cards use landscape 4:3 app artwork, contained 4:5 design imagery, and 3:4 video thumbnails. App and design titles sit below the frame. Video titles and “Watch video” sit at bottom left over a bottom-only dark scrim; this is a media-readability treatment, not a new interface gradient. Design imagery exposes an “Enlarge” action. Loading, empty, and recovery content retains readable text and a retry action where implemented; missing media gets an explicit message. Example content carries a visible “Data contoh” label.
+
+Homepage carousels use scroll snapping, previous/next buttons, arrow keys, and a position indicator. Visual Design can advance every five seconds with a visible pause/resume control; hover, focus, touch, hidden tabs, offscreen content, and open dialogs pause advancement. Reduced motion starts it paused and removes smooth movement. Branding & Video is manually navigated. Collection pages reuse the cards in a grid.
 
 ### Navigation
 
@@ -194,19 +196,19 @@ The header remains opaque and sticky. Desktop links are quiet until hovered; the
 
 ### Dialogs and disclosures
 
-Menu and image dialogs share the surface, border, inset, and large corner treatment. Widths are constrained to 540px and 1100px respectively and to the viewport minus 24px; their maximum height is the viewport minus 24px. The lightbox contains images without cropping and exposes previous/next controls.
+Menu, retained image, and work dialogs share the surface, border, inset, and large corner treatment. Widths are constrained to 540px, 1100px, and 1000px respectively and to the viewport minus 24px; their maximum height is the viewport minus 24px. Image previews contain images without cropping and expose previous/next controls. Work dialogs restore focus to the trigger on close. Video embeds load on selection and retain an external Instagram link.
 
 Capability disclosures use native details/summary, horizontal rules, and a minimum 64px summary height. Open summaries turn orange and rotate the plus icon 45 degrees.
 
 ### Interaction states
 
-Focus outlines are orange, three pixels wide with a five-pixel offset; the contact surface changes the outline to near-black for visibility. Common color transitions take .2s. Artwork transforms take .6–.7s with the custom ease recorded in the sidecar. Hover image transformations run only on hover-capable devices when reduced motion is not requested. Reduced motion removes animations and transitions and disables smooth scrolling.
+Focus outlines are orange, three pixels wide with a five-pixel offset; the contact surface changes the outline to near-black for visibility. Common color transitions take .2s. Artwork transforms take .5–.7s with the custom ease recorded in the sidecar. Hover image transformations run only on hover-capable devices when reduced motion is not requested. Reduced motion removes animations and transitions and disables smooth scrolling.
 
 ## Do's and Don'ts
 
 ### Do:
 - **Do** preserve separate structural and interactive border colors.
-- **Do** keep actual artwork prominent, with captions outside its frame.
+- **Do** keep actual artwork prominent, with captions outside its frame except for the video thumbnail's bottom title overlay.
 - **Do** retain visible action labels, keyboard focus, and explicit loading or failure messages.
 - **Do** respect reduced motion and let mobile action groups wrap.
 

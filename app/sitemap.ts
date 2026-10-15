@@ -26,6 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'daily' as const,
       priority: 1.0,
     },
+    ...['webapp','design','video'].map(slug=>({url:`${baseUrl}/${slug}`,changeFrequency:'weekly' as const,priority:0.9})),
     ...projectUrls,
   ];
 }

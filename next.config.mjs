@@ -3,7 +3,7 @@ const scriptSources = process.env.NODE_ENV === 'development'
   ? "'self' 'unsafe-inline' 'unsafe-eval'"
   : "'self' 'unsafe-inline'";
 const securityHeaders = [
-  { key: 'Content-Security-Policy', value: `default-src 'self'; script-src ${scriptSources}; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://picsum.photos; media-src 'self' blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests` },
+  { key: 'Content-Security-Policy', value: `default-src 'self'; script-src ${scriptSources}; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://picsum.photos; media-src 'self' blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co; frame-src https://www.instagram.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests` },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'X-Frame-Options', value: 'DENY' },

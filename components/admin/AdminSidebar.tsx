@@ -38,6 +38,7 @@ export function AdminSidebar() {
 
   const navItems = [
     { label: 'Overview', href: '/admintgadink/dashboard' },
+    { label: 'Works', href: '/admintgadink/dashboard/works' },
     { label: 'Portfolio Projects', href: '/admintgadink/dashboard/portfolio' },
     { label: 'Visual Gallery', href: '/admintgadink/dashboard/gallery' },
     { label: '+ New Study Case', href: '/admintgadink/dashboard/portfolio/new' },
