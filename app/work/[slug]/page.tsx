@@ -1,4 +1,5 @@
 import React from 'react';
+import { VisualLayout } from '@/components/public/VisualLayout';
 import { notFound,permanentRedirect } from 'next/navigation';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
 import type { Metadata } from 'next';
@@ -103,6 +104,13 @@ export default async function StudyCasePage({
     || project.subtitle
     || 'A practical response shaped around the team, workflow, and business constraint.';
   const outcome = presentation?.impact || projectOutcome(blocks) || '';
+
+  if(presentation?.layout)return <div className="showcase" id="case-top">
+    <StudyCaseHeader projectTitle={project.title}/>
+    <VisualLayout layout={presentation.layout}/>
+    <div className="section-shell case-narrative mx-auto max-w-3xl"><NextProjectNav nextProject={nextProject}/><RelatedProjects projects={related.filter(item=>item.slug!==nextProject?.slug)}/></div>
+    <AuraFooter/>
+  </div>;
 
   return (
     <div className="showcase" id="case-top">

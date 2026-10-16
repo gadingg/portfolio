@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { contentURL, mediaURL } from './content-blocks';
+import { VisualLayoutSchema } from './visual-layout';
 export type SiteField = {
   key: string;
   label: string;
@@ -311,6 +312,7 @@ export const defaultCV = {
 };
 export const SiteSchema = z
   .object({
+    layout: VisualLayoutSchema.optional(),
     values: z.record(z.string().max(4000)),
     cv: z.object({
       name: z.string().min(1).max(150),

@@ -36,9 +36,11 @@ export function AdminSidebar() {
     }
   };
 
+  if(pathname.startsWith('/admintgadink/dashboard/editor/'))return null;
   const navItems = [
     { label: 'Overview', href: '/admintgadink/dashboard' },
     { label: 'Works', href: '/admintgadink/dashboard/works' },
+    { label: 'Editor visual', href: '/admintgadink/dashboard/editor/home' },
     { label: 'Website & CV', href: '/admintgadink/dashboard/site' },
   ];
 

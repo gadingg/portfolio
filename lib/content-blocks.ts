@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { VisualLayoutSchema } from './visual-layout';
 
 export const contentURL = z
   .string()
@@ -104,6 +105,7 @@ export const CMSBlockSchema = z
   });
 export type CMSBlock = z.infer<typeof CMSBlockSchema>;
 export const CaseStudySchema = z.object({
+  layout: VisualLayoutSchema.optional(),
   slug: z
     .string()
     .max(160)

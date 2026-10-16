@@ -2,6 +2,14 @@
 
 Next.js portfolio with a private Supabase-backed CMS. Public presentation emphasizes visual work and problem solving.
 
+## Visual editor
+
+Open **Editor visual** for the homepage, or **Buka editor visual** from a case study. Double-click text in the GrapesJS canvas to edit copy, drag section/column blocks, or use the structure tree and element controls to move, duplicate, and delete content. Device controls preview desktop/mobile layouts; Style edits spacing, typography, color, and flex/grid arrangements. Double-click an image to use the existing private upload/media library.
+
+**Simpan draft** persists the layout privately. **Publikasikan** makes it public. Case-study publishing updates the selected work while retaining other unpublished Works drafts. Existing pages retain their original rendering until a visual layout is published. Visual HTML/CSS is sanitized on the server; arbitrary scripts, forms, and external embeds cannot be inserted. Dynamic Works collections remain connected to the existing CMS.
+
+Layout data uses the existing document JSON; no additional SQL migration is needed. Run `npm run test:visual` for the security and persistence regression tests, alongside `npm run test:works` and `npm run build`.
+
 ## Setup
 
 1. Configure the public Supabase URL/key and server-only service role in `.env.local` and Vercel. Never expose the service role to browser code.

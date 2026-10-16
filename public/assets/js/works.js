@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const groups = [...document.querySelectorAll('[data-work-kind]')];
+  const groups = [...document.querySelectorAll('[data-work-kind]')].filter(group=>group.querySelector('[data-works-list]'));
   if (!groups.length) return;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const node = (tag, cls, text) => { const el = document.createElement(tag); if (cls) el.className = cls; if (text !== undefined) el.textContent = text; return el; };
@@ -75,13 +75,15 @@
   const carousels=[];
   function setupCarousel(group) {
     const list=group.querySelector('[data-works-list]'), controls=group.querySelector('.carousel-controls');
+    if(!controls)return;
     let paused=reduced.matches, hover=false, focus=false, visible=false;
     const toggle=controls.querySelector('[data-carousel-toggle]');const position=controls.querySelector('.carousel-position');
+    if(!toggle||!position)return;
     const automatic=group.dataset.workKind==='design';toggle.hidden=!automatic;
     list.tabIndex=0;list.setAttribute('aria-label',`${group.querySelector('h3')?.textContent||'Works'} carousel`);
     const update=()=>{const overflow=list.scrollWidth>list.clientWidth+4;controls.hidden=!overflow;const children=[...list.children];const left=list.getBoundingClientRect().left;let index=0,min=Infinity;children.forEach((child,i)=>{const distance=Math.abs(child.getBoundingClientRect().left-left);if(distance<min){min=distance;index=i;}});position.textContent=`${index+1} / ${children.length}`;toggle.textContent=paused?'Resume slides':'Pause slides';toggle.setAttribute('aria-pressed',String(paused));};
     const move=direction=>{const step=(list.children[0]?.getBoundingClientRect().width||list.clientWidth)+24;const max=list.scrollWidth-list.clientWidth;const next=direction>0?(list.scrollLeft>=max-4?0:Math.min(max,list.scrollLeft+step)):(list.scrollLeft<=4?max:Math.max(0,list.scrollLeft-step));list.scrollTo({left:next,behavior:reduced.matches?'instant':'smooth'});};
-    controls.querySelector('[data-carousel-prev]').addEventListener('click',()=>move(-1));controls.querySelector('[data-carousel-next]').addEventListener('click',()=>move(1));toggle.addEventListener('click',()=>{paused=!paused;update();});
+    controls.querySelector('[data-carousel-prev]')?.addEventListener('click',()=>move(-1));controls.querySelector('[data-carousel-next]')?.addEventListener('click',()=>move(1));toggle.addEventListener('click',()=>{paused=!paused;update();});
     group.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')hover=true;});group.addEventListener('pointerleave',()=>hover=false);
     group.addEventListener('focusin',()=>focus=true);group.addEventListener('focusout',e=>{focus=group.contains(e.relatedTarget);});
     list.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){paused=true;update();}});
@@ -97,15 +99,15 @@
   let loading=false;
   async function load() {
     if(loading)return;loading=true;const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),12000);
-    groups.forEach(group=>{group.querySelector('[data-works-list]').setAttribute('aria-busy','true');group.querySelector('.works-recovery').hidden=true;group.querySelector('[data-retry-works]').disabled=true;});
+    groups.forEach(group=>{group.querySelector('[data-works-list]').setAttribute('aria-busy','true');group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=true);group.querySelectorAll('[data-retry-works]').forEach(node=>node.disabled=true);});
     try {
       const res=await fetch(document.body.dataset.cmsPreview?'/api/admin/works-preview':'/api/works',{signal:controller.signal,cache:'no-store'});if(!res.ok)throw Error('load');const data=await res.json();if(!Array.isArray(data.items))throw Error('data');
       groups.forEach(group=>{const list=group.querySelector('[data-works-list]');let items=data.items.filter(item=>item.kind===group.dataset.workKind&&item.published);if(group.dataset.workKind==='webapp'&&!group.dataset.collection)items=items.slice(0,6);
         list.replaceChildren(...items.map(item=>card(item,items,group.dataset.collection?'h2':'h4')));if(!items.length)list.append(node('p','works-message','Belum ada karya di koleksi ini.'));list.scrollLeft=0;group._updateCarousel?.();
       });
-    } catch {groups.forEach(group=>{const list=group.querySelector('[data-works-list]');if(!list.querySelector('.work-card'))list.replaceChildren();group.querySelector('.works-recovery').hidden=false;});}
-    finally{clearTimeout(timeout);loading=false;groups.forEach(group=>{group.querySelector('[data-works-list]').setAttribute('aria-busy','false');group.querySelector('[data-retry-works]').disabled=false;});}
+    } catch {groups.forEach(group=>{const list=group.querySelector('[data-works-list]');if(!list.querySelector('.work-card'))list.replaceChildren();group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=false);});}
+    finally{clearTimeout(timeout);loading=false;groups.forEach(group=>{group.querySelector('[data-works-list]').setAttribute('aria-busy','false');group.querySelectorAll('[data-retry-works]').forEach(node=>node.disabled=false);});}
   }
-  groups.forEach(group=>group.querySelector('[data-retry-works]').addEventListener('click',load));
+  groups.forEach(group=>group.querySelector('[data-retry-works]')?.addEventListener('click',load));
   load();
 })();

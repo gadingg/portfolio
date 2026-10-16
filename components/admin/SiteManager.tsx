@@ -101,13 +101,11 @@ export function SiteManager() {
       <div className="wm-heading">
         <h1>Website</h1>
         <a
-          href="/api/admin/preview/site"
+          href="/admintgadink/dashboard/editor/home"
           className="wm-button"
-          target="_blank"
-          rel="noopener noreferrer"
         >
           <Eye size={18} />
-          Preview draft tersimpan
+          Buka editor visual
         </a>
       </div>
       <div className="cms-sticky-toolbar">

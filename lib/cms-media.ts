@@ -2,7 +2,7 @@ import 'server-only';
 import { createAdminClient } from './supabase/admin';
 export const cmsMediaBucket='portfolio-cms-media';
 export function referencesMedia(value:unknown,url:string):boolean {
-  if(typeof value==='string')return value===url||(value.startsWith('/api/media/')&&value.split(/[?#]/)[0]===url);
+  if(typeof value==='string')return value===url||(value.startsWith('/api/media/')&&value.split(/[?#]/)[0]===url)||[...value.matchAll(/\/api\/media\/[A-Za-z0-9/_.-]+/g)].some(match=>match[0]===url);
   if(Array.isArray(value))return value.some(item=>referencesMedia(item,url));
   if(value&&typeof value==='object')return Object.values(value).some(item=>referencesMedia(item,url));
   return false;

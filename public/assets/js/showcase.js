@@ -29,12 +29,13 @@
 
   const menu = document.querySelector('#mobile-menu');
   const menuToggle = document.querySelector('#menu-toggle');
-  menuToggle.addEventListener('click', () => {
+  menuToggle?.addEventListener('click', () => {
+    if(!menu)return;
     menu.showModal();
     menuToggle.setAttribute('aria-expanded', 'true');
   });
-  menu.addEventListener('close', () => menuToggle.setAttribute('aria-expanded', 'false'));
-  menu.querySelectorAll('nav a').forEach((link) => {
+  menu?.addEventListener('close', () => menuToggle?.setAttribute('aria-expanded', 'false'));
+  menu?.querySelectorAll('nav a').forEach((link) => {
     link.addEventListener('click', () => {
       menu.close();
       const target = document.querySelector(link.getAttribute('href'));
@@ -46,7 +47,7 @@
     });
   });
   document.querySelectorAll('dialog').forEach((dialog) => {
-    dialog.querySelector('[data-close-dialog]').addEventListener('click', () => dialog.close());
+    dialog.querySelector('[data-close-dialog]')?.addEventListener('click', () => dialog.close());
     dialog.addEventListener('click', (event) => {
       if (event.target !== dialog) return;
       const rect = dialog.getBoundingClientRect();
@@ -54,7 +55,7 @@
     });
   });
   matchMedia('(min-width:960px)').addEventListener('change', (event) => {
-    if (event.matches && menu.open) menu.close();
+    if (event.matches && menu?.open) menu.close();
   });
 
   document.querySelectorAll('img[src]').forEach(protectImage);

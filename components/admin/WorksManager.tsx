@@ -207,6 +207,7 @@ export function WorksManager() {
   return (
     <div className="works-manager cms-manager">
       <div className="wm-heading">
+        {item?.caseStudy&&<a className="wm-button" href={`/admintgadink/dashboard/editor/${item.id}`}>Buka editor visual</a>}
         <div>
           {editing && (
             <button
@@ -521,7 +522,7 @@ export function WorksManager() {
                   />
                 </label>
               </div>
-              {(['problem', 'solution', 'impact'] as const).map((key, i) => (
+              {!item.caseStudy.layout&&(['problem', 'solution', 'impact'] as const).map((key, i) => (
                 <label key={key}>
                   {['Masalah', 'Solusi', 'Hasil'][i]}
                   <textarea
@@ -538,14 +539,14 @@ export function WorksManager() {
                   />
                 </label>
               ))}
-              <BlockEditor
+              {!item.caseStudy.layout&&<BlockEditor
                 blocks={item.caseStudy.blocks}
                 disabled={busy}
                 onBusyChange={setBusy}
                 onChange={(blocks) =>
                   update(item.id, { caseStudy: { ...item.caseStudy!, blocks } })
                 }
-              />
+              />}
               <a
                 className="wm-button"
                 target="_blank"

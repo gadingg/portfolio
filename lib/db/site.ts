@@ -4,6 +4,7 @@ import path from 'node:path';
 import { load } from 'cheerio';
 import { siteFields, defaultCV, type SiteContent } from '@/lib/site';
 import { readCMS, readPublishedCMS } from './cms';
+import { cleanVisualLayout } from '../visual-layout';
 export const homepageTemplate = () =>
   fs.readFile(path.join(process.cwd(), 'public/index.html'), 'utf8');
 export async function initialSite(): Promise<SiteContent> {
@@ -31,6 +32,11 @@ export const getSiteDocument = () => readCMS('site', initialSite);
 export const getPublicSite = () => readPublishedCMS('site', initialSite);
 export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
   const $ = load(await homepageTemplate());
+  if(site.layout){
+    const layout=cleanVisualLayout(site.layout);
+    $('body').html(layout.html);
+    $('head').append($('<style data-cms-layout>').text(layout.css));
+  }
   const targets = new Map(
     siteFields.map((field) => [field.key, $(field.selector).first()]),
   );
