@@ -58,5 +58,6 @@
   });
 
   document.querySelectorAll('img[src]').forEach(protectImage);
-  document.querySelector('#copyright-year').textContent = new Date().getFullYear();
+  const copyrightYear=document.querySelector('#copyright-year');
+  if(copyrightYear)copyrightYear.textContent = new Date().getFullYear();
 })();

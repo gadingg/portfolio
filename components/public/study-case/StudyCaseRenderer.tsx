@@ -71,6 +71,7 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
                 <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[18px] bg-[#10110f] sm:rounded-[24px]">
                   <Image
                     src={image.url || 'https://picsum.photos/id/1/1200/800'}
+                    unoptimized={image.url?.startsWith('/api/media/')}
                     alt={image.alt || 'Project visual'}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1280px) 92vw, 1280px"
@@ -100,7 +101,7 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
             return (
               <blockquote
                 key={block.id || index}
-                className="glass rounded-[24px] p-6 sm:p-8 my-8 border-l-4 border-l-[#ff5a1f] border-t border-r border-b border-[#f3f0e8]/10"
+                className="glass rounded-[24px] p-6 sm:p-8 my-8 border-l border-l-[#ff5a1f] border-t border-r border-b border-[#f3f0e8]/10"
               >
                 <p className="text-lg sm:text-xl md:text-2xl italic font-medium leading-relaxed text-[#f3f0e8]">
                   &ldquo;{quote.quote}&rdquo;
@@ -130,6 +131,7 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
                     <div className={`relative overflow-hidden rounded-[16px] bg-[#10110f] ${i === 0 && images.length > 2 ? 'aspect-[16/9]' : 'aspect-[4/3]'}`}>
                       <Image
                         src={image.url}
+                        unoptimized={image.url?.startsWith('/api/media/')}
                         alt={image.alt || `Project gallery image ${i + 1}`}
                         fill
                         sizes={i === 0 && images.length > 2 ? '100vw' : '(max-width: 768px) 100vw, 50vw'}
@@ -163,7 +165,7 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
                     preload="none"
                     className="h-full w-full object-cover"
                   >
-                    <source src={video.url} type="video/mp4" />
+                    <source src={video.url} type={/\.webm(?:\?|$)/i.test(video.url)?'video/webm':'video/mp4'} />
                   </video>
                 </div>
               </div>
@@ -173,18 +175,19 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
           case 'list': {
             const list = content as ListBlockContent;
             const items = list.items || [];
+            const ListTag=list.ordered?'ol':'ul';
             return (
-              <ul key={block.id || index} className="space-y-3 my-6 pl-1">
+              <ListTag key={block.id || index} className="space-y-3 my-6 pl-1">
                 {items.map((item: string, i: number) => (
                   <li
                     key={i}
                     className="flex items-start gap-3 text-base sm:text-lg text-[#f3f0e8]/75 leading-relaxed"
                   >
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#ff5a1f] mt-2.5 shrink-0 shadow-[0_0_8px_rgba(255,90,31,0.6)]" />
+                    {list.ordered?<span aria-hidden="true">{i+1}.</span>:<span className="h-1.5 w-1.5 rounded-full bg-[#ff5a1f] mt-2.5 shrink-0" />}
                     <span>{item}</span>
                   </li>
                 ))}
-              </ul>
+              </ListTag>
             );
           }
 
@@ -192,7 +195,7 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
             return (
               <hr
                 key={block.id || index}
-                className="border-none border-t border-[#f3f0e8]/10 my-10"
+                className="border-0 border-t border-solid border-[#f3f0e8]/10 my-10"
               />
             );
           }

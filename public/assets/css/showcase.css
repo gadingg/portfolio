@@ -363,3 +363,5 @@ html:has(.showcase dialog[open]){overflow:hidden}
   .showcase .works-group+.works-group{margin-top:96px;padding-top:72px}
 }
 @media(hover:hover) and (prefers-reduced-motion:no-preference){.showcase .work-media:hover>img:not(.work-app-capture){transform:scale(1.035)}}
+.showcase .cms-heading-line{color:inherit!important}
+.showcase .work-strip.cms-compact-strip{grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))}

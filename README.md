@@ -1,45 +1,50 @@
-# Gading Utama — Personal Portfolio
+# Gading Portfolio CMS
 
-## Secure CMS setup
+Next.js portfolio with a private Supabase-backed CMS. Public presentation emphasizes visual work and problem solving.
 
-1. Create one email/password user in Supabase Auth.
-2. Copy `.env.example` to `.env.local` and set `ADMIN_EMAIL` to that exact email.
-3. Keep `SUPABASE_SERVICE_ROLE_KEY` server-only.
-4. Apply `supabase/migrations/004_secure_cms.sql` to the production project.
-5. Run `npm run audit:supabase` and Supabase Security Advisor. Confirm browser roles cannot mutate portfolio rows, call CMS RPCs, or write Storage objects.
+## Setup
 
-If `ADMIN_EMAIL` is missing, admin access fails closed. Set the same value in `.env.local` and the deployment environment.
+1. Configure the public Supabase URL/key and server-only service role in `.env.local` and Vercel. Never expose the service role to browser code.
+2. Set `ADMIN_EMAIL` to the authorized existing Supabase Auth email. Sign in with that account's password; missing configuration fails closed.
+3. Apply `supabase/migrations/004_secure_cms.sql` and `005_cms_documents.sql` to the existing project.
+4. Run `node scripts/initialize-cms.cjs` once. It imports the existing approved content, preserves initialized documents, creates the private media bucket, and does not remove legacy projects or gallery records.
+5. Run `npm run dev` and open `/admintgadink`.
 
-Admin writes go through authenticated Next.js API routes. Projects and the legacy gallery use PostgreSQL functions; the Works collection uses a JSON document in Supabase Storage.
+The existing production project is `portfolio-gading`, connected to `gadingg/portfolio`, branch `main`. A push triggers Vercel deployment. Database migrations and environment changes are separate from a Git push.
 
+## Editing
 
-Repositori portofolio digital interaktif karya **Gading Utama** (Marketing Communication & Creative Systems).
+- **Works:** Website / Apps, Visual Design, and Branding & Video. Drop multiple images to create hidden draft works, select an existing media asset, or edit an individual work. Add a case study to a web/app item to edit its problem, solution, outcome, and content blocks.
+- **Website & CV:** hero, About, capabilities, process, tools, contact, search metadata, and CV content/PDF.
+- **Simpan draft** changes private content. **Publikasikan** publishes the Works document or Site document being edited. Visibility changes and deletions become public only when that document is published.
+- Drag handles support pointer, touch, and keyboard (Space, arrows, Space; Escape cancels). Works ordering saves automatically and updates the order of already published items without publishing draft fields. Case-study block order is part of the draft and is published with that work.
+- Case-study slugs redirect from previous published slugs after a rename. Collection URLs remain `/webapp`, `/design`, and `/video`.
+- Draft preview requires an authorized session. Save first, then open preview.
 
-## Architecture
+## Data and media
 
-- Next.js App Router serves the portfolio, case studies, CV, API routes, and private CMS.
-- `public/index.html` is the current homepage template and is served by `app/route.ts`.
-- Tailwind is compiled at build time to `public/assets/css/portfolio.css`.
-- The public showcase uses locally hosted fonts, a Lucide sprite and native dialogs. Carousels respect `prefers-reduced-motion`.
-- Supabase stores projects, content blocks, gallery items, media, and the curated Works collection.
+`portfolio_cms_documents` stores private draft and published snapshots for `works` and `site`. Browser database roles cannot read the table or call administrative RPCs. The server selects only the published column for public data. Updates compare the current revision in the same database update, so stale concurrent saves fail rather than overwriting changes.
 
-## Manage Selected Works
+New uploads are immutable files in the private `portfolio-cms-media` bucket. `/api/media/...` serves an asset to a signed-in administrator, or to an anonymous visitor only if a visible published item or published Site document references it. Unpublished images and CV PDFs are not public by URL. Existing public assets remain available in the shared media picker; no existing files are deleted by initialization.
 
-Open `/admintgadink/dashboard/works` after signing in. Choose Website / Apps, Visual Design, or Branding & Video. Expand a card to edit its title, description, image, alt text, link, visibility, or example label. Upload JPG/PNG/WebP/GIF covers, use Naik/Turun to change order, then select **Simpan perubahan**. Deletion and edits can be undone before saving. Only the first six visible web apps appear on the homepage; `/webapp`, `/design`, and `/video` show complete collections.
+Uploads support JPG, PNG, WebP, GIF, MP4, WebM, and PDF, with file-signature checks and a 4 MB per-file limit suitable for the Vercel request limit. Cover pickers accept images; the CV picker accepts PDF. The media picker lists both buckets with pagination and reports storage failures instead of substituting stock assets.
 
-Before the first save, the collection combines existing published projects and non-template gallery content with supplied app links and clearly labeled examples. The first save records that selection at `portfolio-public/content/works.json`. After that, Works is the source for collection cards; Portfolio Projects still edits the linked case-study pages. The old Visual Gallery remains available without overwriting its records.
+Instagram videos use public `/reel/`, `/p/`, or `/tv/` URLs. An embed loads after a tap and is removed on close. Instagram may require Play within its player or disallow embedding; an external fallback remains available.
 
-The Works document contains only public portfolio content. Hiding an entry removes it from public lists, but the backing bucket is public; it is not private draft storage. Saving checks a revision to catch stale edits from another session, though Storage does not provide transactional compare-and-swap for this operation. Use one editing session at a time. A missing document initializes defaults; a saved empty collection stays empty, and permission/network failures display a retry instead of silently replacing content.
+Legacy Portfolio/Gallery editor URLs redirect to Works. Their old write APIs are closed with authenticated HTTP 410 responses. The old database rows and approved brief remain intact as migration/archive sources.
 
-For videos, replace the example with an HTTPS Instagram `/reel/`, `/p/`, or `/tv/` link, upload its thumbnail, and remove **data contoh**. Only the selected embed loads after a click; closing it removes the player. Instagram controls playback and may require another Play tap or deny an embed. An **Open on Instagram** fallback is provided. Samples do not impersonate live Instagram videos.
+## Validation
 
-No database migration is needed for Works. The existing `portfolio-public` bucket must allow JSON uploads from the server service role. `ADMIN_EMAIL`, Supabase Auth, and server credentials are required as described above. Run `npm run test:works` for validation, access-control, conflict, public-filtering, and storage-adapter tests.
-
-## Local development
-
-```bash
-npm install
-npm run dev
+```sh
+npm run test:works
+npm run typecheck
+npm run build
+npm audit --omit=dev
+node scripts/verify-cms-live.cjs
 ```
 
-Open `http://localhost:3000`. Use `npm run typecheck` and `npm run build` before deployment.
+`node scripts/verify-cms-live.cjs --write-check` exercises real CMS persistence and Storage with disposable QA edits. It writes a local ignored backup, refuses to restore over an unexpected external revision, restores the original content, and removes its test media. Run it in a controlled editing window. Its media authorization is simulated; it does not prove a real user login.
+
+The older `audit:supabase` command creates temporary rows/users and probes legacy role restrictions. Read its implementation before running it against production. It is not a read-only health check.
+
+See `docs/cms-audit-2026-10-16.md` for the original audit and `docs/qa-2026-10-16-cms.md` for current validation and limits.

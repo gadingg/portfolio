@@ -1,76 +1,593 @@
 'use client';
-
 import { useEffect, useRef, useState } from 'react';
-import { ArrowDown, ArrowUp, Plus, Save, Trash2, Upload, ExternalLink, RotateCcw } from 'lucide-react';
-import { WorkItemSchema, workKinds, workLabels, type WorkItem, type WorkKind } from '@/lib/works';
+import {
+  ArrowLeft,
+  Plus,
+  Trash2,
+  ExternalLink,
+  Save,
+  Eye,
+  Undo2,
+} from 'lucide-react';
+import {
+  workKinds,
+  workLabels,
+  type WorkItem,
+  type WorkKind,
+} from '@/lib/works';
+import { SortableList } from './SortableList';
+import { FileDrop, type UploadedMedia } from './FileDrop';
+import { BlockEditor } from './BlockEditor';
 import './works-manager.css';
-
 export function WorksManager() {
-  const [items,setItems]=useState<WorkItem[]>([]), [saved,setSaved]=useState<WorkItem[]>([]);
-  const [kind,setKind]=useState<WorkKind>('webapp'), [revision,setRevision]=useState('');
-  const [loading,setLoading]=useState(true), [saving,setSaving]=useState(false), [uploading,setUploading]=useState('');
-  const [initialized,setInitialized]=useState(true);
-  const [error,setError]=useState(''), [notice,setNotice]=useState('');
-  const [removed,setRemoved]=useState<{item:WorkItem,index:number}|null>(null);
-  const dirty=JSON.stringify(items)!==JSON.stringify(saved);
-  const busy=saving||!!uploading;
-  const dirtyRef=useRef(dirty);dirtyRef.current=dirty;
-
+  const [items, setItems] = useState<WorkItem[]>([]),
+    [saved, setSaved] = useState<WorkItem[]>([]),
+    [published, setPublished] = useState<WorkItem[]>([]),
+    [revision, setRevision] = useState<number | null>(null);
+  const revisionRef = useRef<number | null>(null);
+  const [kind, setKind] = useState<WorkKind>('webapp'),
+    [editing, setEditing] = useState<string | null>(null),
+    [busy, setBusy] = useState(false),
+    [error, setError] = useState(''),
+    [notice, setNotice] = useState('');
+  const [removed, setRemoved] = useState<{
+    item: WorkItem;
+    index: number;
+  } | null>(null);
+  const dirty = JSON.stringify(items) !== JSON.stringify(saved),
+    unpublished = JSON.stringify(items) !== JSON.stringify(published);
+  const dirtyRef = useRef(dirty);
+  dirtyRef.current = dirty;
+  function adopt(data: any) {
+    setItems(data.items);
+    setSaved(data.items);
+    setPublished(data.published || []);
+    setRevision(data.revision);
+    revisionRef.current = data.revision;
+  }
   async function load() {
-    setLoading(true);setError('');
-    try {const res=await fetch('/api/admin/works',{cache:'no-store'});const data=await res.json();if(!res.ok)throw Error(data.error);setItems(data.items);setSaved(data.items);setRevision(data.revision);setInitialized(data.initialized);}
-    catch(err){setError(err instanceof Error?err.message:'Karya belum bisa dimuat.');}
-    finally{setLoading(false);}
+    setBusy(true);
+    setError('');
+    try {
+      const r = await fetch('/api/admin/works', { cache: 'no-store' });
+      const data = await r.json();
+      if (!r.ok) throw Error(data.error);
+      adopt(data);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Karya belum bisa dimuat.');
+    } finally {
+      setBusy(false);
+    }
   }
-  useEffect(()=>{load();},[]);
-  useEffect(()=>{
-    const unload=(e:BeforeUnloadEvent)=>{if(dirtyRef.current){e.preventDefault();e.returnValue='';}};
-    const leave=(e:MouseEvent)=>{const a=(e.target as HTMLElement).closest('a');if(dirtyRef.current&&a&&a.target!=='_blank'&&!window.confirm('Perubahan belum disimpan. Tinggalkan halaman?')){e.preventDefault();e.stopPropagation();}};
-    window.addEventListener('beforeunload',unload);document.addEventListener('click',leave,true);
-    return()=>{window.removeEventListener('beforeunload',unload);document.removeEventListener('click',leave,true);};
-  },[]);
-  const update=(id:string,patch:Partial<WorkItem>)=>{setItems(current=>current.map(item=>item.id===id?{...item,...patch}:item));setNotice('');};
-  function add(){const item:WorkItem={id:crypto.randomUUID(),kind,title:'Karya baru',description:'',image:'',imageAlt:'',url:'',published:false,demo:true,artwork:'sample'};setItems(current=>[...current,item]);setNotice('Karya baru ditambahkan sebagai tersembunyi. Lengkapi lalu tampilkan.');}
-  function move(id:string,delta:number){setItems(current=>{const next=[...current];const positions=current.map((item,i)=>item.kind===kind?i:-1).filter(i=>i>=0);const index=current.findIndex(item=>item.id===id);const target=positions[positions.indexOf(index)+delta];if(target===undefined)return current;[next[index],next[target]]=[next[target],next[index]];return next;});setNotice('');}
-  async function upload(id:string,file?:File){
-    if(!file)return;if(!['image/jpeg','image/png','image/webp','image/gif'].includes(file.type)||file.size>10*1024*1024){setError('Pilih JPG, PNG, WebP, atau GIF maksimal 10 MB.');return;}
-    setUploading(id);setError('');
-    try{const form=new FormData();form.append('file',file);form.append('folder','works');const res=await fetch('/api/admin/media',{method:'POST',body:form});const data=await res.json();if(!res.ok)throw Error(data.error);update(id,{image:data.url});setNotice('Gambar terunggah. Simpan perubahan untuk menampilkannya.');}
-    catch(err){setError(err instanceof Error?err.message:'Upload gagal.');}finally{setUploading('');}
+  useEffect(() => {
+    load();
+  }, []);
+  useEffect(()=>{window.scrollTo({top:0,behavior:'instant'});document.querySelector('.admin-main')?.scrollTo({top:0,behavior:'instant'});},[editing]);
+  useEffect(() => {
+    const unload = (e: BeforeUnloadEvent) => {
+      if (dirtyRef.current) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    const leave = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement).closest('a');
+      if (
+        dirtyRef.current &&
+        a &&
+        a.target !== '_blank' &&
+        !confirm('Perubahan belum disimpan. Tinggalkan halaman?')
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    window.addEventListener('beforeunload', unload);
+    document.addEventListener('click', leave, true);
+    return () => {
+      window.removeEventListener('beforeunload', unload);
+      document.removeEventListener('click', leave, true);
+    };
+  }, []);
+  async function send(
+    action: 'save' | 'publish' | 'order',
+    content = items,
+    ids?: string[],
+  ) {
+    const r = await fetch('/api/admin/works', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action,
+        revision: revisionRef.current,
+        ...(action === 'order' ? { ids } : { items: content }),
+      }),
+    });
+    const data = await r.json();
+    if (!r.ok) throw Error(data.error);
+    revisionRef.current = data.revision;
+    return data;
   }
-  async function save(){
-    setError('');setNotice('');
-    for(const item of items){const result=WorkItemSchema.safeParse(item);if(!result.success){setError(`${item.title}: ${result.error.issues[0].message}`);setKind(item.kind);return;}}
-    setSaving(true);
-    try{const res=await fetch('/api/admin/works',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({items,revision})});const data=await res.json();if(!res.ok)throw Error(data.error);setSaved(data.items);setItems(data.items);setRevision(data.revision);setInitialized(true);setRemoved(null);setNotice('Tersimpan. Homepage dan halaman koleksi memakai perubahan ini.');}
-    catch(err){setError(err instanceof Error?err.message:'Perubahan belum tersimpan.');}finally{setSaving(false);}
+  async function save(action: 'save' | 'publish') {
+    if (busy) return;
+    setBusy(true);
+    setError('');
+    setNotice('');
+    try {
+      adopt(await send(action));
+      setRemoved(null);
+      setNotice(
+        action === 'publish' ? 'Karya dipublikasikan.' : 'Draft tersimpan.',
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Belum tersimpan.');
+    } finally {
+      setBusy(false);
+    }
   }
-  const visible=items.filter(item=>item.kind===kind);
-  return <div className="works-manager">
-    <div className="wm-heading"><div><h1>Works</h1><p>Atur karya untuk homepage dan halaman View all.</p></div><a className="wm-button" href={`/${kind}`} target="_blank" rel="noopener noreferrer">Lihat koleksi <ExternalLink size={18} aria-hidden="true" /></a></div>
-    {error&&<div className="wm-message wm-error" role="alert">{error}{!revision&&<button className="wm-button" onClick={load}>Coba lagi</button>}</div>}
-    {notice&&<p className="wm-message" role="status">{notice}</p>}
-    {loading?<p role="status">Memuat karya…</p>:revision&&<>
-      <div className="wm-tabs" role="group" aria-label="Kategori karya">{workKinds.map(value=><button key={value} type="button" className="wm-button" aria-pressed={kind===value} onClick={()=>setKind(value)}>{workLabels[value]} <span>{items.filter(item=>item.kind===value).length}</span></button>)}</div>
-      <p className="wm-help">{kind==='webapp'?'Enam karya pertama yang ditampilkan membentuk grid 3 × 2 di homepage. Sisanya tersedia di /webapp.':kind==='design'?'Gambar tampil dalam carousel otomatis di homepage. Koleksi lengkap tersedia di /design.':'Gunakan link Instagram Reel atau post publik yang mengizinkan embed. Pemutaran mengikuti kontrol Instagram. Judul tampil di kiri bawah thumbnail.'}</p>
-      <div className="wm-toolbar"><button type="button" className="wm-button" onClick={add} disabled={busy}><Plus size={18} aria-hidden="true" /> Tambah karya</button><span>{dirty?'Ada perubahan belum disimpan':initialized?'Semua perubahan tersimpan':'Data awal — simpan untuk mulai mengelola'}</span><button type="button" className="wm-button" disabled={!dirty||busy} onClick={()=>{setItems(saved);setRemoved(null);setNotice('Perubahan dibatalkan.');setError('');}}><RotateCcw size={18} aria-hidden="true" /> Batalkan</button><button type="button" className="wm-button wm-primary" disabled={(!dirty&&initialized)||busy} onClick={save}><Save size={18} aria-hidden="true" />{saving?'Menyimpan…':'Simpan perubahan'}</button></div>
-      {removed&&<div className="wm-message">{removed.item.title} dihapus dari daftar. <button type="button" className="wm-button" disabled={busy} onClick={()=>{setItems(current=>{const next=[...current];next.splice(removed.index,0,removed.item);return next;});setRemoved(null);}}>Urungkan hapus</button></div>}
-      {!visible.length&&<p className="wm-empty">Belum ada karya di kategori ini. Tambahkan karya pertama Anda.</p>}
-      <div className="wm-list">{visible.map((item,index)=><details key={item.id} className="wm-item" open={undefined}>
-        <summary><span className="wm-thumb">{item.image?<img src={item.image} alt="" onError={e=>e.currentTarget.style.visibility='hidden'} />:<span>{workLabels[item.kind]}</span>}</span><span className="wm-summary"><strong>{item.title}</strong><span>{item.published?'Ditampilkan':'Tersembunyi'}{item.demo?' · Data contoh':''}</span></span><span className="wm-edit">Edit</span></summary>
-        <fieldset disabled={busy} className="wm-fields"><legend className="sr-only">Edit {item.title}</legend>
-          <label>Judul<input value={item.title} maxLength={140} onChange={e=>update(item.id,{title:e.target.value})} /></label>
-          <label>Kategori<select value={item.kind} onChange={e=>update(item.id,{kind:e.target.value as WorkKind})}>{workKinds.map(value=><option value={value} key={value}>{workLabels[value]}</option>)}</select></label>
-          <label className="wm-wide">Deskripsi<textarea value={item.description} maxLength={500} rows={2} onChange={e=>update(item.id,{description:e.target.value})} /></label>
-          <label className="wm-wide">{kind==='video'?'Link Instagram':kind==='webapp'?'Link studi kasus atau aplikasi':'Link referensi (opsional)'}<input type="text" inputMode="url" value={item.url} placeholder={kind==='video'?'https://www.instagram.com/reel/…/':'https://… atau /work/nama-project'} onChange={e=>update(item.id,{url:e.target.value})} /></label>
-          <label className="wm-wide">Gambar / thumbnail<input type="text" inputMode="url" value={item.image} placeholder="Upload gambar atau masukkan URL gambar Supabase" onChange={e=>update(item.id,{image:e.target.value})} /></label>
-          <label className="wm-upload"><Upload size={18} aria-hidden="true" />{uploading===item.id?'Mengunggah…':'Upload gambar'}<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={e=>{upload(item.id,e.target.files?.[0]);e.target.value='';}} /></label>
-          <label>Deskripsi gambar (alt)<input value={item.imageAlt} maxLength={250} onChange={e=>update(item.id,{imageAlt:e.target.value})} /></label>
-          <label className="wm-check"><input type="checkbox" checked={item.published} onChange={e=>update(item.id,{published:e.target.checked})} />Tampilkan karya</label>
-          <label className="wm-check"><input type="checkbox" checked={item.demo} onChange={e=>update(item.id,{demo:e.target.checked})} />Tandai sebagai data contoh</label>
-          <div className="wm-item-actions wm-wide"><button type="button" className="wm-button" disabled={index===0} onClick={()=>move(item.id,-1)}><ArrowUp size={18} aria-hidden="true" />Naik</button><button type="button" className="wm-button" disabled={index===visible.length-1} onClick={()=>move(item.id,1)}><ArrowDown size={18} aria-hidden="true" />Turun</button><button type="button" className="wm-button wm-delete" onClick={()=>{setRemoved({item,index:items.indexOf(item)});setItems(current=>current.filter(other=>other.id!==item.id));setNotice('');}}><Trash2 size={18} aria-hidden="true" />Hapus</button></div>
+  async function order(next: WorkItem[]) {
+    if (busy) return;
+    const focused = (document.activeElement as HTMLElement)
+      ?.closest('[data-sortable]')
+      ?.getAttribute('data-sortable');
+    const positions = items
+      .map((item, i) => (item.kind === kind ? i : -1))
+      .filter((i) => i >= 0);
+    const ordered = [...items];
+    positions.forEach((position, i) => (ordered[position] = next[i]));
+    setItems(ordered);
+    setBusy(true);
+    setError('');
+    try {
+      if (dirty) await send('save', items);
+      adopt(
+        await send(
+          'order',
+          ordered,
+          ordered.map((item) => item.id),
+        ),
+      );
+      setNotice('Urutan tersimpan.');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Urutan belum tersimpan.');
+    } finally {
+      setBusy(false);
+      if (focused)
+        requestAnimationFrame(() =>
+          document
+            .querySelector<HTMLElement>(
+              `[data-sortable="${CSS.escape(focused)}"] .cms-grip`,
+            )
+            ?.focus(),
+        );
+    }
+  }
+  function update(id: string, patch: Partial<WorkItem>) {
+    setItems((current) =>
+      current.map((item) => (item.id === id ? { ...item, ...patch } : item)),
+    );
+    setNotice('');
+  }
+  function add() {
+    const item: WorkItem = {
+      id: crypto.randomUUID(),
+      kind,
+      title: 'Karya baru',
+      description: '',
+      image: '',
+      imageAlt: '',
+      url: '',
+      published: false,
+      demo: false,
+      artwork: 'sample',
+    };
+    setItems((current) => [...current, item]);
+    setEditing(item.id);
+  }
+  function importImages(files: UploadedMedia[]) {
+    setItems((current) => [
+      ...current,
+      ...files.map((file) => ({
+        id: crypto.randomUUID(),
+        kind,
+        title: file.filename.replace(/\.[^.]+$/, ''),
+        description: '',
+        image: file.url,
+        imageAlt: file.filename.replace(/\.[^.]+$/, ''),
+        url: '',
+        published: false,
+        demo: false,
+        artwork: 'sample' as const,
+      })),
+    ]);
+    setNotice(`${files.length} karya ditambahkan ke draft.`);
+  }
+  const item = items.find((value) => value.id === editing),
+    visible = items.filter((value) => value.kind === kind);
+  return (
+    <div className="works-manager cms-manager">
+      <div className="wm-heading">
+        <div>
+          {editing && (
+            <button
+              type="button"
+              className="wm-button"
+              onClick={() => setEditing(null)}
+            >
+              <ArrowLeft size={18} />
+              Semua karya
+            </button>
+          )}
+          <h1>{item ? item.title : 'Works'}</h1>
+        </div>
+        <a
+          className="wm-button"
+          href={`/${kind}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Lihat publik
+          <ExternalLink size={18} />
+        </a>
+      </div>
+      <div className="cms-sticky-toolbar">
+        <span role="status">
+          {busy
+            ? 'Memproses…'
+            : dirty
+              ? 'Belum disimpan'
+              : unpublished
+                ? 'Draft tersimpan'
+                : 'Sudah dipublikasikan'}
+        </span>
+        <button
+          className="wm-button"
+          type="button"
+          disabled={busy || !dirty}
+          onClick={() => {
+            setItems(saved);
+            setRemoved(null);
+            setError('');
+          }}
+        >
+          Batalkan
+        </button>
+        <button
+          className="wm-button"
+          type="button"
+          disabled={busy || revision === null || (!dirty && revision > 0)}
+          onClick={() => save('save')}
+        >
+          <Save size={18} />
+          Simpan draft
+        </button>
+        <button
+          className="wm-button wm-primary"
+          type="button"
+          disabled={busy || revision === null || (!unpublished && revision > 0)}
+          onClick={() => save('publish')}
+        >
+          Publikasikan
+        </button>
+      </div>
+      {error && (
+        <div className="wm-message wm-error" role="alert">
+          {error}
+          <button
+            className="wm-button"
+            type="button"
+            disabled={busy}
+            onClick={() => {
+              if (!dirty || confirm('Muat ulang dan lepaskan perubahan lokal?'))
+                load();
+            }}
+          >
+            Muat ulang
+          </button>
+        </div>
+      )}
+      {notice && (
+        <p className="wm-message" role="status">
+          {notice}
+        </p>
+      )}
+      {revision === null && !error && <p role="status">Memuat karya…</p>}
+      {revision !== null && !item && (
+        <>
+          <div className="wm-tabs" role="group" aria-label="Kategori karya">
+            {workKinds.map((value) => (
+              <button
+                key={value}
+                type="button"
+                className="wm-button"
+                aria-pressed={kind === value}
+                onClick={() => setKind(value)}
+              >
+                {workLabels[value]}
+                <span>
+                  {items.filter((item) => item.kind === value).length}
+                </span>
+              </button>
+            ))}
+          </div>
+          <div className="wm-toolbar">
+            <h2>{workLabels[kind]}</h2>
+            <button
+              type="button"
+              className="wm-button"
+              disabled={busy}
+              onClick={add}
+            >
+              <Plus size={18} />
+              Tambah karya
+            </button>
+          </div>
+          <FileDrop
+            multiple
+            disabled={busy}
+            onBusyChange={setBusy}
+            onUploaded={importImages}
+          />
+          {removed && (
+            <div className="wm-message" role="status">
+              {removed.item.title} dihapus dari draft.
+              <button
+                type="button"
+                className="wm-button"
+                disabled={busy}
+                onClick={() => {
+                  setItems((current) => {
+                    const next = [...current];
+                    next.splice(removed.index, 0, removed.item);
+                    return next;
+                  });
+                  setRemoved(null);
+                }}
+              >
+                <Undo2 size={18} />
+                Urungkan
+              </button>
+            </div>
+          )}
+          <SortableList items={visible} disabled={busy} onChange={order}>
+            {(work, index, handle) => (
+              <div className="cms-work-row">
+                {handle}
+                <button
+                  type="button"
+                  className="cms-work-open"
+                  disabled={busy}
+                  onClick={() => setEditing(work.id)}
+                >
+                  <span className="wm-thumb">
+                    {work.image ? (
+                      <img src={work.image} alt="" />
+                    ) : (
+                      <span>{workLabels[work.kind]}</span>
+                    )}
+                  </span>
+                  <span className="wm-summary">
+                    <strong>{work.title}</strong>
+                    <span>
+                      {work.published ? 'Tampil' : 'Tersembunyi'}
+                      {work.caseStudy ? ' · Studi kasus' : ''}
+                      {work.demo ? ' · Contoh' : ''}
+                    </span>
+                  </span>
+                  <span className="wm-edit">Edit</span>
+                </button>
+                <button
+                  type="button"
+                  className="wm-button"
+                  disabled={busy}
+                  aria-label={`Hapus ${work.title}`}
+                  onClick={() => {
+                    setRemoved({ item: work, index: items.indexOf(work) });
+                    setItems(items.filter((item) => item.id !== work.id));
+                  }}
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            )}
+          </SortableList>
+          {!visible.length && <p className="wm-empty">Belum ada karya.</p>}
+        </>
+      )}
+      {item && (
+        <fieldset className="cms-editor-fields" disabled={busy}>
+          <div className="cms-inline-fields">
+            <label>
+              Judul
+              <input
+                value={item.title}
+                maxLength={140}
+                onChange={(e) => update(item.id, { title: e.target.value })}
+              />
+            </label>
+            <label>
+              Kategori
+              <select
+                value={item.kind}
+                onChange={(e) => {
+                  update(item.id, { kind: e.target.value as WorkKind,caseStudy:e.target.value==='webapp'?item.caseStudy:undefined });
+                  setKind(e.target.value as WorkKind);
+                }}
+              >
+                {workKinds.map((value) => (
+                  <option value={value} key={value}>
+                    {workLabels[value]}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <label>
+            Deskripsi
+            <textarea
+              rows={3}
+              value={item.description}
+              maxLength={500}
+              onChange={(e) => update(item.id, { description: e.target.value })}
+            />
+          </label>
+          {item.image && (
+            <img
+              className="cms-image-preview"
+              src={item.image}
+              alt={item.imageAlt}
+            />
+          )}
+          <FileDrop
+            disabled={busy}
+            onBusyChange={setBusy}
+            onUploaded={(files) => update(item.id, { image: files[0].url })}
+          />
+          <div className="cms-inline-fields">
+            <label className="wm-check">
+              <input
+                type="checkbox"
+                checked={item.published}
+                onChange={(e) =>
+                  update(item.id, { published: e.target.checked })
+                }
+              />
+              Tampilkan karya
+            </label>
+            {item.kind === 'webapp' && (
+              <label className="wm-check">
+                <input
+                  type="checkbox"
+                  checked={!!item.caseStudy}
+                  onChange={(e) =>
+                    update(item.id, {
+                      url:e.target.checked?item.url:item.caseStudy?.appUrl||'',
+                      caseStudy: e.target.checked
+                        ? {
+                            slug: `karya-${item.id.slice(0, 8)}`,
+                            problem: '',
+                            solution: '',
+                            impact: '',
+                            appUrl: item.url.startsWith('https:')
+                              ? item.url
+                              : '',
+                            blocks: [],
+                          }
+                        : undefined,
+                    })
+                  }
+                />
+                Dengan studi kasus
+              </label>
+            )}
+          </div>
+          {!item.caseStudy && item.kind !== 'design' && (
+            <label>
+              {item.kind === 'video' ? 'Link Instagram' : 'Link aplikasi'}
+              <input
+                value={item.url}
+                inputMode="url"
+                onChange={(e) => update(item.id, { url: e.target.value })}
+              />
+            </label>
+          )}
+          {item.caseStudy && (
+            <>
+              <div className="cms-inline-fields">
+                <label>
+                  Slug
+                  <input
+                    value={item.caseStudy.slug}
+                    onChange={(e) =>
+                      update(item.id, {
+                        caseStudy: { ...item.caseStudy!, slug: e.target.value },
+                      })
+                    }
+                  />
+                </label>
+                <label>
+                  Link aplikasi
+                  <input
+                    value={item.caseStudy.appUrl}
+                    inputMode="url"
+                    onChange={(e) =>
+                      update(item.id, {
+                        caseStudy: {
+                          ...item.caseStudy!,
+                          appUrl: e.target.value,
+                        },
+                      })
+                    }
+                  />
+                </label>
+              </div>
+              {(['problem', 'solution', 'impact'] as const).map((key, i) => (
+                <label key={key}>
+                  {['Masalah', 'Solusi', 'Hasil'][i]}
+                  <textarea
+                    rows={3}
+                    value={item.caseStudy![key]}
+                    onChange={(e) =>
+                      update(item.id, {
+                        caseStudy: {
+                          ...item.caseStudy!,
+                          [key]: e.target.value,
+                        },
+                      })
+                    }
+                  />
+                </label>
+              ))}
+              <BlockEditor
+                blocks={item.caseStudy.blocks}
+                disabled={busy}
+                onBusyChange={setBusy}
+                onChange={(blocks) =>
+                  update(item.id, { caseStudy: { ...item.caseStudy!, blocks } })
+                }
+              />
+              <a
+                className="wm-button"
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`/admintgadink/preview/${item.id}`}
+              >
+                <Eye size={18} />
+                Preview draft tersimpan
+              </a>
+            </>
+          )}
+          <details className="cms-more">
+            <summary>Pengaturan lainnya</summary>
+            <div className="cms-block-fields">
+              <label>
+                Deskripsi gambar
+                <input
+                  value={item.imageAlt}
+                  onChange={(e) =>
+                    update(item.id, { imageAlt: e.target.value })
+                  }
+                />
+              </label>
+              <label>
+                URL gambar
+                <input
+                  value={item.image}
+                  onChange={(e) => update(item.id, { image: e.target.value })}
+                />
+              </label>
+              <label className="wm-check">
+                <input
+                  type="checkbox"
+                  checked={item.demo}
+                  onChange={(e) => update(item.id, { demo: e.target.checked })}
+                />
+                Data contoh
+              </label>
+            </div>
+          </details>
         </fieldset>
-      </details>)}</div>
-    </>}
-  </div>;
+      )}
+    </div>
+  );
 }

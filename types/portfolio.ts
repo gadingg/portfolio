@@ -133,6 +133,7 @@ export interface ProjectMedia {
 }
 
 export interface Project {
+  cmsWork?: import('@/lib/works').WorkItem;
   id: string;
   title: string;
   slug: string;

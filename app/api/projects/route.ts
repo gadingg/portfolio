@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getPublishedProjects } from '@/lib/db/public-projects';
 
-export const revalidate = 60; // Cache for 60 seconds
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
@@ -12,7 +12,7 @@ export async function GET() {
       {
         status: 200,
         headers: {
-          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+          'Cache-Control': 'no-store',
         },
       }
     );

@@ -1,11 +1,13 @@
 import { ArrowUp, ExternalLink, MessageCircle } from 'lucide-react';
+import { getPublicSite } from '@/lib/db/site';
 
-export function AuraFooter() {
+export async function AuraFooter() {
+  const {values}=await getPublicSite();
   return <>
     <section className="contact-section" aria-labelledby="case-contact-title"><div className="section-shell">
-      <div className="contact-layout"><h2 id="case-contact-title">Let's make<br />something useful.</h2><div><p>Punya campaign yang mau dikembangkan, visual yang perlu dieksekusi, atau workflow yang terasa terlalu ribet? Let's talk.</p><a className="button button-dark" href="https://wa.me/6289653484274?text=Hi%20Gading%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20talk." target="_blank" rel="noopener noreferrer">Chat on WhatsApp <MessageCircle className="icon" aria-hidden="true" /></a></div></div>
-      <div className="contact-bottom"><span>Think. Create. Build. Improve.</span><a href="https://instagram.com/gadingg_" target="_blank" rel="noopener noreferrer">Instagram @gadingg_ <ExternalLink className="icon" aria-hidden="true" /></a></div>
+      <div className="contact-layout"><h2 id="case-contact-title">{values.contactTitle.split('\n').map((line,i)=><span key={i}>{i>0&&<br/>}{line}</span>)}</h2><div><p>{values.contactBody}</p><a className="button button-dark" href={values.whatsapp} target="_blank" rel="noopener noreferrer">{values.contactButton}<MessageCircle className="icon" aria-hidden="true" /></a></div></div>
+      <div className="contact-bottom"><span>{values.footerSignature}</span><a href={values.instagram} target="_blank" rel="noopener noreferrer">{values.instagramLabel}<ExternalLink className="icon" aria-hidden="true" /></a></div>
     </div></section>
-    <footer className="site-footer section-shell"><p>© {new Date().getFullYear()} R. Gading Utama</p><a href="#case-top">Back to top <ArrowUp className="icon" aria-hidden="true" /></a></footer>
+    <footer className="site-footer section-shell"><p>© {new Date().getFullYear()} {values.footerName}</p><a href="#case-top">Back to top <ArrowUp className="icon" aria-hidden="true" /></a></footer>
   </>;
 }

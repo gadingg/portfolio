@@ -1,0 +1,62 @@
+export function cvPDF(lines: string[]) {
+  const wrap = (value: string) => {
+    const words = value.split(/\s+/),
+      rows: string[] = [];
+    let row = '';
+    for (const word of words) {
+      if (row.length + word.length > 88) {
+        rows.push(row);
+        row = '';
+      }
+      row += (row ? ' ' : '') + word;
+    }
+    rows.push(row);
+    return rows;
+  };
+  const flat = lines.flatMap(wrap),
+    pages: string[][] = [];
+  for (let i = 0; i < flat.length; i += 45) pages.push(flat.slice(i, i + 45));
+  const objects: string[] = ['', ''];
+  const kids: number[] = [];
+  const fontIndex = 3 + pages.length * 2;
+  for (const page of pages) {
+    const pageIndex = objects.length + 1,
+      streamIndex = pageIndex + 1;
+    kids.push(pageIndex);
+    objects.push(
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 ${fontIndex} 0 R >> >> /Contents ${streamIndex} 0 R >>`,
+    );
+    const stream =
+      page
+        .map((line, i) => {
+          const clean = line
+            .normalize('NFKD')
+            .replace(/[^\x20-\x7e]/g, ' ')
+            .replace(/\\/g, '\\\\')
+            .replace(/\(/g, '\\(')
+            .replace(/\)/g, '\\)');
+          return `BT /F1 11 Tf 48 ${790 - i * 16} Td (${clean}) Tj ET`;
+        })
+        .join('\n') + '\n';
+    objects.push(
+      `<< /Length ${Buffer.byteLength(stream)} >>\nstream\n${stream}endstream`,
+    );
+  }
+  objects.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
+  objects[0] = '<< /Type /Catalog /Pages 2 0 R >>';
+  objects[1] = `<< /Type /Pages /Kids [${kids.map((id) => `${id} 0 R`).join(' ')}] /Count ${pages.length} >>`;
+  let pdf = '%PDF-1.4\n';
+  const offsets = [0];
+  objects.forEach((object, i) => {
+    offsets.push(Buffer.byteLength(pdf));
+    pdf += `${i + 1} 0 obj\n${object}\nendobj\n`;
+  });
+  const xref = Buffer.byteLength(pdf);
+  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n${offsets
+    .slice(1)
+    .map((offset) => `${String(offset).padStart(10, '0')} 00000 n \n`)
+    .join(
+      '',
+    )}trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+  return Buffer.from(pdf);
+}

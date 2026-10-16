@@ -1,38 +1,22 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { getPublicSite,renderHomepage } from '@/lib/db/site';
+import { getPublicWorks } from '@/lib/db/works';
 
-export const dynamic = 'force-static';
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const candidatePaths = [
-      path.join(process.cwd(), 'public', 'index.html'),
-      path.resolve(process.cwd(), '.next', 'server', 'public', 'index.html'),
-    ];
-
-    let html = '';
-    for (const p of candidatePaths) {
-      if (fs.existsSync(p)) {
-        html = fs.readFileSync(p, 'utf-8');
-        break;
-      }
-    }
-
-    if (!html) {
-      throw new Error('index.html not found in any candidate paths: ' + candidatePaths.join(', '));
-    }
-
+    const [site,works]=await Promise.all([getPublicSite(),getPublicWorks()]);
+    const html=await renderHomepage(site,works.items.filter(item=>item.caseStudy).flatMap(item=>[item.caseStudy!.slug,...(item.aliases||[])]));
     return new NextResponse(html, {
       status: 200,
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+        'Cache-Control': 'no-store',
       },
     });
   } catch (error: any) {
     console.error('Failed to load main portfolio index.html:', error);
-    return new NextResponse('Portfolio page loading error: ' + error.message, { status: 500 });
+    return new NextResponse('Portfolio belum bisa dimuat. Coba lagi.', { status: 503 });
   }
 }

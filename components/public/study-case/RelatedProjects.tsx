@@ -24,10 +24,10 @@ export function RelatedProjects({ projects }: { projects: Project[] }) {
             <div>
               <div className="compact-art mb-4"><ProjectArtwork project={p} /></div>
               <h3 className="text-lg sm:text-xl font-black tracking-[-0.03em] text-[#f3f0e8] group-hover:text-[#ff5a1f] transition mt-1.5 leading-snug">
-                {projectPresentations[p.slug]?.title || p.title}
+                {p.title}
               </h3>
               <p className="text-xs sm:text-sm text-[#f3f0e8]/60 mt-2 line-clamp-2 leading-relaxed">
-                {projectPresentations[p.slug]?.intro || p.subtitle || p.description}
+                {p.subtitle || p.description}
               </p>
             </div>
 

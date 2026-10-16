@@ -1,230 +1,162 @@
 import { randomUUID } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAdminSession } from '@/lib/auth/session';
+import { cmsAccess, cmsError } from '@/lib/cms-http';
 import { createAdminClient } from '@/lib/supabase/admin';
-
-// Curated 16:9 high-resolution design presets for instant dummy & portfolio mockups
-const CURATED_16_9_PRESETS = [
-  {
-    id: 'preset-1',
-    name: 'Executive Analytics Dashboard Mockup',
-    category: 'UI/UX & Web Apps',
-    url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1280&h=720&q=80',
-    aspect: '16:9',
-    source: 'preset'
-  },
-  {
-    id: 'preset-2',
-    name: 'Mobile Fintech & Crypto App UI',
-    category: 'Mobile & Dashboards',
-    url: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1280&h=720&q=80',
-    aspect: '16:9',
-    source: 'preset'
-  },
-  {
-    id: 'preset-3',
-    name: 'SaaS Design System & Design Tokens',
-    category: 'UI/UX & Web Apps',
-    url: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1280&h=720&q=80',
-    aspect: '16:9',
-    source: 'preset'
-  },
-  {
-    id: 'preset-4',
-    name: 'Luxury Property Architecture & Branding',
-    category: 'Brand & Creatives',
-    url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1280&h=720&q=80',
-    aspect: '16:9',
-    source: 'preset'
-  },
-  {
-    id: 'preset-5',
-    name: 'AI Creative Automation & Workflow Engine',
-    category: 'UI/UX & Web Apps',
-    url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1280&h=720&q=80',
-    aspect: '16:9',
-    source: 'preset'
-  },
-  {
-    id: 'preset-6',
-    name: 'High-Impact Performance Marketing Campaign',
-    category: 'Brand & Creatives',
-    url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1280&h=720&q=80',
-    aspect: '16:9',
-    source: 'preset'
-  },
-  {
-    id: 'preset-7',
-    name: 'Minimalist Productivity Task & Habit Tracker',
-    category: 'Mobile & Dashboards',
-    url: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=1280&h=720&q=80',
-    aspect: '16:9',
-    source: 'preset'
-  },
-  {
-    id: 'preset-8',
-    name: 'Modern Web Design Studio Showcase',
-    category: 'UI/UX & Web Apps',
-    url: 'https://images.unsplash.com/photo-1542744094-3a31f272c490?auto=format&fit=crop&w=1280&h=720&q=80',
-    aspect: '16:9',
-    source: 'preset'
-  }
-];
-
-export async function GET(request: NextRequest) {
-  const isAuth = await verifyAdminSession();
-  if (!isAuth) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  try {
-    const supabase = createAdminClient();
-    const folder = request.nextUrl.searchParams.get('folder') || 'covers';
-
-    const uploadedItems: any[] = [];
-
-    // Try fetching files from Supabase Storage bucket
-    const { data: files, error } = await supabase.storage
-      .from('portfolio-public')
-      .list(folder, {
-        limit: 50,
-        sortBy: { column: 'created_at', order: 'desc' },
-      });
-
-    if (!error && Array.isArray(files)) {
-      for (const file of files) {
-        if (!file.name || file.name.startsWith('.')) continue;
-        const storagePath = `${folder}/${file.name}`;
-        const { data: publicUrlData } = supabase.storage
-          .from('portfolio-public')
-          .getPublicUrl(storagePath);
-
-        uploadedItems.push({
-          id: file.id || file.name,
-          name: file.name,
-          category: 'Uploaded Storage',
-          url: publicUrlData.publicUrl,
-          aspect: '16:9',
-          created_at: file.created_at,
-          source: 'storage',
-        });
-      }
-    }
-
-    return NextResponse.json({
-      success: true,
-      uploads: uploadedItems,
-      presets: CURATED_16_9_PRESETS,
-      all: [...uploadedItems, ...CURATED_16_9_PRESETS],
-    });
-  } catch (error: any) {
-    console.warn('Media list warning:', error);
-    // Return presets gracefully even if storage is offline
-    return NextResponse.json({
-      success: true,
-      uploads: [],
-      presets: CURATED_16_9_PRESETS,
-      all: CURATED_16_9_PRESETS,
-    });
-  }
-}
-
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
-const ALLOWED_FOLDERS = new Set(['general', 'covers', 'content', 'gallery']);
-const ALLOWED_MEDIA_TYPES = new Map([
-  ['image/jpeg', 'jpg'],
-  ['image/png', 'png'],
-  ['image/webp', 'webp'],
-  ['image/gif', 'gif'],
-  ['video/mp4', 'mp4'],
-  ['video/webm', 'webm'],
-]);
-
-function hasValidSignature(bytes: Uint8Array, mimeType: string): boolean {
-  const startsWith = (...signature: number[]) => signature.every((byte, index) => bytes[index] === byte);
-  const ascii = (start: number, value: string) =>
-    value.split('').every((character, index) => bytes[start + index] === character.charCodeAt(0));
-
-  switch (mimeType) {
+import { cmsMediaBucket } from '@/lib/cms-media';
+export const dynamic = 'force-dynamic';
+const mediaFolders = [
+  'works',
+  'covers',
+  'content',
+  'gallery',
+  'general',
+  'cv',
+] as const;
+const types: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/gif': 'gif',
+  'video/mp4': 'mp4',
+  'video/webm': 'webm',
+  'application/pdf': 'pdf',
+};
+function validMedia(bytes: Uint8Array, type: string) {
+  const ascii = (offset: number, text: string) =>
+    [...text].every((c, i) => bytes[offset + i] === c.charCodeAt(0));
+  switch (type) {
     case 'image/jpeg':
-      return startsWith(0xff, 0xd8, 0xff);
+      return bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255;
     case 'image/png':
-      return startsWith(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a);
-    case 'image/webp':
-      return ascii(0, 'RIFF') && ascii(8, 'WEBP');
+      return [137, 80, 78, 71, 13, 10, 26, 10].every((b, i) => bytes[i] === b);
     case 'image/gif':
       return ascii(0, 'GIF87a') || ascii(0, 'GIF89a');
+    case 'image/webp':
+      return ascii(0, 'RIFF') && ascii(8, 'WEBP');
     case 'video/mp4':
       return ascii(4, 'ftyp');
     case 'video/webm':
-      return startsWith(0x1a, 0x45, 0xdf, 0xa3);
+      return [26, 69, 223, 163].every((b, i) => bytes[i] === b);
+    case 'application/pdf':
+      return ascii(0, '%PDF-');
     default:
       return false;
   }
 }
-
-export async function POST(request: NextRequest) {
-  const isAuth = await verifyAdminSession();
-  if (!isAuth) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
+export async function GET(request: NextRequest) {
+  const denied = await cmsAccess();
+  if (denied) return denied;
   try {
-    const formData = await request.formData();
-    const fileEntry = formData.get('file');
-    const folderEntry = formData.get('folder');
-    const folder = typeof folderEntry === 'string' && folderEntry ? folderEntry : 'general';
-
-    if (!(fileEntry instanceof File)) {
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
-    }
-
-    if (!ALLOWED_FOLDERS.has(folder)) {
-      return NextResponse.json({ error: 'Invalid upload folder' }, { status: 400 });
-    }
-
-    if (fileEntry.size === 0 || fileEntry.size > MAX_FILE_SIZE) {
-      return NextResponse.json({ error: 'File must be between 1 byte and 10MB' }, { status: 400 });
-    }
-
-    const fileExtension = ALLOWED_MEDIA_TYPES.get(fileEntry.type);
-    if (!fileExtension) {
-      return NextResponse.json({ error: 'Unsupported file type. Use JPG, PNG, WebP, GIF, MP4, or WebM.' }, { status: 400 });
-    }
-
-    const arrayBuffer = await fileEntry.arrayBuffer();
-    const bytes = new Uint8Array(arrayBuffer);
-    if (!hasValidSignature(bytes, fileEntry.type)) {
-      return NextResponse.json({ error: 'File contents do not match the declared media type' }, { status: 400 });
-    }
-
-    const cleanFileName = `${Date.now()}-${randomUUID()}.${fileExtension}`;
-    const storagePath = `${folder}/${cleanFileName}`;
-    const buffer = Buffer.from(arrayBuffer);
-
-    const supabase = createAdminClient();
-    const { error: uploadError } = await supabase.storage
-      .from('portfolio-public')
-      .upload(storagePath, buffer, {
-        contentType: fileEntry.type,
-        upsert: false,
-      });
-
-    if (uploadError) throw uploadError;
-
-    const { data: publicUrlData } = supabase.storage
-      .from('portfolio-public')
-      .getPublicUrl(storagePath);
-
-    if (!publicUrlData?.publicUrl) throw new Error('Storage did not return a public URL.');
-
-    return NextResponse.json({
-      url: publicUrlData.publicUrl,
-      storage_path: storagePath,
-      filename: fileEntry.name,
+    const folder = request.nextUrl.searchParams.get('folder') || 'all';
+    if (
+      folder !== 'all' &&
+      !mediaFolders.includes(folder as (typeof mediaFolders)[number])
+    )
+      return NextResponse.json(
+        { error: 'Folder tidak valid.' },
+        { status: 400 },
+      );
+    const offset = Number(request.nextUrl.searchParams.get('offset') || 0);
+    if (!Number.isInteger(offset) || offset < 0 || offset > 100000)
+      return NextResponse.json(
+        { error: 'Halaman tidak valid.' },
+        { status: 400 },
+      );
+    const client=createAdminClient();
+    const results = await Promise.all(
+      [cmsMediaBucket,'portfolio-public'].flatMap(bucket=>(folder === 'all' ? mediaFolders : [folder]).map(async (prefix) => {
+        const storage=client.storage.from(bucket);
+        const { data, error } = await storage.list(prefix, {
+          limit: 50,
+          offset,
+          sortBy: { column: 'created_at', order: 'desc' },
+        });
+        if (error) throw error;
+        return {
+          more: data.length === 50,
+          items: data
+            .filter(
+              (file) =>
+                file.id &&
+                /\.(jpe?g|png|webp|gif|mp4|webm|pdf)$/i.test(file.name),
+            )
+            .map((file) => ({
+              id: `${bucket}/${prefix}/${file.name}`,
+              name: file.name,
+              url:bucket===cmsMediaBucket?`/api/media/${prefix}/${file.name}`:storage.getPublicUrl(`${prefix}/${file.name}`).data.publicUrl,
+              type: file.metadata?.mimetype || '',
+              created_at: file.created_at,
+              source: 'storage',
+            })),
+        };
+      })),
+    );
+    const uploads = results
+      .flatMap((result) => result.items)
+      .sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+    return NextResponse.json(
+      {
+        uploads,
+        all: uploads,
+        presets: [],
+        hasMore: results.some((result) => result.more),
+        nextOffset: offset + 50,
+      },
+      { headers: { 'Cache-Control': 'no-store' } },
+    );
+  } catch (error) {
+    return cmsError(error);
+  }
+}
+export async function POST(request: NextRequest) {
+  const denied = await cmsAccess(request, 4.4 * 1024 * 1024);
+  if (denied) return denied;
+  try {
+    const form = await request.formData(),
+      file = form.get('file'),
+      folder = form.get('folder') || 'works';
+    if (
+      typeof folder !== 'string' ||
+      !mediaFolders.includes(folder as (typeof mediaFolders)[number])
+    )
+      return NextResponse.json(
+        { error: 'Folder tidak valid.' },
+        { status: 400 },
+      );
+    if (!(file instanceof File) || !file.size || file.size > 4 * 1024 * 1024)
+      return NextResponse.json(
+        { error: 'Pilih file maksimal 4 MB.' },
+        { status: 400 },
+      );
+    if (
+      !types[file.type] ||
+      (folder === 'cv' && file.type !== 'application/pdf')
+    )
+      return NextResponse.json(
+        { error: 'Format file tidak didukung.' },
+        { status: 400 },
+      );
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    if (!validMedia(bytes, file.type))
+      return NextResponse.json(
+        { error: 'Isi file tidak sesuai formatnya.' },
+        { status: 400 },
+      );
+    const storage = createAdminClient().storage.from(cmsMediaBucket);
+    const storage_path = `${folder}/${Date.now()}-${randomUUID()}.${types[file.type]}`;
+    const { error } = await storage.upload(storage_path, bytes, {
+      contentType: file.type,
+      upsert: false,
     });
-  } catch (error: any) {
-    console.error('Upload processing error:', error);
-    return NextResponse.json({ error: error.message || 'Failed to upload media' }, { status: 500 });
+    if (error) throw error;
+    return NextResponse.json({
+      url: `/api/media/${storage_path}`,
+      bucket:cmsMediaBucket,
+      storage_path,
+      filename: file.name,
+      type: file.type,
+    });
+  } catch (error) {
+    return cmsError(error);
   }
 }

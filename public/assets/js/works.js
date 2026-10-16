@@ -99,7 +99,7 @@
     if(loading)return;loading=true;const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),12000);
     groups.forEach(group=>{group.querySelector('[data-works-list]').setAttribute('aria-busy','true');group.querySelector('.works-recovery').hidden=true;group.querySelector('[data-retry-works]').disabled=true;});
     try {
-      const res=await fetch('/api/works',{signal:controller.signal,cache:'no-store'});if(!res.ok)throw Error('load');const data=await res.json();if(!Array.isArray(data.items))throw Error('data');
+      const res=await fetch(document.body.dataset.cmsPreview?'/api/admin/works-preview':'/api/works',{signal:controller.signal,cache:'no-store'});if(!res.ok)throw Error('load');const data=await res.json();if(!Array.isArray(data.items))throw Error('data');
       groups.forEach(group=>{const list=group.querySelector('[data-works-list]');let items=data.items.filter(item=>item.kind===group.dataset.workKind&&item.published);if(group.dataset.workKind==='webapp'&&!group.dataset.collection)items=items.slice(0,6);
         list.replaceChildren(...items.map(item=>card(item,items,group.dataset.collection?'h2':'h4')));if(!items.length)list.append(node('p','works-message','Belum ada karya di koleksi ini.'));list.scrollLeft=0;group._updateCarousel?.();
       });

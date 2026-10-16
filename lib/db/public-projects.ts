@@ -46,8 +46,15 @@ const loadPublishedProjectBySlug = unstable_cache(
   { revalidate: PROJECT_CACHE_SECONDS, tags: ['portfolio-projects'] }
 );
 
-export const getPublishedProjects = cache(loadPublishedProjects);
-export const getPublishedProjectBySlug = cache(loadPublishedProjectBySlug);
+export const getLegacyPublishedProjects = cache(loadPublishedProjects);
+export const getLegacyPublishedProjectBySlug = cache(loadPublishedProjectBySlug);
+export async function getPublishedProjects():Promise<Project[]> {
+  const {getPublicWorks,workAsProject}=await import('./works');
+  return (await getPublicWorks()).items.filter(item=>item.caseStudy).map(workAsProject);
+}
+export async function getPublishedProjectBySlug(slug:string):Promise<Project|null> {
+  return (await getPublishedProjects()).find(item=>item.slug===slug||item.cmsWork?.aliases?.includes(slug))||null;
+}
 
 export function getProjectNavigation(
   projects: Project[],

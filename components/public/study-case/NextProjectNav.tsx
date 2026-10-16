@@ -16,11 +16,11 @@ export function NextProjectNav({ nextProject }: { nextProject: Project | null })
       >
         <div>
           <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-[#f3f0e8] transition group-hover:text-[#ff5a1f] sm:text-3xl">
-            {projectPresentations[nextProject.slug]?.title || nextProject.title}
+            {nextProject.title}
           </h3>
           {nextProject.subtitle && (
             <p className="mt-1 text-xs font-medium text-[#f3f0e8]/55 sm:text-sm">
-              {projectPresentations[nextProject.slug]?.intro || nextProject.subtitle}
+              {nextProject.subtitle}
             </p>
           )}
           <span className="mt-6 inline-flex min-h-[44px] items-center border-b border-[#ff5a1f] text-xs font-bold uppercase tracking-wider text-[#f3f0e8] transition group-hover:text-[#ff5a1f]">

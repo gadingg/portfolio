@@ -1,5 +1,5 @@
 import React from 'react';
-import { notFound } from 'next/navigation';
+import { notFound,permanentRedirect } from 'next/navigation';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
 import type { Metadata } from 'next';
 import type { ContentBlock, MetricsBlockContent } from '@/types/portfolio';
@@ -16,7 +16,7 @@ import { AuraFooter } from '@/components/public/study-case/AuraFooter';
 import { ProjectArtwork } from '@/components/public/study-case/ProjectArtwork';
 import { projectPresentations, useBriefArtwork } from '@/lib/project-presentation';
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 function paragraphAfterHeading(blocks: ContentBlock[], headingPattern: RegExp) {
   const headingIndex = blocks.findIndex((block) => {
@@ -37,7 +37,7 @@ function projectOutcome(blocks: ContentBlock[]) {
   return items.slice(0, 2).map((item) => `${item.value} ${item.label}`).join(' · ');
 }
 
-export async function generateStaticParams() {
+async function legacyStaticParams() {
   try {
     const projects = await getPublishedProjects();
     return projects.map((project) => ({ slug: project.slug }));
@@ -62,8 +62,8 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${projectPresentations[slug]?.title || project.title} · Gading Utama`,
-    description: projectPresentations[slug]?.intro || project.description,
+    title: `${project.title} · Gading Utama`,
+    description: project.description,
     openGraph: {
       title: `${project.title} · Case Study`,
       description: projectPresentations[slug]?.intro || project.description,
@@ -93,15 +93,16 @@ export default async function StudyCasePage({
   if (!project) {
     notFound();
   }
+  if(project.slug!==slug)permanentRedirect(`/work/${project.slug}`);
 
   const { related, nextProject } = getProjectNavigation(projects, slug, project.category);
   const blocks = (project.blocks || []) as ContentBlock[];
-  const presentation = projectPresentations[slug];
+  const presentation = project.cmsWork?.caseStudy;
   const problem = presentation?.problem || paragraphAfterHeading(blocks, /challenge|problem|brief/i) || project.description;
   const approach = presentation?.solution || paragraphAfterHeading(blocks, /solution|approach|system|execution|architecture/i)
     || project.subtitle
     || 'A practical response shaped around the team, workflow, and business constraint.';
-  const outcome = presentation?.impact || projectOutcome(blocks) || 'See the documented outcomes and project evidence below.';
+  const outcome = presentation?.impact || projectOutcome(blocks) || '';
 
   return (
     <div className="showcase" id="case-top">
@@ -119,16 +120,16 @@ export default async function StudyCasePage({
           <header className="case-intro">
             <div>
               <h1>
-                {presentation?.title || project.title}
+                {project.title}
               </h1>
-              {(presentation?.intro || project.subtitle) && (
+              {project.subtitle && (
                 <p>
-                  {presentation?.intro || project.subtitle}
+                  {project.subtitle}
                 </p>
               )}
             </div>
 
-            {presentation && <a className="button button-outline" href={presentation.url} target="_blank" rel="noopener noreferrer">Open app <ExternalLink className="icon" aria-hidden="true" /></a>}
+            {presentation?.appUrl && <a className="button button-outline" href={presentation.appUrl} target="_blank" rel="noopener noreferrer">Open app <ExternalLink className="icon" aria-hidden="true" /></a>}
           </header>
 
           <figure className="case-cover-art">
@@ -151,13 +152,7 @@ export default async function StudyCasePage({
           </section>
 
           <div className="case-narrative mx-auto mt-12 max-w-3xl">
-            {presentation ? <div className="study-case-blocks">
-              {presentation.sections.map((section) => <section key={section.title}><h2>{section.title}</h2><p className="case-copy">{section.body}</p></section>)}
-              {presentation.artwork === 'listing' && <figure className="case-interface-pair"><img src="/assets/work/listing-hub.jpg" alt="Pencarian dan perbandingan properti di Listing Hub" loading="lazy" /><img src="/assets/work/listing-filter.jpg" alt="Filter listing pada layar mobile" loading="lazy" /><figcaption>Tampilan asli Listing Hub: pencarian dan filter mobile.</figcaption></figure>}
-            </div> : <>
-              <p className="mb-12 text-xl font-medium leading-[1.7] tracking-[-0.015em] text-[#f3f0e8]/88 sm:text-2xl">{project.description}</p>
-              {blocks.length > 0 && <StudyCaseRenderer blocks={blocks} />}
-            </>}
+            {blocks.length > 0 && <StudyCaseRenderer blocks={blocks} />}
             <NextProjectNav nextProject={nextProject} />
             <RelatedProjects projects={related.filter((item) => item.slug !== nextProject?.slug)} />
           </div>

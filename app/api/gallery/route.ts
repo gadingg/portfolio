@@ -1,17 +1,17 @@
 import { NextResponse } from 'next/server';
-import { getPublicGalleryItems } from '@/lib/db/gallery';
+import { getPublicWorks } from '@/lib/db/works';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const items = await getPublicGalleryItems();
+    const items = (await getPublicWorks()).items.filter(item=>item.kind==='design').map((item,index)=>({id:item.id,url:item.image,alt:item.imageAlt,caption:item.title,category:'Visual Design',display_order:index+1}));
     return NextResponse.json(
       { items },
       {
         status: 200,
         headers: {
-          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+          'Cache-Control': 'no-store',
         },
       }
     );
