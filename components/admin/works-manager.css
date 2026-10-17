@@ -10,6 +10,8 @@
 .works-manager .wm-primary,.works-manager .wm-tabs [aria-pressed=true]{background:var(--amber);color:#171914;border-color:var(--amber)}
 .works-manager .wm-tabs,.works-manager .wm-toolbar,.works-manager .wm-item-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .works-manager .wm-tabs span{font-variant-numeric:tabular-nums;opacity:.8}
+.wm-search{display:flex;align-items:center;gap:12px;flex:1;justify-content:flex-end;font-size:14px}.wm-search input{max-width:280px}.cms-edit-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.cms-edit-heading h2{margin:0;font-size:22px}.cms-case-form>summary{font-weight:600}.cms-case-form .cms-block-fields{padding-top:20px}.cms-editor-fields>label{max-width:850px}.cms-manager :where(input,textarea,select){min-width:0;max-width:100%}
+@media(max-width:600px){.wm-search{flex-basis:100%;justify-content:flex-start;flex-wrap:wrap}.wm-search input{max-width:none;flex:1}.cms-edit-heading>.wm-button{width:100%}}
 .works-manager .wm-help{margin-block:20px 28px;max-width:75ch}
 .works-manager .wm-toolbar{padding-block:16px;border-block:1px solid var(--border);margin-bottom:24px}
 .works-manager .wm-toolbar>span{font-size:13px;flex:1;min-width:160px}

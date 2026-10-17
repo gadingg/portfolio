@@ -50,6 +50,7 @@
   function card(item, siblings, headingTag) {
     const card=node('article',`work-card work-card-${item.kind}`);
     const href=safeURL(item.url); const media=node(item.kind==='webapp'&&href?'a':'button',`work-media work-art-${item.artwork||'sample'}`);
+    const track=element=>{element.dataset.workId=item.id;element.dataset.demo=String(item.demo);element.dataset.engagement=item.kind==='design'?'design_open':item.kind==='video'?'video_open':item.caseStudy?'work_open':'app_click';};track(media);
     if(media.tagName==='A'){media.href=href;if(!href.startsWith(location.origin+'/')){media.target='_blank';media.rel='noopener noreferrer';}}
     else media.type='button';
     media.setAttribute('aria-label',`${item.kind==='design'?'Enlarge':item.kind==='video'?'Watch':item.demo?'Preview':'View'}: ${item.title}`);
@@ -69,6 +70,7 @@
     if(item.demo)meta.append(node('span','sample-label','Data contoh'));
     if(item.kind==='webapp'){
       const action=node(href?'a':'button','text-link work-destination',item.demo?'Preview':item.url.startsWith('/work/')?'View case study':'Open app');
+      track(action);
       if(href){action.href=href;if(!href.startsWith(location.origin+'/')){action.target='_blank';action.rel='noopener noreferrer';action.append(icon('external-link'));}}
       else {action.type='button';action.addEventListener('click',()=>{openDialog(action,item.title);modal.dataset.mode='sample';body.append(node('p','demo-explanation','Contoh slot Website / Apps. Ganti kontennya dan tambahkan tujuan link melalui menu Works di admin.'));});}
       meta.append(action);

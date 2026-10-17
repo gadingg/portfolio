@@ -56,6 +56,7 @@ export async function PUT(request:NextRequest){
       published=WorksSchema.parse({items:previous?doc.published.items.map(value=>value.id===target?item:value):[...doc.published.items,item]});
     }
     const saved=await writeCMS('works',doc,draft,published);
-    return NextResponse.json({revision:saved.revision,layout:saved.draft.items.find(item=>item.id===target)!.caseStudy!.layout});
+    const updated=saved.draft.items.find(item=>item.id===target)!;
+    return NextResponse.json({revision:saved.revision,layout:updated.caseStudy!.layout,title:updated.title});
   }catch(error){return cmsError(error);}
 }

@@ -9,6 +9,7 @@ export function AdminSidebar() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [logoutError,setLogoutError]=useState(''),[loggingOut,setLoggingOut]=useState(false);
 
   useEffect(() => setIsOpen(false), [pathname]);
   useEffect(() => {
@@ -27,13 +28,16 @@ export function AdminSidebar() {
   }, []);
 
   const handleLogout = async () => {
+    if(loggingOut)return;
+    setLoggingOut(true);setLogoutError('');
     try {
-      await fetch('/api/admin/logout', { method: 'POST' });
+      const response=await fetch('/api/admin/logout', { method: 'POST' });
+      if(!response.ok)throw Error('Belum bisa keluar. Coba lagi.');
       router.push('/admintgadink');
       router.refresh();
     } catch {
-      router.push('/admintgadink');
-    }
+      setLogoutError('Belum bisa keluar. Coba lagi.');
+    } finally {setLoggingOut(false);}
   };
 
   if(pathname.startsWith('/admintgadink/dashboard/editor/'))return null;
@@ -114,6 +118,7 @@ export function AdminSidebar() {
         <button
           type="button"
           onClick={handleLogout}
+          disabled={loggingOut}
           style={{
             padding: '10px 16px',
             borderRadius: '999px',
@@ -127,8 +132,9 @@ export function AdminSidebar() {
             letterSpacing: '0.05em',
           }}
         >
-          LOGOUT
+          {loggingOut?'Keluar…':'Keluar'}
         </button>
+        {logoutError&&<p role="alert" style={{fontSize:'14px',color:'var(--ink)',margin:0}}>{logoutError}</p>}
       </div>
       </aside>
     </>

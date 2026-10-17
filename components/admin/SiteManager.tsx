@@ -4,8 +4,10 @@ import { Eye, Save, Plus, Trash2 } from 'lucide-react';
 import { siteFields, type SiteContent } from '@/lib/site';
 import { FileDrop } from './FileDrop';
 import { SortableList } from './SortableList';
+import { useConfirm } from './ConfirmDialog';
 import './works-manager.css';
 export function SiteManager() {
+  const {ask,confirmation}=useConfirm();
   const [content, setContent] = useState<SiteContent | null>(null),
     [saved, setSaved] = useState(''),
     [published, setPublished] = useState(''),
@@ -16,6 +18,7 @@ export function SiteManager() {
     [notice, setNotice] = useState('');
   const dirty = content && JSON.stringify(content) !== saved;
   const dirtyRef = useRef(dirty);
+  const mutationLock = useRef(false);
   dirtyRef.current = dirty;
   function adopt(data: any) {
     setContent(data.draft);
@@ -53,11 +56,11 @@ export function SiteManager() {
       if (
         dirtyRef.current &&
         a &&
-        a.target !== '_blank' &&
-        !confirm('Perubahan belum disimpan. Tinggalkan halaman?')
+        a.target !== '_blank'
       ) {
         e.preventDefault();
         e.stopPropagation();
+        void ask('Perubahan belum disimpan. Tinggalkan halaman?', 'Tinggalkan').then(yes=>{if(yes){dirtyRef.current=false;window.location.assign(a.href);}});
       }
     };
     window.addEventListener('beforeunload', unload);
@@ -68,6 +71,8 @@ export function SiteManager() {
     };
   }, []);
   async function save(action: 'save' | 'publish') {
+    if (busy || mutationLock.current) return;
+    mutationLock.current = true;
     setBusy(true);
     setError('');
     setNotice('');
@@ -86,6 +91,7 @@ export function SiteManager() {
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Belum tersimpan.');
     } finally {
+      mutationLock.current = false;
       setBusy(false);
     }
   }
@@ -98,6 +104,7 @@ export function SiteManager() {
   const groups = [...new Set(siteFields.map((field) => field.group)), 'CV'];
   return (
     <div className="works-manager cms-manager">
+      {confirmation}
       <div className="wm-heading">
         <h1>Website</h1>
         <a
@@ -158,8 +165,8 @@ export function SiteManager() {
             type="button"
             className="wm-button"
             disabled={busy}
-            onClick={() => {
-              if (!dirty || confirm('Muat ulang dan lepaskan perubahan lokal?'))
+            onClick={async () => {
+              if (!dirty || await ask('Muat ulang dan lepaskan perubahan lokal?', 'Muat ulang'))
                 load();
             }}
           >
@@ -280,8 +287,8 @@ export function SiteManager() {
                         type="button"
                         className="wm-button"
                         aria-label={`Hapus pengalaman ${i + 1}`}
-                        onClick={() =>
-                          cv({
+                        onClick={async () =>
+                          await ask('Hapus pengalaman ini dari draft?') && cv({
                             experience: content.cv.experience.filter(
                               (_item, index) => index !== i,
                             ),

@@ -11,7 +11,7 @@ import {
   projectPresentations,
   useBriefArtwork,
 } from '@/lib/project-presentation';
-import { WorksSchema, type WorkItem } from '@/lib/works';
+import { WorksSchema, publicWork, setWorkKind, type WorkItem } from '@/lib/works';
 import { readCMS, readPublishedCMS, writeCMS, CMSConflict } from './cms';
 import type { Project } from '@/types/portfolio';
 import { applyRequestedWorks } from '@/lib/work-content-update';
@@ -261,10 +261,7 @@ export async function getPublicWorks() {
   return {
     items: doc.items
       .filter((item) => item.published)
-      .map((item) => ({
-        ...item,
-        url: item.caseStudy ? `/work/${item.caseStudy.slug}` : item.url,
-      })),
+      .map(publicWork),
   };
 }
 export function orderedItems(items: WorkItem[], ids: string[]) {
@@ -301,10 +298,14 @@ export async function changeWorks(body: {
     );
   }
   const draft = {
-    items: (body.items || current.draft.items).map((item) => ({
-      ...item,
-      url: item.caseStudy ? `/work/${item.caseStudy.slug}` : item.url,
-    })),
+    items: (body.items || current.draft.items).map((item) => {
+      const previous=current.draft.items.find(value=>value.id===item.id);
+      const retained=!item.caseStudy&&!item.archivedCaseStudy
+        ? {...item,archivedCaseStudy:previous?.caseStudy||previous?.archivedCaseStudy}
+        : item;
+      const normalized=setWorkKind(retained,item.kind);
+      return {...normalized,url:normalized.caseStudy?`/work/${normalized.caseStudy.slug}`:normalized.url};
+    }),
   };
   if(body.action==='publish')for(const item of draft.items){
     const previous=current.published.items.find(value=>value.id===item.id);

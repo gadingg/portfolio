@@ -3,6 +3,7 @@ import './globals.css';
 import '../public/assets/css/showcase.css';
 import '../public/assets/css/visual-content.css';
 import { ThemeProvider } from '@/context/ThemeContext';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'R. Gading Utama · Creative Marketer & Problem Solver',
@@ -35,6 +36,7 @@ export default function RootLayout({
             {children}
           </div>
         </ThemeProvider>
+        <Script src="/assets/js/engagement.js" strategy="afterInteractive" />
       </body>
     </html>
   );

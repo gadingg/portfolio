@@ -18,6 +18,7 @@ export function FileDrop({
   onBusyChange?: (busy: boolean) => void;
 }) {
   const titleId = useId();
+  const uploadLock = useRef(false);
   const input = useRef<HTMLInputElement>(null),
     dialog = useRef<HTMLDialogElement>(null);
   const [busy, setBusy] = useState(false),
@@ -34,7 +35,8 @@ export function FileDrop({
     [libraryError, setLibraryError] = useState(''),
     [listing, setListing] = useState(false);
   async function upload(files: File[]) {
-    if (busy || disabled || !files.length) return;
+    if (busy || disabled || uploadLock.current || !files.length) return;
+    uploadLock.current = true;
     setBusy(true);
     onBusyChange?.(true);
     setError('');
@@ -69,6 +71,7 @@ export function FileDrop({
     if (successes.length) onUploaded(successes);
     setFailed(failures);
     setBusy(false);
+    uploadLock.current = false;
     onBusyChange?.(false);
     setProgress(successes.length ? `${successes.length} file terunggah` : '');
     if (input.current) input.current.value = '';

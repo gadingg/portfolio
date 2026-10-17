@@ -81,6 +81,7 @@ export const WorkDraftItemSchema = z.object({
     .enum(['listing', 'meta', 'mbg', 'hub', 'schedule', 'sample'])
     .default('sample'),
   caseStudy: CaseStudySchema.optional(),
+  archivedCaseStudy: CaseStudySchema.optional(),
   aliases:z.array(z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)).max(30).optional(),
 });
 export const WorkItemSchema = WorkDraftItemSchema.superRefine((item, ctx) => {
@@ -104,6 +105,27 @@ export const WorkItemSchema = WorkDraftItemSchema.superRefine((item, ctx) => {
     });
 });
 export type WorkItem = z.infer<typeof WorkDraftItemSchema>;
+
+export function setCaseStudyEnabled(item: WorkItem, enabled: boolean): WorkItem {
+  if (enabled) {
+    const study = item.caseStudy || item.archivedCaseStudy || {
+      slug: `karya-${item.id.slice(0, 8)}`, problem: '', solution: '', impact: '',
+      appUrl: item.url.startsWith('https:') ? item.url : '', blocks: [],
+    };
+    return { ...item, caseStudy: study, archivedCaseStudy: undefined, url: `/work/${study.slug}` };
+  }
+  return { ...item, archivedCaseStudy: item.caseStudy || item.archivedCaseStudy,
+    caseStudy: undefined, url: item.caseStudy ? item.caseStudy.appUrl || '' : item.url };
+}
+
+export function setWorkKind(item: WorkItem, kind: WorkKind): WorkItem {
+  return { ...(kind !== 'webapp' && item.caseStudy ? setCaseStudyEnabled(item, false) : item), kind };
+}
+
+export function publicWork(item: WorkItem): WorkItem {
+  const { archivedCaseStudy, ...visible } = item;
+  return { ...visible, url: visible.caseStudy ? `/work/${visible.caseStudy.slug}` : visible.url };
+}
 export const WorksDraftSchema = z
   .object({ items: z.array(WorkDraftItemSchema).max(150) })
   .superRefine(({ items }, ctx) => {

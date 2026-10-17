@@ -28,3 +28,5 @@ The latest request prioritizes visual work and problem solving over roles, dates
 The user approved continuation with “Go ahead.” Existing dark and orange identity is retained as the conservative interpretation of the master brief; composition and interaction are refined to meet the latest request.
 
 The October 17 request also approves icon-only pause/resume controls and five-second advancement for the existing work carousels. See `docs/briefs/2026-10-17-works-videos.md` for the supplied Reel, example slots, and playback limitations.
+
+The later October 17 CMS request approves an Overview with real content counts and click charts, safer reversible CRUD, and clearer visual editing. The user explicitly approved an anonymous Supabase engagement table for work, design, video, and contact clicks. Do not store visitor IP or identity, invent historical activity, or equate player opens with Instagram views. Use isolated fixtures for CMS mutation tests. See `docs/briefs/2026-10-17-cms-usability.md`.

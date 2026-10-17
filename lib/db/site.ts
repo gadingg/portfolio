@@ -85,10 +85,10 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
       });
       continue;
     }
-    const texts = el.contents().filter((_i, node) => node.type === 'text');
-    texts.remove();
-    el.prepend($('<span>').text(value).html()||'');
+    const icons=el.children('svg,.icon').clone();
+    el.empty().text(value).append(icons);
   }
   if(caseSlugs){const allowed=new Set(caseSlugs.map(slug=>`/work/${slug}`));$('a.strip-piece[href^="/work/"]').each((_i,element)=>{if(!allowed.has($(element).attr('href')||''))$(element).remove();});if($('.work-strip > a').length<3)$('.work-strip').addClass('cms-compact-strip');}
+  $('body').append('<script src="/assets/js/engagement.js" defer></script>');
   return $.html();
 }

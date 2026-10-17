@@ -3,6 +3,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { SortableList } from './SortableList';
 import { FileDrop } from './FileDrop';
 import type { CMSBlock } from '@/lib/content-blocks';
+import { useConfirm } from './ConfirmDialog';
 const labels: Record<CMSBlock['block_type'], string> = {
   heading: 'Judul',
   paragraph: 'Teks',
@@ -38,6 +39,7 @@ export function BlockEditor({
   disabled: boolean;
   onBusyChange?: (busy: boolean) => void;
 }) {
+  const {ask,confirmation}=useConfirm();
   const patch = (id: string, content: Record<string, unknown>) =>
     onChange(
       blocks.map((block) =>
@@ -70,6 +72,7 @@ export function BlockEditor({
   );
   return (
     <section className="cms-blocks">
+      {confirmation}
       <div className="cms-panel-heading">
         <h2>Isi studi kasus</h2>
         <select
@@ -353,8 +356,8 @@ export function BlockEditor({
                     <button
                       type="button"
                       className="wm-button cms-delete"
-                      onClick={() =>
-                        onChange(
+                      onClick={async () =>
+                        await ask('Hapus blok ini? Perubahan diterapkan saat draft disimpan.') && onChange(
                           blocks.filter((value) => value.id !== block.id),
                         )
                       }

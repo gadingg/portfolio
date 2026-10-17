@@ -12,19 +12,27 @@ import {
 import {
   workKinds,
   workLabels,
+  setCaseStudyEnabled,
+  setWorkKind,
+  WorksDraftSchema,
+  WorksSchema,
   type WorkItem,
   type WorkKind,
 } from '@/lib/works';
 import { SortableList } from './SortableList';
 import { FileDrop, type UploadedMedia } from './FileDrop';
 import { BlockEditor } from './BlockEditor';
+import { useConfirm } from './ConfirmDialog';
 import './works-manager.css';
 export function WorksManager() {
+  const {ask,confirmation}=useConfirm();
   const [items, setItems] = useState<WorkItem[]>([]),
     [saved, setSaved] = useState<WorkItem[]>([]),
     [published, setPublished] = useState<WorkItem[]>([]),
     [revision, setRevision] = useState<number | null>(null);
   const revisionRef = useRef<number | null>(null);
+  const mutationLock = useRef(false);
+  const [query, setQuery] = useState('');
   const [kind, setKind] = useState<WorkKind>('webapp'),
     [editing, setEditing] = useState<string | null>(null),
     [busy, setBusy] = useState(false),
@@ -39,6 +47,7 @@ export function WorksManager() {
   const dirtyRef = useRef(dirty);
   dirtyRef.current = dirty;
   function adopt(data: any) {
+    dirtyRef.current = false;
     setItems(data.items);
     setSaved(data.items);
     setPublished(data.published || []);
@@ -60,6 +69,8 @@ export function WorksManager() {
     }
   }
   useEffect(() => {
+    const selectedKind=new URLSearchParams(window.location.search).get('kind');
+    if(workKinds.includes(selectedKind as WorkKind))setKind(selectedKind as WorkKind);
     load();
   }, []);
   useEffect(()=>{window.scrollTo({top:0,behavior:'instant'});document.querySelector('.admin-main')?.scrollTo({top:0,behavior:'instant'});},[editing]);
@@ -75,11 +86,11 @@ export function WorksManager() {
       if (
         dirtyRef.current &&
         a &&
-        a.target !== '_blank' &&
-        !confirm('Perubahan belum disimpan. Tinggalkan halaman?')
+        a.target !== '_blank'
       ) {
         e.preventDefault();
         e.stopPropagation();
+        void ask('Perubahan belum disimpan. Tinggalkan halaman?', 'Tinggalkan').then(yes=>{if(yes){dirtyRef.current=false;window.location.assign(a.href);}});
       }
     };
     window.addEventListener('beforeunload', unload);
@@ -109,7 +120,15 @@ export function WorksManager() {
     return data;
   }
   async function save(action: 'save' | 'publish') {
-    if (busy) return;
+    if (busy || mutationLock.current) return false;
+    const validation=(action==='publish'?WorksSchema:WorksDraftSchema).safeParse({items});
+    if(!validation.success){
+      const issue=validation.error.issues[0],index=issue.path[0]==='items'&&typeof issue.path[1]==='number'?issue.path[1]:null;
+      if(index!==null&&items[index]){setEditing(items[index].id);setKind(items[index].kind);}
+      setError(`${index!==null&&items[index]?items[index].title+': ':''}${issue.message}`);
+      return false;
+    }
+    mutationLock.current = true;
     setBusy(true);
     setError('');
     setNotice('');
@@ -119,14 +138,18 @@ export function WorksManager() {
       setNotice(
         action === 'publish' ? 'Karya dipublikasikan.' : 'Draft tersimpan.',
       );
+      return true;
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Belum tersimpan.');
+      return false;
     } finally {
+      mutationLock.current = false;
       setBusy(false);
     }
   }
   async function order(next: WorkItem[]) {
-    if (busy) return;
+    if (busy || mutationLock.current) return;
+    mutationLock.current = true;
     const focused = (document.activeElement as HTMLElement)
       ?.closest('[data-sortable]')
       ?.getAttribute('data-sortable');
@@ -151,6 +174,7 @@ export function WorksManager() {
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Urutan belum tersimpan.');
     } finally {
+      mutationLock.current = false;
       setBusy(false);
       if (focused)
         requestAnimationFrame(() =>
@@ -203,11 +227,16 @@ export function WorksManager() {
     setNotice(`${files.length} karya ditambahkan ke draft.`);
   }
   const item = items.find((value) => value.id === editing),
-    visible = items.filter((value) => value.kind === kind);
+    visible = items.filter((value) => value.kind === kind && value.title.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+  async function openVisual() {
+    if (!item || busy) return;
+    if (dirty && !(await save('save'))) return;
+    window.location.assign(`/admintgadink/dashboard/editor/${item.id}`);
+  }
   return (
     <div className="works-manager cms-manager">
+      {confirmation}
       <div className="wm-heading">
-        {item?.caseStudy&&<a className="wm-button" href={`/admintgadink/dashboard/editor/${item.id}`}>Buka editor visual</a>}
         <div>
           {editing && (
             <button
@@ -278,8 +307,8 @@ export function WorksManager() {
             className="wm-button"
             type="button"
             disabled={busy}
-            onClick={() => {
-              if (!dirty || confirm('Muat ulang dan lepaskan perubahan lokal?'))
+            onClick={async () => {
+              if (!dirty || await ask('Muat ulang dan lepaskan perubahan lokal?', 'Muat ulang'))
                 load();
             }}
           >
@@ -302,7 +331,8 @@ export function WorksManager() {
                 type="button"
                 className="wm-button"
                 aria-pressed={kind === value}
-                onClick={() => setKind(value)}
+                disabled={busy}
+                onClick={() => { setKind(value); setQuery(''); }}
               >
                 {workLabels[value]}
                 <span>
@@ -313,6 +343,7 @@ export function WorksManager() {
           </div>
           <div className="wm-toolbar">
             <h2>{workLabels[kind]}</h2>
+            <label className="wm-search">Cari karya<input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder="Cari judul…" /></label>
             <button
               type="button"
               className="wm-button"
@@ -350,7 +381,7 @@ export function WorksManager() {
               </button>
             </div>
           )}
-          <SortableList items={visible} disabled={busy} onChange={order}>
+          <SortableList items={visible} disabled={busy || !!query} onChange={order}>
             {(work, index, handle) => (
               <div className="cms-work-row">
                 {handle}
@@ -382,7 +413,8 @@ export function WorksManager() {
                   className="wm-button"
                   disabled={busy}
                   aria-label={`Hapus ${work.title}`}
-                  onClick={() => {
+                  onClick={async () => {
+                    if (!(await ask(`Hapus “${work.title}” dari draft?`))) return;
                     setRemoved({ item: work, index: items.indexOf(work) });
                     setItems(items.filter((item) => item.id !== work.id));
                   }}
@@ -392,11 +424,12 @@ export function WorksManager() {
               </div>
             )}
           </SortableList>
-          {!visible.length && <p className="wm-empty">Belum ada karya.</p>}
+          {!visible.length && <p className="wm-empty">{query?'Tidak ada judul yang cocok.':'Belum ada karya.'}</p>}
         </>
       )}
       {item && (
         <fieldset className="cms-editor-fields" disabled={busy}>
+          <div className="cms-edit-heading"><h2>Detail karya</h2>{item.caseStudy&&<button type="button" className="wm-button wm-primary" onClick={openVisual}>{dirty?'Simpan & buka editor visual':'Edit studi kasus secara visual'}</button>}</div>
           <div className="cms-inline-fields">
             <label>
               Judul
@@ -411,7 +444,7 @@ export function WorksManager() {
               <select
                 value={item.kind}
                 onChange={(e) => {
-                  update(item.id, { kind: e.target.value as WorkKind,caseStudy:e.target.value==='webapp'?item.caseStudy:undefined });
+                  update(item.id, setWorkKind(item, e.target.value as WorkKind));
                   setKind(e.target.value as WorkKind);
                 }}
               >
@@ -461,27 +494,14 @@ export function WorksManager() {
                   type="checkbox"
                   checked={!!item.caseStudy}
                   onChange={(e) =>
-                    update(item.id, {
-                      url:e.target.checked?item.url:item.caseStudy?.appUrl||'',
-                      caseStudy: e.target.checked
-                        ? {
-                            slug: `karya-${item.id.slice(0, 8)}`,
-                            problem: '',
-                            solution: '',
-                            impact: '',
-                            appUrl: item.url.startsWith('https:')
-                              ? item.url
-                              : '',
-                            blocks: [],
-                          }
-                        : undefined,
-                    })
+                    update(item.id, setCaseStudyEnabled(item, e.target.checked))
                   }
                 />
                 Dengan studi kasus
               </label>
             )}
           </div>
+          {!item.caseStudy&&item.archivedCaseStudy&&<p className="wm-message" role="status">{item.kind==='webapp'?'Isi studi kasus tersimpan. Aktifkan kembali untuk melanjutkan.':'Isi studi kasus tersimpan. Pilih Website / Apps untuk mengaktifkannya kembali.'}</p>}
           {!item.caseStudy && item.kind !== 'design' && (
             <label>
               {item.kind === 'video' ? 'Link Instagram' : 'Link aplikasi'}
@@ -494,7 +514,9 @@ export function WorksManager() {
           )}
           {item.kind==='video'&&<details className="cms-more"><summary>Video autoplay</summary><div className="cms-block-fields"><label>File video MP4 / WebM<input value={item.videoFile||''} inputMode="url" onChange={event=>update(item.id,{videoFile:event.target.value})}/></label><FileDrop folder="works" accept="video/mp4,video/webm" disabled={busy} onBusyChange={setBusy} onUploaded={files=>update(item.id,{videoFile:files[0].url})}/></div></details>}
           {item.caseStudy && (
-            <>
+            <details className="cms-more cms-case-form">
+              <summary>Pengaturan studi kasus & editor blok</summary>
+              <div className="cms-block-fields">
               <div className="cms-inline-fields">
                 <label>
                   Slug
@@ -557,7 +579,8 @@ export function WorksManager() {
                 <Eye size={18} />
                 Preview draft tersimpan
               </a>
-            </>
+              </div>
+            </details>
           )}
           <details className="cms-more">
             <summary>Pengaturan lainnya</summary>

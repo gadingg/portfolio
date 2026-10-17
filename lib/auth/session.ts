@@ -25,5 +25,6 @@ export async function verifyAdminSession(): Promise<boolean> {
 
 export async function destroyAdminSession(): Promise<void> {
   const supabase = await createServerSupabaseClient();
-  await supabase.auth.signOut();
+  const {error}=await supabase.auth.signOut();
+  if(error)throw Error('Sesi belum bisa ditutup. Coba lagi.');
 }
