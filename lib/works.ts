@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CaseStudySchema } from './content-blocks';
+import { CaseStudySchema, mediaURL } from './content-blocks';
 
 export const workKinds = ['webapp', 'design', 'video'] as const;
 export type WorkKind = (typeof workKinds)[number];
@@ -52,6 +52,7 @@ const imageURL = (value: string) => {
 };
 
 export const WorkDraftItemSchema = z.object({
+  videoFile: mediaURL.refine(value=>!value||/\.(mp4|webm)(?:[?#].*)?$/i.test(value),'Gunakan file MP4 atau WebM.').optional(),
   id: z
     .string()
     .min(1)
@@ -89,7 +90,7 @@ export const WorkItemSchema = WorkDraftItemSchema.superRefine((item, ctx) => {
       path: ['url'],
       message: 'Gunakan link Instagram /reel/, /p/, atau /tv/.',
     });
-  if (item.published && !item.demo && item.kind !== 'design' && !item.url)
+  if (item.published && !item.demo && item.kind !== 'design' && !item.url && !(item.kind==='video'&&item.videoFile))
     ctx.addIssue({
       code: 'custom',
       path: ['url'],

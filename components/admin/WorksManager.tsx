@@ -492,6 +492,7 @@ export function WorksManager() {
               />
             </label>
           )}
+          {item.kind==='video'&&<details className="cms-more"><summary>Video autoplay</summary><div className="cms-block-fields"><label>File video MP4 / WebM<input value={item.videoFile||''} inputMode="url" onChange={event=>update(item.id,{videoFile:event.target.value})}/></label><FileDrop folder="works" accept="video/mp4,video/webm" disabled={busy} onBusyChange={setBusy} onUploaded={files=>update(item.id,{videoFile:files[0].url})}/></div></details>}
           {item.caseStudy && (
             <>
               <div className="cms-inline-fields">

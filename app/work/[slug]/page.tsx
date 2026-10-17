@@ -68,7 +68,7 @@ export async function generateMetadata({
     openGraph: {
       title: `${project.title} · Case Study`,
       description: projectPresentations[slug]?.intro || project.description,
-      images: useBriefArtwork(project) ? (slug === 'internal-listing-hub' ? [{ url: '/assets/work/listing-hub.jpg', alt: project.title }] : []) : [
+      images: !project.cover_image_url||useBriefArtwork(project) ? (slug === 'internal-listing-hub' ? [{ url: '/assets/work/listing-hub.jpg', alt: project.title }] : []) : [
         {
           url: project.cover_image_url,
           width: 1200,

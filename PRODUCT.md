@@ -18,7 +18,7 @@ Creative Marketer & Problem Solver. Design is a strong execution skill; web-app 
 English headlines and action labels; natural, professional-casual Indonesian explanations. The supplied master brief is the content source. No invented metrics, testimonials, or sole attribution of property revenue to advertising.
 
 ## Constraints
-The latest request prioritizes visual work and problem solving over roles, dates, timelines, and resume metadata. Preserve existing project publishing and gallery management through Supabase. Keep existing public project URLs and contact channels. No production data writes or deployment requested.
+The latest request prioritizes visual work and problem solving over roles, dates, timelines, and resume metadata. Preserve existing project publishing and gallery management through Supabase. Keep existing public project URLs and contact channels. The October 17 request authorizes targeted CMS content updates for the two requested case studies and seven Instagram video slots. Preserve unrelated draft and published content. Deployment is not requested for this change.
 
 ## References
 - `docs/briefs/2026-10-12-master-portfolio-content.md`
@@ -26,3 +26,5 @@ The latest request prioritizes visual work and problem solving over roles, dates
 
 ## Implementation Authorization
 The user approved continuation with “Go ahead.” Existing dark and orange identity is retained as the conservative interpretation of the master brief; composition and interaction are refined to meet the latest request.
+
+The October 17 request also approves icon-only pause/resume controls and five-second advancement for the existing work carousels. See `docs/briefs/2026-10-17-works-videos.md` for the supplied Reel, example slots, and playback limitations.

@@ -235,7 +235,7 @@
     "dos": [
       "**Do** preserve separate structural and interactive border colors.",
       "**Do** keep actual artwork prominent, with captions outside its frame except for the video thumbnail's bottom title overlay.",
-      "**Do** retain visible action labels, keyboard focus, and explicit loading or failure messages.",
+      "**Do** retain visible action labels, keyboard focus, and explicit loading or failure messages; carousel pause/resume controls use icons with state-specific accessible names and tooltips.",
       "**Do** respect reduced motion and let mobile action groups wrap."
     ],
     "rules": [

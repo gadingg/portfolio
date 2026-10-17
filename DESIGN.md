@@ -170,7 +170,7 @@ Depth comes mainly from tonal surfaces, thin borders, artwork cropping, and spac
 
 Controls are compact rounded rectangles, not pills. Work imagery and dialogs use the artwork radius. Retained archive styles use the control radius for imagery and the filter radius for filters. Borders are one pixel. Large artwork clips to its frame; captions remain outside except for the bottom-aligned video title and play label.
 
-Line icons use current color, rounded stroke ends, and a standard 20px size with 1.7 stroke width. Compact contextual icons use 16px or 17px. Pair icons with visible action labels; the lightbox's previous and next controls instead carry accessible names.
+Line icons use current color, rounded stroke ends, and a standard 20px size with 1.7 stroke width. Compact contextual icons use 16px or 17px. Pair icons with visible action labels; the lightbox's previous and next controls instead carry accessible names. Carousel pause/resume controls use icons with state-specific `aria-label` and `title` text.
 
 ## Components
 
@@ -188,7 +188,7 @@ Collection navigation uses outline links that wrap; `aria-current="page"` select
 
 Case-study imagery forms large standalone surfaces beside story copy. Work cards use landscape 4:3 app artwork, contained 4:5 design imagery, and 3:4 video thumbnails. App and design titles sit below the frame. Video titles and “Watch video” sit at bottom left over a bottom-only dark scrim; this is a media-readability treatment, not a new interface gradient. Design imagery exposes an “Enlarge” action. Loading, empty, and recovery content retains readable text and a retry action where implemented; missing media gets an explicit message. Example content carries a visible “Data contoh” label.
 
-Homepage carousels use scroll snapping, previous/next buttons, arrow keys, and a position indicator. Visual Design can advance every five seconds with a visible pause/resume control; hover, focus, touch, hidden tabs, offscreen content, and open dialogs pause advancement. Reduced motion starts it paused and removes smooth movement. Branding & Video is manually navigated. Collection pages reuse the cards in a grid.
+Homepage carousels use scroll snapping, previous/next buttons, arrow keys, and a position indicator. Visual Design and Branding & Video advance every five seconds with an icon-only pause/resume control; hover, focus, touch, hidden tabs, offscreen content, and open dialogs pause advancement. Reduced motion starts them paused and removes smooth movement. Collection pages reuse the cards in a grid.
 
 ### Navigation
 
@@ -209,7 +209,7 @@ Focus outlines are orange, three pixels wide with a five-pixel offset; the conta
 ### Do:
 - **Do** preserve separate structural and interactive border colors.
 - **Do** keep actual artwork prominent, with captions outside its frame except for the video thumbnail's bottom title overlay.
-- **Do** retain visible action labels, keyboard focus, and explicit loading or failure messages.
+- **Do** retain visible action labels, keyboard focus, and explicit loading or failure messages; carousel pause/resume controls use icons with state-specific accessible names and tooltips.
 - **Do** respect reduced motion and let mobile action groups wrap.
 
 ### Don't:

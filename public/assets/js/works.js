@@ -32,8 +32,12 @@
   modal.addEventListener('keydown',e=>{if(modal.dataset.mode==='design'&&['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();showDesign(imageIndex+(e.key==='ArrowLeft'?-1:1));}});
   function openVideo(item, trigger) {
     openDialog(trigger,item.title);modal.dataset.mode='video';
+    const file=safeURL(item.videoFile);
+    if(file&&/\.(mp4|webm)(?:[?#].*)?$/i.test(file)){
+      const video=node('video','portfolio-video-player');video.src=file;video.poster=safeURL(item.image);video.controls=true;video.autoplay=true;video.muted=true;video.playsInline=true;video.loop=true;body.append(video);video.play().catch(()=>{});return;
+    }
     const url=instagram(item.url);
-    if (!url) {
+    if (!url||/\/DEMO_VIDEO_\d+\//.test(url)) {
       body.append(image(item.image,item.imageAlt||item.title),node('p','demo-explanation','Ini preview data contoh. Ganti dengan link Instagram melalui menu Works di admin untuk menampilkan video.'));
       return;
     }
@@ -79,9 +83,9 @@
     let paused=reduced.matches, hover=false, focus=false, visible=false;
     const toggle=controls.querySelector('[data-carousel-toggle]');const position=controls.querySelector('.carousel-position');
     if(!toggle||!position)return;
-    const automatic=group.dataset.workKind==='design';toggle.hidden=!automatic;
+    const automatic=['design','video'].includes(group.dataset.workKind);toggle.hidden=!automatic;
     list.tabIndex=0;list.setAttribute('aria-label',`${group.querySelector('h3')?.textContent||'Works'} carousel`);
-    const update=()=>{const overflow=list.scrollWidth>list.clientWidth+4;controls.hidden=!overflow;const children=[...list.children];const left=list.getBoundingClientRect().left;let index=0,min=Infinity;children.forEach((child,i)=>{const distance=Math.abs(child.getBoundingClientRect().left-left);if(distance<min){min=distance;index=i;}});position.textContent=`${index+1} / ${children.length}`;toggle.textContent=paused?'Resume slides':'Pause slides';toggle.setAttribute('aria-pressed',String(paused));};
+    const update=()=>{const overflow=list.scrollWidth>list.clientWidth+4;controls.hidden=!overflow;const children=[...list.children];const left=list.getBoundingClientRect().left;let index=0,min=Infinity;children.forEach((child,i)=>{const distance=Math.abs(child.getBoundingClientRect().left-left);if(distance<min){min=distance;index=i;}});position.textContent=`${index+1} / ${children.length}`;const label=paused?'Resume slides':'Pause slides';toggle.replaceChildren(icon(paused?'play':'pause'));toggle.setAttribute('aria-label',label);toggle.title=label;toggle.setAttribute('aria-pressed',String(paused));};
     const move=direction=>{const step=(list.children[0]?.getBoundingClientRect().width||list.clientWidth)+24;const max=list.scrollWidth-list.clientWidth;const next=direction>0?(list.scrollLeft>=max-4?0:Math.min(max,list.scrollLeft+step)):(list.scrollLeft<=4?max:Math.max(0,list.scrollLeft-step));list.scrollTo({left:next,behavior:reduced.matches?'instant':'smooth'});};
     controls.querySelector('[data-carousel-prev]')?.addEventListener('click',()=>move(-1));controls.querySelector('[data-carousel-next]')?.addEventListener('click',()=>move(1));toggle.addEventListener('click',()=>{paused=!paused;update();});
     group.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')hover=true;});group.addEventListener('pointerleave',()=>hover=false);

@@ -344,6 +344,7 @@ html:has(.showcase dialog[open]){overflow:hidden}
 .showcase .work-dialog-bottom{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-top:20px;font-size:14px}
 .showcase .demo-explanation{max-width:55ch;padding:20px;font-size:15px;color:var(--secondary)}
 .showcase .instagram-player{border:0;background:#fff;width:min(100%,540px);height:min(700px,70dvh);border-radius:8px}
+.showcase .portfolio-video-player{display:block;width:min(100%,720px);max-height:70dvh;border-radius:8px;background:#060706}
 .showcase .collection-page{padding-block:40px 96px;min-height:70vh}
 .showcase .collection-intro{margin:28px 0 40px}
 .showcase .collection-intro h1{font-size:clamp(38px,6vw,72px)}

@@ -14,6 +14,7 @@ import {
 import { WorksSchema, type WorkItem } from '@/lib/works';
 import { readCMS, readPublishedCMS, writeCMS, CMSConflict } from './cms';
 import type { Project } from '@/types/portfolio';
+import { applyRequestedWorks } from '@/lib/work-content-update';
 
 const bucket = 'portfolio-public';
 const filename = 'content/works.json';
@@ -242,7 +243,7 @@ export async function initialWorks() {
         },
       });
   }
-  return { items };
+  return { items:applyRequestedWorks(items) };
 }
 export const getWorksDocument = () => readCMS('works', initialWorks);
 export async function getWorks() {
