@@ -1,12 +1,13 @@
 import { z } from 'zod';
 import { contentURL, mediaURL } from './content-blocks';
 import { VisualLayoutSchema } from './visual-layout';
+export const defaultLinkedIn = 'https://www.linkedin.com/in/gadingutama/';
 export type SiteField = {
   key: string;
   label: string;
   group: string;
   selector: string;
-  attribute?: 'href' | 'src' | 'alt' | 'content';
+  attribute?: 'href' | 'src' | 'alt' | 'content' | 'aria-label';
   lines?: boolean;
 };
 export const siteFields: SiteField[] = [
@@ -59,65 +60,6 @@ export const siteFields: SiteField[] = [
     label: 'Tombol kontak',
     group: 'Hero',
     selector: '.hero-bottom .text-link',
-  },
-  {
-    key: 'heroImage',
-    label: 'Gambar pembuka',
-    group: 'Hero',
-    selector: '.strip-app img',
-    attribute: 'src',
-  },
-  {
-    key: 'heroImageAlt',
-    label: 'Deskripsi gambar',
-    group: 'Hero',
-    selector: '.strip-app img',
-    attribute: 'alt',
-  },
-  {
-    key: 'heroImageLink',
-    label: 'Tautan gambar pembuka',
-    group: 'Hero',
-    selector: '.strip-app',
-    attribute: 'href',
-  },
-  {
-    key: 'heroImageCaption',
-    label: 'Caption pembuka',
-    group: 'Hero',
-    selector: '.strip-app .strip-caption > span:first-child',
-  },
-  {
-    key: 'heroThinking',
-    label: 'Judul panel kanan',
-    group: 'Hero',
-    selector: '.thinking-word',
-    lines: true,
-  },
-  {
-    key: 'heroThinkingLink',
-    label: 'Tautan panel kanan',
-    group: 'Hero',
-    selector: '.strip-thinking',
-    attribute: 'href',
-  },
-  {
-    key: 'heroThinkingCaption',
-    label: 'Caption panel kanan',
-    group: 'Hero',
-    selector: '.strip-thinking .strip-caption > span:first-child',
-  },
-  {
-    key: 'tagline',
-    label: 'Bidang kerja',
-    group: 'Hero',
-    selector: '.hero-signoff span:first-child',
-  },
-  {
-    key: 'signature',
-    label: 'Signature',
-    group: 'Hero',
-    selector: '.hero-signoff span:last-child',
   },
   {
     key: 'worksTitle',
@@ -189,24 +131,12 @@ export const siteFields: SiteField[] = [
     group: 'Proses',
     selector: '#process-title',
   },
-  {
-    key: 'processIntro',
-    label: 'Pengantar proses',
-    group: 'Proses',
-    selector: '.process-section > .section-heading p',
-  },
   ...Array.from({ length: 5 }, (_, i) => [
     {
       key: `processTitle${i}`,
       label: `Langkah ${i + 1}`,
       group: 'Proses',
       selector: `.principles li:nth-child(${i + 1}) h3`,
-    },
-    {
-      key: `processBody${i}`,
-      label: `Isi langkah ${i + 1}`,
-      group: 'Proses',
-      selector: `.principles li:nth-child(${i + 1}) p`,
     },
   ]).flat(),
   {
@@ -259,14 +189,22 @@ export const siteFields: SiteField[] = [
     key: 'instagram',
     label: 'Tautan Instagram',
     group: 'Kontak',
-    selector: '.contact-bottom a',
+    selector: '.contact-bottom a[data-social="instagram"], .contact-bottom a[href*="instagram.com"]',
     attribute: 'href',
   },
   {
     key: 'instagramLabel',
     label: 'Label Instagram',
     group: 'Kontak',
-    selector: '.contact-bottom a',
+    selector: '.contact-bottom a[data-social="instagram"], .contact-bottom a[href*="instagram.com"]',
+    attribute: 'aria-label',
+  },
+  {
+    key: 'linkedin',
+    label: 'Tautan LinkedIn',
+    group: 'Kontak',
+    selector: '.contact-bottom a[data-social="linkedin"]',
+    attribute: 'href',
   },
   {
     key: 'footerSignature',
@@ -313,7 +251,7 @@ export const defaultCV = {
 export const SiteSchema = z
   .object({
     layout: VisualLayoutSchema.optional(),
-    values: z.record(z.string().max(4000)),
+    values: z.record(z.string().max(4000)).transform((values): Record<string, string> => ({ linkedin: defaultLinkedIn, ...values })),
     cv: z.object({
       name: z.string().min(1).max(150),
       role: z.string().max(300),

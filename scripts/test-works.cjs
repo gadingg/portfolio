@@ -68,7 +68,7 @@ test('public Works errors do not silently produce an empty collection',async()=>
 test('site content is escaped and the original public sections survive rendering',async()=>{
  const site=loader({'./cms':{}})('lib/db/site.ts');const initial=await site.initialSite();initial.values.headline='<script>alert(1)</script>\nKeep the visual';initial.values.seoTitle='A < B';
  const rendered=await site.renderHomepage(initial);assert.ok(rendered.includes('&lt;script&gt;alert(1)&lt;/script&gt;'));assert.ok(rendered.includes('id="work"'));assert.ok(rendered.includes('id="about"'));assert.ok(rendered.includes('<title>A &lt; B</title>'));
- const $=require('cheerio').load(rendered);assert.equal($('.hero-signoff > span').first().text(),initial.values.tagline);assert.equal($('.hero-signoff > span').last().text(),initial.values.signature);
+ const $=require('cheerio').load(rendered);assert.equal($('.hero-signoff, .hero .work-strip').length,0);assert.equal($('.hero').next().attr('id'),'work');
 });
 test('private media is exposed only by a visible published reference',async()=>{
  const url='/api/media/works/1-aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa.png';let docs=[{id:'works',published:{items:[{published:false,image:url}]}}];

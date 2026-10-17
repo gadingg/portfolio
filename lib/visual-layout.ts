@@ -15,12 +15,12 @@ export function cleanVisualLayout(input: unknown): VisualLayout {
   const html = sanitize(layout.html, {
     allowedTags: [...sanitize.defaults.allowedTags, 'section', 'article', 'header', 'footer', 'main', 'nav', 'dialog', 'img', 'figure', 'figcaption', 'video', 'source', 'button', 'details', 'summary', 'svg', 'use', 'path', 'circle', 'line', 'polyline', 'rect'],
     allowedAttributes: {
-      '*': ['id', 'class', 'title', 'role', 'aria-*', 'data-work-*', 'data-works*', 'data-carousel', 'data-carousel-*', 'data-close-dialog', 'data-retry-works', 'data-kind', 'data-category', 'data-cms-*', 'style', 'hidden', 'lang', 'tabindex'],
+      '*': ['id', 'class', 'title', 'role', 'aria-*', 'data-work-*', 'data-works*', 'data-carousel', 'data-carousel-*', 'data-close-dialog', 'data-retry-works', 'data-kind', 'data-social', 'data-category', 'data-cms-*', 'style', 'hidden', 'lang', 'tabindex'],
       a: ['href', 'target', 'rel'], img: ['src', 'alt', 'width', 'height', 'loading'],
       video: ['src', 'poster', 'controls', 'muted', 'loop', 'playsinline', 'preload'], source: ['src', 'type'],
       details: ['open'], button: ['type', 'aria-label'],
-      svg: ['viewBox', 'width', 'height', 'fill', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'aria-hidden'],
-      use: ['href'], path: ['d', 'fill'], circle: ['cx', 'cy', 'r'], line: ['x1', 'y1', 'x2', 'y2'], polyline: ['points'], rect: ['x', 'y', 'width', 'height', 'rx'],
+      svg: ['viewBox', 'viewbox', 'preserveAspectRatio', 'preserveaspectratio', 'width', 'height', 'fill', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'aria-hidden'],
+      use: ['href'], path: ['d', 'fill', 'pathLength', 'pathlength'], circle: ['cx', 'cy', 'r'], line: ['x1', 'y1', 'x2', 'y2'], polyline: ['points'], rect: ['x', 'y', 'width', 'height', 'rx'],
     },
     allowedSchemes: ['https', 'mailto', 'tel'],
     allowProtocolRelative: false,

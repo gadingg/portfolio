@@ -2,7 +2,7 @@ import 'server-only';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { load } from 'cheerio';
-import { siteFields, defaultCV, type SiteContent } from '@/lib/site';
+import { siteFields, defaultCV, defaultLinkedIn, type SiteContent } from '@/lib/site';
 import { readCMS, readPublishedCMS } from './cms';
 import { cleanVisualLayout } from '../visual-layout';
 export const homepageTemplate = () =>
@@ -28,10 +28,20 @@ export async function initialSite(): Promise<SiteContent> {
   values.footerName = 'R. Gading Utama';
   return { values, cv: defaultCV };
 }
-export const getSiteDocument = () => readCMS('site', initialSite);
-export const getPublicSite = () => readPublishedCMS('site', initialSite);
+const withSiteDefaults = (site: SiteContent): SiteContent => {
+  const values: Record<string, string> = { linkedin: defaultLinkedIn, ...site.values };
+  if (values.worksIntro === 'Website, visual, dan video. Pilihan karya dari ide sampai hasil yang bisa digunakan.') values.worksIntro = 'Karya visual dan digital yang menyelesaikan masalah.';
+  return { ...site, values };
+};
+export const getSiteDocument = async () => {
+  const document = await readCMS('site', initialSite);
+  return { ...document, draft: withSiteDefaults(document.draft), published: withSiteDefaults(document.published) };
+};
+export const getPublicSite = async () => withSiteDefaults(await readPublishedCMS('site', initialSite));
 export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
   const $ = load(await homepageTemplate());
+  const values = withSiteDefaults(site).values;
+  const pipelineTrack = $('.process-pipeline > .pipeline-track').first().clone();
   if(site.layout){
     const layout=cleanVisualLayout(site.layout);
     $('body').html(layout.html);
@@ -41,7 +51,7 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
     siteFields.map((field) => [field.key, $(field.selector).first()]),
   );
   for (const field of siteFields) {
-    const value = site.values[field.key];
+    const value = values[field.key];
     if (value === undefined) continue;
     const el = targets.get(field.key)!;
     if (field.attribute) {
@@ -88,7 +98,38 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
     const icons=el.children('svg,.icon').clone();
     el.empty().text(value).append(icons);
   }
-  if(caseSlugs){const allowed=new Set(caseSlugs.map(slug=>`/work/${slug}`));$('a.strip-piece[href^="/work/"]').each((_i,element)=>{if(!allowed.has($(element).attr('href')||''))$(element).remove();});if($('.work-strip > a').length<3)$('.work-strip').addClass('cms-compact-strip');}
+  // Existing visual layouts retain their structure while public controls use the current treatment.
+  $('#menu-toggle').removeClass('button button-outline').attr({ 'aria-label': 'Open menu', title: 'Open menu' }).empty().append('<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#menu"></use></svg>');
+  $('.contact-bottom').each((_i, element) => {
+    const footer = $(element);
+    let links = footer.children('.social-links').first();
+    if (!links.length) { footer.append('<div class="social-links"></div>'); links = footer.children('.social-links').first(); }
+    for (const key of ['instagram', 'linkedin'] as const) {
+      let link = footer.find(`a[data-social="${key}"], a[href*="${key}.com"]`).first();
+      if (!values[key]) { link.remove(); continue; }
+      if (!link.length) { links.append(`<a data-social="${key}"></a>`); link = links.find(`a[data-social="${key}"]`).first(); }
+      link.attr({ class: 'social-icon', 'data-social': key, href: values[key], target: '_blank', rel: 'noopener noreferrer', title: key === 'instagram' ? 'Instagram' : 'LinkedIn', 'aria-label': key === 'instagram' ? values.instagramLabel || 'Instagram' : 'LinkedIn R. Gading Utama' });
+      link.empty().append(`<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#${key}"></use></svg>`);
+      links.append(link);
+    }
+  });
+  $('.hero .work-strip, .hero .hero-signoff').remove();
+  $('.process-section').each((_i, section) => {
+    const process = $(section), list = process.find('.principles').first();
+    process.find('.section-heading p, .principles li p').remove();
+    if (list.length && !list.parent().hasClass('process-pipeline')) list.wrap('<div class="process-pipeline"></div>');
+    const pipeline = process.find('.process-pipeline').first();
+    if (pipeline.length) {
+      pipeline.children('.pipeline-track').remove();
+      pipeline.prepend(pipelineTrack.clone());
+      const icons = ['search', 'lightbulb', 'code-2', 'users', 'check-check'];
+      list.children('li').each((index, element) => {
+        const step = $(element);
+        step.children('.pipeline-step-icon').remove();
+        step.prepend(`<svg class="icon pipeline-step-icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#${icons[index] || 'check-check'}"></use></svg>`);
+      });
+    }
+  });
   $('body').append('<script src="/assets/js/engagement.js" defer></script>');
   return $.html();
 }

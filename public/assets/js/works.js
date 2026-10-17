@@ -5,6 +5,7 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const node = (tag, cls, text) => { const el = document.createElement(tag); if (cls) el.className = cls; if (text !== undefined) el.textContent = text; return el; };
   const icon = name => { const svg = document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.classList.add('icon'); svg.setAttribute('aria-hidden','true'); const use = document.createElementNS(svg.namespaceURI,'use'); use.setAttribute('href',`/assets/icons/lucide.svg#${name}`); svg.append(use); return svg; };
+  const summary = text => { const value=(text||'').trim();return value.match(/^.*?[.!?](?=\s|$)/)?.[0]||value; };
   const safeURL = value => { if(typeof value!=='string'||!value.trim())return '';try { const u = new URL(value, location.origin); return (u.protocol === 'https:' || u.origin === location.origin) && !u.username && !u.password ? u.href : ''; } catch { return ''; } };
   const instagram = value => { try { const u = new URL(value); const match = u.pathname.match(/^\/(p|reel|tv)\/([\w-]+)\/?$/); return u.protocol === 'https:' && ['instagram.com','www.instagram.com'].includes(u.hostname) && !u.port && !u.username && !u.password && match ? `https://www.instagram.com/${match[1]}/${match[2]}/` : ''; } catch { return ''; } };
   const shell = document.querySelector('.showcase');
@@ -65,7 +66,7 @@
       media.addEventListener('click',()=>{imageItems=siblings;openDialog(media,item.title);modal.dataset.mode='design';showDesign(siblings.indexOf(item));});
     } else if(!href) media.addEventListener('click',()=>{openDialog(media,item.title);modal.dataset.mode='sample';body.append(node('p','demo-explanation','Contoh slot Website / Apps. Ganti kontennya dan tambahkan tujuan link melalui menu Works di admin.'));});
     card.append(media);
-    if(item.kind!=='video'){card.append(node(headingTag,'work-card-title',item.title));if(item.kind==='webapp')card.append(node('p','work-card-description',item.description));}
+    if(item.kind!=='video'){card.append(node(headingTag,'work-card-title',item.title));if(item.kind==='webapp')card.append(node('p','work-card-description',summary(item.description)));}
     const meta=node('div','work-card-meta');
     if(item.demo)meta.append(node('span','sample-label','Data contoh'));
     if(item.kind==='webapp'){
@@ -78,7 +79,6 @@
     if(meta.childElementCount)card.append(meta);
     return card;
   }
-  const carousels=[];
   function setupCarousel(group) {
     const list=group.querySelector('[data-works-list]'), controls=group.querySelector('.carousel-controls');
     if(!controls)return;
@@ -89,19 +89,21 @@
     list.tabIndex=0;list.setAttribute('aria-label',`${group.querySelector('h3')?.textContent||'Works'} carousel`);
     const update=()=>{const overflow=list.scrollWidth>list.clientWidth+4;controls.hidden=!overflow;const children=[...list.children];const left=list.getBoundingClientRect().left;let index=0,min=Infinity;children.forEach((child,i)=>{const distance=Math.abs(child.getBoundingClientRect().left-left);if(distance<min){min=distance;index=i;}});position.textContent=`${index+1} / ${children.length}`;const label=paused?'Resume slides':'Pause slides';toggle.replaceChildren(icon(paused?'play':'pause'));toggle.setAttribute('aria-label',label);toggle.title=label;toggle.setAttribute('aria-pressed',String(paused));};
     const move=direction=>{const step=(list.children[0]?.getBoundingClientRect().width||list.clientWidth)+24;const max=list.scrollWidth-list.clientWidth;const next=direction>0?(list.scrollLeft>=max-4?0:Math.min(max,list.scrollLeft+step)):(list.scrollLeft<=4?max:Math.max(0,list.scrollLeft-step));list.scrollTo({left:next,behavior:reduced.matches?'instant':'smooth'});};
-    controls.querySelector('[data-carousel-prev]')?.addEventListener('click',()=>move(-1));controls.querySelector('[data-carousel-next]')?.addEventListener('click',()=>move(1));toggle.addEventListener('click',()=>{paused=!paused;update();});
-    group.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')hover=true;});group.addEventListener('pointerleave',()=>hover=false);
-    group.addEventListener('focusin',()=>focus=true);group.addEventListener('focusout',e=>{focus=group.contains(e.relatedTarget);});
+    const tick=()=>{if(automatic&&!paused&&!hover&&!focus&&visible&&!document.hidden&&!document.querySelector('dialog[open]')&&list.scrollWidth>list.clientWidth+4)move(1);};
+    let timer;
+    const restart=()=>{clearInterval(timer);timer=setInterval(tick,5000);};
+    controls.querySelector('[data-carousel-prev]')?.addEventListener('click',()=>{move(-1);restart();});controls.querySelector('[data-carousel-next]')?.addEventListener('click',()=>{move(1);restart();});toggle.addEventListener('click',()=>{paused=!paused;if(!paused){hover=false;focus=false;}restart();update();});
+    list.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')hover=true;});list.addEventListener('pointerleave',()=>{hover=false;restart();});
+    list.addEventListener('focusin',()=>focus=true);list.addEventListener('focusout',e=>{focus=list.contains(e.relatedTarget);if(!focus)restart();});
     list.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){paused=true;update();}});
     list.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();move(e.key==='ArrowLeft'?-1:1);}});
     list.addEventListener('scroll',update,{passive:true});new ResizeObserver(update).observe(list);
-    new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;},{threshold:.3}).observe(list);
+    new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)restart();},{threshold:.3}).observe(list);
     reduced.addEventListener('change',()=>{paused=reduced.matches;update();});
-    carousels.push(()=>{if(automatic&&!paused&&!hover&&!focus&&visible&&!document.hidden&&!document.querySelector('dialog[open]')&&list.scrollWidth>list.clientWidth+4)move(1);});
-    group._updateCarousel=update;update();
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)restart();});
+    group._updateCarousel=update;update();restart();
   }
   groups.filter(g=>g.dataset.carousel).forEach(setupCarousel);
-  setInterval(()=>carousels.forEach(tick=>tick()),5000);
   let loading=false;
   async function load() {
     if(loading)return;loading=true;const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),12000);

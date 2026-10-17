@@ -16,8 +16,9 @@ export async function GET(request:NextRequest){
     const target=targetSchema.parse(request.nextUrl.searchParams.get('target'));
     if(target==='home'){
       const [doc,works]=await Promise.all([getSiteDocument(),getWorksDocument()]);
-      const seedHtml=doc.draft.layout?undefined:await renderHomepage(doc.draft,works.draft.items.filter(item=>item.published&&item.caseStudy).flatMap(item=>[item.caseStudy!.slug,...(item.aliases||[])]));
-      return NextResponse.json({revision:doc.revision,layout:doc.draft.layout?cleanVisualLayout(doc.draft.layout):undefined,seedHtml,title:'Homepage',seedUrl:'/api/admin/preview/site',previewUrl:'/api/admin/preview/site'}, {headers:{'Cache-Control':'no-store'}});
+      const rendered=await renderHomepage(doc.draft,works.draft.items.filter(item=>item.published&&item.caseStudy).flatMap(item=>[item.caseStudy!.slug,...(item.aliases||[])]));
+      const layout=doc.draft.layout?cleanVisualLayout({html:load(rendered)('body').html()||'',css:doc.draft.layout.css}):undefined;
+      return NextResponse.json({revision:doc.revision,layout,seedHtml:layout?undefined:rendered,title:'Homepage',seedUrl:'/api/admin/preview/site',previewUrl:'/api/admin/preview/site'}, {headers:{'Cache-Control':'no-store'}});
     }
     const doc=await getWorksDocument(),item=doc.draft.items.find(item=>item.id===target);
     if(!item?.caseStudy)return NextResponse.json({error:'Studi kasus tidak ditemukan.'},{status:404});

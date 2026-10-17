@@ -6,7 +6,7 @@ const { renderToStaticMarkup } = require('react-dom/server');
 const icons = {
   'arrow-right': 'ArrowRight', 'arrow-up-right': 'ArrowUpRight',
   'arrow-left': 'ArrowLeft', 'arrow-up': 'ArrowUp', 'arrow-down': 'ArrowDown',
-  'external-link': 'ExternalLink', menu: 'Menu', x: 'X',
+  'external-link': 'ExternalLink', menu: 'Menu', x: 'X', instagram: 'Instagram', linkedin: 'Linkedin', lightbulb: 'Lightbulb', 'code-2': 'CodeXml', users: 'Users',
   'message-circle': 'MessageCircle', 'file-text': 'FileText',
   'maximize-2': 'Maximize2', 'chevron-left': 'ChevronLeft',
   'chevron-right': 'ChevronRight', 'refresh-cw': 'RefreshCw',

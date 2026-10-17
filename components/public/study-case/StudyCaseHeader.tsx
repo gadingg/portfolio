@@ -15,7 +15,7 @@ export function StudyCaseHeader({ projectTitle }: { projectTitle?: string }) {
         <a href="/#work">Selected works</a><a href="/#about">About</a>
       </nav>
       <a className="header-contact" href="/#contact">Let's talk <MessageCircle className="icon" aria-hidden="true" /></a>
-      <button type="button" className="button button-outline menu-toggle" aria-controls="case-menu" aria-expanded={isOpen} onClick={() => { dialogRef.current?.showModal(); setIsOpen(true); }}>Menu <Menu className="icon" aria-hidden="true" /></button>
+      <button type="button" className="menu-toggle" aria-label="Open menu" title="Open menu" aria-controls="case-menu" aria-expanded={isOpen} onClick={() => { dialogRef.current?.showModal(); setIsOpen(true); }}><Menu className="icon" aria-hidden="true" /></button>
     </header>
     <dialog id="case-menu" className="menu-dialog" ref={dialogRef} aria-labelledby="case-menu-title" onClose={() => setIsOpen(false)} onClick={(event) => {
       if (event.target !== event.currentTarget) return;

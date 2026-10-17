@@ -153,7 +153,7 @@ Case-study page titles use `clamp(34px,5.5vw,72px)` with 1.12 leading. Supportin
 
 Content shells stop at 1280px. Mobile shells subtract 40px from the viewport; from 600px they subtract 64px. The sticky header is full-width and aligns its desktop contents to the same maximum width.
 
-The system is mobile-first. At 600px, the hero artwork strip becomes three unequal columns; below that its first piece spans both columns. Work grids use one column below 600px, two from 600px, and three from 960px. At 960px, desktop navigation replaces the menu button, and existing case-study feature stories become two columns. Paragraph columns remain constrained for reading.
+The system is mobile-first. Work grids use one column below 600px, two from 600px, and three from 960px. At 960px, desktop navigation replaces the menu button, existing case-study feature stories become two columns, and the process pipeline changes from vertical to horizontal. Paragraph columns remain constrained for reading.
 
 Selected Works uses 80px vertical padding below 960px and the desktop section spacing above it. Its child groups use dividers and generous separation. Process sections retain the mobile and desktop section spacing; about uses 88px vertical padding on desktop. Repeated gaps and insets use the frontmatter rhythm. The three collections and homepage grid/carousel composition are specified in `docs/briefs/2026-10-15-works-collections.md`.
 
@@ -170,7 +170,7 @@ Depth comes mainly from tonal surfaces, thin borders, artwork cropping, and spac
 
 Controls are compact rounded rectangles, not pills. Work imagery and dialogs use the artwork radius. Retained archive styles use the control radius for imagery and the filter radius for filters. Borders are one pixel. Large artwork clips to its frame; captions remain outside except for the bottom-aligned video title and play label.
 
-Line icons use current color, rounded stroke ends, and a standard 20px size with 1.7 stroke width. Compact contextual icons use 16px or 17px. Pair icons with visible action labels; the lightbox's previous and next controls instead carry accessible names. Carousel pause/resume controls use icons with state-specific `aria-label` and `title` text.
+Line icons use current color, rounded stroke ends, and a standard 20px size with 1.7 stroke width. Compact contextual icons use 16px or 17px. Pair icons with visible action labels; the lightbox's previous and next controls instead carry accessible names. Carousel pause/resume controls use icons with state-specific `aria-label` and `title` text. The mobile menu trigger and footer social links are also icon-only: 24px Lucide icons inside at least 44px targets, with accessible names and tooltips. These controls have transparent backgrounds and no border or surrounding rectangle.
 
 ## Components
 
@@ -188,11 +188,15 @@ Collection navigation uses outline links that wrap; `aria-current="page"` select
 
 Case-study imagery forms large standalone surfaces beside story copy. Work cards use landscape 4:3 app artwork, contained 4:5 design imagery, and 3:4 video thumbnails. App and design titles sit below the frame. Video titles and “Watch video” sit at bottom left over a bottom-only dark scrim; this is a media-readability treatment, not a new interface gradient. Design imagery exposes an “Enlarge” action. Loading, empty, and recovery content retains readable text and a retry action where implemented; missing media gets an explicit message. Example content carries a visible “Data contoh” label.
 
-Homepage carousels use scroll snapping, previous/next buttons, arrow keys, and a position indicator. Visual Design and Branding & Video advance every five seconds with an icon-only pause/resume control; hover, focus, touch, hidden tabs, offscreen content, and open dialogs pause advancement. Reduced motion starts them paused and removes smooth movement. Collection pages reuse the cards in a grid.
+Homepage carousels use scroll snapping, previous/next buttons, arrow keys, and a position indicator. Visual Design and Branding & Video advance every five seconds with an icon-only pause/resume control. Hover and focus pause advancement only within the artwork list; the separate controls do not hold the timer paused. Resume starts a fresh five-second interval even while its control retains focus. Touch interaction pauses the carousel; hidden tabs, offscreen content, and open dialogs suspend advancement. Reduced motion starts carousels paused and removes smooth movement; explicit Resume permits automatic advancement. Collection pages reuse the cards in a grid.
+
+Works card descriptions show the opening sentence and occupy at most two lines, with overflow clipped by an ellipsis. The Selected Works introduction has the same two-line limit. Full descriptions remain available in the CMS and case studies; this is a compact preview treatment rather than a content limit.
 
 ### Navigation
 
-The header remains opaque and sticky. Desktop links are quiet until hovered; the contact destination has stronger weight. Mobile navigation opens a native dialog with large stacked links, separating rules, and a labelled close button. Preserve the skip link and native dialog keyboard behavior.
+The header remains opaque and sticky. Desktop links are quiet until hovered; the contact destination has stronger weight. Below the desktop breakpoint, a borderless hamburger icon opens mobile navigation. Its 44px target contains a 24px icon, turns orange on hover, and keeps the shared keyboard-focus outline. Mobile navigation opens a native dialog with large stacked links, separating rules, and a labelled close button. Preserve the skip link and native dialog keyboard behavior.
+
+Footer Instagram and LinkedIn links use the same 24px icon scale and minimum 44px targets, arranged with a 12px gap. They inherit dark text on the orange contact surface and reduce opacity on hover. Retain accessible destination names, tooltips, and the contact surface's dark focus outline. An empty configured destination omits its link.
 
 ### Dialogs and disclosures
 
@@ -204,12 +208,20 @@ Capability disclosures use native details/summary, horizontal rules, and a minim
 
 Focus outlines are orange, three pixels wide with a five-pixel offset; the contact surface changes the outline to near-black for visibility. Common color transitions take .2s. Artwork transforms take .5–.7s with the custom ease recorded in the sidecar. Hover image transformations run only on hover-capable devices when reduced motion is not requested. Reduced motion removes animations and transitions and disables smooth scrolling.
 
+### Process pipeline
+
+How I Work uses a continuous pipe with rounded elbows connecting five compact process modules. Each module carries a 24px Lucide icon, a subdued tabular sequence number from 01 to 05, and the existing title. There is no supporting introduction or step paragraph. The pipe has a structural outer stroke, a dark inner channel, and a thin orange progress core; this geometry belongs to the process component rather than general navigation or content rows.
+
+Below 960px, modules alternate left and right along the vertical pipe within a 650px section. From 960px, modules alternate above and below the horizontal pipe within a 280px section. Modules use the artwork corner radius, a fine outline, and a flat canvas fill. Reached modules gain an orange outline and icon; future modules retain quiet icons.
+
+GSAP ScrollTrigger fills the pipe in direct relation to native scrolling, with .35s scrub catch-up and no pinning. A small bright packet follows the leading edge only while progress lies between the endpoints. Reverse scrolling reverses both fill and packet; there is no idle loop. Without JavaScript or with reduced motion, the fully connected static pipe and all titles remain visible without the packet. This presentation is also applied to stored homepage layouts without changing their saved step titles. The surface-specific revision is recorded in `docs/briefs/2026-10-17-pipe-refinement.md`.
+
 ## Do's and Don'ts
 
 ### Do:
 - **Do** preserve separate structural and interactive border colors.
 - **Do** keep actual artwork prominent, with captions outside its frame except for the video thumbnail's bottom title overlay.
-- **Do** retain visible action labels, keyboard focus, and explicit loading or failure messages; carousel pause/resume controls use icons with state-specific accessible names and tooltips.
+- **Do** retain visible action labels, keyboard focus, and explicit loading or failure messages; menu, social, and carousel pause/resume controls use icons with accessible names and tooltips, with state-specific names for pause/resume.
 - **Do** respect reduced motion and let mobile action groups wrap.
 
 ### Don't:

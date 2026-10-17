@@ -11,6 +11,9 @@
   <link rel="stylesheet" href="/assets/css/visual-content.css">
   <script src="/assets/js/showcase.js" defer></script>
   <script src="/assets/js/works.js" defer></script>
+  <script src="/assets/vendor/gsap/gsap.min.js" defer></script>
+  <script src="/assets/vendor/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="/assets/js/process-pipeline.js" defer></script>
 </head>
 <body class="showcase">
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -20,7 +23,7 @@
       <a href="#work">Selected works</a><a href="#about">About</a>
     </nav>
     <a class="header-contact" href="#contact">Let's talk <svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#message-circle"></use></svg></a>
-    <button class="button button-outline menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" id="menu-toggle">Menu <svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#menu"></use></svg></button>
+    <button class="menu-toggle" type="button" aria-label="Open menu" title="Open menu" aria-controls="mobile-menu" aria-expanded="false" id="menu-toggle"><svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#menu"></use></svg></button>
   </header>
 
   <dialog id="mobile-menu" class="menu-dialog" aria-labelledby="menu-title">
@@ -38,25 +41,10 @@
         <div class="actions"><a class="button button-primary" href="#work">View selected works <svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#arrow-down"></use></svg></a><a class="text-link" href="#contact">Get in touch</a></div>
       </div>
 
-      <div class="work-strip" aria-label="A glimpse of the work">
-        <a class="strip-piece strip-app" href="/work/internal-listing-hub">
-          <div class="strip-art"><img src="/assets/work/listing-hub.jpg" alt="Tampilan asli Listing Hub: pencarian, filter, dan perbandingan harga properti" width="1344" height="1720" fetchpriority="high"></div>
-          <span class="strip-caption"><span>Search, made simpler.</span><span class="strip-action">View case study <svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#arrow-right"></use></svg></span></span>
-        </a>
-        <a class="strip-piece strip-manifesto" href="#about">
-          <div class="strip-art" aria-hidden="true"><span class="manifesto-word">Think.</span><span class="manifesto-word">Create.</span><span class="manifesto-word">Build.</span><span class="manifesto-word">Improve.</span></div>
-          <span class="strip-caption"><span>One connected way of thinking.</span><span class="strip-action">About my approach <svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#arrow-down"></use></svg></span></span>
-        </a>
-        <a class="strip-piece strip-thinking" href="/work/program-mbg-real-time-leaderboard">
-          <div class="strip-art"><span class="thinking-word">Make<br>progress<br><em>visible.</em></span><svg class="thinking-icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#trophy"></use></svg></div>
-          <span class="strip-caption"><span>PROGRAM MBG</span><span class="strip-action">View case study <svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#arrow-right"></use></svg></span></span>
-        </a>
-      </div>
-      <div class="hero-signoff"><span>Creative Marketing · Design · Digital Solutions</span><span>Think. Create. Build. Improve.</span></div>
     </section>
 
     <section class="section-shell works-section" id="work" aria-labelledby="work-title">
-      <div class="section-heading"><h2 id="work-title">Selected Works</h2><p>Website, visual, dan video. Pilihan karya dari ide sampai hasil yang bisa digunakan.</p></div>
+      <div class="section-heading"><h2 id="work-title">Selected Works</h2><p>Karya visual dan digital yang menyelesaikan masalah.</p></div>
       <section class="works-group" id="web-apps" data-work-kind="webapp" aria-labelledby="webapp-title">
         <div class="works-heading"><h3 id="webapp-title">Website / Apps</h3><a class="button button-outline" href="/webapp" aria-label="View all Website / Apps">View all <svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#arrow-up-right"></use></svg></a></div>
         <div class="works-grid" data-works-list aria-busy="true"><p class="works-message" role="status">Memuat karya…</p></div>
@@ -88,11 +76,15 @@
       </div></div>
     </section>
 
-    <section class="section-shell process-section" aria-labelledby="process-title"><div class="section-heading"><h2 id="process-title">How I work.</h2><p>Berangkat dari masalah yang nyata. Selesai ketika hasilnya berguna.</p></div><ol class="principles"><li><h3>Observe</h3><p>Pahami workflow dan cari hambatan yang sebenarnya.</p></li><li><h3>Brainstorm</h3><p>Explore ide, lalu pilih yang menjawab tujuan bisnis.</p></li><li><h3>Build</h3><p>Bawa ide menjadi visual, campaign, atau tools yang bisa dicoba.</p></li><li><h3>Collaborate</h3><p>Bangun bersama orang yang akan memakai hasilnya.</p></li><li><h3>Ownership</h3><p>Lihat apa yang bekerja, lalu perbaiki yang belum.</p></li></ol></section>
+    <section class="section-shell process-section" aria-labelledby="process-title"><div class="section-heading"><h2 id="process-title">How I work.</h2></div><div class="process-pipeline">
+      <div class="pipeline-track" aria-hidden="true">
+        <svg class="pipeline-svg pipeline-desktop" viewBox="0 0 1000 280" preserveAspectRatio="none"><path class="pipeline-shell" d="M100 80H180Q200 80 200 100V180Q200 200 220 200H380Q400 200 400 180V100Q400 80 420 80H580Q600 80 600 100V180Q600 200 620 200H780Q800 200 800 180V100Q800 80 820 80H900"/><path class="pipeline-core" d="M100 80H180Q200 80 200 100V180Q200 200 220 200H380Q400 200 400 180V100Q400 80 420 80H580Q600 80 600 100V180Q600 200 620 200H780Q800 200 800 180V100Q800 80 820 80H900"/><path class="pipeline-fill" pathLength="1" d="M100 80H180Q200 80 200 100V180Q200 200 220 200H380Q400 200 400 180V100Q400 80 420 80H580Q600 80 600 100V180Q600 200 620 200H780Q800 200 800 180V100Q800 80 820 80H900"/><circle class="pipeline-packet" r="5"/></svg>
+        <svg class="pipeline-svg pipeline-mobile" viewBox="0 0 320 650" preserveAspectRatio="none"><path class="pipeline-shell" d="M90 70V115Q90 135 110 135H210Q230 135 230 155V245Q230 265 210 265H110Q90 265 90 285V375Q90 395 110 395H210Q230 395 230 415V505Q230 525 210 525H110Q90 525 90 545V590"/><path class="pipeline-core" d="M90 70V115Q90 135 110 135H210Q230 135 230 155V245Q230 265 210 265H110Q90 265 90 285V375Q90 395 110 395H210Q230 395 230 415V505Q230 525 210 525H110Q90 525 90 545V590"/><path class="pipeline-fill" pathLength="1" d="M90 70V115Q90 135 110 135H210Q230 135 230 155V245Q230 265 210 265H110Q90 265 90 285V375Q90 395 110 395H210Q230 395 230 415V505Q230 525 210 525H110Q90 525 90 545V590"/><circle class="pipeline-packet" r="5"/></svg>
+      </div><ol class="principles"><li><h3>Observe</h3></li><li><h3>Brainstorm</h3></li><li><h3>Build</h3></li><li><h3>Collaborate</h3></li><li><h3>Ownership</h3></li></ol></div></section>
 
     <section class="section-shell toolkit-section" id="toolkit" aria-labelledby="toolkit-title"><span id="pricing" class="anchor-alias"></span><h2 id="toolkit-title">Tools behind the work.</h2><div class="toolkit-groups"><div><h3>Design &amp; content</h3><p>Figma · Adobe Illustrator · Canva · CapCut</p></div><div><h3>Marketing</h3><p>Meta Ads Manager · Reporting &amp; Analytics</p></div><div><h3>Build &amp; automation</h3><p>AI-assisted web-app building · Automation · Generative AI</p></div></div></section>
 
-    <section class="contact-section" id="contact" aria-labelledby="contact-title"><div class="section-shell"><div class="contact-layout"><h2 id="contact-title">Let's make<br>something <em>useful.</em></h2><div><p>Punya campaign yang mau dikembangkan, visual yang perlu dieksekusi, atau workflow yang terasa terlalu ribet? Let's talk.</p><a class="button button-dark" href="https://wa.me/6289653484274?text=Hi%20Gading%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20talk." target="_blank" rel="noopener noreferrer">Chat on WhatsApp <svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#message-circle"></use></svg></a></div></div><div class="contact-bottom"><span>Think. Create. Build. Improve.</span><a href="https://instagram.com/gadingg_" target="_blank" rel="noopener noreferrer">Instagram @gadingg_ <svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#external-link"></use></svg></a></div></div></section>
+    <section class="contact-section" id="contact" aria-labelledby="contact-title"><div class="section-shell"><div class="contact-layout"><h2 id="contact-title">Let's make<br>something <em>useful.</em></h2><div><p>Punya campaign yang mau dikembangkan, visual yang perlu dieksekusi, atau workflow yang terasa terlalu ribet? Let's talk.</p><a class="button button-dark" href="https://wa.me/6289653484274?text=Hi%20Gading%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20talk." target="_blank" rel="noopener noreferrer">Chat on WhatsApp <svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#message-circle"></use></svg></a></div></div><div class="contact-bottom"><span>Think. Create. Build. Improve.</span><div class="social-links"><a class="social-icon" data-social="instagram" href="https://instagram.com/gadingg_" aria-label="Instagram @gadingg_" title="Instagram" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#instagram"></use></svg></a><a class="social-icon" data-social="linkedin" href="https://www.linkedin.com/in/gadingutama/" aria-label="LinkedIn R. Gading Utama" title="LinkedIn" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#linkedin"></use></svg></a></div></div></div></section>
   </main>
   <footer class="site-footer section-shell"><p>© <span id="copyright-year">2026</span> R. Gading Utama</p><a href="#home">Back to top <svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#arrow-up"></use></svg></a></footer>
 
