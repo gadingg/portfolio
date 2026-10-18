@@ -1,4 +1,5 @@
 .works-manager{--wm-control:#7b8073;max-width:1200px;margin-inline:auto;color:var(--ink);font-size:15px;line-height:1.6}
+.wm-publication-scope{margin:-12px 0 24px;color:var(--muted);font-size:13px;line-height:1.6}
 .works-manager *{box-sizing:border-box}
 .works-manager .wm-heading{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:32px}
 .works-manager h1{font-size:38px;letter-spacing:-.03em;line-height:1.2;margin:0 0 12px}

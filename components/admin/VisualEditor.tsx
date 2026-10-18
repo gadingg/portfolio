@@ -14,6 +14,7 @@ export function VisualEditor({target}:{target:string}){
   const {ask,confirmation}=useConfirm();
   const canvas=useRef<HTMLDivElement>(null),editor=useRef<Editor|null>(null),meta=useRef<PageData|null>(null),dirtyRef=useRef(false);
   const baseline=useRef({html:'',css:''});
+  const cleanStatus=useRef('Siap diedit');
   const saveLock=useRef(false),selectedRef=useRef<Component|null>(null);
   const [canUndo,setCanUndo]=useState(false),[canRedo,setCanRedo]=useState(false);
   const [tab,setTab]=useState('content'),[title,setTitle]=useState('Editor konten'),[status,setStatus]=useState('Memuat halaman…'),[error,setError]=useState(''),[ready,setReady]=useState(false),[dirty,setDirty]=useState(false),[busy,setBusy]=useState(false),[uploading,setUploading]=useState(false),[device,setDevice]=useState('Desktop'),[preview,setPreview]=useState(false),[panelOpen,setPanelOpen]=useState(false);
@@ -105,12 +106,12 @@ export function VisualEditor({target}:{target:string}){
         ed.on('component:deselected',()=>{selectedRef.current=null;setSelection(null);setActiveSection(null);});
         ed.on('undo redo',()=>{selectedRef.current=ed.getSelected()||null;sync(ed);});
         ed.on('asset:custom',()=>{setTab('content');setPanelOpen(true);});
-        ed.on('update',()=>{if(cancelled)return;const changed=ed.getHtml()!==baseline.current.html||(ed.getCss()||'')!==baseline.current.css;dirtyRef.current=changed;setDirty(changed);if(changed)setStatus('Belum disimpan');sync(ed);});
+        ed.on('update',()=>{if(cancelled)return;const changed=ed.getHtml()!==baseline.current.html||(ed.getCss()||'')!==baseline.current.css;dirtyRef.current=changed;setDirty(changed);setStatus(changed?'Belum disimpan':cleanStatus.current);sync(ed);});
         ed.on('load',()=>{
           const doc=ed.Canvas.getDocument();if(!doc)return;
           ed.getWrapper()?.addClass('showcase');
           ed.getWrapper()?.findType('works-feed').forEach(component=>component.getView()?.render());
-          ed.UndoManager.clear();ed.clearDirtyCount();baseline.current={html:ed.getHtml(),css:ed.getCss()||''};dirtyRef.current=false;setDirty(false);setStatus(data.layout?'Draft dimuat':'Siap diedit');setReady(true);
+          ed.UndoManager.clear();ed.clearDirtyCount();baseline.current={html:ed.getHtml(),css:ed.getCss()||''};dirtyRef.current=false;setDirty(false);cleanStatus.current=data.layout?'Draft dimuat':'Siap diedit';setStatus(cleanStatus.current);setReady(true);
           doc.addEventListener('click',event=>{if((event.target as Element)?.closest('a'))event.preventDefault();});
           const style=doc.createElement('style');style.textContent='html{scroll-behavior:auto!important}body{background:#060706;color:#f3f0e8}.reveal{opacity:1!important;transform:none!important}[data-works-list]:empty{min-height:120px}';doc.head.appendChild(style);
           if(target==='home'){doc.body.dataset.cmsPreview='true';const script=doc.createElement('script');script.src='/assets/js/works.js';doc.body.appendChild(script);}
@@ -139,7 +140,8 @@ export function VisualEditor({target}:{target:string}){
         ed.setComponents(result.layout.html);ed.setStyle(result.layout.css);ed.UndoManager.clear();selectedRef.current=null;ed.select();sync(ed);
       }
       if(!changedDuringSave)baseline.current={html:ed.getHtml(),css:ed.getCss()||''};
-      meta.current={...data,revision:result.revision,layout:result.layout};if(result.title)setTitle(result.title);const changed=changedDuringSave;dirtyRef.current=changed;setDirty(changed);if(!changed)ed.clearDirtyCount();setStatus(changed?'Tersimpan, ada perubahan baru':action==='publish'?'Sudah dipublikasikan':'Draft tersimpan');
+      cleanStatus.current=action==='publish'?'Sudah dipublikasikan':'Draft tersimpan';
+      meta.current={...data,revision:result.revision,layout:result.layout};if(result.title)setTitle(result.title);const changed=changedDuringSave;dirtyRef.current=changed;setDirty(changed);if(!changed)ed.clearDirtyCount();setStatus(changed?'Tersimpan, ada perubahan baru':cleanStatus.current);
     }catch(e){setError(e instanceof Error?e.message:'Perubahan belum tersimpan.');}finally{saveLock.current=false;setBusy(false);}
   }
   function leave(event:React.MouseEvent<HTMLAnchorElement>){if(dirtyRef.current){event.preventDefault();const href=event.currentTarget.href;void ask('Perubahan belum disimpan. Tinggalkan editor?', 'Tinggalkan').then(yes=>{if(yes){dirtyRef.current=false;window.location.assign(href);}});}}
@@ -148,6 +150,7 @@ export function VisualEditor({target}:{target:string}){
     const component=selectedRef.current;if(!component)return;
     const doc=new DOMParser().parseFromString(component.getInnerHTML(),'text/html');
     const nodes=textNodes(doc.body);if(!nodes[index]){if(index!==0)return;const node=doc.createTextNode('');doc.body.insertBefore(node,doc.body.firstChild);nodes.push(node);}nodes[index].textContent=value;
+    if(value.includes('\n'))component.addStyle({'white-space':'pre-line'});
     component.components(doc.body.innerHTML);if(editor.current)sync(editor.current);
   }
   function attribute(name:string,value:string){const component=selectedRef.current;if(component){component.addAttributes({[name]:value});if(editor.current)sync(editor.current);}}

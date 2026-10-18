@@ -31,14 +31,19 @@ test('CMS compare-and-swap prevents stale writes and public reads select only th
  const current=await cms.readCMS('works',async()=>({items:[]}));await cms.writeCMS('works',current,current.draft,current.draft);
  assert.equal((await cms.readPublishedCMS('works',async()=>({items:[]}))).items[0].title,'Changed draft');
 });
-test('reordering publishes only IDs, preserving unpublished text and visibility changes',async()=>{
+test('reordering changes only the draft until explicit publication, preserving live text and visibility',async()=>{
  let doc={draft:{items:[{...work,title:'Private edit',published:false},{...work,id:'second'}]},published:{items:[work,{...work,id:'second',title:'Public second'}]},revision:4,published_at:null};
  class Conflict extends Error{}
  const db=loader({'./cms':{readCMS:async()=>structuredClone(doc),readPublishedCMS:async()=>structuredClone(doc.published),CMSConflict:Conflict,writeCMS:async(_id,current,draft,published=doc.published)=>{assert.equal(current.revision,doc.revision);doc={...doc,draft,published,revision:doc.revision+1};return structuredClone(doc);}},'./public-projects':{},'./gallery':{},'@/lib/supabase/public':{},'@/lib/supabase/admin':{},'@/lib/project-presentation':{}})('lib/db/works.ts');
  await db.changeWorks({action:'order',revision:4,ids:['second','video']});
- assert.equal(doc.published.items[1].title,'Real video');assert.equal(doc.published.items[1].published,true);assert.equal(doc.draft.items[1].title,'Private edit');
+ assert.deepEqual(doc.published.items.map(item=>item.id),['video','second']);
+ assert.equal(doc.published.items[0].title,'Real video');assert.equal(doc.published.items[0].published,true);assert.equal(doc.draft.items[1].title,'Private edit');
  await assert.rejects(db.changeWorks({action:'save',revision:4,items:[]}),Conflict);
  await assert.rejects(db.changeWorks({action:'order',revision:5,ids:['video']}));
+ await db.changeWorks({action:'publish',revision:5,items:doc.draft.items});
+ assert.deepEqual(doc.published.items.map(item=>item.id),['second','video']);
+ assert.equal(doc.published.items[1].title,'Private edit');
+ assert.equal(doc.published.items[1].published,false);
 });
 test('authenticated media endpoint accepts Works uploads, rejects spoofed files and preserves storage errors',async()=>{
  let auth=false,stored=0,listFailure=false;

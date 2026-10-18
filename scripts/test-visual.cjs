@@ -39,3 +39,13 @@ test('converting the incumbent homepage preserves menu and carousel runtime hook
  const original=cheerio.load(fs.readFileSync('public/index.html','utf8')),converted=cheerio.load(clean({html:original('body').html(),css:''}).html);
  for(const selector of ['dialog#mobile-menu','[data-close-dialog]','[data-carousel-toggle]','[data-carousel-prev]','[data-carousel-next]','[data-retry-works]','[data-works-list]','[data-work-kind]'])assert.equal(converted(selector).length,original(selector).length,selector);
 });
+
+test('multiline copy and its line-break styling survive sanitization, draft saving and public rendering with icons intact',async()=>{
+ const site=runtime({'./cms':{}})('lib/db/site.ts'),base=await site.initialSite();let written;
+ const handler=runtime({'@/lib/cms-http':{cmsAccess:async()=>null,cmsError:error=>{throw error;}},'@/lib/db/site':{getSiteDocument:async()=>({revision:3,draft:base,published:base})},'@/lib/db/cms':{CMSConflict:class extends Error{},writeCMS:async(_id,_doc,draft,published)=>{written={revision:4,draft,published};return written;}}})('app/api/admin/visual/route.ts');
+ const layout={html:'<div class="hero-bottom"><p id="multiline">First line\nSecond line</p><a href="#contact">Talk <svg><use href="/assets/icons/lucide.svg#arrow-up-right"></use></svg></a></div>',css:'#multiline{white-space:pre-line}'};
+ const response=await handler.PUT(new NextRequest('https://portfolio.test/api/admin/visual',{method:'PUT',body:JSON.stringify({target:'home',revision:3,action:'save',layout})}));
+ assert.equal(response.status,200);assert.equal(written.published,base);
+ const rendered=await site.renderHomepage(written.draft);
+ assert.match(rendered,/First line\nSecond line/);assert.match(rendered,/white-space:pre-line/);assert.match(rendered,/lucide\.svg#arrow-up-right/);
+});

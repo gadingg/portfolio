@@ -25,6 +25,7 @@ import { BlockEditor } from './BlockEditor';
 import { useConfirm } from './ConfirmDialog';
 import './works-manager.css';
 import { AdminActionLabel } from './AdminActionLabel';
+import { summarizeWorksPublication } from '@/lib/admin-overview';
 export function WorksManager() {
   const {ask,confirmation}=useConfirm();
   const [items, setItems] = useState<WorkItem[]>([]),
@@ -46,6 +47,7 @@ export function WorksManager() {
   } | null>(null);
   const dirty = JSON.stringify(items) !== JSON.stringify(saved),
     unpublished = JSON.stringify(items) !== JSON.stringify(published);
+  const publication = summarizeWorksPublication(items, published);
   const dirtyRef = useRef(dirty);
   dirtyRef.current = dirty;
   function adopt(data: any) {
@@ -133,6 +135,10 @@ export function WorksManager() {
       setError(`${index!==null&&items[index]?items[index].title+': ':''}${issue.message}`);
       return false;
     }
+    if (action === 'publish' && publication.count > 1 && !await ask(
+      `Publikasikan semua perubahan pada ${publication.count} karya? Perubahan di kategori lain juga akan diterbitkan.`,
+      'Publikasikan semua',
+    )) return false;
     mutationLock.current = true;
     setOperation(action);
     setBusy(true);
@@ -154,9 +160,8 @@ export function WorksManager() {
       setBusy(false);
     }
   }
-  async function order(next: WorkItem[]) {
+  function order(next: WorkItem[]) {
     if (busy || mutationLock.current) return;
-    mutationLock.current = true;
     const focused = (document.activeElement as HTMLElement)
       ?.closest('[data-sortable]')
       ?.getAttribute('data-sortable');
@@ -166,32 +171,16 @@ export function WorksManager() {
     const ordered = [...items];
     positions.forEach((position, i) => (ordered[position] = next[i]));
     setItems(ordered);
-    setBusy(true);
     setError('');
-    try {
-      if (dirty) await send('save', items);
-      adopt(
-        await send(
-          'order',
-          ordered,
-          ordered.map((item) => item.id),
-        ),
+    setNotice('Urutan berubah. Simpan draft, lalu publikasikan untuk menayangkannya.');
+    if (focused)
+      requestAnimationFrame(() =>
+        document
+          .querySelector<HTMLElement>(
+            `[data-sortable="${CSS.escape(focused)}"] .cms-grip`,
+          )
+          ?.focus(),
       );
-      setNotice('Urutan tersimpan.');
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Urutan belum tersimpan.');
-    } finally {
-      mutationLock.current = false;
-      setBusy(false);
-      if (focused)
-        requestAnimationFrame(() =>
-          document
-            .querySelector<HTMLElement>(
-              `[data-sortable="${CSS.escape(focused)}"] .cms-grip`,
-            )
-            ?.focus(),
-        );
-    }
   }
   function update(id: string, patch: Partial<WorkItem>) {
     setItems((current) =>
@@ -285,6 +274,7 @@ export function WorksManager() {
             setItems(saved);
             setRemoved(null);
             setError('');
+            setNotice('');
           }}
         >
           Batalkan
@@ -305,9 +295,10 @@ export function WorksManager() {
           onClick={() => save('publish')}
           aria-busy={operation === 'publish'}
         >
-          <AdminActionLabel pending={operation === 'publish'} idle="Publikasikan" busy="Memublikasikan…" />
+          <AdminActionLabel pending={operation === 'publish'} idle="Publikasikan semua" busy="Memublikasikan…" />
         </button>
       </div>
+      {unpublished && <p className="wm-publication-scope" role="status">Seluruh koleksi Works{publication.count > 0 ? `: ${publication.count} karya berubah` : ''}{publication.orderChanged ? `${publication.count > 0 ? ' ·' : ':'} urutan berubah` : ''}.</p>}
       {error && (
         <div className="wm-message wm-error" role="alert">
           {error}

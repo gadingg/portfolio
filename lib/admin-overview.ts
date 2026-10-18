@@ -1,5 +1,18 @@
 import { workKinds, type WorkItem } from './works';
 
+export function summarizeWorksPublication(draft: WorkItem[], published: WorkItem[]) {
+  const content = ({ createdAt, updatedAt, ...item }: WorkItem) => item;
+  const stable = (value: unknown): unknown => Array.isArray(value) ? value.map(stable)
+    : value && typeof value === 'object' ? Object.fromEntries(Object.entries(value).filter(([, item]) => item !== undefined).sort(([a], [b]) => a.localeCompare(b)).map(([key, item]) => [key, stable(item)])) : value;
+  const before = new Map(published.map(item => [item.id, JSON.stringify(stable(content(item)))]));
+  const after = new Map(draft.map(item => [item.id, JSON.stringify(stable(content(item)))]));
+  const ids = new Set([...before.keys(), ...after.keys()]);
+  return {
+    count: [...ids].filter(id => before.get(id) !== after.get(id)).length,
+    orderChanged: draft.length === published.length && draft.some((item, index) => item.id !== published[index]?.id),
+  };
+}
+
 export function summarizeWorks(draft: WorkItem[], published: WorkItem[]) {
   const live = published.filter(item => item.published);
   const visible = new Map(live.map(item => [item.id, item]));

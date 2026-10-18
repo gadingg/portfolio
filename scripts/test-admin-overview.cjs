@@ -4,6 +4,15 @@ const { runtime } = require('./cms-script-runtime.cjs');
 const { summarizeWorks, stampWorkUpdates } = runtime()('lib/admin-overview.ts');
 const item = (id, extra = {}) => ({ id, kind:'webapp', title:id, description:'', image:'', imageAlt:'', url:'https://example.com', published:true, demo:false, artwork:'hub', ...extra });
 
+test('publication review counts changes across categories, additions and removals separately from reordering', () => {
+  const {summarizeWorksPublication}=runtime()('lib/admin-overview.ts');
+  const published=[item('one'),item('two',{kind:'design'}),item('removed')];
+  const draft=[item('one',{title:'Edited'}),item('two',{kind:'design',title:'Edited design'}),item('new')];
+  assert.equal(summarizeWorksPublication(draft,published).count,4);
+  assert.deepEqual(summarizeWorksPublication([published[1],published[0],published[2]],published),{count:0,orderChanged:true});
+  assert.deepEqual(summarizeWorksPublication(published.map(value=>({...value,updatedAt:'2026-10-18T12:00:00Z'})),published),{count:0,orderChanged:false});
+});
+
 test('Tayang uses the public snapshot; drafts and pending deletions do not miscount the collection', () => {
   const published = [item('live'), item('pending-removal'), item('hidden', { published:false })];
   const draft = [item('live', { published:false }), item('new', { published:true }), item('hidden', { published:false, demo:true })];
