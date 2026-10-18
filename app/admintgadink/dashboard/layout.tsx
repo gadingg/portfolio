@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { verifyAdminSession } from '@/lib/auth/session';
+import '@/components/admin/admin-controls.css';
 
 export const metadata: Metadata = {
   title: 'Admin Dashboard | Gading Portfolio CMS',

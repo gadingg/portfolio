@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
+import React, { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { AdminLink } from './AdminLink';
 
 export function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
   const [logoutError,setLogoutError]=useState(''),[loggingOut,setLoggingOut]=useState(false);
 
   useEffect(() => setIsOpen(false), [pathname]);
@@ -26,6 +27,28 @@ export function AdminSidebar() {
     window.addEventListener('keydown', closeOnEscape);
     return () => window.removeEventListener('keydown', closeOnEscape);
   }, []);
+  useEffect(() => {
+    if (!isOpen || !isMobile) return;
+    const main = document.querySelector<HTMLElement>('.admin-main');
+    const oldOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    if (main) main.inert = true;
+    const controls = Array.from(document.querySelectorAll<HTMLElement>('#admin-navigation a, #admin-navigation button'));
+    controls[0]?.focus();
+    const keepFocus = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const first = controls[0], last = controls.at(-1);
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    document.addEventListener('keydown', keepFocus);
+    return () => {
+      document.body.style.overflow = oldOverflow;
+      if (main) main.inert = false;
+      document.removeEventListener('keydown', keepFocus);
+      menuButton.current?.focus();
+    };
+  }, [isOpen, isMobile]);
 
   const handleLogout = async () => {
     if(loggingOut)return;
@@ -52,7 +75,7 @@ export function AdminSidebar() {
     <>
       <header className="admin-mobile-header">
         <div><strong>Gading Admin</strong><span>Portfolio CMS</span></div>
-        <button type="button" onClick={() => setIsOpen(true)} aria-expanded={isOpen} aria-controls="admin-navigation">Menu</button>
+        <button ref={menuButton} type="button" onClick={() => setIsOpen(value => !value)} aria-expanded={isOpen} aria-controls="admin-navigation">{isOpen ? 'Tutup' : 'Menu'}</button>
       </header>
       {isOpen && <button type="button" className="admin-nav-backdrop" onClick={() => setIsOpen(false)} aria-label="Close admin navigation" />}
       <aside
@@ -76,24 +99,14 @@ export function AdminSidebar() {
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <Link
+              <AdminLink
                 key={item.href}
                 href={item.href}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '12px 16px',
-                  borderRadius: '12px',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  color: isActive ? 'var(--ink)' : 'var(--muted)',
-                  background: isActive ? 'var(--surface)' : 'transparent',
-                  border: isActive ? '1px solid var(--border-strong)' : '1px solid transparent',
-                  transition: 'all 0.15s ease',
-                }}
+                className="admin-sidebar-link"
+                aria-current={isActive ? 'page' : undefined}
               >
                 {item.label}
-              </Link>
+              </AdminLink>
             );
           })}
         </nav>
@@ -101,38 +114,23 @@ export function AdminSidebar() {
 
       {/* Footer controls */}
       <div style={{ paddingTop: '20px', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <Link
+        <AdminLink
           href="/"
           target="_blank"
-          style={{
-            fontSize: '12px',
-            color: 'var(--muted)',
-            padding: '8px 12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
+          rel="noopener noreferrer"
+          className="admin-public-link"
         >
-          View Public Site <span>↗</span>
-        </Link>
+          Lihat website
+        </AdminLink>
         <button
           type="button"
           onClick={handleLogout}
           disabled={loggingOut}
-          style={{
-            padding: '10px 16px',
-            borderRadius: '999px',
-            background: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid rgba(239, 68, 68, 0.2)',
-            color: '#ef4444',
-            fontSize: '12px',
-            fontWeight: 700,
-            cursor: 'pointer',
-            textAlign: 'center',
-            letterSpacing: '0.05em',
-          }}
+          aria-busy={loggingOut}
+          className="admin-logout"
         >
-          {loggingOut?'Keluar…':'Keluar'}
+          {loggingOut && <span className="admin-spinner" aria-hidden="true" />}
+          {loggingOut?'Menutup sesi…':'Keluar'}
         </button>
         {logoutError&&<p role="alert" style={{fontSize:'14px',color:'var(--ink)',margin:0}}>{logoutError}</p>}
       </div>

@@ -229,3 +229,9 @@ GSAP ScrollTrigger fills the pipe in direct relation to native scrolling, with .
 - **Don't** apply the screenshot shadow to ordinary buttons, navigation, or content rows.
 - **Don't** import legacy admin or CV styling into the public showcase system.
 - **Don't** promote small pre-heading context lines or artwork kickers into a reusable heading pattern; these existing exceptions are not canonized by this document.
+
+## Admin refinement, 18 October 2026
+
+The public tokens above remain unchanged. The separate admin Overview and related control refinement is documented in [docs/design/admin-overview.md](docs/design/admin-overview.md); its dark/amber identity follows the existing admin surface.
+
+Live editor: panel konten dan daftar bagian mengikuti identitas admin incumbent (Manrope, #151713, #f3f0e8, amber #d9a64b). Lihat `docs/briefs/2026-10-18-live-editor.md`. Pengaturan teknis disembunyikan; tampilan publik tidak didesain ulang.

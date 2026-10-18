@@ -24,6 +24,7 @@ import { FileDrop, type UploadedMedia } from './FileDrop';
 import { BlockEditor } from './BlockEditor';
 import { useConfirm } from './ConfirmDialog';
 import './works-manager.css';
+import { AdminActionLabel } from './AdminActionLabel';
 export function WorksManager() {
   const {ask,confirmation}=useConfirm();
   const [items, setItems] = useState<WorkItem[]>([]),
@@ -38,6 +39,7 @@ export function WorksManager() {
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
     [notice, setNotice] = useState('');
+  const [operation, setOperation] = useState<'save' | 'publish' | null>(null);
   const [removed, setRemoved] = useState<{
     item: WorkItem;
     index: number;
@@ -62,6 +64,9 @@ export function WorksManager() {
       const data = await r.json();
       if (!r.ok) throw Error(data.error);
       adopt(data);
+      const selected = new URLSearchParams(window.location.search).get('work');
+      const work = data.items.find((item: WorkItem) => item.id === selected);
+      if (work) { setKind(work.kind); setEditing(work.id); }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Karya belum bisa dimuat.');
     } finally {
@@ -129,6 +134,7 @@ export function WorksManager() {
       return false;
     }
     mutationLock.current = true;
+    setOperation(action);
     setBusy(true);
     setError('');
     setNotice('');
@@ -144,6 +150,7 @@ export function WorksManager() {
       return false;
     } finally {
       mutationLock.current = false;
+      setOperation(null);
       setBusy(false);
     }
   }
@@ -287,17 +294,18 @@ export function WorksManager() {
           type="button"
           disabled={busy || revision === null || (!dirty && revision > 0)}
           onClick={() => save('save')}
+          aria-busy={operation === 'save'}
         >
-          <Save size={18} />
-          Simpan draft
+          <AdminActionLabel pending={operation === 'save'} idle="Simpan draft" busy="Menyimpan…" icon={<Save size={18} />} />
         </button>
         <button
           className="wm-button wm-primary"
           type="button"
           disabled={busy || revision === null || (!unpublished && revision > 0)}
           onClick={() => save('publish')}
+          aria-busy={operation === 'publish'}
         >
-          Publikasikan
+          <AdminActionLabel pending={operation === 'publish'} idle="Publikasikan" busy="Memublikasikan…" />
         </button>
       </div>
       {error && (

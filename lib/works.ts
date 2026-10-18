@@ -52,6 +52,8 @@ const imageURL = (value: string) => {
 };
 
 export const WorkDraftItemSchema = z.object({
+  createdAt: z.string().datetime().optional(),
+  updatedAt: z.string().datetime().optional(),
   videoFile: mediaURL.refine(value=>!value||/\.(mp4|webm)(?:[?#].*)?$/i.test(value),'Gunakan file MP4 atau WebM.').optional(),
   id: z
     .string()
@@ -123,7 +125,7 @@ export function setWorkKind(item: WorkItem, kind: WorkKind): WorkItem {
 }
 
 export function publicWork(item: WorkItem): WorkItem {
-  const { archivedCaseStudy, ...visible } = item;
+  const { archivedCaseStudy, createdAt, updatedAt, ...visible } = item;
   return { ...visible, url: visible.caseStudy ? `/work/${visible.caseStudy.slug}` : visible.url };
 }
 export const WorksDraftSchema = z

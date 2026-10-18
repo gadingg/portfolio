@@ -1,8 +1,10 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import type { Editor } from 'grapesjs';
-import { ArrowLeft, Undo2, Redo2, Monitor, Smartphone, Eye, Save, Layers, Plus, SlidersHorizontal, ArrowUp, ArrowDown, Copy, Trash2 } from 'lucide-react';
+import type { Editor, Component } from 'grapesjs';
+import { ArrowLeft, Undo2, Redo2, Monitor, Smartphone, Eye, Save, Layers, Plus, SlidersHorizontal, ArrowUp, ArrowDown, Trash2, ExternalLink, Type, Image as ImageIcon, X } from 'lucide-react';
 import { FileDrop } from './FileDrop';
+import { AdminActionLabel } from './AdminActionLabel';
+import './admin-controls.css';
 import { useConfirm } from './ConfirmDialog';
 import 'grapesjs/dist/css/grapes.min.css';
 import './visual-editor.css';
@@ -11,10 +13,31 @@ type PageData={revision:number;layout?:{html:string;css:string};seedHtml?:string
 export function VisualEditor({target}:{target:string}){
   const {ask,confirmation}=useConfirm();
   const canvas=useRef<HTMLDivElement>(null),editor=useRef<Editor|null>(null),meta=useRef<PageData|null>(null),dirtyRef=useRef(false);
-  const activeText=useRef<{disableEditing:()=>Promise<void>}|null>(null);
-  const saveLock=useRef(false),version=useRef(0);
-  const [canUndo,setCanUndo]=useState(false),[canRedo,setCanRedo]=useState(false),[canRemove,setCanRemove]=useState(false);
-  const [tab,setTab]=useState('blocks'),[title,setTitle]=useState('Editor visual'),[status,setStatus]=useState('Memuat halaman…'),[error,setError]=useState(''),[ready,setReady]=useState(false),[dirty,setDirty]=useState(false),[busy,setBusy]=useState(false),[uploading,setUploading]=useState(false),[device,setDevice]=useState('Desktop'),[selected,setSelected]=useState(''),[preview,setPreview]=useState(false),[panelOpen,setPanelOpen]=useState(false);
+  const baseline=useRef({html:'',css:''});
+  const saveLock=useRef(false),selectedRef=useRef<Component|null>(null);
+  const [canUndo,setCanUndo]=useState(false),[canRedo,setCanRedo]=useState(false);
+  const [tab,setTab]=useState('content'),[title,setTitle]=useState('Editor konten'),[status,setStatus]=useState('Memuat halaman…'),[error,setError]=useState(''),[ready,setReady]=useState(false),[dirty,setDirty]=useState(false),[busy,setBusy]=useState(false),[uploading,setUploading]=useState(false),[device,setDevice]=useState('Desktop'),[preview,setPreview]=useState(false),[panelOpen,setPanelOpen]=useState(false);
+  const [selection,setSelection]=useState<SelectionData|null>(null),[sections,setSections]=useState<Component[]>([]),[activeSection,setActiveSection]=useState<Component|null>(null),[action,setAction]=useState('');
+  function sync(ed:Editor){
+    setCanUndo(ed.UndoManager.hasUndo());setCanRedo(ed.UndoManager.hasRedo());
+    setSections(pageSections(ed));
+    const component=selectedRef.current;
+    setActiveSection(component?sectionOf(component,ed):null);
+    setSelection(component?readSelection(component):null);
+  }
+  useEffect(()=>{
+    const mobile=window.matchMedia('(max-width:700px)').matches;
+    if(!panelOpen||!mobile)return;
+    document.querySelector<HTMLButtonElement>('.visual-panel-close')?.focus();
+    const trap=(event:KeyboardEvent)=>{
+      if(event.key!=='Tab')return;
+      const items=Array.from(document.querySelectorAll<HTMLElement>('.visual-sidebar button:not(:disabled),.visual-sidebar a[href],.visual-sidebar input:not(:disabled),.visual-sidebar textarea:not(:disabled)')).filter(item=>item.getClientRects().length);
+      const first=items[0],last=items.at(-1);
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus();}
+    };
+    document.addEventListener('keydown',trap);return()=>document.removeEventListener('keydown',trap);
+  },[panelOpen]);
   useEffect(()=>{
     let cancelled=false;
     const controller=new AbortController();
@@ -43,7 +66,6 @@ export function VisualEditor({target}:{target:string}){
         meta.current=data;setTitle(data.title);
         const ed=module.default.init({
           container:canvas.current,height:'100%',width:'auto',storageManager:false,noticeOnUnload:false,
-          i18n:{locale:'en',detectLocale:false,messagesAdd:{en:{styleManager:{properties:{display:'Tampilan',gap:'Jarak elemen','grid-template-columns':'Susunan kolom',width:'Lebar','min-height':'Tinggi minimum','max-width':'Lebar maksimum',padding:'Ruang dalam',margin:'Ruang luar','font-family':'Jenis huruf','font-size':'Ukuran huruf','font-weight':'Ketebalan','line-height':'Tinggi baris','letter-spacing':'Jarak huruf','text-align':'Perataan',color:'Warna teks','background-color':'Warna latar',border:'Garis tepi','border-radius':'Sudut',opacity:'Transparansi','object-fit':'Posisi gambar'}},traitManager:{traits:{labels:{id:'ID elemen',title:'Tooltip',href:'Tautan',alt:'Deskripsi gambar',target:'Buka di'},attributes:{title:{placeholder:'Tooltip…'},href:{placeholder:'https://…'}},options:{target:{false:'Tab ini',_blank:'Tab baru'}}}}}}},
           parser:{optionsHtml:{allowScripts:false,allowUnsafeAttr:false,allowUnsafeAttrValue:false}},components:html,style:css,fromElement:false,
           plugins:[(instance)=>{
             instance.Components.addType('works-feed',{
@@ -64,116 +86,170 @@ export function VisualEditor({target}:{target:string}){
           }],
           panels:{defaults:[]},
           canvas:{styles:['/assets/css/portfolio.css','/assets/css/showcase.css','/assets/css/visual-content.css']},
-          blockManager:{appendTo:'#visual-blocks'},layerManager:{appendTo:'#visual-layers'},
-          traitManager:{appendTo:'#visual-traits'},
-          selectorManager:{componentFirst:true},
-          styleManager:{appendTo:'#visual-styles',sectors:[
-            {name:'Layout',open:false,buildProps:['display','flex-direction','justify-content','align-items','flex-wrap','gap','grid-template-columns','width','min-height','max-width'],properties:[
-              {property:'display',type:'select',options:['block','flex','grid','inline-block','none'].map(id=>({id,label:id}))},
-              {property:'flex-direction',name:'Arah kolom',type:'select',options:[{id:'row',label:'Horizontal'},{id:'column',label:'Vertikal'}]},
-              {property:'justify-content',name:'Posisi horizontal',type:'select',options:['flex-start','center','flex-end','space-between','space-around'].map(id=>({id,label:id}))},
-              {property:'align-items',name:'Posisi vertikal',type:'select',options:['stretch','flex-start','center','flex-end'].map(id=>({id,label:id}))},
-              {property:'flex-wrap',name:'Bungkus kolom',type:'select',options:[{id:'wrap',label:'Bungkus'},{id:'nowrap',label:'Satu baris'}]},
-            ]},
-            {name:'Jarak',open:false,buildProps:['padding','margin']},
-            {name:'Tipografi',open:true,buildProps:['font-family','font-size','font-weight','line-height','letter-spacing','text-align','color'],properties:[{property:'font-family',type:'select',defaults:'Manrope, Arial, sans-serif',options:[{id:'Manrope, Arial, sans-serif',label:'Manrope'},{id:'Georgia, serif',label:'Georgia'},{id:'Arial, sans-serif',label:'Arial'}]}]},
-            {name:'Tampilan',open:false,buildProps:['background-color','border','border-radius','opacity','object-fit']},
-          ]},
+          styleManager:{sectors:[]},
           deviceManager:{devices:[{id:'Desktop',name:'Desktop',width:''},{id:'Tablet',name:'Tablet',width:'768px',widthMedia:'1024px'},{id:'Mobile',name:'Mobile',width:'390px',widthMedia:'600px'}]},
           assetManager:{custom:true},
         });
         editor.current=ed;
-        ed.on('command:run:before:core:component-delete command:run:before:tlb-delete',({options})=>{
-          if(options.confirmed)return;options.abort=true;const component=ed.getSelected();
-          void ask('Hapus elemen ini? Anda bisa mengembalikannya dengan Undo.').then(yes=>{if(yes&&component)ed.runCommand('core:component-delete',{component,confirmed:true} as any);});
-        });
-        ed.on('undo redo',()=>{setCanUndo(ed.UndoManager.hasUndo());setCanRedo(ed.UndoManager.hasRedo());});
-        const blocks=[
-          ['section','Section','<section class="visual-section"><h2 data-gjs-type="text">Judul section</h2><p data-gjs-type="text">Tulis cerita Anda di sini.</p></section>'],
-          ['two-columns','2 kolom','<section class="visual-section visual-columns"><div class="visual-column"><h2 data-gjs-type="text">Kolom pertama</h2><p data-gjs-type="text">Tulis di sini.</p></div><div class="visual-column"><h2 data-gjs-type="text">Kolom kedua</h2><p data-gjs-type="text">Tulis di sini.</p></div></section>'],
-          ['three-columns','3 kolom','<section class="visual-section visual-columns"><div class="visual-column"><p data-gjs-type="text">Kolom pertama</p></div><div class="visual-column"><p data-gjs-type="text">Kolom kedua</p></div><div class="visual-column"><p data-gjs-type="text">Kolom ketiga</p></div></section>'],
-          ['heading','Judul','<h2 data-gjs-type="text">Judul baru</h2>'],
-          ['text','Teks','<p data-gjs-type="text">Double-click untuk mengedit tulisan ini.</p>'],
-          ['image','Gambar',{type:'image',attributes:{alt:'Gambar karya'},style:{width:'100%','min-height':'160px'}}],
-          ['link','Tombol','<a class="button button-solid" href="#contact" data-gjs-type="link">Hubungi saya</a>'],
-          ['spacer','Jarak','<div style="height:64px" aria-hidden="true"></div>'],
-        ] as const;
-        for(const [id,label,content]of blocks)ed.Blocks.add(id,{label,content:content as any});
+        function protect(component:Component){
+          component.set({draggable:false,droppable:false,editable:false,resizable:false,copyable:false,removable:false,toolbar:[]},{silent:true});
+          component.components().forEach(protect);
+        }
+        ed.getWrapper()?.components().forEach(protect);
+        ed.on('component:add',protect);
         ed.on('component:selected',(component)=>{
-          const names:Record<string,string>={h1:'Judul halaman',h2:'Judul bagian',h3:'Subjudul',p:'Paragraf',a:'Tautan',img:'Gambar',section:'Section',div:'Kontainer',main:'Halaman'};
-          setSelected(names[component.get('tagName')||'']||component.getName()||'Elemen');setCanRemove(component.get('removable')!==false);setTab('style');
-          requestAnimationFrame(()=>document.querySelectorAll<HTMLInputElement|HTMLSelectElement>('#visual-styles input,#visual-styles select,#visual-traits input,#visual-traits select').forEach((input,index)=>{
-            const property=input.closest('.gjs-sm-property,.gjs-trt-trait');const label=property?.querySelector('.gjs-sm-label,.gjs-label')?.textContent?.trim();
-            if(!input.getAttribute('aria-label'))input.setAttribute('aria-label',`${label||'Pengaturan elemen'} ${index+1}`);
-          }));
+          const link=[component,...component.parents()].find(item=>item.get('tagName')==='a');
+          const chosen=component.is('image')?component:link||component;
+          selectedRef.current=chosen;sync(ed);setTab('content');setPanelOpen(true);
         });
-        ed.on('component:deselected',()=>{setSelected('');setCanRemove(false);});
-        ed.on('asset:custom',()=>{setTab('media');setPanelOpen(true);});
-        ed.on('rte:enable',(view)=>{activeText.current=view;view.el.addEventListener('input',()=>{version.current++;dirtyRef.current=true;setDirty(true);setStatus('Belum disimpan');},{once:true});});
-        ed.on('rte:disable',()=>{activeText.current=null;});
-        ed.on('update',()=>{if(cancelled)return;version.current++;dirtyRef.current=true;setDirty(true);setStatus('Belum disimpan');setCanUndo(ed.UndoManager.hasUndo());setCanRedo(ed.UndoManager.hasRedo());});
+        ed.on('component:deselected',()=>{selectedRef.current=null;setSelection(null);setActiveSection(null);});
+        ed.on('undo redo',()=>{selectedRef.current=ed.getSelected()||null;sync(ed);});
+        ed.on('asset:custom',()=>{setTab('content');setPanelOpen(true);});
+        ed.on('update',()=>{if(cancelled)return;const changed=ed.getHtml()!==baseline.current.html||(ed.getCss()||'')!==baseline.current.css;dirtyRef.current=changed;setDirty(changed);if(changed)setStatus('Belum disimpan');sync(ed);});
         ed.on('load',()=>{
           const doc=ed.Canvas.getDocument();if(!doc)return;
           ed.getWrapper()?.addClass('showcase');
           ed.getWrapper()?.findType('works-feed').forEach(component=>component.getView()?.render());
-          ed.UndoManager.clear();ed.clearDirtyCount();dirtyRef.current=false;setDirty(false);setStatus(data.layout?'Draft dimuat':'Siap diedit');setReady(true);
+          ed.UndoManager.clear();ed.clearDirtyCount();baseline.current={html:ed.getHtml(),css:ed.getCss()||''};dirtyRef.current=false;setDirty(false);setStatus(data.layout?'Draft dimuat':'Siap diedit');setReady(true);
           doc.addEventListener('click',event=>{if((event.target as Element)?.closest('a'))event.preventDefault();});
           const style=doc.createElement('style');style.textContent='html{scroll-behavior:auto!important}body{background:#060706;color:#f3f0e8}.reveal{opacity:1!important;transform:none!important}[data-works-list]:empty{min-height:120px}';doc.head.appendChild(style);
           if(target==='home'){doc.body.dataset.cmsPreview='true';const script=doc.createElement('script');script.src='/assets/js/works.js';doc.body.appendChild(script);}
-          document.querySelectorAll<HTMLElement>('#visual-blocks .gjs-block').forEach((el,index)=>{
-            const block=blocks[index];if(!block)return;el.tabIndex=0;el.setAttribute('role','button');el.setAttribute('aria-label',`Tambah ${block[1]}`);
-            const insert=()=>{const selected=ed.getSelected();const parent=selected?.get('droppable')?selected:selected?.parent();const [component]=parent?parent.append(block[2] as any):ed.addComponents(block[2] as any);ed.select(component);component.getEl()?.scrollIntoView({block:'center'});setPanelOpen(false);};
-            el.addEventListener('click',insert);el.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();insert();}});
-          });
+          sync(ed);
         });
       }catch(e){if(cancelled)return;setError(e instanceof Error?e.message:'Editor belum tersedia.');setStatus('Gagal memuat');}
     }
     start();
     const unload=(event:BeforeUnloadEvent)=>{if(dirtyRef.current){event.preventDefault();event.returnValue='';}};
+    const escape=(event:KeyboardEvent)=>{if(event.key==='Escape'){setPanelOpen(false);document.querySelector<HTMLButtonElement>('.visual-panel-toggle')?.focus();}};
+    window.addEventListener('keydown',escape);
     window.addEventListener('beforeunload',unload);
-    return()=>{cancelled=true;controller.abort();window.removeEventListener('beforeunload',unload);editor.current?.destroy();editor.current=null;};
+    return()=>{cancelled=true;controller.abort();window.removeEventListener('keydown',escape);window.removeEventListener('beforeunload',unload);editor.current?.destroy();editor.current=null;};
   },[target]);
   async function save(action:'save'|'publish'){
     const ed=editor.current,data=meta.current;if(!ed||!data||saveLock.current||uploading)return;
     saveLock.current=true;
-    setBusy(true);setError('');
+    setBusy(true);setAction(action);setError('');
     try{
-      if(activeText.current)await activeText.current.disableEditing();
+
       const layout={html:ed.getHtml(),css:ed.getCss()||''};
       const res=await fetch('/api/admin/visual',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({target,revision:data.revision,action,layout})});
       const result=await res.json();if(!res.ok)throw Error(result.error||'Perubahan belum tersimpan.');
-      meta.current={...data,revision:result.revision,layout:result.layout};if(result.title)setTitle(result.title);const changed=ed.getHtml()!==layout.html||(ed.getCss()||'')!==layout.css;dirtyRef.current=changed;setDirty(changed);if(!changed)ed.clearDirtyCount();setStatus(changed?'Tersimpan, ada perubahan baru':action==='publish'?'Sudah dipublikasikan':'Draft tersimpan');
+      const changedDuringSave=ed.getHtml()!==layout.html||(ed.getCss()||'')!==layout.css;
+      if(!changedDuringSave&&result.layout&&(result.layout.html!==layout.html||result.layout.css!==layout.css)){
+        ed.setComponents(result.layout.html);ed.setStyle(result.layout.css);ed.UndoManager.clear();selectedRef.current=null;ed.select();sync(ed);
+      }
+      if(!changedDuringSave)baseline.current={html:ed.getHtml(),css:ed.getCss()||''};
+      meta.current={...data,revision:result.revision,layout:result.layout};if(result.title)setTitle(result.title);const changed=changedDuringSave;dirtyRef.current=changed;setDirty(changed);if(!changed)ed.clearDirtyCount();setStatus(changed?'Tersimpan, ada perubahan baru':action==='publish'?'Sudah dipublikasikan':'Draft tersimpan');
     }catch(e){setError(e instanceof Error?e.message:'Perubahan belum tersimpan.');}finally{saveLock.current=false;setBusy(false);}
   }
   function leave(event:React.MouseEvent<HTMLAnchorElement>){if(dirtyRef.current){event.preventDefault();const href=event.currentTarget.href;void ask('Perubahan belum disimpan. Tinggalkan editor?', 'Tinggalkan').then(yes=>{if(yes){dirtyRef.current=false;window.location.assign(href);}});}}
   function setViewport(value:string){editor.current?.setDevice(value);setDevice(value);}
-  function move(direction:number){const component=editor.current?.getSelected(),parent=component?.parent();if(!component||!parent)return;const index=parent.components().indexOf(component);component.move(parent,{at:Math.max(0,Math.min(parent.components().length-1,index+direction))});}
+  function editText(index:number,value:string){
+    const component=selectedRef.current;if(!component)return;
+    const doc=new DOMParser().parseFromString(component.getInnerHTML(),'text/html');
+    const nodes=textNodes(doc.body);if(!nodes[index]){if(index!==0)return;const node=doc.createTextNode('');doc.body.insertBefore(node,doc.body.firstChild);nodes.push(node);}nodes[index].textContent=value;
+    component.components(doc.body.innerHTML);if(editor.current)sync(editor.current);
+  }
+  function attribute(name:string,value:string){const component=selectedRef.current;if(component){component.addAttributes({[name]:value});if(editor.current)sync(editor.current);}}
+  function moveSection(component:Component,direction:number){
+    const ed=editor.current,parent=component.parent();if(!ed||!parent)return;
+    const list=pageSections(ed),index=list.indexOf(component),neighbor=list[index+direction];
+    if(!neighbor||neighbor.parent()!==parent)return;
+    component.move(parent,{at:parent.components().indexOf(neighbor)+(direction>0?1:0)});ed.select(component);sync(ed);
+  }
+  async function removeSection(component:Component){
+    if(!await ask(`Hapus bagian “${sectionTitle(component)}”? Anda bisa mengembalikannya dengan Urungkan.`))return;
+    component.remove();selectedRef.current=null;editor.current?.select();if(editor.current)sync(editor.current);
+  }
+  function addSection(html:string){
+    const ed=editor.current;if(!ed)return;
+    const list=pageSections(ed),after=activeSection||list.at(-1),parent=after?.parent()||ed.getWrapper()?.find('main')[0]||ed.getWrapper();
+    if(!parent)return;
+    const [component]=parent.append(html,after?{at:parent.components().indexOf(after)+1}:{});
+    ed.select(component);sync(ed);component.getEl()?.scrollIntoView({block:'center',behavior:'smooth'});setTab('content');
+  }
+  const sectionIndex=activeSection?sections.indexOf(activeSection):-1;
   return <div className={`visual-editor ${preview?'visual-preview':''} ${panelOpen?'visual-panel-open':''}`}>
     {confirmation}
     <header className="visual-toolbar">
       <a href={target==='home'?'/admintgadink/dashboard/site':'/admintgadink/dashboard/works'} onClick={leave} className="visual-icon" aria-label="Kembali ke CMS"><ArrowLeft size={20}/></a>
-      <div className="visual-title"><h1>{title}</h1><span role="status">{busy?'Menyimpan…':status}{uploading?' · Mengupload…':''}</span></div>
-      <div className="visual-history"><button aria-label="Undo" title="Urungkan perubahan" disabled={!ready||busy||uploading||!canUndo} onClick={()=>editor.current?.UndoManager.undo()}><Undo2 size={18}/></button><button aria-label="Redo" title="Ulangi perubahan" disabled={!ready||busy||uploading||!canRedo} onClick={()=>editor.current?.UndoManager.redo()}><Redo2 size={18}/></button></div>
-      <div className="visual-devices" aria-label="Ukuran kanvas"><button aria-label="Desktop" aria-pressed={device==='Desktop'} onClick={()=>setViewport('Desktop')}><Monitor size={18}/></button><button aria-label="Mobile" aria-pressed={device==='Mobile'} onClick={()=>setViewport('Mobile')}><Smartphone size={18}/></button></div>
-      <button className="visual-panel-toggle" aria-label="Panel editor" aria-expanded={panelOpen} onClick={()=>setPanelOpen(!panelOpen)}><SlidersHorizontal size={18}/><span>Panel</span></button>
-      <button aria-label="Preview" aria-pressed={preview} onClick={()=>{const ed=editor.current;if(preview)ed?.stopCommand('preview');else ed?.runCommand('preview');setPreview(!preview);}} disabled={!ready||busy}><Eye size={18}/><span>Preview</span></button>
-      <button aria-label="Simpan draft" disabled={!ready||busy||uploading||!dirty} onClick={()=>save('save')}><Save size={18}/><span>Simpan draft</span></button>
-      <button className="visual-publish" disabled={!ready||busy||uploading} onClick={()=>save('publish')}>Publikasikan</button>
+      <div className="visual-title"><h1>{title}</h1><span role="status">{busy?(action==='publish'?'Mempublikasikan…':'Menyimpan draft…'):status}{uploading?' · Mengunggah…':''}</span></div>
+      <div className="visual-history"><button aria-label="Urungkan" disabled={!ready||busy||uploading||!canUndo} onClick={()=>editor.current?.UndoManager.undo()}><Undo2 size={18}/></button><button aria-label="Ulangi" disabled={!ready||busy||uploading||!canRedo} onClick={()=>editor.current?.UndoManager.redo()}><Redo2 size={18}/></button></div>
+      <div className="visual-devices" aria-label="Ukuran kanvas"><button aria-label="Desktop" aria-pressed={device==='Desktop'} disabled={!ready} onClick={()=>setViewport('Desktop')}><Monitor size={18}/></button><button aria-label="Mobile" aria-pressed={device==='Mobile'} disabled={!ready} onClick={()=>setViewport('Mobile')}><Smartphone size={18}/></button></div>
+      <button className="visual-panel-toggle" aria-label="Panel editor" aria-expanded={panelOpen} onClick={()=>setPanelOpen(!panelOpen)} disabled={preview}><SlidersHorizontal size={18}/><span>Panel</span></button>
+      <button aria-label="Pratinjau tampilan" aria-pressed={preview} onClick={()=>{const ed=editor.current;if(preview)ed?.stopCommand('preview');else ed?.runCommand('preview');setPreview(!preview);}} disabled={!ready||busy}><Eye size={18}/><span>{preview?'Kembali edit':'Pratinjau'}</span></button>
+      <button aria-label="Simpan draft" aria-busy={busy&&action==='save'} disabled={!ready||busy||uploading||!dirty} onClick={()=>save('save')}><AdminActionLabel pending={busy&&action==='save'} idle="Simpan draft" busy="Menyimpan…" icon={<Save size={18}/>}/></button>
+      <button className="visual-publish" aria-label="Publikasikan" aria-busy={busy&&action==='publish'} disabled={!ready||busy||uploading} onClick={()=>save('publish')}><AdminActionLabel pending={busy&&action==='publish'} idle="Publikasikan" busy="Menerbitkan…"/></button>
     </header>
     {error&&<div role="alert" className="visual-error">{error}{!ready?<button onClick={()=>window.location.reload()}>Coba lagi</button>:<button onClick={()=>setError('')} aria-label="Tutup pesan">Tutup</button>}</div>}
+    {preview&&<p className="visual-preview-note">Pratinjau tampilan. <a href={dirty?undefined:meta.current?.previewUrl} aria-disabled={dirty} target="_blank" rel="noopener noreferrer">Buka halaman tersimpan <ExternalLink size={14}/></a>{dirty&&' Simpan draft untuk membuka halaman.'}</p>}
     <div className="visual-workspace" aria-busy={busy}>
-      <aside className="visual-sidebar" aria-label="Panel editor" inert={busy||uploading}>
-        <button className="visual-panel-close" onClick={()=>setPanelOpen(false)}>Tutup panel</button>
-        <nav aria-label="Pengaturan editor">{[['blocks','Tambah',Plus],['layers','Struktur',Layers],['style','Atur',SlidersHorizontal]].map(([value,label,Icon])=><button key={value as string} aria-pressed={tab===value} onClick={()=>setTab(value as string)}><Icon size={17}/>{label as string}</button>)}</nav>
-        <p className="visual-hint">Double-click teks untuk menulis langsung.</p>
-        <div id="visual-blocks" hidden={tab!=='blocks'}/>
-        <div id="visual-layers" hidden={tab!=='layers'}/>
-        {selected&&<div className="visual-selection"><strong>{selected}</strong><div className="visual-element-actions" aria-label="Aksi elemen"><button aria-label="Pindah ke atas" title="Pindah ke atas" disabled={busy} onClick={()=>move(-1)}><ArrowUp size={16}/></button><button aria-label="Pindah ke bawah" title="Pindah ke bawah" disabled={busy} onClick={()=>move(1)}><ArrowDown size={16}/></button><button aria-label="Duplikasi elemen" title="Duplikasi elemen" disabled={busy} onClick={()=>{const component=editor.current?.getSelected(),parent=component?.parent();if(component&&parent&&component.get('copyable')!==false){const clone=component.clone();parent.append(clone,{at:parent.components().indexOf(component)+1});editor.current?.select(clone);}}}><Copy size={16}/></button><button aria-label="Hapus elemen" title="Hapus elemen" disabled={busy||!canRemove} onClick={()=>editor.current?.runCommand('core:component-delete')}><Trash2 size={16}/></button></div></div>}
-        <div hidden={tab!=='style'}>{!selected&&<h2>Pilih elemen di kanvas</h2>}<div id="visual-traits"/><div id="visual-styles"/></div>
-        {tab==='media'&&<h2>Ganti gambar</h2>}
-        {(tab==='media'||(tab==='style'&&selected==='Gambar'))&&<FileDrop disabled={busy} onBusyChange={setUploading} onUploaded={files=>{const component=editor.current?.getSelected();if(component?.is('image'))component.set('src',files[0].url);editor.current?.AssetManager.close();setTab('style');}}/>}
+      {panelOpen&&<button className="visual-panel-backdrop" aria-label="Tutup panel" onClick={()=>setPanelOpen(false)}/>}
+      <aside className="visual-sidebar" aria-label="Panel konten" inert={busy||uploading||!ready}>
+        <div className="visual-panel-heading"><h2>Edit halaman</h2><button className="visual-panel-close" aria-label="Tutup panel konten" onClick={()=>setPanelOpen(false)}><X size={18}/></button></div>
+        <nav aria-label="Panel editor">{[['content','Konten',Type],['sections','Bagian',Layers],['add','Tambah',Plus]].map(([value,label,Icon])=><button key={value as string} aria-pressed={tab===value} onClick={()=>setTab(value as string)}><Icon size={16}/>{label as string}</button>)}</nav>
+        {tab==='content'&&<div className="visual-content-panel">
+          {!selection?<div className="visual-empty"><Type size={24}/><h3>Pilih konten di halaman</h3><p>Klik teks, gambar, atau tombol untuk mengeditnya.</p></div>:<>
+            <h3>{selection.label}</h3>
+            {selection.managed?<><p className="visual-hint">Koleksi ini mengikuti data di pengelola Works.</p><a className="visual-text-link" href="/admintgadink/dashboard/works" onClick={leave}>Kelola Works <ExternalLink size={14}/></a></>:<>
+              {selection.texts.map((text,index)=><label className="visual-field" key={`${selectedRef.current?.cid}-${index}`}>{selection.texts.length===1?'Teks':`Teks ${index+1}`}<TextField value={text} onDirty={()=>{dirtyRef.current=true;setDirty(true);setStatus('Belum disimpan');}} onCommit={value=>editText(index,value)}/></label>)}
+              {selection.image&&<><img className="visual-image-preview" src={selection.src} alt="Gambar yang dipilih"/><label className="visual-field">Deskripsi gambar<input value={selection.alt} onChange={event=>attribute('alt',event.target.value)}/></label><FileDrop disabled={busy} onBusyChange={setUploading} onUploaded={files=>{const component=selectedRef.current;if(component?.is('image')&&files[0]){component.set('src',files[0].url);if(editor.current)sync(editor.current);}}}/></>}
+              {selection.link&&<><label className="visual-field">Tujuan tautan<input type="text" inputMode="url" value={selection.href} placeholder="https://… atau #contact" onChange={event=>attribute('href',event.target.value)}/></label><label className="visual-check"><input type="checkbox" checked={selection.blank} onChange={event=>{attribute('target',event.target.checked?'_blank':'_self');attribute('rel',event.target.checked?'noopener noreferrer':'');}}/>Buka di tab baru</label></>}
+              {!selection.texts.length&&!selection.image&&!selection.link&&<p className="visual-hint">Pilih teks atau gambar di dalam bagian ini. Desain mengikuti tampilan website.</p>}
+            </>}
+            {activeSection&&<button className="visual-section-shortcut" onClick={()=>setTab('sections')}><Layers size={16}/>Atur bagian: {sectionTitle(activeSection)}</button>}
+          </>}
+        </div>}
+        {tab==='sections'&&<div className="visual-section-panel"><h3>Susunan halaman</h3><p className="visual-hint">Pilih bagian, lalu atur urutannya.</p><ol className="visual-section-list">{sections.map(component=><li key={component.cid}><button aria-pressed={activeSection===component} onClick={()=>{editor.current?.select(component);setTab('sections');component.getEl()?.scrollIntoView({block:'center',behavior:'smooth'});}}>{sectionTitle(component)}</button></li>)}</ol>
+          {activeSection&&<div className="visual-section-controls"><strong>{sectionTitle(activeSection)}</strong><div><button aria-label="Pindah bagian ke atas" disabled={sectionIndex<=0||sections[sectionIndex-1]?.parent()!==activeSection.parent()} onClick={()=>moveSection(activeSection,-1)}><ArrowUp size={16}/></button><button aria-label="Pindah bagian ke bawah" disabled={sectionIndex<0||sectionIndex>=sections.length-1||sections[sectionIndex+1]?.parent()!==activeSection.parent()} onClick={()=>moveSection(activeSection,1)}><ArrowDown size={16}/></button><button className="visual-delete" aria-label="Hapus bagian" onClick={()=>removeSection(activeSection)}><Trash2 size={16}/>Hapus</button></div></div>}
+        </div>}
+        {tab==='add'&&<div className="visual-templates"><h3>Tambah bagian</h3><p className="visual-hint">{activeSection?`Setelah “${sectionTitle(activeSection)}”`:'Di akhir konten halaman'}</p>{templates.map(item=><button key={item.title} onClick={()=>addSection(item.html)}><item.icon size={20}/><span>{item.title}</span><Plus size={16}/></button>)}</div>}
+        <p className="visual-publish-hint">Simpan draft untuk melanjutkan nanti. Publikasikan untuk menampilkan perubahan ke pengunjung.</p>
       </aside>
       <div className="visual-canvas" ref={canvas} inert={busy||uploading}/>
+      {!ready&&!error&&<div className="visual-loading" role="status"><span className="admin-spinner"/>Menyiapkan halaman…</div>}
     </div>
   </div>;
+}
+
+type SelectionData={label:string;texts:string[];image:boolean;src:string;alt:string;link:boolean;href:string;blank:boolean;managed:boolean};
+function textNodes(root:Node):Text[]{
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes:Text[]=[];
+  while(walker.nextNode()){
+    const node=walker.currentNode as Text;
+    if(node.textContent?.trim()&&!node.parentElement?.closest('svg,script,style,[data-works-list]'))nodes.push(node);
+  }
+  return nodes;
+}
+function readSelection(component:Component):SelectionData{
+  const tag=component.get('tagName')||'',attrs=component.getAttributes();
+  const managed=[component,...component.parents()].some(item=>item.getAttributes()['data-works-list']!==undefined);
+  const isText=/^(h[1-6]|p|span|em|strong|a|button|li|figcaption|blockquote)$/.test(tag);
+  const doc=new DOMParser().parseFromString(component.getInnerHTML(),'text/html');
+  return {label:component.is('image')?'Gambar':tag==='a'?'Tombol / tautan':isText?'Teks':'Bagian halaman',texts:!managed&&isText?(textNodes(doc.body).length?textNodes(doc.body).map(node=>node.textContent||''):['']):[],image:component.is('image'),src:component.get('src')||attrs.src||'',alt:attrs.alt||'',link:tag==='a',href:attrs.href||'',blank:attrs.target==='_blank',managed};
+}
+function pageSections(ed:Editor):Component[]{
+  const wrapper=ed.getWrapper();if(!wrapper)return [];
+  const main=wrapper.find('main')[0]||wrapper;
+  const all=main.find('section');
+  if(all.length)return all.filter(component=>!component.parents().some(parent=>parent!==main&&parent.get('tagName')==='section'));
+  return main.components().filter((component:Component)=>!['script','style','header','footer','nav','dialog'].includes(component.get('tagName')||''));
+}
+function sectionOf(component:Component,ed:Editor){const sections=pageSections(ed);return [component,...component.parents()].find(parent=>sections.includes(parent))||null;}
+function sectionTitle(component:Component){
+  const heading=/^h[1-3]$/.test(component.get('tagName')||'')?component:component.find('h1,h2,h3')[0];
+  const doc=new DOMParser().parseFromString(heading?.getInnerHTML()||'','text/html');
+  return doc.body.textContent?.trim().replace(/\s+/g,' ').slice(0,64)||component.getAttributes()['aria-label']||({'text':'Judul & teks','image':'Gambar & keterangan','columns':'Dua kolom','cta':'Ajakan & tombol'} as Record<string,string>)[component.getAttributes()['data-cms-section']]||component.find('img')[0]?.getAttributes().alt||'Bagian';
+}
+const templates=[
+  {title:'Judul & teks',icon:Type,html:'<section class="visual-section" data-cms-section="text"><h2>Judul bagian</h2><p>Tulis konten Anda di sini.</p></section>'},
+  {title:'Gambar & keterangan',icon:ImageIcon,html:'<section class="visual-section" data-cms-section="image"><figure><img src="/assets/images/hero-dark.jpg" alt="Ganti dengan gambar Anda"/><figcaption>Keterangan gambar</figcaption></figure></section>'},
+  {title:'Dua kolom',icon:Layers,html:'<section class="visual-section visual-columns" data-cms-section="columns"><div class="visual-column"><h2>Judul pertama</h2><p>Tulis konten Anda di sini.</p></div><div class="visual-column"><h2>Judul kedua</h2><p>Tulis konten Anda di sini.</p></div></section>'},
+  {title:'Ajakan & tombol',icon:ExternalLink,html:'<section class="visual-section" data-cms-section="cta"><h2>Mari terhubung</h2><a class="button button-solid" href="#contact">Hubungi saya</a></section>'},
+];
+
+function TextField({value,onCommit,onDirty}:{value:string;onDirty:()=>void;onCommit:(value:string)=>void}){
+  const [draft,setDraft]=useState(value);
+  useEffect(()=>setDraft(value),[value]);
+  return <textarea rows={Math.min(6,Math.max(2,draft.split('\n').length))} value={draft} onChange={event=>{setDraft(event.target.value);onDirty();}} onBlur={()=>{if(draft!==value)onCommit(draft);}}/>;
 }

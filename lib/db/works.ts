@@ -15,6 +15,7 @@ import { WorksSchema, publicWork, setWorkKind, type WorkItem } from '@/lib/works
 import { readCMS, readPublishedCMS, writeCMS, CMSConflict } from './cms';
 import type { Project } from '@/types/portfolio';
 import { applyRequestedWorks } from '@/lib/work-content-update';
+import { stampWorkUpdates } from '@/lib/admin-overview';
 
 const bucket = 'portfolio-public';
 const filename = 'content/works.json';
@@ -313,11 +314,12 @@ export async function changeWorks(body: {
       item.aliases=[...new Set([...(previous.aliases||[]),...(item.aliases||[]),previous.caseStudy.slug])].filter(slug=>slug!==item.caseStudy!.slug);
     }
   }
+  const stamped = { items: stampWorkUpdates(current.draft.items, draft.items, new Date().toISOString()) };
   return writeCMS(
     'works',
     current,
-    draft,
-    body.action === 'publish' ? WorksSchema.parse(draft) : current.published,
+    stamped,
+    body.action === 'publish' ? WorksSchema.parse(stamped) : current.published,
   );
 }
 export function workAsProject(item: WorkItem): Project {

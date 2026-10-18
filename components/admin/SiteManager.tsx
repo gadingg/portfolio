@@ -6,6 +6,7 @@ import { FileDrop } from './FileDrop';
 import { SortableList } from './SortableList';
 import { useConfirm } from './ConfirmDialog';
 import './works-manager.css';
+import { AdminActionLabel } from './AdminActionLabel';
 export function SiteManager() {
   const {ask,confirmation}=useConfirm();
   const [content, setContent] = useState<SiteContent | null>(null),
@@ -16,6 +17,7 @@ export function SiteManager() {
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
     [notice, setNotice] = useState('');
+  const [operation, setOperation] = useState<'save' | 'publish' | null>(null);
   const dirty = content && JSON.stringify(content) !== saved;
   const dirtyRef = useRef(dirty);
   const mutationLock = useRef(false);
@@ -73,6 +75,7 @@ export function SiteManager() {
   async function save(action: 'save' | 'publish') {
     if (busy || mutationLock.current) return;
     mutationLock.current = true;
+    setOperation(action);
     setBusy(true);
     setError('');
     setNotice('');
@@ -92,6 +95,7 @@ export function SiteManager() {
       setError(e instanceof Error ? e.message : 'Belum tersimpan.');
     } finally {
       mutationLock.current = false;
+      setOperation(null);
       setBusy(false);
     }
   }
@@ -141,9 +145,9 @@ export function SiteManager() {
           className="wm-button"
           disabled={busy || !content || (!dirty && revision > 0)}
           onClick={() => save('save')}
+          aria-busy={operation === 'save'}
         >
-          <Save size={18} />
-          Simpan draft
+          <AdminActionLabel pending={operation === 'save'} idle="Simpan draft" busy="Menyimpan…" icon={<Save size={18} />} />
         </button>
         <button
           type="button"
@@ -154,8 +158,9 @@ export function SiteManager() {
             (JSON.stringify(content) === published && revision > 0)
           }
           onClick={() => save('publish')}
+          aria-busy={operation === 'publish'}
         >
-          Publikasikan
+          <AdminActionLabel pending={operation === 'publish'} idle="Publikasikan" busy="Memublikasikan…" />
         </button>
       </div>
       {error && (
