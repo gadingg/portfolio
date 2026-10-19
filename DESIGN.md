@@ -163,7 +163,7 @@ At viewport widths up to 379px, each Works group heading stacks its View all des
 
 ## Elevation & Depth
 
-Depth comes mainly from tonal surfaces, thin borders, artwork cropping, and space. The header and buttons explicitly have no shadow or backdrop blur. Dialogs use a dark translucent backdrop (`#060706e8`), a surface fill, and a fine border.
+Depth comes mainly from tonal surfaces, thin borders, artwork cropping, and space. Buttons have no shadow or backdrop blur. The sticky public header is solid at the top and uses a soft glass surface while scrolling; this owner-approved navigation exception does not extend to cards, buttons, dialogs, or admin surfaces. Dialogs use a dark translucent backdrop (`#060706e8`), a surface fill, and a fine border.
 
 ### Shadow Vocabulary
 - **Captured interface:** `0 18px 40px #172c2233` under the tilted Listing Hub screenshot. This belongs to the artwork composition, not ordinary controls or content containers.
@@ -204,7 +204,7 @@ Works card descriptions show the opening sentence and occupy at most two lines, 
 
 ### Navigation
 
-The header remains opaque and sticky. Desktop links are quiet until hovered; the contact destination has stronger weight. Below the desktop breakpoint, header vertical padding is 8px around its 44px controls, giving a 60px header, with a 26px wordmark. A borderless hamburger icon opens mobile navigation. Its 44px target contains a 24px icon, turns orange on hover, and keeps the shared keyboard-focus outline. Mobile navigation opens a native dialog with large stacked links, separating rules, and a labelled close button. Preserve the skip link and native dialog keyboard behavior.
+The header remains sticky and solid at the top. Beyond 16px of scroll, supported browsers use a near-black translucent surface (`rgba(6,7,6,.76)`), 16px backdrop blur with 120% saturation, and a quiet bottom rule (`rgba(243,240,232,.14)`). Returning to the top restores the solid canvas. The same treatment covers homepage, collection, and case-study headers, including restored scroll positions. Unsupported browsers retain the opaque header; forced colors use a solid system canvas and system text divider. The .22s background and border-color transition is removed for reduced motion. Header geometry, touch targets, links, and dialog behavior do not change between states. Desktop links are quiet until hovered; the contact destination has stronger weight. Below the desktop breakpoint, header vertical padding is 8px around its 44px controls, giving a 60px header, with a 26px wordmark. A borderless hamburger icon opens mobile navigation. Its 44px target contains a 24px icon, turns orange on hover, and keeps the shared keyboard-focus outline. Mobile navigation opens a native dialog with large stacked links, separating rules, and a labelled close button. Preserve the skip link and native dialog keyboard behavior.
 
 Footer Instagram and LinkedIn links use the same 24px icon scale and minimum 44px targets, arranged with a 12px gap. They inherit dark text on the orange contact surface and reduce opacity on hover. Retain accessible destination names, tooltips, and the contact surface's dark focus outline. An empty configured destination omits its link.
 

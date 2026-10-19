@@ -20,6 +20,11 @@ body.showcase{margin:0}
 .showcase .skip-link{position:fixed;top:10px;left:16px;z-index:110;padding:12px 20px;background:var(--ink);color:var(--canvas);transform:translateY(-160%)}
 .showcase .skip-link:focus{transform:none}
 .showcase .portfolio-header{position:sticky;top:0;left:0;transform:none;width:100%;height:auto;border-radius:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 20px;border:0;border-bottom:1px solid var(--line);background:var(--canvas)}
+.showcase .portfolio-header{transition:background-color .22s,border-color .22s}
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .showcase .portfolio-header.is-scrolled{background:rgba(6,7,6,.76);backdrop-filter:blur(16px) saturate(120%);-webkit-backdrop-filter:blur(16px) saturate(120%);border-bottom-color:rgba(243,240,232,.14)}
+}
+@media(forced-colors:active){.showcase .portfolio-header.is-scrolled{background:Canvas;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom-color:CanvasText}}
 .showcase .wordmark{font-size:30px;line-height:1.2;font-weight:800;letter-spacing:-.04em;min-height:44px;display:inline-flex;align-items:center}
 .showcase .wordmark>span{color:var(--accent)}
 .showcase .desktop-nav,.showcase .header-contact{display:none}
@@ -448,4 +453,5 @@ html:has(.showcase dialog[open]){overflow:hidden}
 }
 @media(prefers-reduced-motion:reduce){
   .showcase .work-card-link,.showcase .work-destination .icon{transition:none;transform:none!important}
+  .showcase .portfolio-header{transition:none}
 }

@@ -1,6 +1,12 @@
 (() => {
   'use strict';
 
+  const header = document.querySelector('.portfolio-header');
+  const updateHeader = () => header?.classList.toggle('is-scrolled', window.scrollY > 16);
+  updateHeader();
+  window.addEventListener('scroll', updateHeader, { passive: true });
+  window.addEventListener('pageshow', updateHeader);
+
   const svgNS = 'http://www.w3.org/2000/svg';
   const icon = (name) => {
     const svg = document.createElementNS(svgNS, 'svg');

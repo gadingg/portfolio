@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-19T03:18:32.866Z",
+  "generatedAt": "2026-10-19T06:03:40.349Z",
   "title": "Design System: Gading Public Showcase",
   "extensions": {
     "motion": [
@@ -23,6 +23,11 @@
         "name": "process-scroll",
         "value": "scrub: 0.35; ease: none",
         "purpose": "GSAP ScrollTrigger links the pipe core, leading packet and reached-module states to native scrolling between top 78% and bottom 42%; reverse scroll reverses progress, with no pinning or idle loop. Reduced motion and missing JavaScript show the fully connected static pipe without the packet."
+      },
+      {
+        "name": "header-scroll-state",
+        "value": ".22s",
+        "purpose": "Background and border-color transitions between the solid top state and soft glass scrolled state; disabled under reduced motion."
       }
     ],
     "shadows": [
@@ -189,6 +194,15 @@
       "navigation": "Below 960px: 8px vertical padding, 26px wordmark, 44px targets. Existing sticky opaque header and menu dialog preserved.",
       "video": "Existing five-second carousel and its pause/resume behavior preserved.",
       "narrowWorksHeading": "At viewport widths up to 379px, Works group headings use a left-aligned column with a 12px gap; View all follows below the title."
+    },
+    "headerScroll": {
+      "source": "docs/briefs/2026-10-19-scroll-header.md",
+      "threshold": "scrollY > 16",
+      "surface": "rgba(6,7,6,.76)",
+      "backdropFilter": "blur(16px) saturate(120%)",
+      "bottomRule": "rgba(243,240,232,.14)",
+      "fallback": "Opaque canvas without backdrop-filter support; solid Canvas and CanvasText divider under forced colors.",
+      "scope": "Homepage, collection and case-study public headers only. Geometry and navigation behavior remain unchanged."
     }
   },
   "components": [
@@ -242,8 +256,8 @@
       "name": "Desktop navigation",
       "html": "<nav class=\"ds-nav\" aria-label=\"Main navigation\"><a href=\"#work\">Selected works</a><a href=\"#about\">About</a></nav>",
       "kind": "nav",
-      "css": ".ds-nav{display:flex;gap:32px;background:#060706;padding:16px;font:400 13px/1.65 Manrope,Arial,sans-serif}.ds-nav a{display:flex;align-items:center;min-height:44px;color:#b6b8ae;text-decoration:none}.ds-nav a:hover{color:#f3f0e8}.ds-nav a:focus-visible{outline:3px solid #ff5a1f;outline-offset:5px}",
-      "description": "Compact opaque navigation with quiet links."
+      "css": ".ds-nav{display:flex;gap:32px;background:#060706;padding:16px;font:400 13px/1.65 Manrope,Arial,sans-serif}.ds-nav a{display:flex;align-items:center;min-height:44px;color:#b6b8ae;text-decoration:none}.ds-nav a:hover{color:#f3f0e8}.ds-nav a:focus-visible{outline:3px solid #ff5a1f;outline-offset:5px}.ds-nav{border-bottom:1px solid #33372f;transition:background-color .22s,border-color .22s}@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.ds-nav.ds-is-scrolled{background:rgba(6,7,6,.76);backdrop-filter:blur(16px) saturate(120%);-webkit-backdrop-filter:blur(16px) saturate(120%);border-bottom-color:rgba(243,240,232,.14)}}@media(forced-colors:active){.ds-nav.ds-is-scrolled{background:Canvas;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom-color:CanvasText}}@media(prefers-reduced-motion:reduce){.ds-nav{transition:none}}",
+      "description": "Compact sticky navigation: solid at the top, soft glass after 16px scroll; links remain quiet."
     },
     {
       "name": "Recovery container",

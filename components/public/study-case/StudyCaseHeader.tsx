@@ -1,15 +1,26 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Menu, MessageCircle, X } from 'lucide-react';
 
 export function StudyCaseHeader({ projectTitle }: { projectTitle?: string }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const close = () => dialogRef.current?.close();
+  useEffect(() => {
+    const update = () => setIsScrolled(window.scrollY > 16);
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('pageshow', update);
+    return () => {
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('pageshow', update);
+    };
+  }, []);
 
   return <>
-    <header className="portfolio-header">
+    <header className={`portfolio-header${isScrolled ? ' is-scrolled' : ''}`}>
       <a className="wordmark" href="/" aria-label="R. Gading Utama, home">gading<span aria-hidden="true">.</span></a>
       <nav className="desktop-nav" aria-label={projectTitle ? `Navigation from ${projectTitle}` : 'Main navigation'}>
         <a href="/#work">Selected works</a><a href="/#about">About</a>
