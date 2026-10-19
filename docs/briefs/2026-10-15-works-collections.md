@@ -1,5 +1,7 @@
 # Selected Works collections
 
+Superseded in part on October 19: the homepage Visual Design carousel is now a four-artwork static editorial gallery. See `2026-10-19-editorial-refinement.md`. Branding & Video retains the subsequently approved five-second carousel behavior; unrelated collection and CMS requirements below remain in force.
+
 Mode: Experience. Preserve the existing dark/orange public identity, Manrope, Lucide, and clear action labels. Selected Works is the parent heading. Website / Apps, Visual Design, and Branding & Video are its three child sections.
 
 Website / Apps uses the first six visible entries in a three-column, two-row desktop grid with uniform 4:3 artwork; two columns on tablet and one on mobile. Remove the duplicated tools list. Visual Design is a horizontally scrollable carousel that advances every five seconds; pause on hover, focus, touch, hidden tab, offscreen, or open dialog. Respect reduced motion. Branding & Video uses a manually navigated carousel with portrait thumbnails, a bottom-only dark scrim, and bottom-left titles. The gradient exists to keep text readable over thumbnails, as explicitly requested.

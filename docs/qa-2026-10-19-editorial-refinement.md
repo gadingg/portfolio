@@ -1,0 +1,15 @@
+# Editorial refinement verification
+
+Scope: the owner's supplied master refinement prompt, preserving the incumbent Manrope, orange, near-black identity and project records. No new library or production write.
+
+- 41 regression tests passed across editorial cards, public controls, Works, visual editing, CMS reliability, work updates and admin Overview. Four editorial tests cover canonical whole-card links, absence of nested controls and duplicate tracking, one-button example cards, separate artwork/detail interactions, exact bio copy, legacy layouts and unchanged video controls.
+- Next.js production build passed compilation, lint/type validation and generation. The final editorial subset passed again. Source changes are local and uncommitted.
+- Desktop 1120px, tablet 768px, mobile 390px and small mobile 320px were inspected. Body client/scroll widths matched: 753/753 at tablet, 375/375 at mobile, 305/305 at small mobile. Small-mobile hero measured 69px high at a 34.56px line height, confirming two headline lines.
+- The actual published CMS layout was used for local browser reads. Its saved markup receives the same hero metadata, bio defaults and static gallery as the source template and editor seed. No document was saved or published during QA; custom project descriptions and artwork remain unchanged.
+- Clicking a real card's description navigated to `/work/internal-listing-hub`, whose heading and case-study content loaded. The whole example card opened its preview, and Escape closed it. Semantic tests confirm there is a single link/button per project unit.
+- Artwork opened the existing lightbox. Next moved from Campaign poster to Social media series; Escape restored focus to the artwork trigger. Mobile menu opens, navigates to a section and closes. CV retains its inline file-icon link.
+- Homepage has four designs, no design carousel controls or autoplay hook. Image measurements preserved source aspect ratios: 2400×1350 rendered as 551×310 in the first inspection; 120×150 examples rendered proportionally. Desktop column ratio was then tightened to 1.5:1 to give the first work stronger emphasis without cropping. Video carousel controls remain present.
+- New copy is the owner's supplied text. Default copy is normalized in read projections and old layouts, while future custom CMS copy is preserved. Hero uses content height; metadata is factual owner-supplied content, not a decorative eyebrow.
+- One Impeccable detector pass completed. Retained whole-file warnings are reviewed alongside screenshots; design documentation and its sidecar were updated by the documenter. Independent finish review found one 320px group-title wrap defect. Below 380px, Works headings now stack above View all with a 12px gap. The title measures one 26.875px line, the link sits below it, and document width remains 305/305. Corrected captures were reviewed and the named fix received `ship`. Evidence is under `.impeccable/review/editorial-2026-10-19/`.
+
+Preview: http://localhost:3002/. Deployment and Git publication are not included in this task. Browser interaction checks used the local production-mode server after the development inspection.

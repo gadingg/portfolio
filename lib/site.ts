@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { contentURL, mediaURL } from './content-blocks';
 import { VisualLayoutSchema } from './visual-layout';
 export const defaultLinkedIn = 'https://www.linkedin.com/in/gadingutama/';
+export const defaultHeroMetadata = '© 2026 SUB-IDN. Creative Marketing';
 export type SiteField = {
   key: string;
   label: string;
@@ -25,16 +26,10 @@ export const siteFields: SiteField[] = [
     attribute: 'content',
   },
   {
-    key: 'name',
-    label: 'Nama',
+    key: 'heroMetadata',
+    label: 'Metadata hero',
     group: 'Hero',
-    selector: '.hero-intro p:first-child',
-  },
-  {
-    key: 'location',
-    label: 'Lokasi',
-    group: 'Hero',
-    selector: '.hero-intro p:last-child',
+    selector: '.hero-metadata',
   },
   {
     key: 'headline',
@@ -251,7 +246,7 @@ export const defaultCV = {
 export const SiteSchema = z
   .object({
     layout: VisualLayoutSchema.optional(),
-    values: z.record(z.string().max(4000)).transform((values): Record<string, string> => ({ linkedin: defaultLinkedIn, ...values })),
+    values: z.record(z.string().max(4000)).transform((values): Record<string, string> => ({ linkedin: defaultLinkedIn, heroMetadata: defaultHeroMetadata, ...values })),
     cv: z.object({
       name: z.string().min(1).max(150),
       role: z.string().max(300),

@@ -2,7 +2,7 @@ import 'server-only';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { load } from 'cheerio';
-import { siteFields, defaultCV, defaultLinkedIn, type SiteContent } from '@/lib/site';
+import { siteFields, defaultCV, defaultLinkedIn, defaultHeroMetadata, type SiteContent } from '@/lib/site';
 import { readCMS, readPublishedCMS } from './cms';
 import { cleanVisualLayout } from '../visual-layout';
 export const homepageTemplate = () =>
@@ -29,8 +29,15 @@ export async function initialSite(): Promise<SiteContent> {
   return { values, cv: defaultCV };
 }
 const withSiteDefaults = (site: SiteContent): SiteContent => {
-  const values: Record<string, string> = { linkedin: defaultLinkedIn, ...site.values };
+  const values: Record<string, string> = { linkedin: defaultLinkedIn, heroMetadata: defaultHeroMetadata, ...site.values };
   if (values.worksIntro === 'Website, visual, dan video. Pilihan karya dari ide sampai hasil yang bisa digunakan.') values.worksIntro = 'Karya visual dan digital yang menyelesaikan masalah.';
+  const replacements: Record<string, [string, string]> = {
+    headline: ['I think. I create.\nI solve.', 'I Think. I Create.\nI Solve.'],
+    aboutLead: ['Saya suka ikut mikir dari awal.', 'Dari brainstorm, membuat visual, sampai membuat workflow lewat web-app dan AI.'],
+    aboutBody1: ['Mulai dari mencari ide campaign, menyusun content, membuat visual, sampai melihat workflow yang ribet dan mencari cara supaya bisa dibuat lebih simpel lewat web-app atau AI.', 'Good visuals are nice, but good solutions are better.'],
+    aboutBody2: ['Buat saya, hasil yang bagus bukan cuma terlihat menarik. Campaign harus punya tujuan, tools harus benar-benar kepakai, dan solusi harus membuat pekerjaan jadi lebih mudah.', 'Buat saya, bukan cuma soal visual yang menarik, tapi juga bagaimana pesan bisa tersampaikan dengan baik & masalah bisa diselesaikan.'],
+  };
+  for (const [key, [previous, next]] of Object.entries(replacements)) if (values[key]?.replace(/\u00a0/g, ' ').trim() === previous) values[key] = next;
   return { ...site, values };
 };
 export const getSiteDocument = async () => {
@@ -114,6 +121,14 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
     }
   });
   $('.hero .work-strip, .hero .hero-signoff').remove();
+  $('.hero-intro').empty().append($('<p class="hero-metadata">').text(values.heroMetadata));
+  $('.about-copy').each((_i, element) => {
+    const copy = $(element);
+    copy.find('p').first().removeClass('lead-copy');
+    copy.find('p').eq(1).addClass('about-statement');
+  });
+  $('#visuals').removeAttr('data-carousel').find('.carousel-controls').remove();
+  $('#visuals [data-works-list]').removeClass('works-track works-grid').addClass('editorial-gallery').removeAttr('tabindex aria-label');
   $('.process-section').each((_i, section) => {
     const process = $(section), list = process.find('.principles').first();
     process.find('.section-heading p, .principles li p').remove();

@@ -13,6 +13,7 @@
     "test:works": "node --test scripts/test-works.cjs",
     "test:visual": "node --test scripts/test-visual.cjs",
     "test:controls": "node --test scripts/test-public-controls.cjs",
+    "test:editorial": "node --test scripts/test-editorial-public.cjs",
     "audit:supabase": "node scripts/audit-supabase-security.js"
   },
   "dependencies": {

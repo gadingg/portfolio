@@ -14,10 +14,10 @@ colors:
 typography:
   display:
     fontFamily: "Manrope, Arial, sans-serif"
-    fontSize: "clamp(40px,8.25vw,96px)"
+    fontSize: "clamp(32px,8.1vw,96px)"
     fontWeight: 800
-    lineHeight: 1.05
-    letterSpacing: "-.04em"
+    lineHeight: 1.08
+    letterSpacing: "-.035em"
   headline:
     fontFamily: "Manrope, Arial, sans-serif"
     fontSize: "clamp(32px,4.3vw,58px)"
@@ -147,6 +147,8 @@ The system pairs broad, tightly spaced headings with relaxed paragraph leading. 
 
 Case-study page titles use `clamp(34px,5.5vw,72px)` with 1.12 leading. Supporting narrative and dialog headings use smaller role-specific sizes rather than another font family.
 
+Homepage About paragraphs use 16px text with 1.8 leading and 20px paragraph separation. The English statement is the stronger reading anchor: 22px with 1.45 leading below 960px, increasing to 24px on desktop. View CV remains a minimal inline file-icon link. The factual hero metadata is owner-supplied content; its small type is not a reusable pre-heading pattern.
+
 **The One Family Rule.** Keep display, explanation, navigation, and controls in Manrope; hierarchy comes from scale, weight, spacing, and color.
 
 ## Layout
@@ -155,7 +157,9 @@ Content shells stop at 1280px. Mobile shells subtract 40px from the viewport; fr
 
 The system is mobile-first. Work grids use one column below 600px, two from 600px, and three from 960px. At 960px, desktop navigation replaces the menu button, existing case-study feature stories become two columns, and the process pipeline changes from vertical to horizontal. Paragraph columns remain constrained for reading.
 
-Selected Works uses 80px vertical padding below 960px and the desktop section spacing above it. Its child groups use dividers and generous separation. Process sections retain the mobile and desktop section spacing; about uses 88px vertical padding on desktop. Repeated gaps and insets use the frontmatter rhythm. The three collections and homepage grid/carousel composition are specified in `docs/briefs/2026-10-15-works-collections.md`.
+The homepage hero uses content-driven height. Selected Works starts 48px after the hero content below 960px and 64px above it; its bottom padding is 64px and 88px respectively. Child groups retain dividers and generous separation. About uses 56px vertical padding below 960px and 72px above it; its capability group follows after 40px and 48px respectively. Process sections retain the mobile and desktop section spacing. Repeated gaps and insets use the frontmatter rhythm. The original collection brief is superseded for the homepage Visual Design gallery by `docs/briefs/2026-10-19-editorial-refinement.md`.
+
+At viewport widths up to 379px, each Works group heading stacks its View all destination below the title, left-aligned with a 12px gap. This preserves readable titles and comfortable controls on narrow phones.
 
 ## Elevation & Depth
 
@@ -178,6 +182,8 @@ Line icons use current color, rounded stroke ends, and a standard 20px size with
 
 Primary, outline, and dark buttons share a minimum 48px height, the button typography, and a 12px icon gap. Outline controls use the control border, then invert to warm white on hover. Dark controls appear on orange and lighten on hover. Pressing a button moves it down one pixel. Disabled buttons reduce opacity to .4 and remove that motion.
 
+The homepage hero primary action is a compact contextual variant: minimum 44px height, 10px by 14px padding, 13px text, and a 10px icon gap. Its secondary destination is an inline text link rather than another filled control.
+
 Text links have a persistent underline, at least 44px height, and change to orange on hover. Action groups wrap rather than conceal labels.
 
 ### Collection selection and retained filters
@@ -186,15 +192,19 @@ Collection navigation uses outline links that wrap; `aria-current="page"` select
 
 ### Artwork and content containers
 
-Case-study imagery forms large standalone surfaces beside story copy. Work cards use landscape 4:3 app artwork, contained 4:5 design imagery, and 3:4 video thumbnails. App and design titles sit below the frame. Video titles and “Watch video” sit at bottom left over a bottom-only dark scrim; this is a media-readability treatment, not a new interface gradient. Design imagery exposes an “Enlarge” action. Loading, empty, and recovery content retains readable text and a retry action where implemented; missing media gets an explicit message. Example content carries a visible “Data contoh” label.
+Case-study imagery forms large standalone surfaces beside story copy. Work cards use landscape 4:3 app artwork and 3:4 video thumbnails. Design images retain their intrinsic proportions, transparent frameless containers, and no hover zoom. App and design titles sit below the artwork. Video titles and “Watch video” sit at bottom left over a bottom-only dark scrim; this is a media-readability treatment, not a new interface gradient. Design imagery exposes an “Enlarge” action. Loading, empty, and recovery content retains readable text and a retry action where implemented; missing media gets an explicit message. Example content carries a visible “Data contoh” label.
 
-Homepage carousels use scroll snapping, previous/next buttons, arrow keys, and a position indicator. Visual Design and Branding & Video advance every five seconds with an icon-only pause/resume control. Hover and focus pause advancement only within the artwork list; the separate controls do not hold the timer paused. Resume starts a fresh five-second interval even while its control retains focus. Touch interaction pauses the carousel; hidden tabs, offscreen content, and open dialogs suspend advancement. Reduced motion starts carousels paused and removes smooth movement; explicit Resume permits automatic advancement. Collection pages reuse the cards in a grid.
+Website / Apps combines thumbnail, title, description, and arrow CTA into one semantic destination link with no nested controls. Examples without destinations use one button for the whole unit. Hover and keyboard focus turn the title orange; the arrow moves slightly on hover, and pressing the unit offsets it one pixel. Project spacing exceeds the spacing within each unit.
+
+The homepage Visual Design gallery displays four selected artworks in one column below 960px. From 960px it uses a 1.5:1 two-column composition, a 72px offset on even items, and an 86%-width third item. Images open the existing lightbox; separate title links open details when available. Category captions sit below titles. The gallery has no autoplay, scroll track, counter, or carousel controls. View all remains a gallery destination.
+
+Branding & Video retains scroll snapping, previous/next buttons, arrow keys, a position indicator, and five-second advancement with an icon-only pause/resume control. Hover and focus pause advancement only within the artwork list; the separate controls do not hold the timer paused. Resume starts a fresh five-second interval even while its control retains focus. Touch interaction pauses the carousel; hidden tabs, offscreen content, and open dialogs suspend advancement. Reduced motion starts the carousel paused and removes smooth movement; explicit Resume permits automatic advancement. Collection pages reuse the cards in a grid.
 
 Works card descriptions show the opening sentence and occupy at most two lines, with overflow clipped by an ellipsis. The Selected Works introduction has the same two-line limit. Full descriptions remain available in the CMS and case studies; this is a compact preview treatment rather than a content limit.
 
 ### Navigation
 
-The header remains opaque and sticky. Desktop links are quiet until hovered; the contact destination has stronger weight. Below the desktop breakpoint, a borderless hamburger icon opens mobile navigation. Its 44px target contains a 24px icon, turns orange on hover, and keeps the shared keyboard-focus outline. Mobile navigation opens a native dialog with large stacked links, separating rules, and a labelled close button. Preserve the skip link and native dialog keyboard behavior.
+The header remains opaque and sticky. Desktop links are quiet until hovered; the contact destination has stronger weight. Below the desktop breakpoint, header vertical padding is 8px around its 44px controls, giving a 60px header, with a 26px wordmark. A borderless hamburger icon opens mobile navigation. Its 44px target contains a 24px icon, turns orange on hover, and keeps the shared keyboard-focus outline. Mobile navigation opens a native dialog with large stacked links, separating rules, and a labelled close button. Preserve the skip link and native dialog keyboard behavior.
 
 Footer Instagram and LinkedIn links use the same 24px icon scale and minimum 44px targets, arranged with a 12px gap. They inherit dark text on the orange contact surface and reduce opacity on hover. Retain accessible destination names, tooltips, and the contact surface's dark focus outline. An empty configured destination omits its link.
 

@@ -50,11 +50,16 @@
   const artworkText={listing:['Find your','next shortlist.'],meta:['Report once.','Learn more.'],mbg:['Make progress','visible.'],hub:['One hub.','Less busywork.'],schedule:['Request.','Schedule. Take.'],sample:['Your next','website.']};
   function card(item, siblings, headingTag) {
     const card=node('article',`work-card work-card-${item.kind}`);
-    const href=safeURL(item.url); const media=node(item.kind==='webapp'&&href?'a':'button',`work-media work-art-${item.artwork||'sample'}`);
-    const track=element=>{element.dataset.workId=item.id;element.dataset.demo=String(item.demo);element.dataset.engagement=item.kind==='design'?'design_open':item.kind==='video'?'video_open':item.caseStudy?'work_open':'app_click';};track(media);
-    if(media.tagName==='A'){media.href=href;if(!href.startsWith(location.origin+'/')){media.target='_blank';media.rel='noopener noreferrer';}}
-    else media.type='button';
-    media.setAttribute('aria-label',`${item.kind==='design'?'Enlarge':item.kind==='video'?'Watch':item.demo?'Preview':'View'}: ${item.title}`);
+    const app=item.kind==='webapp',href=safeURL(item.caseStudy?`/work/${item.caseStudy.slug}`:item.url);
+    const destination=item.demo?'Preview':item.caseStudy||item.url.startsWith('/work/')?'View case study':'Open app';
+    const unit=app?node(href?'a':'button','work-card-link'):card;
+    const media=node(app?'span':'button',`work-media work-art-${item.artwork||'sample'}`);
+    const track=element=>{element.dataset.workId=item.id;element.dataset.demo=String(item.demo);element.dataset.engagement=item.kind==='design'?'design_open':item.kind==='video'?'video_open':item.caseStudy?'work_open':'app_click';};track(app?unit:media);
+    if(app){
+      unit.setAttribute('aria-label',`${destination}: ${item.title}`);
+      if(href){unit.href=href;if(!href.startsWith(location.origin+'/')){unit.target='_blank';unit.rel='noopener noreferrer';}}
+      else {unit.type='button';unit.addEventListener('click',()=>{openDialog(unit,item.title);modal.dataset.mode='sample';body.append(node('p','demo-explanation','Contoh slot Website / Apps. Ganti kontennya dan tambahkan tujuan link melalui menu Works di admin.'));});}
+    } else {media.type='button';media.setAttribute('aria-label',`${item.kind==='design'?'Enlarge':'Watch'}: ${item.title}`);}
     if(item.image) media.append(image(item.image,item.imageAlt||item.title));
     else if(item.artwork==='listing')media.append(image('/assets/work/listing-hub.jpg',item.title,'work-app-capture'));
     else {const art=node('span','work-type-art');for(const line of artworkText[item.artwork]||[item.title])art.append(node('span','',line));media.append(art);}
@@ -64,19 +69,25 @@
     } else if(item.kind==='design'){
       const enlarge=node('span','work-enlarge','Enlarge');enlarge.prepend(icon('maximize-2'));media.append(enlarge);
       media.addEventListener('click',()=>{imageItems=siblings;openDialog(media,item.title);modal.dataset.mode='design';showDesign(siblings.indexOf(item));});
-    } else if(!href) media.addEventListener('click',()=>{openDialog(media,item.title);modal.dataset.mode='sample';body.append(node('p','demo-explanation','Contoh slot Website / Apps. Ganti kontennya dan tambahkan tujuan link melalui menu Works di admin.'));});
-    card.append(media);
-    if(item.kind!=='video'){card.append(node(headingTag,'work-card-title',item.title));if(item.kind==='webapp')card.append(node('p','work-card-description',summary(item.description)));}
-    const meta=node('div','work-card-meta');
+    }
+    unit.append(media);
+    if(item.kind!=='video'){
+      const heading=node(app&&!href?'span':headingTag,'work-card-title');
+      if(app&&!href){heading.setAttribute('role','heading');heading.setAttribute('aria-level',headingTag.slice(1));}
+      if(item.kind==='design'&&href){const details=node('a','design-title-link',item.title);details.href=href;if(!href.startsWith(location.origin+'/')){details.target='_blank';details.rel='noopener noreferrer';}details.append(icon('arrow-up-right'));heading.append(details);}else heading.textContent=item.title;
+      unit.append(heading);
+      if(app)unit.append(node(href?'p':'span','work-card-description',summary(item.description)));
+      if(item.kind==='design')unit.append(node('p','work-category','Visual Design'));
+    }
+    const meta=node(app&&!href?'span':'div','work-card-meta');
     if(item.demo)meta.append(node('span','sample-label','Data contoh'));
     if(item.kind==='webapp'){
-      const action=node(href?'a':'button','text-link work-destination',item.demo?'Preview':item.url.startsWith('/work/')?'View case study':'Open app');
-      track(action);
-      if(href){action.href=href;if(!href.startsWith(location.origin+'/')){action.target='_blank';action.rel='noopener noreferrer';action.append(icon('external-link'));}}
-      else {action.type='button';action.addEventListener('click',()=>{openDialog(action,item.title);modal.dataset.mode='sample';body.append(node('p','demo-explanation','Contoh slot Website / Apps. Ganti kontennya dan tambahkan tujuan link melalui menu Works di admin.'));});}
+      const action=node('span','work-destination',destination);
+      action.append(icon(href&&!href.startsWith(location.origin+'/')?'external-link':'arrow-right'));
       meta.append(action);
     }
-    if(meta.childElementCount)card.append(meta);
+    if(meta.childElementCount)unit.append(meta);
+    if(app)card.append(unit);
     return card;
   }
   function setupCarousel(group) {
@@ -107,10 +118,10 @@
   let loading=false;
   async function load() {
     if(loading)return;loading=true;const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),12000);
-    groups.forEach(group=>{group.querySelector('[data-works-list]').setAttribute('aria-busy','true');group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=true);group.querySelectorAll('[data-retry-works]').forEach(node=>node.disabled=true);});
+    groups.forEach(group=>{const list=group.querySelector('[data-works-list]');list.setAttribute('aria-busy','true');if(!list.childElementCount)list.append(node('p','works-message','Memuat karya…'));group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=true);group.querySelectorAll('[data-retry-works]').forEach(node=>node.disabled=true);});
     try {
       const res=await fetch(document.body.dataset.cmsPreview?'/api/admin/works-preview':'/api/works',{signal:controller.signal,cache:'no-store'});if(!res.ok)throw Error('load');const data=await res.json();if(!Array.isArray(data.items))throw Error('data');
-      groups.forEach(group=>{const list=group.querySelector('[data-works-list]');let items=data.items.filter(item=>item.kind===group.dataset.workKind&&item.published);if(group.dataset.workKind==='webapp'&&!group.dataset.collection)items=items.slice(0,6);
+      groups.forEach(group=>{const list=group.querySelector('[data-works-list]');let items=data.items.filter(item=>item.kind===group.dataset.workKind&&item.published);if(group.dataset.workKind==='webapp'&&!group.dataset.collection)items=items.slice(0,6);if(group.dataset.workKind==='design'&&!group.dataset.collection)items=items.slice(0,4);
         list.replaceChildren(...items.map(item=>card(item,items,group.dataset.collection?'h2':'h4')));if(!items.length)list.append(node('p','works-message','Belum ada karya di koleksi ini.'));list.scrollLeft=0;group._updateCarousel?.();
       });
     } catch {groups.forEach(group=>{const list=group.querySelector('[data-works-list]');if(!list.querySelector('.work-card'))list.replaceChildren();group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=false);});}
