@@ -53,26 +53,53 @@ test('design showcase uses video-style caption without play action and keeps det
  assert.ok(button.listeners.click);
 });
 
-test('legacy capability accordions become editable bento cards without losing saved copy or duplicating visuals',async()=>{
- const db=runtime({'./cms':{}})('lib/db/site.ts'),{siteFields}=runtime()('lib/site.ts'),{load}=require('cheerio');
+test('legacy five-capability layouts receive four exact title-only cards without deleting stored copy',async()=>{
+ const db=runtime({'./cms':{}})('lib/db/site.ts'),{siteFields,capabilityTitles}=runtime()('lib/site.ts'),{load}=require('cheerio');
  const site=await db.initialSite(),old=load(fs.readFileSync('public/index.html','utf8'));
- const original=Array.from({length:5},(_,i)=>[site.values[`capabilityTitle${i}`],site.values[`capabilityBody${i}`]]);
- assert.ok(original.every(pair=>pair.every(Boolean)));
+ const original=Array.from({length:5},(_,i)=>[`Old capability ${i}`,`Stored paragraph ${i}`]);
+ delete site.values.capabilityLayoutVersion;
+ original.forEach(([title,copy],i)=>{site.values[`capabilityTitle${i}`]=title;site.values[`capabilityBody${i}`]=copy;});
+ old('.capability-list').removeClass('capability-bento-v2');
  old('.capability-list').empty().append(original.map(([title,copy])=>`<details><summary>${title}<svg class="icon"></svg></summary><p>${copy}</p></details>`).join(''));
  old('#work>.section-heading').append('<p>Old Selected Works helper</p>');
  site.values.capabilityTitle1='Desain dengan arah yang jelas';site.values.capabilityBody1='Copy yang disimpan melalui CMS.';
  site.values.worksIntro='Keep this stored value intact';
  site.layout={html:old('body').html(),css:''};
  const rendered=await db.renderHomepage(site),$=load(rendered);
- assert.equal($('.capability-list details').length,0);assert.equal($('.capability-card').length,5);
- assert.equal($('.capability-visual').length,5);assert.equal($('.capability-visual img').length,4);
- assert.equal($('.capability-card h4').eq(1).text(),site.values.capabilityTitle1);
- assert.equal($('.capability-card p').eq(1).text(),site.values.capabilityBody1);
+ assert.equal($('.capability-list details').length,0);assert.equal($('.capability-card').length,4);
+ assert.equal($('.capability-visual').length,4);assert.equal($('.capability-card p,.capability-card summary,.capability-card img').length,0);
+ assert.deepEqual($('.capability-card h4').map((_,el)=>$(el).text()).get(),Array.from(capabilityTitles));
+ assert.equal(site.values.capabilityTitle1,'Desain dengan arah yang jelas');assert.equal(site.values.capabilityBody1,'Copy yang disimpan melalui CMS.');
+ assert.equal(site.values.capabilityBody4,'Stored paragraph 4');
  assert.equal($('#work>.section-heading p').length,0);assert.equal($('.works-heading>.works-view-all').length,3);
  assert.equal(site.values.worksIntro,'Keep this stored value intact');assert.equal(siteFields.some(field=>field.key==='worksIntro'),false);
- $('.capability-visual img').first().attr('src','/assets/custom-capability.webp');
+ $('.capability-visual').first().addClass('custom-visual');
+ site.values.capabilityLayoutVersion='2';site.values.capabilityTitle1='Editable title after migration';
  site.layout={html:$('body').html(),css:''};const again=load(await db.renderHomepage(site));
- assert.equal(again('.capability-card').length,5);assert.equal(again('.capability-visual').length,5);
+ assert.equal(again('.capability-card').length,4);assert.equal(again('.capability-visual').length,4);
  assert.equal(again('#visuals .carousel-controls').length,1);
- assert.equal(again('.capability-visual img').first().attr('src'),'/assets/custom-capability.webp');
+ assert.equal(again('.capability-visual').first().hasClass('custom-visual'),true);
+ assert.equal(again('.capability-card h4').eq(1).text(),'Editable title after migration');
+ assert.equal(siteFields.filter(field=>field.key.startsWith('capabilityTitle')).length,4);
+ assert.equal(siteFields.some(field=>field.key.startsWith('capabilityBody')),false);
+});
+
+test('homepage and stored layouts place About second and keep an editable semantic quote without duplicate wrappers',async()=>{
+ const db=runtime({'./cms':{}})('lib/db/site.ts'),{load}=require('cheerio');
+ const site=await db.initialSite(),old=load(fs.readFileSync('public/index.html','utf8'));
+ assert.equal(site.values.aboutBody1,'Good visuals are nice, but good solutions are better.');
+ assert.ok(site.values.aboutBody2.startsWith('Buat saya,'));
+ old('#work').insertAfter(old('#home'));
+ old('.about-quote').replaceWith(old('.about-statement').clone());
+ site.values.aboutBody1='An editable statement from the CMS.';
+ site.layout={html:old('body').html(),css:''};
+ const $=load(await db.renderHomepage(site));
+ assert.deepEqual($('main>section').slice(0,3).map((_,el)=>$(el).attr('id')).get(),['home','about','work']);
+ assert.equal($('.about-copy>blockquote.about-quote').length,1);
+ assert.equal($('.about-quote .about-statement').text(),site.values.aboutBody1);
+ assert.equal($('.about-copy>p').first().text(),site.values.aboutLead);
+ assert.equal($('.about-copy>p').last().text(),site.values.aboutBody2);
+ site.layout={html:$('body').html(),css:''};const again=load(await db.renderHomepage(site));
+ assert.equal(again('.about-quote').length,1);assert.equal(again('.about-quote blockquote').length,0);
+ assert.deepEqual(again('main>section').slice(0,3).map((_,el)=>again(el).attr('id')).get(),['home','about','work']);
 });

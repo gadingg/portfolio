@@ -148,7 +148,7 @@
     const move=direction=>{const step=(list.children[1]?.getBoundingClientRect().left-list.children[0]?.getBoundingClientRect().left)||(list.children[0]?.getBoundingClientRect().width||list.clientWidth)+16;const max=list.scrollWidth-list.clientWidth;const next=direction>0?(list.scrollLeft>=max-4?0:Math.min(max,list.scrollLeft+step)):(list.scrollLeft<=4?max:Math.max(0,list.scrollLeft-step));list.scrollTo({left:next,behavior:reduced.matches?'instant':'smooth'});};
     const tick=()=>{if(automatic&&!paused&&!hover&&!focus&&visible&&!document.hidden&&!document.querySelector('dialog[open]')&&list.scrollWidth>list.clientWidth+4)move(1);};
     let timer;
-    const restart=()=>{clearInterval(timer);timer=setInterval(tick,5000);};
+    const restart=()=>{clearInterval(timer);timer=setInterval(tick,3000);};
     controls.querySelector('[data-carousel-prev]')?.addEventListener('click',()=>{move(-1);restart();});controls.querySelector('[data-carousel-next]')?.addEventListener('click',()=>{move(1);restart();});toggle.addEventListener('click',()=>{paused=!paused;if(!paused){hover=false;focus=false;}restart();update();});
     list.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')hover=true;});list.addEventListener('pointerleave',()=>{hover=false;restart();});
     list.addEventListener('focusin',()=>focus=true);list.addEventListener('focusout',e=>{focus=list.contains(e.relatedTarget);if(!focus)restart();});

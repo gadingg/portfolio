@@ -14,6 +14,7 @@ const icons = {
   trophy: 'Trophy', 'check-check': 'CheckCheck', 'calendar-days': 'CalendarDays',
   'layout-dashboard': 'LayoutDashboard', 'map-pin': 'MapPin',
   'mouse-pointer-2': 'MousePointer2', 'plus': 'Plus', play: 'Play', pause: 'Pause',
+  megaphone: 'Megaphone', palette: 'Palette', layers: 'Layers', sparkles: 'Sparkles', workflow: 'Workflow',
 };
 
 async function build() {

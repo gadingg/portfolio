@@ -3,6 +3,7 @@ import { contentURL, mediaURL } from './content-blocks';
 import { VisualLayoutSchema } from './visual-layout';
 export const defaultLinkedIn = 'https://www.linkedin.com/in/gadingutama/';
 export const defaultHeroMetadata = '© 2026 SUB-IDN. Creative Marketing';
+export const capabilityTitles = ['Creative Strategy & Digital Marketing','Visual Design & Branding','Web Apps & Digital Solutions','Generative AI & Automation'] as const;
 export type SiteField = {
   key: string;
   label: string;
@@ -80,19 +81,19 @@ export const siteFields: SiteField[] = [
     key: 'aboutLead',
     label: 'Pembuka About',
     group: 'About',
-    selector: '.about-copy p:nth-child(1)',
+    selector: '.about-copy > p:first-child',
   },
   {
     key: 'aboutBody1',
     label: 'Paragraf pertama',
     group: 'About',
-    selector: '.about-copy p:nth-child(2)',
+    selector: '.about-copy .about-statement, .about-copy > p:nth-child(2)',
   },
   {
     key: 'aboutBody2',
     label: 'Paragraf kedua',
     group: 'About',
-    selector: '.about-copy p:nth-child(3)',
+    selector: '.about-copy > p:last-of-type',
   },
   {
     key: 'capabilitiesTitle',
@@ -100,18 +101,12 @@ export const siteFields: SiteField[] = [
     group: 'About',
     selector: '.capability-layout > h3',
   },
-  ...Array.from({ length: 5 }, (_, i) => [
+  ...Array.from({ length: 4 }, (_, i) => [
     {
       key: `capabilityTitle${i}`,
       label: `Kemampuan ${i + 1}`,
       group: 'Kemampuan',
       selector: `.capability-list > :nth-child(${i + 1}) :is(summary,h4)`,
-    },
-    {
-      key: `capabilityBody${i}`,
-      label: `Isi kemampuan ${i + 1}`,
-      group: 'Kemampuan',
-      selector: `.capability-list > :nth-child(${i + 1}) p`,
     },
   ]).flat(),
   {

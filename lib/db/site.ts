@@ -2,7 +2,7 @@ import 'server-only';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { load } from 'cheerio';
-import { siteFields, defaultCV, defaultLinkedIn, defaultHeroMetadata, type SiteContent } from '@/lib/site';
+import { siteFields, defaultCV, defaultLinkedIn, defaultHeroMetadata, capabilityTitles, type SiteContent } from '@/lib/site';
 import { readCMS, readPublishedCMS } from './cms';
 import { cleanVisualLayout } from '../visual-layout';
 export const homepageTemplate = () =>
@@ -26,10 +26,15 @@ export async function initialSite(): Promise<SiteContent> {
           .trim() || el.text().trim();
   }
   values.footerName = 'R. Gading Utama';
+  values.capabilityLayoutVersion = '2';
   return { values, cv: defaultCV };
 }
 const withSiteDefaults = (site: SiteContent): SiteContent => {
   const values: Record<string, string> = { linkedin: defaultLinkedIn, heroMetadata: defaultHeroMetadata, ...site.values };
+  if(values.capabilityLayoutVersion!=='2'){
+    capabilityTitles.forEach((title,index)=>{values[`capabilityTitle${index}`]=title;});
+    values.capabilityLayoutVersion='2';
+  }
   const replacements: Record<string, [string, string]> = {
     headline: ['I think. I create.\nI solve.', 'I Think. I Create.\nI Solve.'],
     aboutLead: ['Saya suka ikut mikir dari awal.', 'Dari brainstorm, membuat visual, sampai membuat workflow lewat web-app dan AI.'],
@@ -49,7 +54,7 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
   const values = withSiteDefaults(site).values;
   const pipelineTrack = $('.process-pipeline > .pipeline-track').first().clone();
   const designControls = $('#visuals .carousel-controls').first().clone();
-  const capabilityVisuals = $('.capability-card .capability-visual').toArray().map(element => $(element).clone());
+  const capabilityCards = $('.capability-list > .capability-card').toArray().map(element => $(element).clone());
   if(site.layout){
     const layout=cleanVisualLayout(site.layout);
     $('body').html(layout.html);
@@ -127,24 +132,30 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
     const copy = $(element);
     copy.find('p').first().removeClass('lead-copy');
     copy.find('p').eq(1).addClass('about-statement');
+    const statement=copy.find('.about-statement').first();
+    if(statement.length){
+      if(!statement.parent().is('blockquote'))statement.wrap('<blockquote class="about-quote"></blockquote>');
+      else statement.parent().addClass('about-quote');
+    }
   });
+  const hero=$('main > #home, main > .hero').first(), about=$('main > #about').first(), works=$('main > #work').first();
+  if(hero.length&&about.length){hero.after(about);if(works.length)about.after(works);}
   $('.works-section > .section-heading > p').remove();
   $('.works-heading > a').addClass('works-view-all');
   $('#visuals').attr('data-carousel','true').find('.carousel-controls').remove();
   $('#visuals [data-works-list]').removeClass('works-grid').addClass('editorial-gallery works-track').removeAttr('tabindex aria-label');
   $('#visuals .gallery-hint').remove();
   $('#visuals [data-works-list]').after(designControls);
-  $('.capability-list').children('details,article').each((index,element) => {
-    const previous=$(element), title=previous.find('summary,h4').first().text().trim(), body=previous.find('p').first().clone();
-    if(previous.is('article')){
-      previous.addClass('capability-card');
-      if(!previous.children('.capability-visual').length&&capabilityVisuals[index])previous.prepend(capabilityVisuals[index].clone());
-      return;
+  $('.capability-list').each((_index,element) => {
+    const list=$(element);
+    if(!list.hasClass('capability-bento-v2')||list.children('.capability-card').length!==4){
+      list.empty().append(...capabilityCards.map(card=>card.clone()));
+      list.addClass('capability-bento-v2');
     }
-    const card=$('<article class="capability-card"></article>');
-    if(capabilityVisuals[index])card.append(capabilityVisuals[index].clone());
-    card.append($('<h4>').text(title),body);
-    previous.replaceWith(card);
+    list.children('.capability-card').each((index,card)=>{
+      $(card).find('h4').first().text(values[`capabilityTitle${index}`]||capabilityTitles[index]);
+      $(card).find('p,summary,.sample-label').remove();
+    });
   });
   $('.process-section').each((_i, section) => {
     const process = $(section), list = process.find('.principles').first();
