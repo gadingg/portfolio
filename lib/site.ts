@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { contentURL, mediaURL } from './content-blocks';
 import { VisualLayoutSchema } from './visual-layout';
 export const defaultLinkedIn = 'https://www.linkedin.com/in/gadingutama/';
-export const defaultHeroMetadata = '© 2026 SUB-IDN. Creative Marketing';
+export const defaultHeroMetadata = 'Creative Marketing & Digital Solutions';
 export const capabilityTitles = ['Creative Strategy & Digital Marketing','Visual Design & Branding','Web Apps & Digital Solutions','Generative AI & Automation'] as const;
 export type SiteField = {
   key: string;
@@ -78,20 +78,14 @@ export const siteFields: SiteField[] = [
     lines: true,
   },
   {
-    key: 'aboutLead',
-    label: 'Pembuka About',
-    group: 'About',
-    selector: '.about-copy > p:first-child',
-  },
-  {
     key: 'aboutBody1',
-    label: 'Paragraf pertama',
+    label: 'Quote About',
     group: 'About',
-    selector: '.about-copy .about-statement, .about-copy > p:nth-child(2)',
+    selector: '.about-copy .about-statement',
   },
   {
     key: 'aboutBody2',
-    label: 'Paragraf kedua',
+    label: 'Penjelasan About',
     group: 'About',
     selector: '.about-copy > p:last-of-type',
   },

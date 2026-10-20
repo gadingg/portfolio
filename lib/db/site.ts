@@ -42,6 +42,14 @@ const withSiteDefaults = (site: SiteContent): SiteContent => {
     aboutBody2: ['Buat saya, hasil yang bagus bukan cuma terlihat menarik. Campaign harus punya tujuan, tools harus benar-benar kepakai, dan solusi harus membuat pekerjaan jadi lebih mudah.', 'Buat saya, bukan cuma soal visual yang menarik, tapi juga bagaimana pesan bisa tersampaikan dengan baik & masalah bisa diselesaikan.'],
   };
   for (const [key, [previous, next]] of Object.entries(replacements)) if (values[key]?.replace(/\u00a0/g, ' ').trim() === previous) values[key] = next;
+  const editorialDefaults: Record<string, [string[], string]> = {
+    heroMetadata: [['© 2026 SUB-IDN. Creative Marketing'], defaultHeroMetadata],
+    intro: [['Saya menggabungkan creative marketing, design, dan technology untuk mengubah ide atau masalah bisnis menjadi campaign, visual, dan web-app yang benar-benar bisa dipakai.', 'Saya suka mengembangkan ide jadi sesuatu yang benar-benar kepakai. Mulai dari campaign, visual, sampai web-app yang bikin workflow lebih simpel.'], 'Saya suka mengubah ide jadi sesuatu yang benar-benar kepakai, dari visual sampai solusi digital.'],
+    aboutTitle: [['More than\nexecuting\nthe brief.'], 'More than executing\nthe brief.'],
+    aboutBody1: [['Good visuals are nice, but good solutions are better.'], 'Good visuals catch eyes. Great ideas make an impact.'],
+    aboutBody2: [['Buat saya, bukan cuma soal visual yang menarik, tapi juga bagaimana pesan bisa tersampaikan dengan baik & masalah bisa diselesaikan.'], 'Buat saya, bukan cuma soal visual yang menarik, tapi juga bagaimana pesan bisa tersampaikan dengan baik dan pekerjaan jadi lebih simpel.'],
+  };
+  for (const [key, [previous, next]] of Object.entries(editorialDefaults)) if (previous.includes(values[key]?.replace(/\u00a0/g, ' ').trim())) values[key] = next;
   return { ...site, values };
 };
 export const getSiteDocument = async () => {
@@ -60,6 +68,14 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
     $('body').html(layout.html);
     $('head').append($('<style data-cms-layout>').text(layout.css));
   }
+  // Normalize older CMS layouts before binding fields so the quote and body stay distinct.
+  $('.about-copy').each((_i, element) => {
+    const copy = $(element);
+    let statement = copy.find('.about-statement').first();
+    if (!statement.length) statement = copy.find('p').eq(1).addClass('about-statement');
+    copy.children('p').not(statement).slice(0, -1).remove();
+    if (statement.length && !statement.parent().is('blockquote')) statement.wrap('<blockquote class="about-quote"></blockquote>');
+  });
   const targets = new Map(
     siteFields.map((field) => [field.key, $(field.selector).first()]),
   );
@@ -130,8 +146,6 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
   $('.hero-intro').empty().append($('<p class="hero-metadata">').text(values.heroMetadata));
   $('.about-copy').each((_i, element) => {
     const copy = $(element);
-    copy.find('p').first().removeClass('lead-copy');
-    copy.find('p').eq(1).addClass('about-statement');
     const statement=copy.find('.about-statement').first();
     if(statement.length){
       if(!statement.parent().is('blockquote'))statement.wrap('<blockquote class="about-quote"></blockquote>');
@@ -139,7 +153,7 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
     }
   });
   const hero=$('main > #home, main > .hero').first(), about=$('main > #about').first(), works=$('main > #work').first();
-  if(hero.length&&about.length){hero.after(about);if(works.length)about.after(works);}
+  if(hero.length&&works.length){hero.after(works);if(about.length)works.after(about);}
   $('.works-section > .section-heading > p').remove();
   $('.works-heading > a').addClass('works-view-all');
   $('#visuals').attr('data-carousel','true').find('.carousel-controls').remove();
@@ -174,5 +188,6 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
     }
   });
   $('body').append('<script src="/assets/js/engagement.js" defer></script>');
+  if (!$('script[src="/assets/js/capabilities-motion.js"]').length) $('body').append('<script src="/assets/js/capabilities-motion.js" defer></script>');
   return $.html();
 }
