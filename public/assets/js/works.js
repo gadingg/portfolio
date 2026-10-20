@@ -48,7 +48,7 @@
     const fallback=node('a','text-link','Open on Instagram');fallback.href=url;fallback.target='_blank';fallback.rel='noopener noreferrer';fallback.append(icon('external-link'));bottom.append(hint,fallback);
   }
   const artworkText={listing:['Find your','next shortlist.'],meta:['Report once.','Learn more.'],mbg:['Make progress','visible.'],hub:['One hub.','Less busywork.'],schedule:['Request.','Schedule. Take.'],sample:['Your next','website.']};
-  function card(item, siblings, headingTag) {
+  function card(item, siblings, headingTag, showcase = false) {
     const card=node('article',`work-card work-card-${item.kind}`);
     const app=item.kind==='webapp',href=safeURL(item.caseStudy?`/work/${item.caseStudy.slug}`:item.url);
     const destination=item.demo?'Preview':item.caseStudy||item.url.startsWith('/work/')?'View case study':'Open app';
@@ -74,9 +74,14 @@
       const heading=node(app&&!href?'span':headingTag,'work-card-title');
       if(app&&!href){heading.setAttribute('role','heading');heading.setAttribute('aria-level',headingTag.slice(1));}
       if(item.kind==='design'&&href){const details=node('a','design-title-link',item.title);details.href=href;if(!href.startsWith(location.origin+'/')){details.target='_blank';details.rel='noopener noreferrer';}details.append(icon('arrow-up-right'));heading.append(details);}else heading.textContent=item.title;
-      unit.append(heading);
-      if(app)unit.append(node(href?'p':'span','work-card-description',summary(item.description)));
-      if(item.kind==='design')unit.append(node('p','work-category','Visual Design'));
+      if(item.kind==='design'&&showcase){
+        const caption=node('div','video-bottom design-showcase-caption');
+        caption.append(heading,node('p','work-category','Visual Design'));unit.append(caption);
+      }else{
+        unit.append(heading);
+        if(app)unit.append(node(href?'p':'span','work-card-description',summary(item.description)));
+        if(item.kind==='design')unit.append(node('p','work-category','Visual Design'));
+      }
     }
     const meta=node(app&&!href?'span':'div','work-card-meta');
     if(item.demo&&item.kind!=='design')meta.append(node('span','sample-label','Data contoh'));
@@ -91,24 +96,9 @@
   }
   function setupEditorialGallery(group) {
     const list=group.querySelector('[data-works-list]');
-    const hint=group.querySelector('.gallery-hint');
     list.tabIndex=0;list.setAttribute('role','region');
     list.setAttribute('aria-label','Visual Design gallery');
-    if(hint)list.setAttribute('aria-describedby',hint.id);
-    const update=()=>{
-      const cards=[...list.querySelectorAll('.work-card-design')];
-      const first=cards[0]?.querySelector('img');
-      const ratio=first?.naturalWidth&&first.naturalHeight?first.naturalWidth/first.naturalHeight:.8;
-      const mobile=matchMedia('(max-width: 767px)').matches;
-      const height=Math.max(180,Math.min(420,list.clientWidth*(mobile ? .84 : 1/3.4)/ratio));
-      list.style.setProperty('--gallery-art-height',`${height}px`);
-      cards.forEach(card=>{const img=card.querySelector('img');if(img?.naturalWidth&&img.naturalHeight)card.style.setProperty('--art-ratio',img.naturalWidth/img.naturalHeight);});
-      if(hint)hint.hidden=list.scrollWidth<=list.clientWidth+4;
-    };
-    group._updateGallery=()=>{
-      list.querySelectorAll('img').forEach(img=>{if(!img.complete)img.addEventListener('load',update,{once:true});});
-      update();
-    };
+    group._editorialGallery=true;
     let drag=null,suppressClick=false,resetClick;
     const finish=()=>{
       if(!drag)return;
@@ -144,7 +134,6 @@
       const left=event.key==='Home'?0:event.key==='End'?list.scrollWidth-list.clientWidth:event.key==='ArrowRight'?offsets.find(offset=>offset>list.scrollLeft+4)??list.scrollWidth-list.clientWidth:[...offsets].reverse().find(offset=>offset<list.scrollLeft-4)??0;
       list.scrollTo({left,behavior:reduced.matches?'instant':'smooth'});
     });
-    new ResizeObserver(update).observe(list);
   }
   groups.filter(group=>group.querySelector('.editorial-gallery')).forEach(setupEditorialGallery);
   function setupCarousel(group) {
@@ -156,7 +145,7 @@
     const automatic=['design','video'].includes(group.dataset.workKind);toggle.hidden=!automatic;
     list.tabIndex=0;list.setAttribute('aria-label',`${group.querySelector('h3')?.textContent||'Works'} carousel`);
     const update=()=>{const overflow=list.scrollWidth>list.clientWidth+4;controls.hidden=!overflow;const children=[...list.children];const left=list.getBoundingClientRect().left;let index=0,min=Infinity;children.forEach((child,i)=>{const distance=Math.abs(child.getBoundingClientRect().left-left);if(distance<min){min=distance;index=i;}});position.textContent=`${index+1} / ${children.length}`;const label=paused?'Resume slides':'Pause slides';toggle.replaceChildren(icon(paused?'play':'pause'));toggle.setAttribute('aria-label',label);toggle.title=label;toggle.setAttribute('aria-pressed',String(paused));};
-    const move=direction=>{const step=(list.children[0]?.getBoundingClientRect().width||list.clientWidth)+24;const max=list.scrollWidth-list.clientWidth;const next=direction>0?(list.scrollLeft>=max-4?0:Math.min(max,list.scrollLeft+step)):(list.scrollLeft<=4?max:Math.max(0,list.scrollLeft-step));list.scrollTo({left:next,behavior:reduced.matches?'instant':'smooth'});};
+    const move=direction=>{const step=(list.children[1]?.getBoundingClientRect().left-list.children[0]?.getBoundingClientRect().left)||(list.children[0]?.getBoundingClientRect().width||list.clientWidth)+16;const max=list.scrollWidth-list.clientWidth;const next=direction>0?(list.scrollLeft>=max-4?0:Math.min(max,list.scrollLeft+step)):(list.scrollLeft<=4?max:Math.max(0,list.scrollLeft-step));list.scrollTo({left:next,behavior:reduced.matches?'instant':'smooth'});};
     const tick=()=>{if(automatic&&!paused&&!hover&&!focus&&visible&&!document.hidden&&!document.querySelector('dialog[open]')&&list.scrollWidth>list.clientWidth+4)move(1);};
     let timer;
     const restart=()=>{clearInterval(timer);timer=setInterval(tick,5000);};
@@ -164,7 +153,7 @@
     list.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')hover=true;});list.addEventListener('pointerleave',()=>{hover=false;restart();});
     list.addEventListener('focusin',()=>focus=true);list.addEventListener('focusout',e=>{focus=list.contains(e.relatedTarget);if(!focus)restart();});
     list.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){paused=true;update();}});
-    list.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();move(e.key==='ArrowLeft'?-1:1);}});
+    if(!group._editorialGallery)list.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();move(e.key==='ArrowLeft'?-1:1);}});
     list.addEventListener('scroll',update,{passive:true});new ResizeObserver(update).observe(list);
     new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)restart();},{threshold:.3}).observe(list);
     reduced.addEventListener('change',()=>{paused=reduced.matches;update();});
@@ -179,7 +168,7 @@
     try {
       const res=await fetch(document.body.dataset.cmsPreview?'/api/admin/works-preview':'/api/works',{signal:controller.signal,cache:'no-store'});if(!res.ok)throw Error('load');const data=await res.json();if(!Array.isArray(data.items))throw Error('data');
       groups.forEach(group=>{const list=group.querySelector('[data-works-list]');let items=data.items.filter(item=>item.kind===group.dataset.workKind&&item.published);if(group.dataset.workKind==='webapp'&&!group.dataset.collection)items=items.slice(0,6);
-        list.replaceChildren(...items.map(item=>card(item,items,group.dataset.collection?'h2':'h4')));if(!items.length)list.append(node('p','works-message','Belum ada karya di koleksi ini.'));list.scrollLeft=0;group._updateCarousel?.();group._updateGallery?.();
+        list.replaceChildren(...items.map(item=>card(item,items,group.dataset.collection?'h2':'h4',!!group.querySelector('.editorial-gallery'))));if(!items.length)list.append(node('p','works-message','Belum ada karya di koleksi ini.'));list.scrollLeft=0;group._updateCarousel?.();
       });
     } catch {groups.forEach(group=>{const list=group.querySelector('[data-works-list]');if(!list.querySelector('.work-card'))list.replaceChildren();group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=false);});}
     finally{clearTimeout(timeout);loading=false;groups.forEach(group=>{group.querySelector('[data-works-list]').setAttribute('aria-busy','false');group.querySelectorAll('[data-retry-works]').forEach(node=>node.disabled=false);});}

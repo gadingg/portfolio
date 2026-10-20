@@ -1,0 +1,11 @@
+# Works and What I Do refinement QA
+
+Approved scope and interpretation are in docs/briefs/2026-10-20-works-bento-refinement.md. No production CMS write, commit, push or deployment was performed.
+
+- Final npm production build passed compilation, lint, type validation and page generation after the CMS preservation adjustment.
+- Final suite: `node --test scripts/test-editorial-public.cjs scripts/test-horizontal-gallery.cjs scripts/test-public-controls.cjs`,15 tests passed. Tests cover card semantics, detail-link/lightbox separation, no design Watch video/play affordance, drag versus click, keyboard movement, native touch non-interference,5-second autoplay/pause/resume, reduced motion, CMS old/new capability field binding and stored-layout migration.
+- A legacy CMS fixture keeps custom capability titles/descriptions while replacing details with5 visual bento articles. Rendering twice does not duplicate images or controls. Existing edited bento image URLs are preserved. Removed worksIntro remains unchanged in stored fixture values but is not presented or offered as an editable helper field.
+- Production server localhost:3005 returned200 for homepage,/webapp,/design,/video. Actual homepage HTML has no Selected Works paragraph,3 shared View all classes, one design track/control group,5 populated bento cards and5 visuals, and no inline About background overriding the canvas rule.
+- Source uses shared16px track/card gaps,24px heading-content gap,32px Selected Works heading gap,64px/80px work-group separation. Both design/video share responsive track widths; design fits source images with contain. Bento is1/2/3 columns with a wide first desktop card. The About background uses existing canvas token with no section border.
+- One Impeccable scoped detector pass recorded one preexisting Contact padding warning outside scope. No unrelated Contact change was made.
+- Current browser captures are unavailable. The session's last CUA initialization failed before opening a tab with kernel asset path error3. Desktop/mobile appearance, computed spacing, physical swipe/trackpad behavior and measured overflow remain unverified. Source/HTTP/fixtures cannot replace visual evidence. Finish disposition: recapture.

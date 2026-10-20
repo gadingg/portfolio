@@ -210,13 +210,14 @@
     "homepageEditorial": {
       "source": "docs/briefs/2026-10-19-editorial-refinement.md",
       "hero": "Content-driven height; primary action minimum 44px, 10px 14px padding, 13px type. Metadata is owner-supplied factual content, not a reusable pre-heading style.",
-      "works": "Homepage top/bottom padding: 48px/64px below 960px, 64px/88px from 960px. Web app units have 44px row gaps, increasing to 52px on desktop; descriptions have two-line clamps.",
-      "gallery": "Single horizontal rail of all published design works in CMS order. Frames share a height and ratio-derived widths with 16px gaps; no stagger, border, padding, cropping or distortion. Image-load and resize sizing uses first-image ratio and 84% of rail width below 768px, 1/3.4 from 768px, bounded to 180..420px height. Actual visible count varies with image ratios. Captions use 16px/1.4 titles, 12px category text, 12px artwork-to-title and 4px title-to-category spacing. View all stays beside heading, 24px above artwork, including narrow screens. Native horizontal overflow, proximity snap, mouse drag after 6px with trailing-click suppression, Arrow/Home/End rail navigation and overflow-only Drag / Swipe to explore hint. Existing lightbox opens from artwork; separate detail title links retain 44px targets. Zoom-in cursor and .88 hover opacity without image zoom. Reduced motion removes smooth programmatic scrolling and transition. No visible Enlarge, autoplay, slide count, or demo labels; stored data preserved. Design archive grid and video carousel unchanged. Source-derived record only; visual captures unavailable due CUA kernel asset path error3, so no visual finish approval.",
-      "bio": "From 600px: 16px/1.8 paragraphs with 20px spacing; statement 22px/1.45, 24px on desktop. Up to 599px: paragraphs and bold statement 15px/1.8 with 58ch maximum statement measure. Capability group margin 40px, 48px desktop. View CV stays inline with its file icon.",
+      "works": "Homepage top/bottom padding48px/64px below960px,64px/88px from960px. Selected Works helper absent from presentation and editing; stored values retained. Heading-to-first-group32px, group heading-to-content24px, group separation64px mobile/80px desktop without redundant rules/insets. All View all links borderless with44px targets and same-row alignment. Web app units retain44px row gaps,52px desktop and two-line summaries.",
+      "gallery": "Homepage design shares video showcase: 84% columns mobile,46% from 600px,36% from 960px;16px gaps;3:4 rounded12px frames; contain-fit uncropped images. Bottom gradient title/category overlay, titles clamp(22px,2.5vw,32px)/1.2 and category12px. Independent detail links preserve44px targets; artwork button opens existing lightbox without Watch/play/visible Enlarge or demo labels. All published CMS items retain order. Mandatory snap, native swipe/trackpad, mouse drag after6px with trailing-click suppression, rail Arrow/Home/End. Five-second carousel controls, indicator, pause/resume and reduced-motion states now match video. Old manual-only natural-width gallery and hint superseded. Design archive retains artwork-first grid. Browser captures unavailable; no visual approval.",
+      "bio": "From 600px: 16px/1.8 paragraphs with 20px spacing; statement 22px/1.45, 24px on desktop. Up to 599px: paragraphs and bold statement 15px/1.8 with 58ch maximum statement measure. Capability group margin48px at all widths. About background uses canvas without a section border; orange headline accent preserved. View CV stays inline with its file icon.",
       "navigation": "Below 960px: 8px vertical padding, 26px wordmark, 44px targets. Existing sticky opaque header and menu dialog preserved.",
       "video": "Existing five-second carousel and its pause/resume behavior preserved.",
-      "narrowWorksHeading": "At viewport widths up to 379px, Works group headings use a left-aligned column with a 12px gap; View all follows below the title. Homepage Visual Design overrides this with a same-row heading and View all link.",
-      "gallerySource": "docs/briefs/2026-10-20-horizontal-design-gallery.md"
+      "narrowWorksHeading": "Works headings and View all links remain in one row. Up to379px headings20px,12px gap,View all13px.",
+      "gallerySource": "docs/briefs/2026-10-20-works-bento-refinement.md",
+      "capabilities": "Five static visual bento cards replace disclosures. One column mobile,two columns from600px with last spanning full row,three from960px with first spanning two and image left/copy right. 16px gutters,24px padding,12px corners,12px internal gaps. Heading gap24px. Four existing contain-fit artwork images at200px visual height; featured desktop image min260px; fifth uses32px orange Lucide flow. Titles20px/1.3,body15px/1.8 secondary. CMS old summary/new h4 selectors preserved; public normalization converts old details after field binding and keeps edited article markup."
     },
     "headerScroll": {
       "source": "docs/briefs/2026-10-19-scroll-header.md",
@@ -299,11 +300,11 @@
       "description": "Readable recovery text with an explicit retry action."
     },
     {
-      "name": "Capability disclosure",
-      "html": "<details class=\"ds-capability\"><summary>Creative marketing<svg class=\"ds-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 5v14M5 12h14\"/></svg></summary><p>Campaign, visual execution, and practical workflows.</p></details>",
-      "kind": "custom",
-      "css": ".ds-capability{border-block:1px solid #33372f;background:#171914;font-family:Manrope,Arial,sans-serif;color:#f3f0e8}.ds-capability summary{display:flex;align-items:center;justify-content:space-between;gap:20px;list-style:none;cursor:pointer;min-height:64px;padding:18px 0;font-size:16px;font-weight:700;line-height:1.5}.ds-capability summary::-webkit-details-marker{display:none}.ds-icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;transition:transform .25s cubic-bezier(.16,1,.3,1)}.ds-capability[open] summary{color:#ff5a1f}.ds-capability[open] .ds-icon{transform:rotate(45deg)}.ds-capability p{max-width:62ch;color:#b6b8ae;font-size:14px;line-height:1.65;margin:0;padding-bottom:22px}.ds-capability summary:focus-visible{outline:3px solid #ff5a1f;outline-offset:5px}@media(prefers-reduced-motion:reduce){.ds-icon{transition:none}}",
-      "description": "Native disclosure with an open-state accent and rotating line icon."
+      "name": "Capability bento card",
+      "html": "<article class=\"ds-capability\"><div class=\"ds-capability-visual\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\"><path d=\"M18 16 22 12 18 8M6 8 2 12 6 16M14.5 4 9.5 20\"/></svg></div><h4>Web-App &amp; Digital Solutions</h4><p>Internal web-app dan tools untuk menyederhanakan workflow.</p></article>",
+      "kind": "card",
+      "css": ".ds-capability{display:flex;flex-direction:column;gap:12px;min-width:0;padding:24px;border-radius:12px;background:var(--surface,#141613);color:var(--ink,#f3f0e8);font-family:Manrope,Arial,sans-serif}.ds-capability-visual{display:flex;align-items:center;justify-content:center;height:200px;overflow:hidden;margin:-24px -24px 8px;border-radius:12px 12px 0 0}.ds-capability-visual svg{width:32px;height:32px;color:var(--accent,#ff5a1f)}.ds-capability h4{font-size:20px;line-height:1.3;letter-spacing:-.02em;margin:0}.ds-capability p{font-size:15px;line-height:1.8;color:var(--secondary,#b6b8ae);margin:0;max-width:62ch}",
+      "description": "Static artwork-led capability card with CMS-editable title and body; no disclosure or false action cue."
     },
     {
       "name": "Process pipeline",
@@ -324,7 +325,7 @@
     "dos": [
       "**Do** keep Req Take Video's two browser panels on a white/silver studio background with the larger schedule at left and the supporting request panel at right. Preserve teal UI and actual content, soft physical shadows, 4:3 contain framing, CMS image editing, and the existing title, slug, case narrative, and destination. Keep aqua environments, rings, stages, and sparkles out of this artwork.",
       "**Do** preserve separate structural and interactive border colors.",
-      "**Do** keep actual artwork prominent, with captions outside its frame except for the video thumbnail's bottom title overlay.",
+      "**Do** keep actual artwork prominent, with captions outside its frame except for homepage design and video showcase bottom title overlays.",
       "**Do** retain visible action labels, keyboard focus, and explicit loading or failure messages; menu, social, and carousel pause/resume controls use icons with accessible names and tooltips, with state-specific names for pause/resume.",
       "**Do** respect reduced motion and let mobile action groups wrap.",
       "For Internal Listing Hub, keep the two-app mobile presentation in one 4:3 cover with complete graphite phones, actual white/green app interfaces, a forest-green artwork background and soft physical shadows. Keep copy outside the thumbnail. Preserve Works CMS editing of the cover, concise Indonesian narrative and both app link blocks. Authored copy uses no em dash or en dash and no unverified quantitative impact claims. This is project artwork, not a new public interface palette.",
@@ -350,7 +351,7 @@
       }
     ],
     "keyCharacteristics": [
-      "Large artwork with captions outside its frame; video thumbnails use a bottom title overlay.",
+      "Large artwork leads; homepage design and video showcases use a bottom title overlay, while archive captions remain outside.",
       "Confident sans headings and quieter, readable explanations.",
       "Flat dark surfaces, thin dividers, and compact rectangular controls.",
       "Orange actions and emphasis, with an orange contact surface.",

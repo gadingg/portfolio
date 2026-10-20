@@ -27,7 +27,7 @@ test('artwork lightbox and optional detail link remain separate sibling interact
  const demo=descendants(cards()({...design,demo:true},[design],'h4'));
  assert.equal(demo.filter(node=>node.className==='sample-label').length,0);
 });
-test('stored CMS layouts receive editorial hero, exact bio, and manual editorial gallery while video remains a carousel',async()=>{
+test('stored CMS layouts receive editorial hero, exact bio, and matching design/video carousel controls',async()=>{
  const db=runtime({'./cms':{}})('lib/db/site.ts'),{load}=require('cheerio'),site=await db.initialSite(),old=load(fs.readFileSync('public/index.html','utf8'));
  site.values.headline='I think. I create.\nI solve.';site.values.aboutLead='Saya suka ikut mikir dari awal.';
  site.values.aboutBody1='Mulai dari mencari ide campaign, menyusun content, membuat visual, sampai melihat workflow yang ribet dan mencari cara supaya bisa dibuat lebih simpel lewat web-app atau AI.';
@@ -37,7 +37,42 @@ test('stored CMS layouts receive editorial hero, exact bio, and manual editorial
  assert.equal($('.hero-metadata').text(),'© 2026 SUB-IDN. Creative Marketing');assert.equal($('#hero-title').text(),'I Think. I Create.I Solve.');
  assert.equal($('.about-copy p').eq(0).text(),'Dari brainstorm, membuat visual, sampai membuat workflow lewat web-app dan AI.');
  assert.equal($('.about-statement').text(),'Good visuals are nice, but good solutions are better.');assert.equal($('.about-copy p').eq(2).text(),'Buat saya, bukan cuma soal visual yang menarik, tapi juga bagaimana pesan bisa tersampaikan dengan baik & masalah bisa diselesaikan.');
- assert.equal($('#visuals').attr('data-carousel'),undefined);assert.equal($('#visuals .carousel-controls').length,0);assert.equal($('#visuals .editorial-gallery').length,1);assert.equal($('#videos[data-carousel] .carousel-controls').length,1);
- assert.equal($('#visuals .gallery-hint').length,1);assert.equal($('#visuals .gallery-hint').attr('id'),'visual-gallery-hint');
+ assert.equal($('#visuals').attr('data-carousel'),'true');assert.equal($('#visuals .carousel-controls').length,1);assert.equal($('#visuals .editorial-gallery.works-track').length,1);assert.equal($('#videos[data-carousel] .carousel-controls').length,1);
+ assert.equal($('#visuals .gallery-hint').length,0);
  assert.equal(site.values.aboutLead,'Saya suka ikut mikir dari awal.');
+});
+
+test('design showcase uses video-style caption without play action and keeps detail link outside lightbox button',()=>{
+ const design={...item,kind:'design',caseStudy:undefined,url:'/work/design'};
+ const root=cards()(design,[design],'h4',true),all=descendants(root);
+ const button=all.find(node=>node.tagName==='BUTTON');
+ assert.ok(all.some(node=>node.className==='video-bottom design-showcase-caption'));
+ assert.equal(all.filter(node=>node.className==='video-play'||node.textContent==='Watch video').length,0);
+ assert.equal(descendants(button).filter(node=>node.tagName==='A').length,0);
+ assert.ok(all.find(node=>node.className==='design-title-link'));
+ assert.ok(button.listeners.click);
+});
+
+test('legacy capability accordions become editable bento cards without losing saved copy or duplicating visuals',async()=>{
+ const db=runtime({'./cms':{}})('lib/db/site.ts'),{siteFields}=runtime()('lib/site.ts'),{load}=require('cheerio');
+ const site=await db.initialSite(),old=load(fs.readFileSync('public/index.html','utf8'));
+ const original=Array.from({length:5},(_,i)=>[site.values[`capabilityTitle${i}`],site.values[`capabilityBody${i}`]]);
+ assert.ok(original.every(pair=>pair.every(Boolean)));
+ old('.capability-list').empty().append(original.map(([title,copy])=>`<details><summary>${title}<svg class="icon"></svg></summary><p>${copy}</p></details>`).join(''));
+ old('#work>.section-heading').append('<p>Old Selected Works helper</p>');
+ site.values.capabilityTitle1='Desain dengan arah yang jelas';site.values.capabilityBody1='Copy yang disimpan melalui CMS.';
+ site.values.worksIntro='Keep this stored value intact';
+ site.layout={html:old('body').html(),css:''};
+ const rendered=await db.renderHomepage(site),$=load(rendered);
+ assert.equal($('.capability-list details').length,0);assert.equal($('.capability-card').length,5);
+ assert.equal($('.capability-visual').length,5);assert.equal($('.capability-visual img').length,4);
+ assert.equal($('.capability-card h4').eq(1).text(),site.values.capabilityTitle1);
+ assert.equal($('.capability-card p').eq(1).text(),site.values.capabilityBody1);
+ assert.equal($('#work>.section-heading p').length,0);assert.equal($('.works-heading>.works-view-all').length,3);
+ assert.equal(site.values.worksIntro,'Keep this stored value intact');assert.equal(siteFields.some(field=>field.key==='worksIntro'),false);
+ $('.capability-visual img').first().attr('src','/assets/custom-capability.webp');
+ site.layout={html:$('body').html(),css:''};const again=load(await db.renderHomepage(site));
+ assert.equal(again('.capability-card').length,5);assert.equal(again('.capability-visual').length,5);
+ assert.equal(again('#visuals .carousel-controls').length,1);
+ assert.equal(again('.capability-visual img').first().attr('src'),'/assets/custom-capability.webp');
 });

@@ -20,19 +20,19 @@ function gallery({mobile=true,reduced=false}={}){
  const ratios=[];
  const cards=images.map((img,i)=>({style:{setProperty:(key,value)=>ratios[i]=value},querySelector:()=>img,getBoundingClientRect:()=>({left:i*320-list.scrollLeft})}));
  const hint={id:'visual-gallery-hint'},group={querySelector:q=>q==='.gallery-hint'?hint:list};
- vm.runInNewContext(code+';setupEditorialGallery(group);group._updateGallery();',{
+ vm.runInNewContext(code+';setupEditorialGallery(group);',{
   group,window:{addEventListener(name,fn){listeners[name]=fn;}},reduced:{matches:reduced},matchMedia:()=>({matches:mobile}),
   ResizeObserver:class{observe(){}},setTimeout(fn){timer=fn;return 1;},clearTimeout(){timer=null;}
  });
  const event=extra=>({target:list,pointerType:'mouse',button:0,buttons:1,pointerId:1,clientX:200,preventDefault(){this.prevented=true;},stopImmediatePropagation(){this.stopped=true;},...extra});
  return {list,hint,styles,ratios,classes,listeners,event,flush:()=>timer?.()};
 }
-test('mobile uses one dominant artwork, shared height and intrinsic image ratios',()=>{
- const g=gallery();assert.ok(Math.abs(parseFloat(g.styles['--gallery-art-height'])-378)<.01);assert.deepEqual(g.ratios,[.8,1.4]);
- assert.equal(g.list.tabIndex,0);assert.equal(g.list['aria-describedby'],g.hint.id);assert.equal(g.hint.hidden,false);
+test('design showcase is a named focusable rail without an extra helper hint',()=>{
+ const g=gallery();assert.equal(g.list.tabIndex,0);assert.equal(g.list['aria-label'],'Visual Design gallery');
+ assert.equal(g.list['aria-describedby'],undefined);
 });
-test('desktop height stays bounded and keyboard scroll respects reduced motion',()=>{
- const g=gallery({mobile:false,reduced:true});assert.equal(g.styles['--gallery-art-height'],'420px');
+test('desktop keyboard scrolling respects reduced motion and rail boundaries',()=>{
+ const g=gallery({mobile:false,reduced:true});
  g.listeners.keydown(g.event({target:g.list,key:'ArrowRight'}));assert.equal(g.list.scrollLeft,320);assert.equal(g.list.behavior,'instant');
  g.listeners.keydown(g.event({target:g.list,key:'End'}));assert.equal(g.list.scrollLeft,1000);
  g.listeners.keydown(g.event({target:g.list,key:'Home'}));assert.equal(g.list.scrollLeft,0);

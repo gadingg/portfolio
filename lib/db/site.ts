@@ -30,7 +30,6 @@ export async function initialSite(): Promise<SiteContent> {
 }
 const withSiteDefaults = (site: SiteContent): SiteContent => {
   const values: Record<string, string> = { linkedin: defaultLinkedIn, heroMetadata: defaultHeroMetadata, ...site.values };
-  if (values.worksIntro === 'Website, visual, dan video. Pilihan karya dari ide sampai hasil yang bisa digunakan.') values.worksIntro = 'Karya visual dan digital yang menyelesaikan masalah.';
   const replacements: Record<string, [string, string]> = {
     headline: ['I think. I create.\nI solve.', 'I Think. I Create.\nI Solve.'],
     aboutLead: ['Saya suka ikut mikir dari awal.', 'Dari brainstorm, membuat visual, sampai membuat workflow lewat web-app dan AI.'],
@@ -49,6 +48,8 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
   const $ = load(await homepageTemplate());
   const values = withSiteDefaults(site).values;
   const pipelineTrack = $('.process-pipeline > .pipeline-track').first().clone();
+  const designControls = $('#visuals .carousel-controls').first().clone();
+  const capabilityVisuals = $('.capability-card .capability-visual').toArray().map(element => $(element).clone());
   if(site.layout){
     const layout=cleanVisualLayout(site.layout);
     $('body').html(layout.html);
@@ -127,10 +128,24 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
     copy.find('p').first().removeClass('lead-copy');
     copy.find('p').eq(1).addClass('about-statement');
   });
-  $('#visuals').removeAttr('data-carousel').find('.carousel-controls').remove();
-  $('#visuals [data-works-list]').removeClass('works-track works-grid').addClass('editorial-gallery').removeAttr('tabindex aria-label');
+  $('.works-section > .section-heading > p').remove();
+  $('.works-heading > a').addClass('works-view-all');
+  $('#visuals').attr('data-carousel','true').find('.carousel-controls').remove();
+  $('#visuals [data-works-list]').removeClass('works-grid').addClass('editorial-gallery works-track').removeAttr('tabindex aria-label');
   $('#visuals .gallery-hint').remove();
-  $('#visuals [data-works-list]').after('<p class="gallery-hint" id="visual-gallery-hint" hidden>Drag / Swipe to explore</p>');
+  $('#visuals [data-works-list]').after(designControls);
+  $('.capability-list').children('details,article').each((index,element) => {
+    const previous=$(element), title=previous.find('summary,h4').first().text().trim(), body=previous.find('p').first().clone();
+    if(previous.is('article')){
+      previous.addClass('capability-card');
+      if(!previous.children('.capability-visual').length&&capabilityVisuals[index])previous.prepend(capabilityVisuals[index].clone());
+      return;
+    }
+    const card=$('<article class="capability-card"></article>');
+    if(capabilityVisuals[index])card.append(capabilityVisuals[index].clone());
+    card.append($('<h4>').text(title),body);
+    previous.replaceWith(card);
+  });
   $('.process-section').each((_i, section) => {
     const process = $(section), list = process.find('.principles').first();
     process.find('.section-heading p, .principles li p').remove();

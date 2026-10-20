@@ -63,12 +63,6 @@ export const siteFields: SiteField[] = [
     selector: '#work-title',
   },
   {
-    key: 'worksIntro',
-    label: 'Pengantar karya',
-    group: 'Works',
-    selector: '.works-section > .section-heading p',
-  },
-  {
     key: 'aboutTitle',
     label: 'Judul About',
     group: 'About',
@@ -111,13 +105,13 @@ export const siteFields: SiteField[] = [
       key: `capabilityTitle${i}`,
       label: `Kemampuan ${i + 1}`,
       group: 'Kemampuan',
-      selector: `.capability-list details:nth-child(${i + 1}) summary`,
+      selector: `.capability-list > :nth-child(${i + 1}) :is(summary,h4)`,
     },
     {
       key: `capabilityBody${i}`,
       label: `Isi kemampuan ${i + 1}`,
       group: 'Kemampuan',
-      selector: `.capability-list details:nth-child(${i + 1}) p`,
+      selector: `.capability-list > :nth-child(${i + 1}) p`,
     },
   ]).flat(),
   {

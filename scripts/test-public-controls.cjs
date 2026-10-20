@@ -16,16 +16,16 @@ function carousel(kind='design',reducedMotion=false){
  return {list,toggle,prev,next,group,document,advance};
 }
 for(const kind of ['design','video'])test(`${kind}: autoplay, pause, and resume while control keeps focus`,()=>{
- const c=carousel(kind);c.advance(5000);assert.equal(c.list.scrollLeft,324);
- c.toggle.listeners.click();c.advance(10000);assert.equal(c.list.scrollLeft,324);assert.equal(c.toggle['aria-label'],'Resume slides');
- c.toggle.listeners.click();c.advance(4999);assert.equal(c.list.scrollLeft,324);c.advance(1);assert.equal(c.list.scrollLeft,648);assert.equal(c.toggle['aria-label'],'Pause slides');
+ const c=carousel(kind);c.advance(5000);assert.equal(c.list.scrollLeft,316);
+ c.toggle.listeners.click();c.advance(10000);assert.equal(c.list.scrollLeft,316);assert.equal(c.toggle['aria-label'],'Resume slides');
+ c.toggle.listeners.click();c.advance(4999);assert.equal(c.list.scrollLeft,316);c.advance(1);assert.equal(c.list.scrollLeft,632);assert.equal(c.toggle['aria-label'],'Pause slides');
  assert.equal(c.group.listeners,undefined); // Controls are outside the artwork's hover/focus pause region.
 });
 test('artwork focus pauses; Resume clears that pause; touch and reduced motion remain opt in',()=>{
  const c=carousel();c.list.listeners.focusin();c.advance(5000);assert.equal(c.list.scrollLeft,0);
- c.toggle.listeners.click();c.toggle.listeners.click();c.advance(5000);assert.equal(c.list.scrollLeft,324);
- c.list.listeners.pointerdown({pointerType:'touch'});c.advance(5000);assert.equal(c.list.scrollLeft,324);
- const r=carousel('design',true);r.advance(5000);assert.equal(r.list.scrollLeft,0);r.toggle.listeners.click();r.advance(5000);assert.equal(r.list.scrollLeft,324);
+ c.toggle.listeners.click();c.toggle.listeners.click();c.advance(5000);assert.equal(c.list.scrollLeft,316);
+ c.list.listeners.pointerdown({pointerType:'touch'});c.advance(5000);assert.equal(c.list.scrollLeft,316);
+ const r=carousel('design',true);r.advance(5000);assert.equal(r.list.scrollLeft,0);r.toggle.listeners.click();r.advance(5000);assert.equal(r.list.scrollLeft,316);
 });
 test('legacy CMS layouts render icon-only menu and social links without losing copy or breaking old saves',async()=>{
  const db=runtime({'./cms':{}})('lib/db/site.ts'),schema=runtime()('lib/site.ts');
