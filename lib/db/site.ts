@@ -129,6 +129,8 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
   });
   $('#visuals').removeAttr('data-carousel').find('.carousel-controls').remove();
   $('#visuals [data-works-list]').removeClass('works-track works-grid').addClass('editorial-gallery').removeAttr('tabindex aria-label');
+  $('#visuals .gallery-hint').remove();
+  $('#visuals [data-works-list]').after('<p class="gallery-hint" id="visual-gallery-hint" hidden>Drag / Swipe to explore</p>');
   $('.process-section').each((_i, section) => {
     const process = $(section), list = process.find('.principles').first();
     process.find('.section-heading p, .principles li p').remove();

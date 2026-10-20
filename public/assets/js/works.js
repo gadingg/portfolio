@@ -24,7 +24,7 @@
     const focusedControl = bottom.contains(document.activeElement) ? document.activeElement.getAttribute('aria-label') : '';
     imageIndex=(index+imageItems.length)%imageItems.length; const item=imageItems[imageIndex];
     title.textContent=item.title;body.replaceChildren(image(item.image,item.imageAlt||item.title));bottom.replaceChildren();
-    const caption=node('p','',`${imageIndex+1} / ${imageItems.length}${item.demo?' · Data contoh':''}`);caption.setAttribute('aria-live','polite');
+    const caption=node('p','',`${imageIndex+1} / ${imageItems.length}`);caption.setAttribute('aria-live','polite');
     const controls=node('div','actions');
     for(const [label,delta,symbol] of [['Previous image',-1,'chevron-left'],['Next image',1,'chevron-right']]) { const button=node('button','button button-outline');button.type='button';button.setAttribute('aria-label',label);button.append(icon(symbol));button.disabled=imageItems.length<2;button.addEventListener('click',()=>showDesign(imageIndex+delta));controls.append(button); }
     bottom.append(caption,controls);
@@ -67,7 +67,6 @@
       const overlay=node('span','video-bottom');const play=node('span','video-play','Watch video');play.prepend(icon('play'));overlay.append(play,node('strong','',item.title));media.append(overlay);
       media.addEventListener('click',()=>openVideo(item,media));
     } else if(item.kind==='design'){
-      const enlarge=node('span','work-enlarge','Enlarge');enlarge.prepend(icon('maximize-2'));media.append(enlarge);
       media.addEventListener('click',()=>{imageItems=siblings;openDialog(media,item.title);modal.dataset.mode='design';showDesign(siblings.indexOf(item));});
     }
     unit.append(media);
@@ -80,7 +79,7 @@
       if(item.kind==='design')unit.append(node('p','work-category','Visual Design'));
     }
     const meta=node(app&&!href?'span':'div','work-card-meta');
-    if(item.demo)meta.append(node('span','sample-label','Data contoh'));
+    if(item.demo&&item.kind!=='design')meta.append(node('span','sample-label','Data contoh'));
     if(item.kind==='webapp'){
       const action=node('span','work-destination',destination);
       action.append(icon(href&&!href.startsWith(location.origin+'/')?'external-link':'arrow-right'));
@@ -90,6 +89,64 @@
     if(app)card.append(unit);
     return card;
   }
+  function setupEditorialGallery(group) {
+    const list=group.querySelector('[data-works-list]');
+    const hint=group.querySelector('.gallery-hint');
+    list.tabIndex=0;list.setAttribute('role','region');
+    list.setAttribute('aria-label','Visual Design gallery');
+    if(hint)list.setAttribute('aria-describedby',hint.id);
+    const update=()=>{
+      const cards=[...list.querySelectorAll('.work-card-design')];
+      const first=cards[0]?.querySelector('img');
+      const ratio=first?.naturalWidth&&first.naturalHeight?first.naturalWidth/first.naturalHeight:.8;
+      const mobile=matchMedia('(max-width: 767px)').matches;
+      const height=Math.max(180,Math.min(420,list.clientWidth*(mobile ? .84 : 1/3.4)/ratio));
+      list.style.setProperty('--gallery-art-height',`${height}px`);
+      cards.forEach(card=>{const img=card.querySelector('img');if(img?.naturalWidth&&img.naturalHeight)card.style.setProperty('--art-ratio',img.naturalWidth/img.naturalHeight);});
+      if(hint)hint.hidden=list.scrollWidth<=list.clientWidth+4;
+    };
+    group._updateGallery=()=>{
+      list.querySelectorAll('img').forEach(img=>{if(!img.complete)img.addEventListener('load',update,{once:true});});
+      update();
+    };
+    let drag=null,suppressClick=false,resetClick;
+    const finish=()=>{
+      if(!drag)return;
+      const {id,moved}=drag;drag=null;
+      list.classList.remove('is-dragging');
+      if(list.hasPointerCapture(id))list.releasePointerCapture(id);
+      if(moved){suppressClick=true;clearTimeout(resetClick);resetClick=setTimeout(()=>{suppressClick=false;},250);}
+    };
+    list.addEventListener('pointerdown',event=>{
+      if(event.pointerType!=='mouse'||event.button!==0)return;
+      suppressClick=false;clearTimeout(resetClick);
+      drag={id:event.pointerId,x:event.clientX,left:list.scrollLeft,moved:false};
+    });
+    list.addEventListener('pointermove',event=>{
+      if(!drag||event.pointerId!==drag.id)return;
+      if(!event.buttons){finish();return;}
+      const delta=event.clientX-drag.x;
+      if(!drag.moved&&Math.abs(delta)<6)return;
+      if(!drag.moved){drag.moved=true;list.setPointerCapture(drag.id);list.classList.add('is-dragging');}
+      event.preventDefault();list.scrollLeft=drag.left-delta;
+    });
+    list.addEventListener('pointerup',finish);
+    list.addEventListener('pointercancel',finish);
+    list.addEventListener('lostpointercapture',finish);
+    list.addEventListener('pointerleave',()=>{if(drag&&!drag.moved)finish();});
+    list.addEventListener('dragstart',event=>event.preventDefault());
+    window.addEventListener('click',event=>{if(suppressClick&&list.contains(event.target)){event.preventDefault();event.stopImmediatePropagation();}},{capture:true});
+    list.addEventListener('keydown',event=>{
+      if(event.target!==list||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+      event.preventDefault();
+      const cards=[...list.querySelectorAll('.work-card')];
+      const offsets=cards.map(card=>card.getBoundingClientRect().left-list.getBoundingClientRect().left+list.scrollLeft);
+      const left=event.key==='Home'?0:event.key==='End'?list.scrollWidth-list.clientWidth:event.key==='ArrowRight'?offsets.find(offset=>offset>list.scrollLeft+4)??list.scrollWidth-list.clientWidth:[...offsets].reverse().find(offset=>offset<list.scrollLeft-4)??0;
+      list.scrollTo({left,behavior:reduced.matches?'instant':'smooth'});
+    });
+    new ResizeObserver(update).observe(list);
+  }
+  groups.filter(group=>group.querySelector('.editorial-gallery')).forEach(setupEditorialGallery);
   function setupCarousel(group) {
     const list=group.querySelector('[data-works-list]'), controls=group.querySelector('.carousel-controls');
     if(!controls)return;
@@ -121,8 +178,8 @@
     groups.forEach(group=>{const list=group.querySelector('[data-works-list]');list.setAttribute('aria-busy','true');if(!list.childElementCount)list.append(node('p','works-message','Memuat karya…'));group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=true);group.querySelectorAll('[data-retry-works]').forEach(node=>node.disabled=true);});
     try {
       const res=await fetch(document.body.dataset.cmsPreview?'/api/admin/works-preview':'/api/works',{signal:controller.signal,cache:'no-store'});if(!res.ok)throw Error('load');const data=await res.json();if(!Array.isArray(data.items))throw Error('data');
-      groups.forEach(group=>{const list=group.querySelector('[data-works-list]');let items=data.items.filter(item=>item.kind===group.dataset.workKind&&item.published);if(group.dataset.workKind==='webapp'&&!group.dataset.collection)items=items.slice(0,6);if(group.dataset.workKind==='design'&&!group.dataset.collection)items=items.slice(0,4);
-        list.replaceChildren(...items.map(item=>card(item,items,group.dataset.collection?'h2':'h4')));if(!items.length)list.append(node('p','works-message','Belum ada karya di koleksi ini.'));list.scrollLeft=0;group._updateCarousel?.();
+      groups.forEach(group=>{const list=group.querySelector('[data-works-list]');let items=data.items.filter(item=>item.kind===group.dataset.workKind&&item.published);if(group.dataset.workKind==='webapp'&&!group.dataset.collection)items=items.slice(0,6);
+        list.replaceChildren(...items.map(item=>card(item,items,group.dataset.collection?'h2':'h4')));if(!items.length)list.append(node('p','works-message','Belum ada karya di koleksi ini.'));list.scrollLeft=0;group._updateCarousel?.();group._updateGallery?.();
       });
     } catch {groups.forEach(group=>{const list=group.querySelector('[data-works-list]');if(!list.querySelector('.work-card'))list.replaceChildren();group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=false);});}
     finally{clearTimeout(timeout);loading=false;groups.forEach(group=>{group.querySelector('[data-works-list]').setAttribute('aria-busy','false');group.querySelectorAll('[data-retry-works]').forEach(node=>node.disabled=false);});}

@@ -2,7 +2,8 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const {runtime}=require('./cms-script-runtime.cjs');
 function carousel(kind='design',reducedMotion=false){
  const source=fs.readFileSync('public/assets/js/works.js','utf8');
- const body=source.slice(source.indexOf('  function setupCarousel(group) {'),source.indexOf('  groups.filter'));
+ const start=source.indexOf('  function setupCarousel(group) {');
+ const body=source.slice(start,source.indexOf('  groups.filter',start));
  let now=0,sequence=0;const timers=new Map();
  const element=()=>({listeners:{},addEventListener(name,fn){this.listeners[name]=fn;},setAttribute(name,value){this[name]=value;},replaceChildren(){},getBoundingClientRect(){return {left:0,width:300};}});
  const list=Object.assign(element(),{scrollWidth:1400,clientWidth:600,scrollLeft:0,children:[element(),element(),element(),element()],contains:()=>false,scrollTo({left}){this.scrollLeft=left;}});
