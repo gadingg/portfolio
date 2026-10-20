@@ -225,6 +225,8 @@ html:has(.showcase dialog[open]){overflow:hidden}
 .showcase .case-intro p{margin-top:22px;max-width:65ch;font-size:clamp(16px,1.7vw,20px);color:var(--secondary);line-height:1.8}
 .showcase .case-cover-art{margin-top:40px}
 .showcase .case-cover-art .project-art{aspect-ratio:16/9}
+.showcase .case-cover-art .project-art.device-project-image{aspect-ratio:4/3}
+.showcase .project-art.device-project-image>img{object-fit:contain}
 .showcase .case-cover-art .listing-art{padding:32px 24% 0}
 .showcase .case-cover-art .mbg-cover,.showcase .case-cover-art .meta-cover{padding:clamp(24px,5vw,64px)}
 .showcase .case-cover-art .mbg-cover>strong,.showcase .case-cover-art .meta-cover>strong{font-size:clamp(30px,6vw,76px)}
@@ -455,3 +457,41 @@ html:has(.showcase dialog[open]){overflow:hidden}
   .showcase .work-card-link,.showcase .work-destination .icon{transition:none;transform:none!important}
   .showcase .portfolio-header{transition:none}
 }
+@media(max-width:599px){
+  .showcase{--mobile-section-size:clamp(32px,8.1vw,48px);--mobile-body-size:15px}
+  .showcase :is(.section-heading h2,#about-title,.toolkit-section h2,.contact-layout h2,.case-intro h1,.collection-intro h1,.study-case-blocks h2,.case-narrative>section>h2,#problem-solving-title){font-size:var(--mobile-section-size);line-height:1.08;letter-spacing:-.035em}
+  .showcase :is(.works-heading h3,.capability-layout>h3){font-size:24px;line-height:1.25}
+  .showcase .toolkit-groups h3{font-size:20px;line-height:1.3}
+  .showcase .work-card-title,.showcase .work-card-design .work-card-title{font-size:20px;line-height:1.3}
+  .showcase :is(.section-heading>p,.work-card-description,.capability-list details p,.toolkit-groups p,.contact-layout p,.collection-intro p,.case-intro p,.case-summary-step p,.case-narrative>p,.study-case-blocks p,.study-case-blocks li,.tool-row>span>span),
+  .showcase #about .about-copy p,
+  .showcase #about .about-copy .about-statement{font-size:var(--mobile-body-size);line-height:1.8}
+  .showcase #about .about-copy .about-statement{max-width:58ch}
+  .showcase .study-case-blocks .case-copy{font-size:var(--mobile-body-size);line-height:1.8}
+  .showcase .case-narrative>section h3{font-size:20px;line-height:1.3}
+  .showcase .case-narrative>section p{font-size:var(--mobile-body-size);line-height:1.8}
+}
+.showcase .case-explore{margin-top:48px}
+.showcase .case-explore>h2{margin:0 0 24px;font-size:var(--mobile-section-size,clamp(32px,4vw,40px));line-height:1.08}
+.showcase .case-explore-grid{display:grid;gap:32px;align-items:start}
+.showcase .case-explore-card{display:grid;gap:16px;min-width:0;border-radius:12px;text-decoration:none}
+.showcase .case-explore-art{min-width:0;overflow:hidden;border-radius:12px}
+.showcase .case-explore-art .project-art{aspect-ratio:4/3}
+.showcase .case-explore-copy{display:grid;gap:8px;min-width:0;align-content:start}
+.showcase .case-explore-label{color:var(--secondary);font-size:12px;line-height:1.5;font-weight:700;letter-spacing:.06em}
+.showcase .case-explore .case-explore-card h3{margin:0;font-size:20px;line-height:1.3;letter-spacing:-.02em;overflow-wrap:anywhere;transition:color .2s}
+.showcase .case-explore .case-explore-card p{margin:0;font-size:15px;line-height:1.8;color:var(--secondary);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden}
+.showcase .case-explore-cta{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-size:13px;font-weight:700;line-height:1.5}
+.showcase .case-explore-cta .icon{width:16px;height:16px;transition:transform .2s}
+.showcase .case-explore-card--alternative{grid-template-columns:minmax(88px,.36fr) minmax(0,.64fr);gap:16px}
+.showcase .case-explore-card:hover h3,.showcase .case-explore-card:focus-visible h3{color:var(--accent)}
+.showcase .case-explore-card:active .case-explore-copy{opacity:.8}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){.showcase .case-explore-card:hover .case-explore-cta .icon{transform:translateX(3px)}}
+@media(min-width:768px){
+  .showcase .case-explore{margin-top:64px}
+  .showcase .case-explore>h2{margin-bottom:28px}
+  .showcase .case-explore-grid--pair{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:32px}
+  .showcase .case-explore-card--alternative{grid-template-columns:minmax(0,1fr)}
+  .showcase .case-explore .case-explore-card--next h3{font-size:24px}
+}
+@media(prefers-reduced-motion:reduce){.showcase .case-explore-card h3,.showcase .case-explore-cta .icon{transition:none}}

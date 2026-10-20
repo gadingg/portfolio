@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-19T06:03:40.349Z",
+  "generatedAt": "2026-10-20T00:00:00+07:00",
   "title": "Design System: Gading Public Showcase",
   "extensions": {
     "motion": [
@@ -37,6 +37,28 @@
         "purpose": "Listing Hub screenshot composition only."
       }
     ],
+    "mobileTypography": {
+      "source": "docs/briefs/2026-10-19-grid-mobile-type.md",
+      "condition": "max-width:599px",
+      "mainHeading": {
+        "fontSize": "clamp(32px,8.1vw,48px)",
+        "lineHeight": 1.08,
+        "letterSpacing": "-.035em"
+      },
+      "body": {
+        "fontSize": "15px",
+        "lineHeight": 1.8
+      },
+      "subgroupHeading": {
+        "fontSize": "24px",
+        "lineHeight": 1.25
+      },
+      "cardAndToolkitTitle": {
+        "fontSize": "20px",
+        "lineHeight": 1.3
+      },
+      "scope": "Public homepage, collections and case narrative; hero and desktop unchanged. Metadata, captions, controls and compact pipeline labels retain smaller roles."
+    },
     "typographyMeta": {
       "body": {
         "purpose": "Readable project and section explanations.",
@@ -190,7 +212,7 @@
       "hero": "Content-driven height; primary action minimum 44px, 10px 14px padding, 13px type. Metadata is owner-supplied factual content, not a reusable pre-heading style.",
       "works": "Homepage top/bottom padding: 48px/64px below 960px, 64px/88px from 960px. Web app units have 44px row gaps, increasing to 52px on desktop; descriptions have two-line clamps.",
       "gallery": "Four homepage artworks; one column below 960px, 1.5fr 1fr above it, 64px 48px gaps, even items offset 72px and third item 86% width. Intrinsic image aspect ratios; no cropping, padding, hover zoom, carousel controls or autoplay. Artwork opens lightbox; separate title links open details when available.",
-      "bio": "16px/1.8 paragraphs with 20px spacing; statement 22px/1.45, 24px on desktop. Capability group margin 40px, 48px desktop. View CV stays inline with its file icon.",
+      "bio": "From 600px: 16px/1.8 paragraphs with 20px spacing; statement 22px/1.45, 24px on desktop. Up to 599px: paragraphs and bold statement 15px/1.8 with 58ch maximum statement measure. Capability group margin 40px, 48px desktop. View CV stays inline with its file icon.",
       "navigation": "Below 960px: 8px vertical padding, 26px wordmark, 44px targets. Existing sticky opaque header and menu dialog preserved.",
       "video": "Existing five-second carousel and its pause/resume behavior preserved.",
       "narrowWorksHeading": "At viewport widths up to 379px, Works group headings use a left-aligned column with a 12px gap; View all follows below the title."
@@ -203,6 +225,15 @@
       "bottomRule": "rgba(243,240,232,.14)",
       "fallback": "Opaque canvas without backdrop-filter support; solid Canvas and CanvasText divider under forced colors.",
       "scope": "Homepage, collection and case-study public headers only. Geometry and navigation behavior remain unchanged."
+    },
+    "caseStudyContinuation": {
+      "source": "components/public/study-case/ExploreMoreWork.tsx; components/public/study-case/NextProjectNav.tsx; public/assets/css/showcase.css",
+      "composition": "One Explore More Work section in standard and custom-layout cases. Source-ordered next project first; optionally show the first remaining related project, excluding the next slug. Empty navigation renders nothing.",
+      "interaction": "Each preview is one link containing artwork, title, two-line source summary and arrow CTA. No nested actions. Orange title on hover and focus, shared orange keyboard outline, quieter copy on press, 3px arrow movement for hover-capable pointers without reduced motion. Reduced motion removes transitions.",
+      "navigationCopy": "UP NEXT and Explore next case study are owner-requested navigation context confined to the featured card. Alternative uses View case study. This does not authorize reusable decorative eyebrows.",
+      "mobileLayout": "No dividers or fixed height. Section starts after 48px; heading-to-cards 24px; card-to-card 32px. Featured card stacks artwork and text; alternative uses a compact thumbnail beside text. Titles 20px; summaries 15px/1.8; CTA 13px with a 44px minimum visual action height.",
+      "desktopLayout": "From 960px: section starts after 64px, heading-to-cards 28px, paired columns 1.4:1 with 32px gap. Both previews stack artwork and text. Featured title is 24px.",
+      "preservation": "Retain dark/orange/Manrope identity, source project order, copy, artwork, links and existing artwork framing. Replaces separate Next Case Study and Keep Exploring blocks only."
     }
   },
   "components": [
@@ -290,10 +321,15 @@
   ],
   "narrative": {
     "dos": [
+      "**Do** keep Req Take Video's two browser panels on a white/silver studio background with the larger schedule at left and the supporting request panel at right. Preserve teal UI and actual content, soft physical shadows, 4:3 contain framing, CMS image editing, and the existing title, slug, case narrative, and destination. Keep aqua environments, rings, stages, and sparkles out of this artwork.",
       "**Do** preserve separate structural and interactive border colors.",
       "**Do** keep actual artwork prominent, with captions outside its frame except for the video thumbnail's bottom title overlay.",
       "**Do** retain visible action labels, keyboard focus, and explicit loading or failure messages; menu, social, and carousel pause/resume controls use icons with accessible names and tooltips, with state-specific names for pause/resume.",
-      "**Do** respect reduced motion and let mobile action groups wrap."
+      "**Do** respect reduced motion and let mobile action groups wrap.",
+      "For Internal Listing Hub, keep the two-app mobile presentation in one 4:3 cover with complete graphite phones, actual white/green app interfaces, a forest-green artwork background and soft physical shadows. Keep copy outside the thumbnail. Preserve Works CMS editing of the cover, concise Indonesian narrative and both app link blocks. Authored copy uses no em dash or en dash and no unverified quantitative impact claims. This is project artwork, not a new public interface palette.",
+      "**Do** preserve PROGRAM MBG's three real mobile screens in its 4:3 cover, keep its navy, teal, and gold inside the artwork, and retain CMS editing of cover and narrative. Treat screenshot points as interface content rather than outcome metrics; authored copy uses no em dash or en dash.",
+      "**Do** present Meta Ads Report as a single white/silver display close-up with a static magnified Rekap Iklan panel over a subdued real dashboard. Use existing batch metrics and blue/green accents without inventing application features. Keep the cover and description CMS editable, preserve existing case claims and blocks, and retain the portfolio's dark/orange interface.",
+      "**Do** use Daily App Gading as the portfolio name, replacing Mega App Gading. Preserve its 4:3 regular diagonal white/silver grid: parallel panels, uniform gaps, matching radii, one shared rotation, and no overlap or independently floating screens. Central-lower Kanban anchors Prompt Generator upper left, Link Library upper right, Watermark Generator lower right, and cropped neighboring tiles. Keep original small UI accents and uniform soft shadows confined to artwork, with no device frames. Retain editable CMS fields and existing narrative, use /work/daily-app-gading, and preserve /work/mega-app-gading as a legacy alias with the stable internal item ID and external app destination. This supersedes the earlier floating three-screen collage."
     ],
     "rules": [
       {

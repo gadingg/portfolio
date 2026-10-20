@@ -46,7 +46,7 @@ async function initialItems(): Promise<WorkItem[]> {
     {
       id: 'mega-app',
       kind: 'webapp',
-      title: 'Mega App Gading',
+      title: 'Daily App Gading',
       description:
         'Task, prompt, caption, link, dan reminder dalam satu hub kerja.',
       image: '',

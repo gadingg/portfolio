@@ -1,0 +1,11 @@
+# Daily grid correction and mobile type consistency
+
+Mode: Experience. Owner rejects the loose Daily App collage and supplies the same regular diagonal tile reference as binding layout authority. Replace independently floating/overlapping panels with one aligned grid plane: same rotation, parallel edges, consistent gaps, equal radii, cropped neighboring tiles. Match reference geometry while retaining actual Daily App UI instead of copying restaurant content. This supersedes the earlier three-panel floating composition.
+
+Built-in imagegen prompt: landscape4:3, exact reference-style regular tiled UI grid rotated together about minus18degrees; all edges parallel, equal32px gutters and12px radii, no stacking/overlaps or independent rotations; large central-lower Kanban tile, upper-left Prompt Generator, upper-right Link Library, lower-right Watermark Generator, cropped neighboring slivers of the same actual screens; reference-like edge cropping and aligned rows; faithful white/gray app UI and original accents, DAILY APP GADING headers, soft uniform shadow and pale gray ground; no restaurant data, illustrations, devices, invented charts, slogans or new controls.
+
+Asset public/assets/work/daily-app-grid.webp:1448x1086,164828bytes. Explicit target-only CMS update independently preserves draft/public, old slug alias, content and other works. Prior asset retained recoverably.
+
+Typography request: use the existing mobile hero as the sizing reference across public sections. Measured at390px: hero heading32px/34.56px line, body15px/27px line. Current About body16px, statement22px, Toolkit heading26px/body13px and contact heading36px drift from that anchor. At max599px, section headings use clamp(32px,8.1vw,48px), line1.08, tracking-.035em; main content paragraphs15px/1.8; collection/case headings and narrative follow the same scale. Secondary group headings24px, card/tool titles20px. Compact pipeline node labels, metadata, captions and controls keep their distinct roles. Hero and desktop remain unchanged, as do fonts, colors, copy, admin controls and interactions. Bold About statement retains emphasis at body size and full body measure.
+
+Verify public homepage sections plus collection/case pages at mobile, 320px overflow boundary and desktop. Capture the regular grid and representative type regions. No new libraries or behavior changes.

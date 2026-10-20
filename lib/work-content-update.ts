@@ -6,7 +6,7 @@ const paragraph=(id:string,text:string):CMSBlock=>({id,block_type:'paragraph',bl
 const list=(id:string,items:string[]):CMSBlock=>({id,block_type:'list',block_order:0,content_json:{items}});
 export const requestedCaseStudies={
   'mega-app':{
-    slug:'mega-app-gading',appUrl:'https://patosser.my.id/gading/',
+    slug:'daily-app-gading',appUrl:'https://patosser.my.id/gading/',
     problem:'Kebutuhan marketing harian tersebar di beberapa tempat dan sebagian masih dikerjakan manual. Waktu habis untuk mencari, merapikan, menghitung, dan mengulang proses yang sama.',
     solution:'Satu workspace berisi tools sederhana yang dipakai setiap hari: task management, prompt, watermark, caption, library, rekap closing, dan reminder.',
     impact:'Workflow marketing harian menjadi lebih rapi, cepat, dan konsisten. Lebih sedikit waktu habis untuk pekerjaan teknis kecil dan lebih banyak waktu bisa dialihkan ke creative thinking, campaign, dan marketing.',
@@ -27,7 +27,7 @@ export const requestedCaseStudies={
         'Birthday Reminder: rekap ulang tahun agent dan kirim reminder melalui Telegram Bot.',
       ]),
       heading('mega-result','More room for creative thinking.'),
-      paragraph('mega-outcome','Mega App Gading membuat workflow marketing harian lebih rapi, cepat, dan konsisten. Lebih sedikit waktu habis untuk pekerjaan teknis kecil dan lebih banyak waktu bisa dialihkan ke creative thinking, campaign, dan marketing.'),
+      paragraph('mega-outcome','Daily App Gading membuat workflow marketing harian lebih rapi, cepat, dan konsisten. Lebih sedikit waktu habis untuk pekerjaan teknis kecil dan lebih banyak waktu bisa dialihkan ke creative thinking, campaign, dan marketing.'),
     ],
   },
   'req-video':{
@@ -56,7 +56,7 @@ export const requestedCaseStudies={
 export function applyRequestedWorks(items:WorkItem[]):WorkItem[]{
   const updated=items.map(item=>{
     const study=requestedCaseStudies[item.id as keyof typeof requestedCaseStudies];
-    if(study&&!item.caseStudy)return {...item,url:`/work/${study.slug}`,caseStudy:{...study,blocks:study.blocks.map((block,index)=>({...block,block_order:index}))}};
+    if(study&&!item.caseStudy)return {...item,...(item.id==='mega-app'?{title:'Daily App Gading',aliases:[...new Set([...(item.aliases||[]),'mega-app-gading'])]}:{}),url:`/work/${study.slug}`,caseStudy:{...study,blocks:study.blocks.map((block,index)=>({...block,block_order:index}))}};
     if(item.id==='sample-video-1')return {...item,title:'Video Instagram 01',description:'Instagram Reel yang diberikan untuk portfolio.',url:'https://www.instagram.com/reel/DeBkwyszNoi/',demo:false};
     return item;
   });

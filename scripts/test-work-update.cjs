@@ -7,7 +7,7 @@ test('requested cases and seven video slots are valid, stable, and preserve unre
  const result=applyRequestedWorks(items);assert.equal(WorksSchema.safeParse({items:result}).success,true);
  assert.deepEqual(applyRequestedWorks(result),result);assert.equal(result.find(x=>x.id==='other').description,'Unpublished user edit');
  assert.equal(result.filter(x=>x.kind==='video').length,7);assert.equal(result.find(x=>x.id==='sample-video-1').url,'https://www.instagram.com/reel/DeBkwyszNoi/');assert.equal(result.find(x=>x.id==='sample-video-1').demo,false);
- assert.equal(result.find(x=>x.id==='mega-app').caseStudy.slug,'mega-app-gading');assert.equal(result.find(x=>x.id==='req-video').caseStudy.slug,'req-video-bareng-patosser');
+ assert.equal(result.find(x=>x.id==='mega-app').caseStudy.slug,'daily-app-gading');assert.equal(result.find(x=>x.id==='req-video').caseStudy.slug,'req-video-bareng-patosser');
  const edited=result.map(x=>x.id==='mega-app'?{...x,caseStudy:{...x.caseStudy,problem:'User refinement'}}:x);assert.equal(applyRequestedWorks(edited)[0].caseStudy.problem,'User refinement');
 });
 test('optional autoplay media accepts supported files and rejects executable or unrelated sources',()=>{

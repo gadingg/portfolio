@@ -11,8 +11,7 @@ import {
 } from '@/lib/db/public-projects';
 import { StudyCaseHeader } from '@/components/public/study-case/StudyCaseHeader';
 import { StudyCaseRenderer } from '@/components/public/study-case/StudyCaseRenderer';
-import { RelatedProjects } from '@/components/public/study-case/RelatedProjects';
-import { NextProjectNav } from '@/components/public/study-case/NextProjectNav';
+import { ExploreMoreWork } from '@/components/public/study-case/ExploreMoreWork';
 import { AuraFooter } from '@/components/public/study-case/AuraFooter';
 import { ProjectArtwork } from '@/components/public/study-case/ProjectArtwork';
 import { projectPresentations, useBriefArtwork } from '@/lib/project-presentation';
@@ -108,7 +107,7 @@ export default async function StudyCasePage({
   if(presentation?.layout)return <div className="showcase" id="case-top">
     <StudyCaseHeader projectTitle={project.title}/>
     <VisualLayout layout={presentation.layout}/>
-    <div className="section-shell case-narrative mx-auto max-w-3xl"><NextProjectNav nextProject={nextProject}/><RelatedProjects projects={related.filter(item=>item.slug!==nextProject?.slug)}/></div>
+    <div className="section-shell case-narrative mx-auto max-w-3xl"><ExploreMoreWork nextProject={nextProject} related={related}/></div>
     <AuraFooter/>
   </div>;
 
@@ -161,8 +160,7 @@ export default async function StudyCasePage({
 
           <div className="case-narrative mx-auto mt-12 max-w-3xl">
             {blocks.length > 0 && <StudyCaseRenderer blocks={blocks} />}
-            <NextProjectNav nextProject={nextProject} />
-            <RelatedProjects projects={related.filter((item) => item.slug !== nextProject?.slug)} />
+            <ExploreMoreWork nextProject={nextProject} related={related} />
           </div>
         </article>
       </main>
