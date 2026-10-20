@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+import { readFileSync } from 'node:fs';
+const caseSlugRedirects=JSON.parse(readFileSync(new URL('./lib/case-slugs.json',import.meta.url),'utf8'));
 const scriptSources = process.env.NODE_ENV === 'development'
   ? "'self' 'unsafe-inline' 'unsafe-eval'"
   : "'self' 'unsafe-inline'";
@@ -13,6 +15,7 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
+  async redirects(){return Object.entries(caseSlugRedirects).map(([old,slug])=>({source:`/work/${old}`,destination:`/work/${slug}`,permanent:true}));},
   outputFileTracingIncludes: {
     '/': ['./public/index.html'],
   },

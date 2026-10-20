@@ -16,6 +16,7 @@ import { readCMS, readPublishedCMS, writeCMS, CMSConflict } from './cms';
 import type { Project } from '@/types/portfolio';
 import { applyRequestedWorks } from '@/lib/work-content-update';
 import { stampWorkUpdates } from '@/lib/admin-overview';
+import { normalizeWorkSlugs } from '@/lib/work-slugs';
 
 const bucket = 'portfolio-public';
 const filename = 'content/works.json';
@@ -246,7 +247,10 @@ export async function initialWorks() {
   }
   return { items:applyRequestedWorks(items) };
 }
-export const getWorksDocument = () => readCMS('works', initialWorks);
+export const getWorksDocument = async () => {
+  const doc=await readCMS('works',initialWorks);
+  return {...doc,draft:{...doc.draft,items:normalizeWorkSlugs(doc.draft.items)},published:{...doc.published,items:normalizeWorkSlugs(doc.published.items)}};
+};
 export async function getWorks() {
   const doc = await getWorksDocument();
   return {
@@ -258,9 +262,9 @@ export async function getWorks() {
   };
 }
 export async function getPublicWorks() {
-  const doc = await readPublishedCMS('works', initialWorks);
+  const doc = await readPublishedCMS('works', initialWorks, { cached: true });
   return {
-    items: doc.items
+    items: normalizeWorkSlugs(doc.items)
       .filter((item) => item.published)
       .map(publicWork),
   };

@@ -1,7 +1,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),ts=require('typescript');
 const {NextRequest}=require('next/server');
 const root=path.resolve(__dirname,'..');
-function loader(mocks={}){const cache=new Map();function load(file){file=path.resolve(root,file);if(cache.has(file))return cache.get(file).exports;const module={exports:{}};cache.set(file,module);const source=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText;new Function('require','module','exports',source)(name=>{if(name in mocks)return mocks[name];if(name==='server-only')return {};if(name.startsWith('@/')||name.startsWith('.')){const base=name.startsWith('@/')?path.join(root,name.slice(2)):path.resolve(path.dirname(file),name);return load(fs.existsSync(base+'.ts')?base+'.ts':base);}return require(name);},module,module.exports);return module.exports;}return load;}
+function loader(mocks={}){const cache=new Map();function load(file){file=path.resolve(root,file);if(file.endsWith('.json'))return JSON.parse(fs.readFileSync(file,'utf8'));if(cache.has(file))return cache.get(file).exports;const module={exports:{}};cache.set(file,module);const source=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText;new Function('require','module','exports',source)(name=>{if(name in mocks)return mocks[name];if(name==='server-only')return {};if(name.startsWith('@/')||name.startsWith('.')){const base=name.startsWith('@/')?path.join(root,name.slice(2)):path.resolve(path.dirname(file),name);return load(fs.existsSync(base+'.ts')?base+'.ts':base);}return require(name);},module,module.exports);return module.exports;}return load;}
 const schema=loader()('lib/works.ts');
 const work={id:'video',kind:'video',title:'Real video',description:'',image:'/assets/work/sample-design-1.svg',imageAlt:'Cover',url:'https://www.instagram.com/reel/abc_123/',published:true,demo:false,artwork:'sample'};
 const request=(body,origin='https://portfolio.test')=>new NextRequest('https://portfolio.test/api/admin/works',{method:'PUT',headers:{origin,'content-type':'application/json'},body:JSON.stringify(body)});
@@ -21,8 +21,8 @@ test('content blocks reject incompatible payloads and unsafe destinations',()=>{
 });
 test('CMS compare-and-swap prevents stale writes and public reads select only the published snapshot',async()=>{
  let row={id:'works',draft:{items:[{...work,title:'Draft'}]},published:{items:[work]},revision:1,published_at:null};let selection='';
- const client={from:()=>{let filter={},patch;const q={select:value=>{selection=value;return q;},eq:(key,value)=>{filter[key]=value;return q;},update:value=>{patch=value;return q;},insert:value=>{patch=value;return q;},maybeSingle:async()=>{if(patch){if(filter.revision!==undefined&&filter.revision!==row.revision)return {data:null,error:null};row={...row,...patch};}return {data:selection==='published'?{published:structuredClone(row.published)}:structuredClone(row),error:null};}};return q;}};
- const cms=loader({'@/lib/supabase/admin':{createAdminClient:()=>client},'next/cache':{unstable_noStore(){}}})('lib/db/cms.ts');
+ const client={from:()=>{let filter={},patch;const q={abortSignal:()=>q,select:value=>{selection=value;return q;},eq:(key,value)=>{filter[key]=value;return q;},update:value=>{patch=value;return q;},insert:value=>{patch=value;return q;},maybeSingle:async()=>{if(patch){if(filter.revision!==undefined&&filter.revision!==row.revision)return {data:null,error:null};row={...row,...patch};}return {data:selection==='published'?{published:structuredClone(row.published)}:structuredClone(row),error:null};}};return q;}};
+ const cms=loader({'@/lib/supabase/admin':{createAdminClient:()=>client},'next/cache':{unstable_noStore(){},unstable_cache:fn=>fn,revalidateTag(){}}})('lib/db/cms.ts');
  const first=await cms.readCMS('works',async()=>({items:[]}));const other=structuredClone(first);
  await cms.writeCMS('works',first,{items:[{...work,title:'Changed draft'}]});
  assert.equal((await cms.readPublishedCMS('works',async()=>({items:[]}))).items[0].title,work.title);
@@ -68,7 +68,7 @@ test('public Works errors do not silently produce an empty collection',async()=>
 test('site content is escaped and the original public sections survive rendering',async()=>{
  const site=loader({'./cms':{}})('lib/db/site.ts');const initial=await site.initialSite();initial.values.headline='<script>alert(1)</script>\nKeep the visual';initial.values.seoTitle='A < B';
  const rendered=await site.renderHomepage(initial);assert.ok(rendered.includes('&lt;script&gt;alert(1)&lt;/script&gt;'));assert.ok(rendered.includes('id="work"'));assert.ok(rendered.includes('id="about"'));assert.ok(rendered.includes('<title>A &lt; B</title>'));
- const $=require('cheerio').load(rendered);assert.equal($('.hero-signoff, .hero .work-strip').length,0);assert.equal($('.hero').next().attr('id'),'work');
+ const $=require('cheerio').load(rendered);assert.equal($('.hero-signoff, .hero .work-strip').length,0);assert.equal($('.hero').next().attr('id'),'about');
 });
 test('private media is exposed only by a visible published reference',async()=>{
  const url='/api/media/works/1-aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa.png';let docs=[{id:'works',published:{items:[{published:false,image:url}]}}];

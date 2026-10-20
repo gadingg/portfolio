@@ -28,6 +28,11 @@
         "name": "header-scroll-state",
         "value": ".22s",
         "purpose": "Background and border-color transitions between the solid top state and soft glass scrolled state; disabled under reduced motion."
+      },
+      {
+        "name": "case-loading-sweep",
+        "value": "1.5s ease-in-out infinite",
+        "purpose": "Transient case skeleton sweep only during pending requests; absent with reduced motion. No deliberate content delay."
       }
     ],
     "shadows": [
@@ -232,13 +237,13 @@
       "scope": "Homepage, collection and case-study public headers only. Geometry and navigation behavior remain unchanged."
     },
     "caseStudyContinuation": {
-      "source": "components/public/study-case/ExploreMoreWork.tsx; components/public/study-case/NextProjectNav.tsx; public/assets/css/showcase.css",
-      "composition": "One Explore More Work section in standard and custom-layout cases. Source-ordered next project first; optionally show the first remaining related project, excluding the next slug. Empty navigation renders nothing.",
-      "interaction": "Each preview is one link containing artwork, title, two-line source summary and arrow CTA. No nested actions. Orange title on hover and focus, shared orange keyboard outline, quieter copy on press, 3px arrow movement for hover-capable pointers without reduced motion. Reduced motion removes transitions.",
-      "navigationCopy": "UP NEXT and Explore next case study are owner-requested navigation context confined to the featured card. Alternative uses View case study. This does not authorize reusable decorative eyebrows.",
-      "mobileLayout": "No dividers or fixed height. Section starts after 48px; heading-to-cards 24px; card-to-card 32px. Featured card stacks artwork and text; alternative uses a compact thumbnail beside text. Titles 20px; summaries 15px/1.8; CTA 13px with a 44px minimum visual action height.",
-      "desktopLayout": "From 960px: section starts after 64px, heading-to-cards 28px, paired columns 1.4:1 with 32px gap. Both previews stack artwork and text. Featured title is 24px.",
-      "preservation": "Retain dark/orange/Manrope identity, source project order, copy, artwork, links and existing artwork framing. Replaces separate Next Case Study and Keep Exploring blocks only."
+      "source": "docs/briefs/2026-10-20-single-next-project.md; components/public/study-case/NextProjectNav.tsx; public/assets/css/showcase.css",
+      "composition": "One Next Project section,one next-project card,one Next Case Study CTA in standard and custom-layout branches. Existing published order,last wraps to first. No UP NEXT,alternative,or duplicate navigation.",
+      "reuse": "Same article/work-card-link/work-media/title/description/meta/destination structure and CSS as vanillaDOM Selected Works. Existing ProjectArtwork component fits shared4:3media via a tiny bridge. No bespoke preview style or separate typography ramp.",
+      "layout": "Single vertical stack at every size in existing narrative column. 48px section separation,24px shared Works heading gap,4:3media,12px radius,two-line summary,44px CTA area.",
+      "interaction": "One whole-card named link,no nested actions. Existing Selected Works orange hover/focus,title/body sizing,arrow/active and reduced-motion states. Viewport prefetch remains disabled.",
+      "preservation": "Original source order,content,artwork,destinations,short canonical slugs and loading fixes retained. Obsolete ExploreMoreWork/RelatedProjects and custom paired-card styles removed.",
+      "approval": "Source/functional checks only; current browser captures missing, no visual approval."
     },
     "capabilityGlass": {
       "scope": "Four What I Do capability cards only; explicit owner-requested exception to flat interface.",
@@ -249,6 +254,16 @@
       "glow": "radial-gradient(ellipse at 12% 0,rgba(255,90,31,.075),transparent 65%)",
       "sceneMaterials": "Small geometric CSS tiles, dark tonal gradients and soft black shadows. No large rasters.",
       "approval": "Source checked; no visual finish approval because CUA kernel assets path error3 prevents captures."
+    },
+    "caseLoading": {
+      "source": "docs/briefs/2026-10-20-case-loading-short-slugs.md",
+      "structure": "Existing themed header, visible Memuat studi kasus status, aria-busy main. Decorative title,description,4:3cover and3copy placeholders hidden from assistive technology; no artificial delay.",
+      "styles": "Existing surface,12px corners; title width min(90%,720px),height clamp(40px,7vw,80px);description min(72%,520px),20px height;cover4:3;copy128px height,16px gaps,stacked below768px and3columns above.",
+      "motion": "1.5s ease-in-out infinite sweep with rgba(243,240,232,.06) light. Reduced motion disables sweep entirely.",
+      "error": "Local boundary retains header; Studi kasus belum bisa dimuat heading,alert explanation,Coba lagi button,and Kembali ke karya link to /#work. Existing actions/focus/type retained.",
+      "routes": "Canonical /work/listinghub,/work/metaads,/work/mbg,/work/dailyapp,/work/reqvideo;6historical308aliases preserved. Read-time normalization preserves production data and future custom-slug edits.",
+      "reliability": "Next Project card viewport prefetch disabled. Published request memoization,60sec tagged cache,publish/order invalidation,8sec upstream abort. Admin/draft reads uncached.",
+      "approval": "Functional/source evidence only; current browser captures unavailable, no visual approval."
     }
   },
   "components": [

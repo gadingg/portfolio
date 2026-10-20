@@ -48,7 +48,7 @@ export const getSiteDocument = async () => {
   const document = await readCMS('site', initialSite);
   return { ...document, draft: withSiteDefaults(document.draft), published: withSiteDefaults(document.published) };
 };
-export const getPublicSite = async () => withSiteDefaults(await readPublishedCMS('site', initialSite));
+export const getPublicSite = async () => withSiteDefaults(await readPublishedCMS('site', initialSite, {cached:true}));
 export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
   const $ = load(await homepageTemplate());
   const values = withSiteDefaults(site).values;

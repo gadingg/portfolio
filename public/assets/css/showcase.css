@@ -335,7 +335,7 @@ html:has(.showcase dialog[open]){overflow:hidden}
 .showcase .works-section{padding-block:80px}
 .showcase .works-group+.works-group{margin-top:64px;padding-top:0;border:0}
 .showcase .works-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:28px}
-.showcase .works-heading h3{font-size:clamp(24px,3vw,36px)}
+.showcase .works-heading :is(h2,h3){font-size:clamp(24px,3vw,36px)}
 .showcase .works-heading .button{flex-shrink:0}
 .showcase .works-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:36px 24px}
 .showcase .work-card{min-width:0;display:flex;flex-direction:column}
@@ -472,7 +472,7 @@ html:has(.showcase dialog[open]){overflow:hidden}
 @media(max-width:599px){
   .showcase{--mobile-section-size:clamp(32px,8.1vw,48px);--mobile-body-size:15px}
   .showcase :is(.section-heading h2,#about-title,.toolkit-section h2,.contact-layout h2,.case-intro h1,.collection-intro h1,.study-case-blocks h2,.case-narrative>section>h2,#problem-solving-title){font-size:var(--mobile-section-size);line-height:1.08;letter-spacing:-.035em}
-  .showcase :is(.works-heading h3,.capability-layout>h3){font-size:24px;line-height:1.25}
+  .showcase :is(.works-heading :is(h2,h3),.capability-layout>h3){font-size:24px;line-height:1.25}
   .showcase .toolkit-groups h3{font-size:20px;line-height:1.3}
   .showcase .work-card-title,.showcase .work-card-design .work-card-title{font-size:20px;line-height:1.3}
   .showcase :is(.section-heading>p,.work-card-description,.capability-list details p,.toolkit-groups p,.contact-layout p,.collection-intro p,.case-intro p,.case-summary-step p,.case-narrative>p,.study-case-blocks p,.study-case-blocks li,.tool-row>span>span),
@@ -483,30 +483,8 @@ html:has(.showcase dialog[open]){overflow:hidden}
   .showcase .case-narrative>section h3{font-size:20px;line-height:1.3}
   .showcase .case-narrative>section p{font-size:var(--mobile-body-size);line-height:1.8}
 }
-.showcase .case-explore{margin-top:48px}
-.showcase .case-explore>h2{margin:0 0 24px;font-size:var(--mobile-section-size,clamp(32px,4vw,40px));line-height:1.08}
-.showcase .case-explore-grid{display:grid;gap:32px;align-items:start}
-.showcase .case-explore-card{display:grid;gap:16px;min-width:0;border-radius:12px;text-decoration:none}
-.showcase .case-explore-art{min-width:0;overflow:hidden;border-radius:12px}
-.showcase .case-explore-art .project-art{aspect-ratio:4/3}
-.showcase .case-explore-copy{display:grid;gap:8px;min-width:0;align-content:start}
-.showcase .case-explore-label{color:var(--secondary);font-size:12px;line-height:1.5;font-weight:700;letter-spacing:.06em}
-.showcase .case-explore .case-explore-card h3{margin:0;font-size:20px;line-height:1.3;letter-spacing:-.02em;overflow-wrap:anywhere;transition:color .2s}
-.showcase .case-explore .case-explore-card p{margin:0;font-size:15px;line-height:1.8;color:var(--secondary);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden}
-.showcase .case-explore-cta{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-size:13px;font-weight:700;line-height:1.5}
-.showcase .case-explore-cta .icon{width:16px;height:16px;transition:transform .2s}
-.showcase .case-explore-card--alternative{grid-template-columns:minmax(88px,.36fr) minmax(0,.64fr);gap:16px}
-.showcase .case-explore-card:hover h3,.showcase .case-explore-card:focus-visible h3{color:var(--accent)}
-.showcase .case-explore-card:active .case-explore-copy{opacity:.8}
-@media(hover:hover) and (prefers-reduced-motion:no-preference){.showcase .case-explore-card:hover .case-explore-cta .icon{transform:translateX(3px)}}
-@media(min-width:768px){
-  .showcase .case-explore{margin-top:64px}
-  .showcase .case-explore>h2{margin-bottom:28px}
-  .showcase .case-explore-grid--pair{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:32px}
-  .showcase .case-explore-card--alternative{grid-template-columns:minmax(0,1fr)}
-  .showcase .case-explore .case-explore-card--next h3{font-size:24px}
-}
-@media(prefers-reduced-motion:reduce){.showcase .case-explore-card h3,.showcase .case-explore-cta .icon{transition:none}}
+.showcase .case-next-project{margin-top:48px}
+.showcase .case-next-project .work-media>.project-art{width:100%;height:100%;aspect-ratio:auto;border-radius:inherit}
 .showcase #work>.section-heading{margin-bottom:32px}
 .showcase #about.about-section{background:var(--canvas);border:0}
 .showcase #about .capability-layout{display:block;margin-top:48px}
@@ -552,7 +530,21 @@ html:has(.showcase dialog[open]){overflow:hidden}
   .showcase #about .capability-card h4{font-size:24px}
 }
 @media(max-width:379px){.showcase #about .capability-card{padding:20px}.showcase #about .capability-card h4{font-size:18px}.showcase #about .capability-heading{gap:10px}}
-@media(max-width:379px){.showcase .works-heading h3{font-size:20px}.showcase .works-heading{gap:12px}.showcase .works-heading>a.button{font-size:13px}}
+@media(max-width:379px){.showcase .works-heading :is(h2,h3){font-size:20px}.showcase .works-heading{gap:12px}.showcase .works-heading>a.button{font-size:13px}}
 .showcase #about .about-quote{position:relative;margin:24px 0;padding:0 0 0 32px;max-width:36ch}
 .showcase #about .about-quote::before{content:"\201C";position:absolute;left:0;top:-8px;font-size:48px;line-height:1;color:var(--accent)}
 .showcase #about .about-quote .about-statement{margin:0;font-size:clamp(20px,2.2vw,26px);line-height:1.45;font-style:italic;color:var(--ink)}
+.showcase .case-loading-status{font-size:14px;color:var(--secondary);margin:0 0 24px}
+.showcase .case-skeleton{position:relative;overflow:hidden;background:var(--surface);border-radius:12px}
+.showcase .case-skeleton::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(243,240,232,.06),transparent);animation:case-skeleton-sweep 1.5s ease-in-out infinite}
+.showcase .case-skeleton-title{width:min(90%,720px);height:clamp(40px,7vw,80px);margin-bottom:16px}
+.showcase .case-skeleton-description{width:min(72%,520px);height:20px;margin-bottom:32px}
+.showcase .case-skeleton-cover{width:100%;aspect-ratio:4/3}
+.showcase .case-skeleton-columns{display:grid;gap:16px;margin:32px 0 64px}
+.showcase .case-skeleton-copy{height:128px}
+.showcase .case-load-error{padding-bottom:80px}
+.showcase .case-load-error h1{font-size:clamp(28px,4vw,48px);max-width:24ch}
+.showcase .case-load-error p{margin:20px 0 24px;color:var(--secondary)}
+@media(min-width:768px){.showcase .case-skeleton-columns{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@keyframes case-skeleton-sweep{to{transform:translateX(100%)}}
+@media(prefers-reduced-motion:reduce){.showcase .case-skeleton::after{animation:none;transform:none;background:none}}

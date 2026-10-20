@@ -48,10 +48,10 @@ const loadPublishedProjectBySlug = unstable_cache(
 
 export const getLegacyPublishedProjects = cache(loadPublishedProjects);
 export const getLegacyPublishedProjectBySlug = cache(loadPublishedProjectBySlug);
-export async function getPublishedProjects():Promise<Project[]> {
+export const getPublishedProjects = cache(async ():Promise<Project[]> => {
   const {getPublicWorks,workAsProject}=await import('./works');
   return (await getPublicWorks()).items.filter(item=>item.caseStudy).map(workAsProject);
-}
+});
 export async function getPublishedProjectBySlug(slug:string):Promise<Project|null> {
   return (await getPublishedProjects()).find(item=>item.slug===slug||item.cmsWork?.aliases?.includes(slug))||null;
 }

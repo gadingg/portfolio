@@ -11,12 +11,13 @@ import {
 } from '@/lib/db/public-projects';
 import { StudyCaseHeader } from '@/components/public/study-case/StudyCaseHeader';
 import { StudyCaseRenderer } from '@/components/public/study-case/StudyCaseRenderer';
-import { ExploreMoreWork } from '@/components/public/study-case/ExploreMoreWork';
+import { NextProjectNav } from '@/components/public/study-case/NextProjectNav';
 import { AuraFooter } from '@/components/public/study-case/AuraFooter';
 import { ProjectArtwork } from '@/components/public/study-case/ProjectArtwork';
 import { projectPresentations, useBriefArtwork } from '@/lib/project-presentation';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 15;
 
 function paragraphAfterHeading(blocks: ContentBlock[], headingPattern: RegExp) {
   const headingIndex = blocks.findIndex((block) => {
@@ -37,16 +38,6 @@ function projectOutcome(blocks: ContentBlock[]) {
   return items.slice(0, 2).map((item) => `${item.value} ${item.label}`).join(' · ');
 }
 
-async function legacyStaticParams() {
-  try {
-    const projects = await getPublishedProjects();
-    return projects.map((project) => ({ slug: project.slug }));
-  } catch (error) {
-    console.error('Project prerender skipped because the project source was unavailable.', error);
-    return [];
-  }
-}
-
 export async function generateMetadata({
   params,
 }: {
@@ -64,10 +55,11 @@ export async function generateMetadata({
   return {
     title: `${project.title} · Gading Utama`,
     description: project.description,
+    alternates:{canonical:`/work/${project.slug}`},
     openGraph: {
       title: `${project.title} · Case Study`,
-      description: projectPresentations[slug]?.intro || project.description,
-      images: !project.cover_image_url||useBriefArtwork(project) ? (slug === 'internal-listing-hub' ? [{ url: '/assets/work/listing-hub.jpg', alt: project.title }] : []) : [
+      description: projectPresentations[project.slug]?.intro || project.description,
+      images: !project.cover_image_url||useBriefArtwork(project) ? (project.slug === 'listinghub' ? [{ url: '/assets/work/listing-hub.jpg', alt: project.title }] : []) : [
         {
           url: project.cover_image_url,
           width: 1200,
@@ -85,17 +77,15 @@ export default async function StudyCasePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [project, projects] = await Promise.all([
-    getPublishedProjectBySlug(slug),
-    getPublishedProjects(),
-  ]);
+  const projects = await getPublishedProjects();
+  const project = projects.find(item=>item.slug===slug||item.cmsWork?.aliases?.includes(slug));
 
   if (!project) {
     notFound();
   }
   if(project.slug!==slug)permanentRedirect(`/work/${project.slug}`);
 
-  const { related, nextProject } = getProjectNavigation(projects, slug, project.category);
+  const { nextProject } = getProjectNavigation(projects, slug, project.category);
   const blocks = (project.blocks || []) as ContentBlock[];
   const presentation = project.cmsWork?.caseStudy;
   const problem = presentation?.problem || paragraphAfterHeading(blocks, /challenge|problem|brief/i) || project.description;
@@ -107,7 +97,7 @@ export default async function StudyCasePage({
   if(presentation?.layout)return <div className="showcase" id="case-top">
     <StudyCaseHeader projectTitle={project.title}/>
     <VisualLayout layout={presentation.layout}/>
-    <div className="section-shell case-narrative mx-auto max-w-3xl"><ExploreMoreWork nextProject={nextProject} related={related}/></div>
+    <div className="section-shell case-narrative mx-auto max-w-3xl"><NextProjectNav nextProject={nextProject}/></div>
     <AuraFooter/>
   </div>;
 
@@ -160,7 +150,7 @@ export default async function StudyCasePage({
 
           <div className="case-narrative mx-auto mt-12 max-w-3xl">
             {blocks.length > 0 && <StudyCaseRenderer blocks={blocks} />}
-            <ExploreMoreWork nextProject={nextProject} related={related} />
+            <NextProjectNav nextProject={nextProject} />
           </div>
         </article>
       </main>

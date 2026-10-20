@@ -1,4 +1,5 @@
 import type { Project } from '@/types/portfolio';
+import { caseSlugRedirects } from './work-slugs';
 
 export const projectPresentations: Record<string, {
   title: string; intro: string; problem: string; solution: string; impact: string;
@@ -50,6 +51,7 @@ export const projectPresentations: Record<string, {
   },
 };
 
+for(const [old,slug] of Object.entries(caseSlugRedirects))if(projectPresentations[old])projectPresentations[slug]=projectPresentations[old];
 const legacyCovers = new Set([
   '4734259a-bad7-422f-981e-ce01e79184f2_1600w.jpg',
   '26f04b2b-4ba5-4f3b-baef-c3dfdc2d08a5_1600w.webp',
