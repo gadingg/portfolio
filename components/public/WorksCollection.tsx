@@ -5,7 +5,7 @@ import { AuraFooter } from './study-case/AuraFooter';
 import { workKinds, workLabels, type WorkKind } from '@/lib/works';
 
 export function WorksCollection({kind}:{kind:WorkKind}) {
-  const descriptions = {webapp:'Website dan aplikasi untuk menyederhanakan pekerjaan. Buka karya untuk melihat studi kasus atau mencoba aplikasinya.',design:'Koleksi visual, dari komposisi sampai detail. Pilih gambar untuk melihatnya lebih dekat.',video:'Cerita brand dan campaign dalam gerak. Pilih video untuk menonton melalui Instagram.'};
+  const descriptions = {webapp:'Website dan aplikasi untuk menyederhanakan pekerjaan. Buka karya untuk melihat studi kasus atau mencoba aplikasinya.',design:'Koleksi visual, dari komposisi sampai detail. Pilih gambar untuk melihatnya lebih dekat.',video:'Cerita brand dan campaign dalam gerak. Pilih video untuk menonton.'};
   return <div className="showcase" id="case-top">
     <StudyCaseHeader />
     <main className="section-shell collection-page">

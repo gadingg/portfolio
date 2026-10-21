@@ -538,6 +538,8 @@ html:has(.showcase dialog[open]){overflow:hidden}
 .showcase #about .about-copy>.text-link{font-size:14px;gap:8px;min-height:44px}
 .showcase #about .about-copy>.text-link .icon{width:16px;height:16px}
 .showcase #home .hero-bottom>p{max-width:52ch}
+.showcase .work-media>.work-video-preview{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:var(--canvas);opacity:0;pointer-events:none}
+.showcase .work-media>.work-video-preview.is-playing{opacity:1}
 .showcase #about .capability-layout{margin-top:48px}
 @media(min-width:960px){
   .showcase #about .about-layout{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:64px}

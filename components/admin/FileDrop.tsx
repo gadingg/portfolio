@@ -1,7 +1,8 @@
 'use client';
 import { useId, useRef, useState } from 'react';
 import { Upload, Images, X } from 'lucide-react';
-export type UploadedMedia = { url: string; filename: string; type: string };
+import { captureVideoCover, uploadCover, uploadPortfolioVideo } from '@/lib/video-upload';
+export type UploadedMedia = { url: string; filename: string; type: string; cover?:string };
 export function FileDrop({
   folder = 'works',
   multiple = false,
@@ -49,7 +50,15 @@ export function FileDrop({
       try {
         if (!accept.split(',').includes(file.type))
           throw Error('Format tidak didukung');
-        if (file.size > 4 * 1024 * 1024) throw Error('Maksimal 4 MB per file');
+        const isVideo=['video/mp4','video/webm'].includes(file.type);
+        if (file.size > (isVideo?40:4) * 1024 * 1024) throw Error(`Maksimal ${isVideo?40:4} MB per file`);
+        if (isVideo) {
+          const uploaded=await uploadPortfolioVideo(file,percent=>setProgress(`Mengunggah ${i+1}/${batch.length} · ${percent}%`));
+          try { uploaded.cover=await uploadCover(await captureVideoCover(file)); }
+          catch {setError(previous=>`${previous}${previous?' · ':''}${file.name}: video tersimpan, pilih cover sendiri.`);}
+          successes.push(uploaded);
+          continue;
+        }
         const form = new FormData();
         form.append('file', file);
         form.append('folder', folder);
@@ -122,9 +131,9 @@ export function FileDrop({
           onClick={() => input.current?.click()}
         >
           <Upload size={18} aria-hidden="true" />
-          {busy ? progress : multiple ? 'Upload gambar' : 'Upload file'}
+          {busy ? progress : accept.startsWith('video/') ? 'Upload video' : multiple ? 'Upload gambar' : 'Upload file'}
         </button>
-        <span>atau lepas file di sini · maks. 4 MB</span>
+        <span>atau lepas file di sini · maks. {accept.startsWith('video/')?40:4} MB</span>
         <button
           type="button"
           className="wm-button"

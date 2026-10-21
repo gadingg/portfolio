@@ -8,6 +8,8 @@ import {
   Save,
   Eye,
   Undo2,
+  Settings2,
+  FileText,
 } from 'lucide-react';
 import {
   workKinds,
@@ -25,6 +27,8 @@ import { BlockEditor } from './BlockEditor';
 import { useConfirm } from './ConfirmDialog';
 import './works-manager.css';
 import { AdminActionLabel } from './AdminActionLabel';
+import { VideoSourceEditor } from './VideoSourceEditor';
+import { SettingsDisclosure } from './SettingsDisclosure';
 export function WorksManager() {
   const {ask,confirmation}=useConfirm();
   const [items, setItems] = useState<WorkItem[]>([]),
@@ -223,7 +227,8 @@ export function WorksManager() {
         kind,
         title: file.filename.replace(/\.[^.]+$/, ''),
         description: '',
-        image: file.url,
+        image: file.type.startsWith('video/') ? file.cover||'' : file.url,
+        ...(file.type.startsWith('video/')?{videoFile:file.url}:{}),
         imageAlt: file.filename.replace(/\.[^.]+$/, ''),
         url: '',
         published: false,
@@ -364,6 +369,7 @@ export function WorksManager() {
           </div>
           <FileDrop
             multiple
+            accept={kind==='video'?'video/mp4,video/webm':'image/jpeg,image/png,image/webp,image/gif'}
             disabled={busy}
             onBusyChange={setBusy}
             onUploaded={importImages}
@@ -473,18 +479,18 @@ export function WorksManager() {
               onChange={(e) => update(item.id, { description: e.target.value })}
             />
           </label>
-          {item.image && (
+          {item.kind!=='video'&&item.image && (
             <img
               className="cms-image-preview"
               src={item.image}
               alt={item.imageAlt}
             />
           )}
-          <FileDrop
+          {item.kind!=='video'&&<FileDrop
             disabled={busy}
             onBusyChange={setBusy}
             onUploaded={(files) => update(item.id, { image: files[0].url })}
-          />
+          />}
           <div className="cms-inline-fields">
             <label className="wm-check">
               <input
@@ -512,7 +518,7 @@ export function WorksManager() {
           {!item.caseStudy&&item.archivedCaseStudy&&<p className="wm-message" role="status">{item.kind==='webapp'?'Isi studi kasus tersimpan. Aktifkan kembali untuk melanjutkan.':'Isi studi kasus tersimpan. Pilih Website / Apps untuk mengaktifkannya kembali.'}</p>}
           {!item.caseStudy && item.kind !== 'design' && (
             <label>
-              {item.kind === 'video' ? 'Link Instagram' : 'Link aplikasi'}
+              {item.kind === 'video' ? 'Link Instagram (opsional jika ada file video)' : 'Link aplikasi'}
               <input
                 value={item.url}
                 inputMode="url"
@@ -520,10 +526,9 @@ export function WorksManager() {
               />
             </label>
           )}
-          {item.kind==='video'&&<details className="cms-more"><summary>Video autoplay</summary><div className="cms-block-fields"><label>File video MP4 / WebM<input value={item.videoFile||''} inputMode="url" onChange={event=>update(item.id,{videoFile:event.target.value})}/></label><FileDrop folder="works" accept="video/mp4,video/webm" disabled={busy} onBusyChange={setBusy} onUploaded={files=>update(item.id,{videoFile:files[0].url})}/></div></details>}
+          {item.kind==='video'&&<VideoSourceEditor key={item.id} value={item.videoFile||''} cover={item.image} disabled={busy} onBusyChange={setBusy} onChange={patch=>update(item.id,patch)}/>}
           {item.caseStudy && (
-            <details className="cms-more cms-case-form">
-              <summary>Pengaturan studi kasus & editor blok</summary>
+            <SettingsDisclosure title="Studi Kasus & Editor Blok" icon={<FileText size={20}/>}>
               <div className="cms-block-fields">
               <div className="cms-inline-fields">
                 <label>
@@ -588,10 +593,9 @@ export function WorksManager() {
                 Preview draft tersimpan
               </a>
               </div>
-            </details>
+            </SettingsDisclosure>
           )}
-          <details className="cms-more">
-            <summary>Pengaturan lainnya</summary>
+          <SettingsDisclosure title="Pengaturan Tambahan" icon={<Settings2 size={20}/>}>
             <div className="cms-block-fields">
               <label>
                 Deskripsi gambar
@@ -618,7 +622,7 @@ export function WorksManager() {
                 Data contoh
               </label>
             </div>
-          </details>
+          </SettingsDisclosure>
         </fieldset>
       )}
     </div>

@@ -11,15 +11,34 @@
   const shell = document.querySelector('.showcase');
   let currentTrigger;
   let imageItems = [], imageIndex = 0;
+  const videoPreviews = new Map();
+  let activePreview;
+  function syncVideoPreviews() {
+    const eligible=!reduced.matches&&!document.hidden&&!modal.open;
+    const candidates=[...videoPreviews.entries()].filter(([video,state])=>video.isConnected&&state.ratio>=.6);
+    candidates.sort((a,b)=>b[1].ratio-a[1].ratio);
+    const next=eligible?candidates[0]?.[0]:null;
+    if(activePreview&&activePreview!==next)activePreview.pause();
+    activePreview=next;
+    if(!next)return;
+    if(!next.src)next.src=next.dataset.src;
+    if(next.paused)next.play().catch(()=>{next.classList.remove('is-playing');});
+  }
+  const videoObserver=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{const state=videoPreviews.get(entry.target);if(state)state.ratio=entry.isIntersecting?entry.intersectionRatio:0;});
+    syncVideoPreviews();
+  },{threshold:[0,.6,.85,1]});
+  document.addEventListener('visibilitychange',syncVideoPreviews);
+  reduced.addEventListener('change',syncVideoPreviews);
   const modal = node('dialog','work-dialog'); modal.setAttribute('aria-labelledby','work-dialog-title');
   const top = node('div','dialog-top'); const title = node('h2','',''); title.id='work-dialog-title';
   const close = node('button','button button-outline','Close'); close.type='button'; close.append(icon('x')); top.append(title,close);
   const body = node('div','work-dialog-body'); const bottom = node('div','work-dialog-bottom'); modal.append(top,body,bottom); shell.append(modal);
   close.addEventListener('click',()=>modal.close());
-  modal.addEventListener('close',()=>{body.replaceChildren();bottom.replaceChildren();currentTrigger?.focus({preventScroll:true});});
+  modal.addEventListener('close',()=>{body.querySelectorAll('video').forEach(video=>video.pause());body.replaceChildren();bottom.replaceChildren();currentTrigger?.focus({preventScroll:true});syncVideoPreviews();});
   modal.addEventListener('click',e=>{if(e.target!==modal)return;const r=modal.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)modal.close();});
   const image = (src, alt, cls='') => { const img=node('img',cls); img.alt=alt; img.loading='lazy'; img.decoding='async'; img.addEventListener('error',()=>{img.hidden=true;const parent=img.parentElement;if(parent&&!parent.querySelector('.work-image-error'))parent.append(node('span','work-image-error','Image unavailable'));},{once:true}); img.src=safeURL(src);return img; };
-  function openDialog(trigger, heading) { currentTrigger=trigger;title.textContent=heading;body.replaceChildren();bottom.replaceChildren();if(!modal.open)modal.showModal(); }
+  function openDialog(trigger, heading) { currentTrigger=trigger;title.textContent=heading;body.replaceChildren();bottom.replaceChildren();if(!modal.open)modal.showModal();syncVideoPreviews(); }
   function showDesign(index) {
     const focusedControl = bottom.contains(document.activeElement) ? document.activeElement.getAttribute('aria-label') : '';
     imageIndex=(index+imageItems.length)%imageItems.length; const item=imageItems[imageIndex];
@@ -35,7 +54,11 @@
     openDialog(trigger,item.title);modal.dataset.mode='video';
     const file=safeURL(item.videoFile);
     if(file&&/\.(mp4|webm)(?:[?#].*)?$/i.test(file)){
-      const video=node('video','portfolio-video-player');video.src=file;video.poster=safeURL(item.image);video.controls=true;video.autoplay=true;video.muted=true;video.playsInline=true;video.loop=true;body.append(video);video.play().catch(()=>{});return;
+      const video=node('video','portfolio-video-player');video.src=file;video.poster=safeURL(item.image);video.controls=true;video.autoplay=true;video.muted=true;video.playsInline=true;video.preload='metadata';body.append(video);
+      const status=node('p','','');status.setAttribute('role','status');bottom.append(status);
+      video.addEventListener('error',()=>{status.textContent='Video belum bisa diputar. Tutup lalu buka kembali untuk mencoba lagi.';});
+      video.play().catch(()=>{status.textContent='Tekan Play untuk memutar video.';});
+      const original=instagram(item.url);if(original){const link=node('a','text-link','Open on Instagram');link.href=original;link.target='_blank';link.rel='noopener noreferrer';bottom.append(link);}return;
     }
     const url=instagram(item.url);
     if (!url||/\/DEMO_VIDEO_\d+\//.test(url)) {
@@ -64,6 +87,14 @@
     else if(item.artwork==='listing')media.append(image('/assets/work/listing-hub.jpg',item.title,'work-app-capture'));
     else {const art=node('span','work-type-art');for(const line of artworkText[item.artwork]||[item.title])art.append(node('span','',line));media.append(art);}
     if(item.kind==='video'){
+      const file=safeURL(item.videoFile);
+      if(file&&/\.(mp4|webm)(?:[?#].*)?$/i.test(file)){
+        const preview=node('video','work-video-preview');preview.dataset.src=file;preview.poster=safeURL(item.image);preview.muted=true;preview.defaultMuted=true;preview.playsInline=true;preview.loop=true;preview.preload='none';preview.setAttribute('aria-hidden','true');
+        preview.addEventListener('playing',()=>preview.classList.add('is-playing'));
+        preview.addEventListener('pause',()=>preview.classList.remove('is-playing'));
+        preview.addEventListener('error',()=>preview.classList.remove('is-playing'));
+        media.append(preview);videoPreviews.set(preview,{ratio:0});videoObserver.observe(preview);
+      }
       const overlay=node('span','video-bottom');const play=node('span','video-play','Watch video');play.prepend(icon('play'));overlay.append(play,node('strong','',item.title));media.append(overlay);
       media.addEventListener('click',()=>openVideo(item,media));
     } else if(item.kind==='design'){
@@ -168,6 +199,7 @@
     try {
       const res=await fetch(document.body.dataset.cmsPreview?'/api/admin/works-preview':'/api/works',{signal:controller.signal,cache:'no-store'});if(!res.ok)throw Error('load');const data=await res.json();if(!Array.isArray(data.items))throw Error('data');
       groups.forEach(group=>{const list=group.querySelector('[data-works-list]');let items=data.items.filter(item=>item.kind===group.dataset.workKind&&item.published);if(group.dataset.workKind==='webapp'&&!group.dataset.collection)items=items.slice(0,6);
+        list.querySelectorAll('.work-video-preview').forEach(video=>{video.pause();videoObserver.unobserve(video);videoPreviews.delete(video);});
         list.replaceChildren(...items.map(item=>card(item,items,group.dataset.collection?'h2':'h4',!!group.querySelector('.editorial-gallery'))));if(!items.length)list.append(node('p','works-message','Belum ada karya di koleksi ini.'));list.scrollLeft=0;group._updateCarousel?.();
       });
     } catch {groups.forEach(group=>{const list=group.querySelector('[data-works-list]');if(!list.querySelector('.work-card'))list.replaceChildren();group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=false);});}

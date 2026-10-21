@@ -1,0 +1,9 @@
+# Clear video settings cards
+
+Operate mode. User approved the A/B combination: always-open Video & Thumbnail card, collapsible Sumber Video and Pengaturan Tambahan cards. Preserve admin identity, data, storage behavior and public gallery. The thumbnail preview/upload now lives with video controls rather than above the group. Existing image controls for other work kinds remain in place.
+
+Use one shared SettingsDisclosure with native details/summary semantics, Lucide icon, label and right-aligned downward chevron. Sumber Video shows a short current-source status. Remove browser triangle markers and rotate the chevron upward when open. Whole summary is a 64px target with visible keyboard focus. Open content has the same card boundary; no separating full-width rule or navigation-like triangle. Existing case settings reuse the same component for consistency.
+
+Cards use the existing dark palette, warm-white .035 surface, fine .12 alpha border, 12px radius and 12px backdrop blur with opaque dark page fallback. No shadow, gradient or new imagery. Insets are 24px for primary card / 20px disclosure on desktop and 16px on mobile. Reduced motion removes chevron/background transitions; forced colors retain a system border and canvas.
+
+Build passed including lint and type checks. Scoped detector returned no findings. Owner's existing video record was opened read-only in the authenticated local CMS. Enter opened the source card, Space closed it, and Enter opened the additional settings. AX reported collapsed/expanded button states, browser markers were none, and chevron transforms matched the state. Desktop (1280px) and mobile (390px) had no document overflow. No fields were edited or saved, and no upload/storage operations were repeated for this refinement. Current evidence: .impeccable/review/settings-cards/.

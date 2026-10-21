@@ -48,3 +48,26 @@
 .cms-gallery-edit{display:flex;flex-wrap:wrap;align-items:center;gap:12px}.cms-gallery-edit>img{width:80px;height:64px;object-fit:cover}.cms-gallery-edit>label{flex:1;min-width:160px}.cms-error{color:var(--ink);padding:16px;border:1px solid #c46841;border-radius:8px;overflow-wrap:anywhere}.cms-error .wm-button{margin-left:12px}
 .cms-media-dialog{max-width:900px;width:calc(100% - 32px);max-height:85dvh;padding:24px;border:1px solid var(--wm-control);border-radius:12px;background:var(--surface);color:var(--ink);overflow:auto}.cms-media-dialog::backdrop{background:rgba(0,0,0,.75)}.cms-media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px;margin:24px 0}.cms-media-choice{border:2px solid transparent;border-radius:8px;background:var(--bg);padding:8px;color:var(--ink);font:inherit;font-size:12px;overflow:hidden;cursor:pointer}.cms-media-choice[aria-pressed=true]{border-color:var(--amber)}.cms-media-choice>img,.cms-media-choice>video{width:100%;height:110px;object-fit:cover;border-radius:4px}.cms-media-choice>span{display:block;overflow-wrap:anywhere;margin-top:8px}.cms-section-tabs{display:flex;flex-wrap:wrap;gap:8px}.cms-section-tabs [aria-pressed=true]{background:var(--amber);color:#171914;border-color:var(--amber)}
 @media(max-width:600px){.cms-sticky-toolbar{top:66px}.cms-sticky-toolbar>span{flex-basis:100%}.cms-sticky-toolbar .wm-button{flex:1}.cms-work-row{gap:4px}.cms-work-open{gap:10px;padding:4px}.cms-work-open .wm-edit{display:none}.cms-drop{padding:16px}.cms-block-row{gap:8px;padding:10px}.cms-panel-heading{align-items:flex-start;flex-wrap:wrap}.cms-block-row summary span{display:block;margin-left:0}.cms-manager .wm-button{padding:10px}.cms-media-dialog{padding:16px}}
+.cms-video-source{display:grid;gap:16px;min-width:0}
+.cms-video-preview{display:block;width:100%;max-height:320px;background:#060706;object-fit:contain;border-radius:12px}
+.works-manager .cms-settings-card{min-width:0;border:1px solid rgba(243,240,232,.12);border-radius:12px;background:rgba(243,240,232,.035);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);overflow:hidden}
+.works-manager .cms-video-main{display:grid;gap:20px;padding:24px}
+.works-manager .cms-video-main h3{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:600;margin:0}
+.works-manager .cms-video-main h3>svg,.works-manager .cms-settings-icon{color:var(--muted);flex-shrink:0}
+.works-manager .cms-video-cover{display:grid;gap:16px;min-width:0}
+.works-manager .cms-video-cover h4{margin:0;font-size:14px;font-weight:600}
+.works-manager .cms-disclosure>summary{display:flex;align-items:center;gap:12px;min-height:64px;padding:16px 20px;list-style:none;cursor:pointer;font-size:15px;font-weight:600;transition:background .18s ease}
+.works-manager .cms-disclosure>summary::-webkit-details-marker{display:none}
+.works-manager .cms-disclosure>summary::marker{content:''}
+.works-manager .cms-disclosure>summary:hover{background:rgba(243,240,232,.04)}
+.works-manager .cms-disclosure>summary:focus-visible{outline:2px solid var(--accent);outline-offset:-3px;border-radius:12px}
+.works-manager .cms-settings-icon{display:flex;align-items:center;justify-content:center;width:20px}
+.works-manager .cms-settings-label{display:grid;gap:4px;flex:1;min-width:0;overflow-wrap:anywhere}
+.works-manager .cms-settings-label small{color:var(--muted);font-size:12px;line-height:1.5;font-weight:400}
+.works-manager .cms-settings-chevron{flex-shrink:0;transition:transform .18s ease;color:var(--muted)}
+.works-manager .cms-disclosure[open]>summary .cms-settings-chevron{transform:rotate(180deg)}
+.works-manager .cms-settings-content{padding:4px 20px 20px}
+.works-manager .cms-settings-content>.cms-block-fields{padding:0}
+@media(max-width:600px){.works-manager .cms-video-main{padding:16px}.works-manager .cms-disclosure>summary{padding:16px}.works-manager .cms-settings-content{padding:0 16px 16px}}
+@media(prefers-reduced-motion:reduce){.works-manager .cms-settings-chevron,.works-manager .cms-disclosure>summary{transition:none}}
+@media(forced-colors:active){.works-manager .cms-settings-card{border-color:CanvasText;background:Canvas;backdrop-filter:none}}

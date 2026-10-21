@@ -87,6 +87,7 @@ export const WorkDraftItemSchema = z.object({
   aliases:z.array(z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)).max(30).optional(),
 });
 export const WorkItemSchema = WorkDraftItemSchema.superRefine((item, ctx) => {
+  if(item.kind==='video'&&item.videoFile&&item.published&&!item.demo&&!item.image)ctx.addIssue({code:'custom',path:['image'],message:'Tambahkan thumbnail sebelum video dipublikasikan.'});
   if (item.kind === 'video' && item.url && !instagramURL(item.url))
     ctx.addIssue({
       code: 'custom',
