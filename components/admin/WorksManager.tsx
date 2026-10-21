@@ -72,7 +72,7 @@ export function WorksManager() {
       const work = data.items.find((item: WorkItem) => item.id === selected);
       if (work) { setKind(work.kind); setEditing(work.id); }
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Karya belum bisa dimuat.');
+      setError(e instanceof Error ? e.message : 'Portfolio belum bisa dimuat.');
     } finally {
       setBusy(false);
     }
@@ -99,7 +99,7 @@ export function WorksManager() {
       ) {
         e.preventDefault();
         e.stopPropagation();
-        void ask('Perubahan belum disimpan. Tinggalkan halaman?', 'Tinggalkan').then(yes=>{if(yes){dirtyRef.current=false;window.location.assign(a.href);}});
+        void ask('Masih ada perubahan yang belum disimpan. Tetap keluar?', 'Tinggalkan').then(yes=>{if(yes){dirtyRef.current=false;window.location.assign(a.href);}});
       }
     };
     window.addEventListener('beforeunload', unload);
@@ -146,7 +146,7 @@ export function WorksManager() {
       adopt(await send(action));
       setRemoved(null);
       setNotice(
-        action === 'publish' ? 'Karya dipublikasikan.' : 'Draft tersimpan.',
+        action === 'publish' ? 'Perubahan portfolio sudah tayang.' : 'Draft tersimpan.',
       );
       return true;
     } catch (e) {
@@ -207,7 +207,7 @@ export function WorksManager() {
     const item: WorkItem = {
       id: crypto.randomUUID(),
       kind,
-      title: 'Karya baru',
+      title: 'Portfolio baru',
       description: '',
       image: '',
       imageAlt: '',
@@ -236,7 +236,7 @@ export function WorksManager() {
         artwork: 'sample' as const,
       })),
     ]);
-    setNotice(`${files.length} karya ditambahkan ke draft.`);
+    setNotice(`${files.length} portfolio ditambahkan ke draft.`);
   }
   const item = items.find((value) => value.id === editing),
     visible = items.filter((value) => value.kind === kind && value.title.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
@@ -257,10 +257,10 @@ export function WorksManager() {
               onClick={() => setEditing(null)}
             >
               <ArrowLeft size={18} />
-              Semua karya
+              Semua portfolio
             </button>
           )}
-          <h1>{item ? item.title : 'Works'}</h1>
+          <h1>{item ? item.title : 'Portfolio'}</h1>
         </div>
         <a
           className="wm-button"
@@ -334,10 +334,10 @@ export function WorksManager() {
           {notice}
         </p>
       )}
-      {revision === null && !error && <p role="status">Memuat karya…</p>}
+      {revision === null && !error && <p role="status">Memuat portfolio…</p>}
       {revision !== null && !item && (
         <>
-          <div className="wm-tabs" role="group" aria-label="Kategori karya">
+          <div className="wm-tabs" role="group" aria-label="Kategori portfolio">
             {workKinds.map((value) => (
               <button
                 key={value}
@@ -356,7 +356,7 @@ export function WorksManager() {
           </div>
           <div className="wm-toolbar">
             <h2>{workLabels[kind]}</h2>
-            <label className="wm-search">Cari karya<input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder="Cari judul…" /></label>
+            <label className="wm-search">Cari portfolio<input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder="Cari judul…" /></label>
             <button
               type="button"
               className="wm-button"
@@ -364,7 +364,7 @@ export function WorksManager() {
               onClick={add}
             >
               <Plus size={18} />
-              Tambah karya
+              Tambah portfolio
             </button>
           </div>
           <FileDrop
@@ -438,12 +438,12 @@ export function WorksManager() {
               </div>
             )}
           </SortableList>
-          {!visible.length && <p className="wm-empty">{query?'Tidak ada judul yang cocok.':'Belum ada karya.'}</p>}
+          {!visible.length && <p className="wm-empty">{query?'Tidak ada judul yang cocok.':'Belum ada portfolio.'}</p>}
         </>
       )}
       {item && (
         <fieldset className="cms-editor-fields" disabled={busy}>
-          <div className="cms-edit-heading"><h2>Detail karya</h2>{item.caseStudy&&<button type="button" className="wm-button wm-primary" onClick={openVisual}>{dirty?'Simpan & buka editor visual':'Edit studi kasus secara visual'}</button>}</div>
+          <div className="cms-edit-heading"><h2>Detail portfolio</h2>{item.caseStudy&&<button type="button" className="wm-button wm-primary" onClick={openVisual}>{dirty?'Simpan & buka editor visual':'Edit studi kasus secara visual'}</button>}</div>
           <div className="cms-inline-fields">
             <label>
               Judul
@@ -492,7 +492,7 @@ export function WorksManager() {
             onUploaded={(files) => update(item.id, { image: files[0].url })}
           />}
           <div className="cms-inline-fields">
-            <label className="wm-check">
+            <label className="wm-check cms-visibility">
               <input
                 type="checkbox"
                 checked={item.published}
@@ -500,7 +500,7 @@ export function WorksManager() {
                   update(item.id, { published: e.target.checked })
                 }
               />
-              Tampilkan karya
+              <span><strong>Tampilkan di portfolio</strong><small>{item.published?'Ikut tayang setelah klik Publikasikan.':'Disembunyikan setelah klik Publikasikan. Datanya tetap ada.'}</small></span>
             </label>
             {item.kind === 'webapp' && (
               <label className="wm-check">
@@ -511,14 +511,14 @@ export function WorksManager() {
                     update(item.id, setCaseStudyEnabled(item, e.target.checked))
                   }
                 />
-                Dengan studi kasus
+                Pakai studi kasus
               </label>
             )}
           </div>
-          {!item.caseStudy&&item.archivedCaseStudy&&<p className="wm-message" role="status">{item.kind==='webapp'?'Isi studi kasus tersimpan. Aktifkan kembali untuk melanjutkan.':'Isi studi kasus tersimpan. Pilih Website / Apps untuk mengaktifkannya kembali.'}</p>}
+          {!item.caseStudy&&item.archivedCaseStudy&&<p className="wm-message" role="status">{item.kind==='webapp'?'Studi kasusnya masih aman. Aktifkan lagi buat lanjut edit.':'Studi kasusnya masih aman. Pilih Website / Apps buat lanjut edit.'}</p>}
           {!item.caseStudy && item.kind !== 'design' && (
             <label>
-              {item.kind === 'video' ? 'Link Instagram (opsional jika ada file video)' : 'Link aplikasi'}
+              {item.kind === 'video' ? 'Link Instagram (boleh kosong kalau ada file video)' : 'Link aplikasi'}
               <input
                 value={item.url}
                 inputMode="url"

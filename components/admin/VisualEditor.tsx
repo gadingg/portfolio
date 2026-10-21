@@ -57,7 +57,7 @@ export function VisualEditor({target}:{target:string}){
           html=target==='home'?root.innerHTML:`<div class="showcase"><main class="case-page section-shell">${root.innerHTML}</main></div>`;
         }
         const worksResponse=target==='home'?await fetch('/api/admin/works-preview',{signal:controller.signal,cache:'no-store'}):null;
-        if(worksResponse&&!worksResponse.ok)throw Error('Koleksi Works belum bisa dimuat. Coba lagi.');
+        if(worksResponse&&!worksResponse.ok)throw Error('Koleksi Portfolio belum bisa dimuat. Coba lagi.');
         const works=worksResponse?(await worksResponse.json()).items:[];
         const parsedLayout=new DOMParser().parseFromString(html,'text/html');
         parsedLayout.querySelectorAll('[data-works-list]').forEach(el=>{el.innerHTML='';el.setAttribute('data-gjs-type','works-feed');el.setAttribute('aria-busy','false');});
@@ -70,7 +70,7 @@ export function VisualEditor({target}:{target:string}){
           plugins:[(instance)=>{
             instance.Components.addType('works-feed',{
               isComponent:el=>el.hasAttribute?.('data-works-list')?{type:'works-feed'}:false,
-              model:{defaults:{name:'Koleksi Works',droppable:false,editable:false,draggable:false,copyable:false,removable:false}},
+              model:{defaults:{name:'Koleksi Portfolio',droppable:false,editable:false,draggable:false,copyable:false,removable:false}},
               view:{onRender(){
                 const kind=this.model.parents().find(parent=>parent.getAttributes()['data-work-kind'])?.getAttributes()['data-work-kind'];
                 const items=works.filter((item:any)=>item.kind===kind).slice(0,kind==='webapp'?6:50);
@@ -142,7 +142,7 @@ export function VisualEditor({target}:{target:string}){
       meta.current={...data,revision:result.revision,layout:result.layout};if(result.title)setTitle(result.title);const changed=changedDuringSave;dirtyRef.current=changed;setDirty(changed);if(!changed)ed.clearDirtyCount();setStatus(changed?'Tersimpan, ada perubahan baru':action==='publish'?'Sudah dipublikasikan':'Draft tersimpan');
     }catch(e){setError(e instanceof Error?e.message:'Perubahan belum tersimpan.');}finally{saveLock.current=false;setBusy(false);}
   }
-  function leave(event:React.MouseEvent<HTMLAnchorElement>){if(dirtyRef.current){event.preventDefault();const href=event.currentTarget.href;void ask('Perubahan belum disimpan. Tinggalkan editor?', 'Tinggalkan').then(yes=>{if(yes){dirtyRef.current=false;window.location.assign(href);}});}}
+  function leave(event:React.MouseEvent<HTMLAnchorElement>){if(dirtyRef.current){event.preventDefault();const href=event.currentTarget.href;void ask('Editan belum disimpan. Tetap keluar?', 'Tinggalkan').then(yes=>{if(yes){dirtyRef.current=false;window.location.assign(href);}});}}
   function setViewport(value:string){editor.current?.setDevice(value);setDevice(value);}
   function editText(index:number,value:string){
     const component=selectedRef.current;if(!component)return;
@@ -158,7 +158,7 @@ export function VisualEditor({target}:{target:string}){
     component.move(parent,{at:parent.components().indexOf(neighbor)+(direction>0?1:0)});ed.select(component);sync(ed);
   }
   async function removeSection(component:Component){
-    if(!await ask(`Hapus bagian “${sectionTitle(component)}”? Anda bisa mengembalikannya dengan Urungkan.`))return;
+    if(!await ask(`Hapus bagian “${sectionTitle(component)}”? Bisa dikembalikan lewat Urungkan.`))return;
     component.remove();selectedRef.current=null;editor.current?.select();if(editor.current)sync(editor.current);
   }
   function addSection(html:string){
@@ -177,34 +177,34 @@ export function VisualEditor({target}:{target:string}){
       <div className="visual-history"><button aria-label="Urungkan" disabled={!ready||busy||uploading||!canUndo} onClick={()=>editor.current?.UndoManager.undo()}><Undo2 size={18}/></button><button aria-label="Ulangi" disabled={!ready||busy||uploading||!canRedo} onClick={()=>editor.current?.UndoManager.redo()}><Redo2 size={18}/></button></div>
       <div className="visual-devices" aria-label="Ukuran kanvas"><button aria-label="Desktop" aria-pressed={device==='Desktop'} disabled={!ready} onClick={()=>setViewport('Desktop')}><Monitor size={18}/></button><button aria-label="Mobile" aria-pressed={device==='Mobile'} disabled={!ready} onClick={()=>setViewport('Mobile')}><Smartphone size={18}/></button></div>
       <button className="visual-panel-toggle" aria-label="Panel editor" aria-expanded={panelOpen} onClick={()=>setPanelOpen(!panelOpen)} disabled={preview}><SlidersHorizontal size={18}/><span>Panel</span></button>
-      <button aria-label="Pratinjau tampilan" aria-pressed={preview} onClick={()=>{const ed=editor.current;if(preview)ed?.stopCommand('preview');else ed?.runCommand('preview');setPreview(!preview);}} disabled={!ready||busy}><Eye size={18}/><span>{preview?'Kembali edit':'Pratinjau'}</span></button>
+      <button aria-label="Preview halaman" aria-pressed={preview} onClick={()=>{const ed=editor.current;if(preview)ed?.stopCommand('preview');else ed?.runCommand('preview');setPreview(!preview);}} disabled={!ready||busy}><Eye size={18}/><span>{preview?'Kembali edit':'Preview'}</span></button>
       <button aria-label="Simpan draft" aria-busy={busy&&action==='save'} disabled={!ready||busy||uploading||!dirty} onClick={()=>save('save')}><AdminActionLabel pending={busy&&action==='save'} idle="Simpan draft" busy="Menyimpan…" icon={<Save size={18}/>}/></button>
       <button className="visual-publish" aria-label="Publikasikan" aria-busy={busy&&action==='publish'} disabled={!ready||busy||uploading} onClick={()=>save('publish')}><AdminActionLabel pending={busy&&action==='publish'} idle="Publikasikan" busy="Menerbitkan…"/></button>
     </header>
     {error&&<div role="alert" className="visual-error">{error}{!ready?<button onClick={()=>window.location.reload()}>Coba lagi</button>:<button onClick={()=>setError('')} aria-label="Tutup pesan">Tutup</button>}</div>}
-    {preview&&<p className="visual-preview-note">Pratinjau tampilan. <a href={dirty?undefined:meta.current?.previewUrl} aria-disabled={dirty} target="_blank" rel="noopener noreferrer">Buka halaman tersimpan <ExternalLink size={14}/></a>{dirty&&' Simpan draft untuk membuka halaman.'}</p>}
+    {preview&&<p className="visual-preview-note">Ini preview-nya. <a href={dirty?undefined:meta.current?.previewUrl} aria-disabled={dirty} target="_blank" rel="noopener noreferrer">Buka halaman tersimpan <ExternalLink size={14}/></a>{dirty&&' Simpan draft untuk membuka halaman.'}</p>}
     <div className="visual-workspace" aria-busy={busy}>
       {panelOpen&&<button className="visual-panel-backdrop" aria-label="Tutup panel" onClick={()=>setPanelOpen(false)}/>}
       <aside className="visual-sidebar" aria-label="Panel konten" inert={busy||uploading||!ready}>
         <div className="visual-panel-heading"><h2>Edit halaman</h2><button className="visual-panel-close" aria-label="Tutup panel konten" onClick={()=>setPanelOpen(false)}><X size={18}/></button></div>
         <nav aria-label="Panel editor">{[['content','Konten',Type],['sections','Bagian',Layers],['add','Tambah',Plus]].map(([value,label,Icon])=><button key={value as string} aria-pressed={tab===value} onClick={()=>setTab(value as string)}><Icon size={16}/>{label as string}</button>)}</nav>
         {tab==='content'&&<div className="visual-content-panel">
-          {!selection?<div className="visual-empty"><Type size={24}/><h3>Pilih konten di halaman</h3><p>Klik teks, gambar, atau tombol untuk mengeditnya.</p></div>:<>
+          {!selection?<div className="visual-empty"><Type size={24}/><h3>Mau edit yang mana?</h3><p>Klik teks, gambar, atau tombol di preview.</p></div>:<>
             <h3>{selection.label}</h3>
-            {selection.managed?<><p className="visual-hint">Koleksi ini mengikuti data di pengelola Works.</p><a className="visual-text-link" href="/admintgadink/dashboard/works" onClick={leave}>Kelola Works <ExternalLink size={14}/></a></>:<>
+            {selection.managed?<><p className="visual-hint">Portfolio di sini terhubung ke menu Portfolio.</p><a className="visual-text-link" href="/admintgadink/dashboard/works" onClick={leave}>Kelola Portfolio <ExternalLink size={14}/></a></>:<>
               {selection.texts.map((text,index)=><label className="visual-field" key={`${selectedRef.current?.cid}-${index}`}>{selection.texts.length===1?'Teks':`Teks ${index+1}`}<TextField value={text} onDirty={()=>{dirtyRef.current=true;setDirty(true);setStatus('Belum disimpan');}} onCommit={value=>editText(index,value)}/></label>)}
               {selection.image&&<><img className="visual-image-preview" src={selection.src} alt="Gambar yang dipilih"/><label className="visual-field">Deskripsi gambar<input value={selection.alt} onChange={event=>attribute('alt',event.target.value)}/></label><FileDrop disabled={busy} onBusyChange={setUploading} onUploaded={files=>{const component=selectedRef.current;if(component?.is('image')&&files[0]){component.set('src',files[0].url);if(editor.current)sync(editor.current);}}}/></>}
-              {selection.link&&<><label className="visual-field">Tujuan tautan<input type="text" inputMode="url" value={selection.href} placeholder="https://… atau #contact" onChange={event=>attribute('href',event.target.value)}/></label><label className="visual-check"><input type="checkbox" checked={selection.blank} onChange={event=>{attribute('target',event.target.checked?'_blank':'_self');attribute('rel',event.target.checked?'noopener noreferrer':'');}}/>Buka di tab baru</label></>}
-              {!selection.texts.length&&!selection.image&&!selection.link&&<p className="visual-hint">Pilih teks atau gambar di dalam bagian ini. Desain mengikuti tampilan website.</p>}
+              {selection.link&&<><label className="visual-field">Tujuan link<input type="text" inputMode="url" value={selection.href} placeholder="https://… atau #contact" onChange={event=>attribute('href',event.target.value)}/></label><label className="visual-check"><input type="checkbox" checked={selection.blank} onChange={event=>{attribute('target',event.target.checked?'_blank':'_self');attribute('rel',event.target.checked?'noopener noreferrer':'');}}/>Buka di tab baru</label></>}
+              {!selection.texts.length&&!selection.image&&!selection.link&&<p className="visual-hint">Pilih teks atau gambar di bagian ini buat lanjut edit.</p>}
             </>}
             {activeSection&&<button className="visual-section-shortcut" onClick={()=>setTab('sections')}><Layers size={16}/>Atur bagian: {sectionTitle(activeSection)}</button>}
           </>}
         </div>}
-        {tab==='sections'&&<div className="visual-section-panel"><h3>Susunan halaman</h3><p className="visual-hint">Pilih bagian, lalu atur urutannya.</p><ol className="visual-section-list">{sections.map(component=><li key={component.cid}><button aria-pressed={activeSection===component} onClick={()=>{editor.current?.select(component);setTab('sections');component.getEl()?.scrollIntoView({block:'center',behavior:'smooth'});}}>{sectionTitle(component)}</button></li>)}</ol>
+        {tab==='sections'&&<div className="visual-section-panel"><h3>Susunan halaman</h3><p className="visual-hint">Pilih bagiannya, lalu geser urutannya.</p><ol className="visual-section-list">{sections.map(component=><li key={component.cid}><button aria-pressed={activeSection===component} onClick={()=>{editor.current?.select(component);setTab('sections');component.getEl()?.scrollIntoView({block:'center',behavior:'smooth'});}}>{sectionTitle(component)}</button></li>)}</ol>
           {activeSection&&<div className="visual-section-controls"><strong>{sectionTitle(activeSection)}</strong><div><button aria-label="Pindah bagian ke atas" disabled={sectionIndex<=0||sections[sectionIndex-1]?.parent()!==activeSection.parent()} onClick={()=>moveSection(activeSection,-1)}><ArrowUp size={16}/></button><button aria-label="Pindah bagian ke bawah" disabled={sectionIndex<0||sectionIndex>=sections.length-1||sections[sectionIndex+1]?.parent()!==activeSection.parent()} onClick={()=>moveSection(activeSection,1)}><ArrowDown size={16}/></button><button className="visual-delete" aria-label="Hapus bagian" onClick={()=>removeSection(activeSection)}><Trash2 size={16}/>Hapus</button></div></div>}
         </div>}
         {tab==='add'&&<div className="visual-templates"><h3>Tambah bagian</h3><p className="visual-hint">{activeSection?`Setelah “${sectionTitle(activeSection)}”`:'Di akhir konten halaman'}</p>{templates.map(item=><button key={item.title} onClick={()=>addSection(item.html)}><item.icon size={20}/><span>{item.title}</span><Plus size={16}/></button>)}</div>}
-        <p className="visual-publish-hint">Simpan draft untuk melanjutkan nanti. Publikasikan untuk menampilkan perubahan ke pengunjung.</p>
+        <p className="visual-publish-hint">Simpan draft dulu kalau belum siap. Klik Publikasikan saat sudah oke.</p>
       </aside>
       <div className="visual-canvas" ref={canvas} inert={busy||uploading}/>
       {!ready&&!error&&<div className="visual-loading" role="status"><span className="admin-spinner"/>Menyiapkan halaman…</div>}

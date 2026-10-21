@@ -62,7 +62,7 @@ export function SiteManager() {
       ) {
         e.preventDefault();
         e.stopPropagation();
-        void ask('Perubahan belum disimpan. Tinggalkan halaman?', 'Tinggalkan').then(yes=>{if(yes){dirtyRef.current=false;window.location.assign(a.href);}});
+        void ask('Masih ada perubahan yang belum disimpan. Tetap keluar?', 'Tinggalkan').then(yes=>{if(yes){dirtyRef.current=false;window.location.assign(a.href);}});
       }
     };
     window.addEventListener('beforeunload', unload);
@@ -89,7 +89,7 @@ export function SiteManager() {
       if (!res.ok) throw Error(data.error);
       adopt(data);
       setNotice(
-        action === 'publish' ? 'Website dipublikasikan.' : 'Draft tersimpan.',
+        action === 'publish' ? 'Perubahan website sudah tayang.' : 'Draft tersimpan.',
       );
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Belum tersimpan.');
@@ -171,7 +171,7 @@ export function SiteManager() {
             className="wm-button"
             disabled={busy}
             onClick={async () => {
-              if (!dirty || await ask('Muat ulang dan lepaskan perubahan lokal?', 'Muat ulang'))
+              if (!dirty || await ask('Muat ulang? Perubahan yang belum disimpan akan dibuang.', 'Muat ulang'))
                 load();
             }}
           >

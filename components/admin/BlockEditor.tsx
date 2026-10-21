@@ -1,5 +1,5 @@
 'use client';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, ChevronDown } from 'lucide-react';
 import { SortableList } from './SortableList';
 import { FileDrop } from './FileDrop';
 import type { CMSBlock } from '@/lib/content-blocks';
@@ -14,7 +14,7 @@ const labels: Record<CMSBlock['block_type'], string> = {
   metrics: 'Hasil',
   list: 'Daftar',
   divider: 'Pemisah',
-  link: 'Tautan',
+  link: 'Link',
 };
 const defaults: Record<CMSBlock['block_type'], Record<string, unknown>> = {
   heading: { text: '', level: 2 },
@@ -113,7 +113,7 @@ export function BlockEditor({
             <div className="cms-block">
               <div className="cms-block-row">
                 {handle}
-                <details>
+                <details className="cms-block-disclosure">
                   <summary>
                     {labels[block.block_type]}
                     <span>
@@ -125,6 +125,7 @@ export function BlockEditor({
                           '',
                       ).slice(0, 70)}
                     </span>
+                    <ChevronDown className="admin-disclosure-chevron" size={18} aria-hidden="true"/>
                   </summary>
                   <fieldset disabled={disabled} className="cms-block-fields">
                     {['heading', 'paragraph'].includes(block.block_type) &&
@@ -265,7 +266,7 @@ export function BlockEditor({
                     {block.block_type === 'link' && (
                       <>
                         {field(block, 'label', 'Label')}
-                        {field(block, 'url', 'Tautan')}
+                        {field(block, 'url', 'Link')}
                       </>
                     )}
                     {block.block_type === 'list' && (
@@ -352,7 +353,7 @@ export function BlockEditor({
                         </button>
                       </>
                     )}
-                    {block.block_type === 'divider' && <p>Pemisah bagian.</p>}
+                    {block.block_type === 'divider' && <p>Jeda antarbagian.</p>}
                     <button
                       type="button"
                       className="wm-button cms-delete"
@@ -372,7 +373,7 @@ export function BlockEditor({
           );
         }}
       </SortableList>
-      {!blocks.length && <p>Belum ada isi studi kasus.</p>}
+      {!blocks.length && <p>Masih kosong. Tambahkan blok pertama, yuk.</p>}
     </section>
   );
 }

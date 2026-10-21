@@ -21,5 +21,14 @@
 .admin-sidebar .admin-logout:hover { border-color:var(--muted); }
 .admin-sidebar .admin-logout:disabled { cursor:wait; opacity:.7; }
 .admin-route-loading { display:flex; align-items:center; justify-content:center; gap:12px; min-height:180px; color:var(--muted); font-size:14px; }
+.admin-shell details>summary{list-style:none}
+.admin-shell details>summary::marker{content:''}
+.admin-shell details>summary::-webkit-details-marker{display:none}
+.admin-shell .admin-disclosure-chevron{flex-shrink:0;margin-left:auto;transition:transform .18s ease}
+.admin-shell details[open]>summary>.admin-disclosure-chevron{transform:rotate(180deg)}
+.admin-shell .cms-block-disclosure>summary{display:flex;align-items:center;gap:12px;min-height:48px}
+.admin-shell .cms-block-disclosure>summary>span{min-width:0;overflow-wrap:anywhere}
+.admin-shell .cms-block-disclosure>summary:focus-visible{outline:2px solid var(--amber);outline-offset:2px;border-radius:8px}
+@media(prefers-reduced-motion:reduce){.admin-shell .admin-disclosure-chevron{transition:none}}
 @keyframes admin-spin { to { transform:rotate(360deg); } }
 @media(prefers-reduced-motion:reduce) { .admin-spinner { animation:none; }.admin-shell .wm-button { transition:none; } }

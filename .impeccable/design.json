@@ -265,7 +265,8 @@
       "reliability": "Next Project card viewport prefetch disabled. Published request memoization,60sec tagged cache,publish/order invalidation,8sec upstream abort. Admin/draft reads uncached.",
       "approval": "Functional/source evidence only; current browser captures unavailable, no visual approval."
     },
-    "adminVideoSettings": "Admin video settings use one always-open Video & Thumbnail glass card plus native Sumber Video and Pengaturan Tambahan disclosures. Thin boundaries, 12px corners, restrained blur, Lucide icons and down/up chevrons replace navigation-like triangles. Main insets are 24px desktop and 16px mobile; optional headers remain 64px touch targets. Whole-header keyboard interaction and focus outline preserve expansion semantics. See docs/briefs/2026-10-21-settings-cards.md."
+    "adminVideoSettings": "Admin video settings use one always-open Video & Thumbnail glass card plus native Sumber Video and Pengaturan Tambahan disclosures. Thin boundaries, 12px corners, restrained blur, Lucide icons and down/up chevrons replace navigation-like triangles. Main insets are 24px desktop and 16px mobile; optional headers remain 64px touch targets. Whole-header keyboard interaction and focus outline preserve expansion semantics. See docs/briefs/2026-10-21-settings-cards.md.",
+    "adminClarity": "All admin-owned disclosure summaries suppress native triangle markers and expose down/up chevrons. Overview reuses the shared settings card; case blocks keep their existing card boundary and add a consistent keyboard-operable chevron. Work visibility is labeled Tampilkan di portfolio with state-specific publish timing. Mobile action bars use an opaque admin canvas and wrap whole buttons, preserving complete action labels. Supporting copy is short, friendly Indonesian; save and publish remain distinct. See docs/briefs/2026-10-21-admin-clean-copy.md."
   },
   "components": [
     {

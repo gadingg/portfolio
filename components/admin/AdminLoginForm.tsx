@@ -26,11 +26,11 @@ export function AdminLoginForm() {
         body: JSON.stringify({ email, password }),
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Unable to sign in.');
+      if (!response.ok) throw new Error(data.error || 'Belum bisa masuk. Coba lagi, ya.');
       router.replace('/admintgadink/dashboard');
       router.refresh();
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'Unable to sign in.');
+      setError(caught instanceof Error ? caught.message : 'Belum bisa masuk. Coba lagi, ya.');
     } finally {
       setLoading(false);
     }
@@ -39,8 +39,8 @@ export function AdminLoginForm() {
   return (
     <section className="admin-login-card" aria-labelledby="admin-login-title">
       <p className="admin-kicker">Gading Admin</p>
-      <h1 id="admin-login-title">Private CMS</h1>
-      <p className="admin-login-intro">Sign in with the only account allowed to manage projects and gallery.</p>
+      <h1 id="admin-login-title">Masuk CMS</h1>
+      <p className="admin-login-intro">Login dulu, lalu lanjut rapikan portfolio kamu.</p>
 
       <form onSubmit={handleSubmit} className="admin-login-form">
         <label htmlFor="admin-email">Email</label>
@@ -69,7 +69,7 @@ export function AdminLoginForm() {
         {error && <p className="admin-form-error" role="alert">{error}</p>}
 
         <button type="submit" className="button button--primary" disabled={loading}>
-          {loading ? 'Signing in...' : 'Open CMS'}
+          {loading ? 'Masuk dulu…' : 'Masuk CMS'}
         </button>
       </form>
     </section>

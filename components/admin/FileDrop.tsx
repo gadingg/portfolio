@@ -82,7 +82,7 @@ export function FileDrop({
     setBusy(false);
     uploadLock.current = false;
     onBusyChange?.(false);
-    setProgress(successes.length ? `${successes.length} file terunggah` : '');
+    setProgress(successes.length ? `${successes.length} file sudah masuk` : '');
     if (input.current) input.current.value = '';
   }
   async function loadLibrary(nextOffset = 0) {
@@ -152,7 +152,7 @@ export function FileDrop({
           type="file"
           accept={accept}
           multiple={multiple}
-          aria-label="Pilih file untuk diunggah"
+          aria-label="Pilih file buat diupload"
           hidden
           onChange={(e) => upload(Array.from(e.target.files || []))}
         />
@@ -235,7 +235,7 @@ export function FileDrop({
         {listing ? (
           <p role="status">Memuat media…</p>
         ) : !media.length && !libraryError ? (
-          <p>Belum ada media.</p>
+          <p>Belum ada file. Upload yang pertama, yuk.</p>
         ) : null}
         <div className="wm-toolbar">
           {hasMore && (

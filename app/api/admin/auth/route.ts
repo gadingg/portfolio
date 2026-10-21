@@ -5,7 +5,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { createHash } from 'node:crypto';
 import { sameOrigin } from '@/lib/cms-http';
 
-const INVALID_CREDENTIALS = 'Email or password is incorrect.';
+const INVALID_CREDENTIALS = 'Email atau password belum cocok. Coba cek lagi.';
 
 export async function POST(request: NextRequest) {
   if(!sameOrigin(request))return NextResponse.json({error:'Permintaan tidak diizinkan.'},{status:403});
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     const password = typeof body.password === 'string' ? body.password : '';
 
     if (!email || !password) {
-      return NextResponse.json({ error: 'Email and password are required.' }, { status: 400 });
+      return NextResponse.json({ error: 'Isi email dan password dulu, ya.' }, { status: 400 });
     }
 
     if (!isAdminEmail(email)) {
@@ -42,6 +42,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Admin authentication failed:', error);
-    return NextResponse.json({ error: 'Unable to sign in right now.' }, { status: 500 });
+    return NextResponse.json({ error: 'Belum bisa masuk. Coba lagi sebentar.' }, { status: 500 });
   }
 }
