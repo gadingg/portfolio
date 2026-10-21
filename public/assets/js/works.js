@@ -198,6 +198,7 @@
         list.querySelectorAll('.work-video-preview').forEach(video=>{video.pause();videoObserver.unobserve(video);videoPreviews.delete(video);});
         list.replaceChildren(...items.map(item=>card(item,items,group.dataset.collection?'h2':'h4',!!group.querySelector('.editorial-gallery'))));if(!items.length)list.append(node('p','works-message','Belum ada portfolio di koleksi ini.'));list.scrollLeft=0;list.setAttribute('aria-busy','false');group._updateCarousel?.();
       });
+      document.dispatchEvent(new Event('portfolio:works-ready'));
   }
   async function load() {
     if(loading)return;loading=true;const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),12000);
