@@ -77,3 +77,78 @@
 .cms-visibility strong{font-size:14px;font-weight:600}
 .cms-visibility small{font-size:12px;line-height:1.5;color:var(--muted)}
 @media(max-width:600px){.cms-sticky-toolbar .wm-button{flex:1 1 auto;min-width:max-content;white-space:nowrap}.cms-sticky-toolbar .admin-action-label>span{overflow-wrap:normal;word-break:normal}}
+
+/* Portfolio workspace: browse first, edit and publish in context. */
+.wm-workspace .wm-heading{margin-bottom:24px;align-items:flex-start}
+.wm-workspace h1{font-size:clamp(26px,3vw,36px);margin:0;overflow-wrap:anywhere}
+.wm-workspace .wm-clean-status{font-size:12px;margin-top:8px}
+.wm-workspace .wm-public-link{display:inline-flex;align-items:center;gap:8px;min-height:44px;color:var(--muted);font-size:13px;text-decoration:none;white-space:nowrap}
+.wm-workspace .wm-public-link:hover{color:var(--ink)}
+.wm-workspace .wm-public-link:focus-visible{outline:2px solid var(--amber);outline-offset:4px;border-radius:4px}
+.wm-workspace .wm-public-link svg{width:16px;height:16px}
+.wm-workspace .wm-heading>div>.wm-button{margin-bottom:16px;border-color:transparent;background:none;padding-left:0}
+.wm-workspace .wm-tabs{gap:24px;flex-wrap:nowrap;overflow-x:auto;border-bottom:1px solid var(--border);scrollbar-width:thin;max-width:100%}
+.wm-workspace .wm-tabs .wm-button{position:relative;flex:0 0 auto;min-height:48px;padding:10px 0;border:0;border-radius:0;background:none;color:var(--muted);font-weight:500;white-space:nowrap}
+.wm-workspace .wm-tabs .wm-button[aria-pressed=true]{color:var(--ink);box-shadow:inset 0 -2px var(--amber)}
+.wm-workspace .wm-tabs span{font-size:12px}
+.wm-workspace .wm-toolbar{border:0;gap:16px;padding:20px 0;margin:0}
+.wm-workspace .wm-search{position:relative;flex:1;display:flex;flex-direction:row;justify-content:flex-start;max-width:460px;gap:0}
+.wm-workspace .wm-search>svg{position:absolute;left:12px;pointer-events:none;color:var(--muted)}
+.wm-workspace .wm-search input{max-width:none;padding-left:40px;min-height:44px}
+.wm-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.wm-action-menu{position:relative;flex-shrink:0}
+.wm-add-menu{margin-left:auto}
+.wm-action-menu>summary{list-style:none;cursor:pointer}
+.wm-action-menu>summary::-webkit-details-marker{display:none}
+.wm-action-menu>summary::marker{content:''}
+.wm-action-menu>summary:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.wm-menu-panel{position:absolute;right:0;top:calc(100% + 8px);z-index:35;min-width:220px;max-width:calc(100vw - 40px);display:grid;padding:6px;border:1px solid var(--border-strong);border-radius:12px;background:var(--admin-bg,#0c1016);box-shadow:0 12px 24px rgba(0,0,0,.28)}
+.wm-action-menu:not([open])>.wm-menu-panel{display:none}
+.wm-menu-panel>button{display:flex;gap:10px;align-items:center;min-height:44px;padding:10px 12px;border:0;border-radius:6px;background:none;text-align:left;color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
+.wm-menu-panel>button:hover,.wm-menu-panel>button:focus-visible{background:var(--surface);outline:2px solid var(--amber);outline-offset:-2px}
+.wm-menu-panel>button:disabled{opacity:.45;cursor:default}
+.wm-workspace .wm-menu-delete{color:#ffb4a8}
+.wm-workspace .wm-list{gap:0}
+.wm-workspace .cms-work-row{padding:16px 0;gap:12px}
+.wm-workspace .cms-grip,.wm-workspace .wm-row-menu>summary{border-color:transparent;background:none;padding:10px;color:var(--muted)}
+.wm-workspace .cms-grip:hover,.wm-workspace .wm-row-menu>summary:hover{background:var(--surface);color:var(--ink)}
+.wm-workspace .cms-work-open{padding:4px;gap:16px;border-radius:8px}
+.wm-workspace .cms-work-open:hover{background:var(--surface)}
+.wm-workspace .wm-thumb{width:88px}
+.wm-workspace .wm-summary strong{font-size:16px}
+.wm-workspace .wm-edit{color:var(--muted)}
+.wm-workspace .wm-import-panel{padding:20px;border:1px solid var(--border);border-radius:12px;margin:0 0 20px;background:var(--surface)}
+.wm-import-panel .cms-panel-heading{margin-bottom:16px}
+.wm-import-panel .cms-panel-heading h2{font-size:18px}
+.wm-import-panel .cms-drop{margin-bottom:0}
+.wm-workspace .wm-savebar{margin-bottom:24px;gap:10px}
+.wm-savebar .wm-save-scope{flex-basis:100%;font-size:12px;color:var(--muted);line-height:1.5}
+.wm-editor-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,310px);gap:32px;align-items:start}
+.wm-workspace .cms-editor-fields{margin:0;gap:24px;min-width:0}
+.wm-workspace .cms-edit-heading{gap:12px}
+.wm-workspace .cms-edit-heading h2{font-size:20px}
+.wm-workspace .cms-edit-heading>.wm-button{font-size:13px}
+.wm-workspace .cms-inline-fields>label{min-width:min(220px,100%)}
+.wm-card-preview{position:sticky;top:150px;min-width:0;display:grid;gap:14px}
+.wm-card-preview h2{font-size:13px;font-weight:500;color:var(--muted)}
+.wm-card-preview>img{width:100%;aspect-ratio:4/3;object-fit:contain;background:var(--surface);border-radius:12px}
+.wm-card-preview h3{margin:0;font-size:18px;line-height:1.4;overflow-wrap:anywhere}
+.wm-card-preview p{font-size:13px;line-height:1.6;overflow-wrap:anywhere}
+.wm-card-preview>span{font-size:12px;color:var(--muted)}
+.wm-preview-empty{display:grid;place-items:center;aspect-ratio:4/3;border:1px dashed var(--border-strong);border-radius:12px;color:var(--muted);font-size:13px}
+@media(max-width:1000px){.wm-editor-layout{grid-template-columns:minmax(0,1fr)}.wm-card-preview{position:static;max-width:460px;padding-top:24px;border-top:1px solid var(--border)}}
+@media(max-width:760px){.wm-workspace .wm-heading{flex-direction:row;gap:16px}.wm-workspace .wm-tabs{gap:20px}.wm-workspace .wm-tabs .wm-button{font-size:13px;flex:0 0 auto}.wm-workspace .wm-toolbar{align-items:stretch;flex-direction:column;gap:12px;padding:16px 0}.wm-workspace .wm-search{flex-basis:auto;max-width:none}.wm-workspace .wm-add-menu{margin:0;align-self:flex-start}.wm-workspace .wm-add-menu>summary{font-size:13px}.wm-workspace .wm-add-menu>.wm-menu-panel{left:0;right:auto}.wm-workspace .wm-thumb{width:64px}.wm-workspace .cms-work-row{gap:4px;padding:12px 0}.wm-workspace .cms-work-open{gap:10px}.wm-workspace .wm-summary strong{font-size:14px}.wm-workspace .wm-summary>span{font-size:11px}.wm-workspace .wm-edit{display:none}.wm-workspace .wm-import-panel{padding:16px}.wm-workspace .wm-savebar{top:66px}.wm-savebar>span{flex-basis:100%}.wm-workspace .wm-savebar .wm-button{font-size:12px;min-width:0;flex:1 1 auto}.wm-workspace .cms-edit-heading>.wm-button{width:auto}.wm-workspace .wm-public-link{font-size:12px}.wm-card-preview{max-width:100%}}
+.wm-workspace .wm-tabs .wm-tab-label{font-size:inherit;opacity:1}
+.wm-workspace .wm-tabs .wm-tab-short{display:none}
+@media(max-width:760px){.wm-workspace .wm-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;overflow:visible}.wm-workspace .wm-tabs .wm-button{min-width:0;gap:6px;font-size:13px}.wm-workspace .wm-tabs .wm-tab-label{display:none}.wm-workspace .wm-tabs .wm-tab-short{display:inline;font-size:inherit;opacity:1}}
+/* Contextual publishing and section navigation shared by CMS forms. */
+.wm-savebar{gap:10px}.wm-save-scope{flex-basis:100%;font-size:12px;line-height:1.5;color:var(--muted)}
+.wm-site-layout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:32px;align-items:start}
+.wm-site-layout .cms-section-tabs{display:grid;gap:4px;position:sticky;top:150px}
+.wm-site-layout .cms-section-tabs .wm-button{justify-content:flex-start;background:none;border-color:transparent;font-weight:500}
+.wm-site-layout .cms-section-tabs [aria-pressed=true]{background:var(--surface);color:var(--ink);border-color:var(--border)}
+.wm-site-layout .cms-editor-fields{margin:0;min-width:0}
+.wm-section-select{display:none!important}
+.wm-site-workspace .wm-clean-status{font-size:12px;margin-top:8px}
+@media(max-width:760px){.wm-site-layout{grid-template-columns:minmax(0,1fr);gap:24px}.wm-site-layout .cms-section-tabs{display:none}.wm-section-select{display:flex!important;gap:8px!important}.wm-savebar>span{flex-basis:100%}.wm-savebar .wm-button{font-size:12px;min-width:0!important;flex:1 1 auto}.wm-site-workspace .wm-heading{margin-bottom:24px}.wm-site-workspace .wm-heading h1{font-size:28px}}
+.wm-form-loading{display:grid;gap:16px;padding-block:24px;color:var(--muted);font-size:13px}.wm-form-loading>div{height:64px;border-radius:8px;background:var(--surface)}

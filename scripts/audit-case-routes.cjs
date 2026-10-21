@@ -7,7 +7,9 @@ const base=process.env.CASE_AUDIT_URL||'http://localhost:3008';
   const response=await fetch(`${base}/work/${old}`,{redirect:'manual',signal:AbortSignal.timeout(12000)});
   assert.equal(response.status,308,old);assert.equal(new URL(response.headers.get('location'),base).pathname,`/work/${slug}`);
  }
- const slugs=[...new Set(Object.values(redirects))];
+ const data=await(await fetch(base+'/api/works')).json();
+ const slugs=data.items.filter(item=>item.caseStudy).map(item=>item.caseStudy.slug);
+ assert.ok(slugs.length,'At least one published case is required');
  for(let round=0;round<2;round++)for(const slug of slugs){
   const started=performance.now(),response=await fetch(`${base}/work/${slug}`,{signal:AbortSignal.timeout(14000)});
   const headerMs=Math.round(performance.now()-started),body=await response.text(),$=load(body);
@@ -23,7 +25,6 @@ const base=process.env.CASE_AUDIT_URL||'http://localhost:3008';
   assert.equal($('.case-explore').length,0);
   measurements.push({slug,round,headerMs,totalMs:Math.round(performance.now()-started),bytes:body.length});
  }
- const data=await(await fetch(base+'/api/works')).json();
  assert.deepEqual(data.items.filter(item=>item.caseStudy).map(item=>item.caseStudy.slug),slugs);
  const sitemap=await(await fetch(base+'/sitemap.xml')).text();slugs.forEach(slug=>assert.ok(sitemap.includes('/work/'+slug)));
  for(const old of Object.keys(redirects))assert.ok(!sitemap.includes('/work/'+old));

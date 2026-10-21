@@ -6,7 +6,7 @@ import { FileDrop } from './FileDrop';
 import { SortableList } from './SortableList';
 import { useConfirm } from './ConfirmDialog';
 import './works-manager.css';
-import { AdminActionLabel } from './AdminActionLabel';
+import { PublicationBar } from './PublicationBar';
 export function SiteManager() {
   const {ask,confirmation}=useConfirm();
   const [content, setContent] = useState<SiteContent | null>(null),
@@ -107,10 +107,10 @@ export function SiteManager() {
     setContent((old) => (old ? { ...old, cv: { ...old.cv, ...patch } } : old));
   const groups = [...new Set(siteFields.map((field) => field.group)), 'CV'];
   return (
-    <div className="works-manager cms-manager">
+    <div className="works-manager cms-manager wm-site-workspace">
       {confirmation}
       <div className="wm-heading">
-        <h1>Website</h1>
+        <div><h1>Website &amp; CV</h1>{content && !dirty && saved === published && <p className="wm-clean-status">Semua perubahan tersimpan</p>}</div>
         <a
           href="/admintgadink/dashboard/editor/home"
           className="wm-button"
@@ -119,50 +119,9 @@ export function SiteManager() {
           Buka editor visual
         </a>
       </div>
-      <div className="cms-sticky-toolbar">
-        <span role="status">
-          {busy
-            ? 'Memproses…'
-            : dirty
-              ? 'Belum disimpan'
-              : saved !== published
-                ? 'Draft tersimpan'
-                : 'Sudah dipublikasikan'}
-        </span>
-        <button
-          type="button"
-          className="wm-button"
-          disabled={busy || !dirty}
-          onClick={() => {
-            setContent(JSON.parse(saved));
-            setError('');
-          }}
-        >
-          Batalkan
-        </button>
-        <button
-          type="button"
-          className="wm-button"
-          disabled={busy || !content || (!dirty && revision > 0)}
-          onClick={() => save('save')}
-          aria-busy={operation === 'save'}
-        >
-          <AdminActionLabel pending={operation === 'save'} idle="Simpan draft" busy="Menyimpan…" icon={<Save size={18} />} />
-        </button>
-        <button
-          type="button"
-          className="wm-button wm-primary"
-          disabled={
-            busy ||
-            !content ||
-            (JSON.stringify(content) === published && revision > 0)
-          }
-          onClick={() => save('publish')}
-          aria-busy={operation === 'publish'}
-        >
-          <AdminActionLabel pending={operation === 'publish'} idle="Publikasikan" busy="Memublikasikan…" />
-        </button>
-      </div>
+      {content && <PublicationBar dirty={!!dirty} unpublished={saved !== published} busy={busy} operation={operation} scope="Berlaku untuk perubahan Website & CV."
+        onCancel={() => { setContent(JSON.parse(saved)); setError(''); }}
+        onSave={() => { void save('save'); }} onPublish={() => { void save('publish'); }}/>}
       {error && (
         <div className="wm-message wm-error" role="alert">
           {error}
@@ -184,9 +143,10 @@ export function SiteManager() {
           {notice}
         </p>
       )}
+      {!content && !error && <div className="wm-form-loading" role="status"><span>Memuat konten website…</span><div aria-hidden="true"/><div aria-hidden="true"/></div>}
       {content && (
         <>
-          <nav className="cms-section-tabs" aria-label="Bagian website">
+          <div className="wm-site-layout"><label className="wm-section-select">Bagian website<select value={group} onChange={event => setGroup(event.target.value)}>{groups.map(value => <option key={value} value={value}>{value}</option>)}</select></label><nav className="cms-section-tabs" aria-label="Bagian website">
             {groups.map((value) => (
               <button
                 type="button"
@@ -349,7 +309,7 @@ export function SiteManager() {
                 )}
               </>
             )}
-          </fieldset>
+          </fieldset></div>
         </>
       )}
     </div>

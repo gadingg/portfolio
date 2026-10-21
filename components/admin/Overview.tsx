@@ -28,9 +28,10 @@ export function Overview({ draft, published, data, days }: {
     </header>
 
     <section className="overview-stats" aria-label="Ringkasan portfolio">
-      <div className="overview-stat"><h2>Total Portfolio</h2><strong>{number(summary.total)}</strong><p>{summary.examples ? `Termasuk ${number(summary.examples)} portfolio contoh` : 'Seluruh koleksi portfolio'}</p></div>
+      <div className="overview-stat"><h2>Total Portfolio</h2><strong>{number(summary.total)}</strong><p>Seluruh koleksi portfolio</p></div>
       <div className="overview-stat"><h2>Tayang</h2><strong>{number(summary.live)}</strong><p>Terlihat di website</p></div>
-      <div className="overview-stat"><h2>Draft</h2><strong>{number(summary.drafts)}</strong><p>Belum tampil di website</p></div>
+      <div className="overview-stat"><h2>Draft baru</h2><strong>{number(summary.drafts)}</strong><p>Belum pernah dipublikasikan</p></div>
+      <div className="overview-stat"><h2>Disembunyikan</h2><strong>{number(summary.hidden)}</strong><p>Tersimpan, tidak tampil di website</p></div>
     </section>
 
     {summary.changed && <div className="overview-publication-note"><span>Draft sudah tersimpan, tapi belum tayang.</span><AdminLink href="/admintgadink/dashboard/works">Tinjau perubahan</AdminLink></div>}
@@ -50,7 +51,7 @@ export function Overview({ draft, published, data, days }: {
         {summary.recent.length ? <ul className="overview-recent">
           {summary.recent.map(item => <li key={item.id}>
             <div className="overview-work-info"><h3>{item.title}</h3><p>{workLabels[item.kind]}<span aria-hidden="true"> · </span>{item.updatedAt ? <time dateTime={item.updatedAt}>{date(item.updatedAt)}</time> : 'Tanggal belum tersedia'}</p></div>
-            <span className={`overview-status ${item.isLive ? 'is-live' : ''}`}>{item.isLive ? 'Tayang' : 'Draft'}</span>
+            <span className={`overview-status ${item.isLive ? 'is-live' : ''}`}>{item.status}</span>
             <AdminLink className="wm-button" aria-label={`Edit ${item.title}`} href={`/admintgadink/dashboard/works?kind=${item.kind}&work=${encodeURIComponent(item.id)}`}>Edit</AdminLink>
           </li>)}
         </ul> : <div className="overview-empty"><h3>Belum ada portfolio</h3><p>Buka Kelola portfolio buat menambahkan portfolio pertama.</p></div>}
@@ -71,7 +72,7 @@ export function Overview({ draft, published, data, days }: {
           <div className="chart-axis"><span>{date(data.daily[0].date)}</span><span>{date(data.daily.at(-1)!.date)}</span></div>
         </> : null}
         <dl className="engagement-types">{engagementKinds.map(kind => <div key={kind}><dt>{engagementLabels[kind]}</dt><dd>{number(data.types[kind] || 0)}</dd></div>)}</dl>
-        <p className="overview-note">Menghitung klik di portfolio, termasuk membuka player. Bukan views Instagram. Data contoh dan preview admin tidak dihitung.</p>
+        <p className="overview-note">Menghitung klik di portfolio, termasuk membuka player. Bukan views Instagram. Konten sementara dan preview admin tidak dihitung.</p>
         <div className="overview-detail-grid">
           <div><h3>Portfolio paling sering dibuka</h3>{data.popular.length ? <ul className="overview-popular">{data.popular.slice(0, 5).map(item => <li key={item.id}><span>{names.get(item.id) || 'Portfolio diarsipkan'}</span><strong>{number(item.clicks)} <span>klik</span></strong></li>)}</ul> : <p className="overview-note">Belum ada portfolio yang dibuka di periode ini.</p>}</div>
           <SettingsDisclosure title="Klik per hari" icon={<List size={20}/>}><div className="overview-daily"><table className="overview-table"><caption className="admin-sr-only">Klik harian selama {days} hari</caption><thead><tr><th scope="col">Tanggal</th><th scope="col">Klik</th></tr></thead><tbody>{data.daily.map(item => <tr key={item.date}><td>{date(item.date)}</td><td>{number(item.clicks)}</td></tr>)}</tbody></table></div></SettingsDisclosure>

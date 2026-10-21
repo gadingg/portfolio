@@ -18,11 +18,11 @@ export async function GET(request:NextRequest){
       const [doc,works]=await Promise.all([getSiteDocument(),getWorksDocument()]);
       const rendered=await renderHomepage(doc.draft,works.draft.items.filter(item=>item.published&&item.caseStudy).flatMap(item=>[item.caseStudy!.slug,...(item.aliases||[])]));
       const layout=doc.draft.layout?cleanVisualLayout({html:load(rendered)('body').html()||'',css:doc.draft.layout.css}):undefined;
-      return NextResponse.json({revision:doc.revision,layout,seedHtml:layout?undefined:rendered,title:'Homepage',seedUrl:'/api/admin/preview/site',previewUrl:'/api/admin/preview/site'}, {headers:{'Cache-Control':'no-store'}});
+      return NextResponse.json({unpublished:JSON.stringify(doc.draft)!==JSON.stringify(doc.published),revision:doc.revision,layout,seedHtml:layout?undefined:rendered,title:'Homepage',seedUrl:'/api/admin/preview/site',previewUrl:'/api/admin/preview/site'}, {headers:{'Cache-Control':'no-store'}});
     }
     const doc=await getWorksDocument(),item=doc.draft.items.find(item=>item.id===target);
     if(!item?.caseStudy)return NextResponse.json({error:'Studi kasus tidak ditemukan.'},{status:404});
-    return NextResponse.json({revision:doc.revision,layout:item.caseStudy.layout?cleanVisualLayout(item.caseStudy.layout):undefined,title:item.title,seedUrl:`/admintgadink/preview/${target}`,previewUrl:`/admintgadink/preview/${target}`},{headers:{'Cache-Control':'no-store'}});
+    return NextResponse.json({unpublished:JSON.stringify(item)!==JSON.stringify(doc.published.items.find(value=>value.id===target)),revision:doc.revision,layout:item.caseStudy.layout?cleanVisualLayout(item.caseStudy.layout):undefined,title:item.title,seedUrl:`/admintgadink/preview/${target}`,previewUrl:`/admintgadink/preview/${target}`},{headers:{'Cache-Control':'no-store'}});
   }catch(error){return cmsError(error);}
 }
 export async function PUT(request:NextRequest){
@@ -42,7 +42,7 @@ export async function PUT(request:NextRequest){
       }
       const draft=SiteSchema.parse({...doc.draft,values,layout});
       const saved=await writeCMS('site',doc,draft,action==='publish'?draft:doc.published);
-      return NextResponse.json({revision:saved.revision,layout:saved.draft.layout});
+      return NextResponse.json({unpublished:JSON.stringify(saved.draft)!==JSON.stringify(saved.published),revision:saved.revision,layout:saved.draft.layout});
     }
     const doc=await getWorksDocument();if(doc.revision!==revision)throw new CMSConflict();
     const current=doc.draft.items.find(item=>item.id===target);if(!current?.caseStudy)return NextResponse.json({error:'Studi kasus tidak ditemukan.'},{status:404});
@@ -58,6 +58,6 @@ export async function PUT(request:NextRequest){
     }
     const saved=await writeCMS('works',doc,draft,published);
     const updated=saved.draft.items.find(item=>item.id===target)!;
-    return NextResponse.json({revision:saved.revision,layout:updated.caseStudy!.layout,title:updated.title});
+    return NextResponse.json({unpublished:JSON.stringify(updated)!==JSON.stringify(saved.published.items.find(value=>value.id===target)),revision:saved.revision,layout:updated.caseStudy!.layout,title:updated.title});
   }catch(error){return cmsError(error);}
 }

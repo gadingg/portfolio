@@ -10,6 +10,11 @@ import {
   Undo2,
   Settings2,
   FileText,
+  MoreHorizontal,
+  Upload,
+  X,
+  ChevronDown,
+  Search,
 } from 'lucide-react';
 import {
   workKinds,
@@ -26,7 +31,7 @@ import { FileDrop, type UploadedMedia } from './FileDrop';
 import { BlockEditor } from './BlockEditor';
 import { useConfirm } from './ConfirmDialog';
 import './works-manager.css';
-import { AdminActionLabel } from './AdminActionLabel';
+import { PublicationBar } from './PublicationBar';
 import { VideoSourceEditor } from './VideoSourceEditor';
 import { SettingsDisclosure } from './SettingsDisclosure';
 export function WorksManager() {
@@ -38,6 +43,7 @@ export function WorksManager() {
   const revisionRef = useRef<number | null>(null);
   const mutationLock = useRef(false);
   const [query, setQuery] = useState('');
+  const [showImport, setShowImport] = useState(false);
   const [kind, setKind] = useState<WorkKind>('webapp'),
     [editing, setEditing] = useState<string | null>(null),
     [busy, setBusy] = useState(false),
@@ -83,6 +89,28 @@ export function WorksManager() {
     load();
   }, []);
   useEffect(()=>{window.scrollTo({top:0,behavior:'instant'});document.querySelector('.admin-main')?.scrollTo({top:0,behavior:'instant'});},[editing]);
+  useEffect(() => {
+    if (revision === null) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set('kind', kind);
+    if (editing) url.searchParams.set('work', editing);
+    else url.searchParams.delete('work');
+    window.history.replaceState(null, '', url);
+  }, [kind, editing, revision]);
+  useEffect(() => {
+    const close = (event: PointerEvent | KeyboardEvent) => {
+      if (event instanceof KeyboardEvent && event.key !== 'Escape') return;
+      document.querySelectorAll<HTMLDetailsElement>('.wm-action-menu[open]').forEach(menu => {
+        if (event instanceof KeyboardEvent || !menu.contains(event.target as Node)) {
+          menu.open = false;
+          if (event instanceof KeyboardEvent) menu.querySelector<HTMLElement>('summary')?.focus();
+        }
+      });
+    };
+    document.addEventListener('pointerdown', close);
+    document.addEventListener('keydown', close);
+    return () => { document.removeEventListener('pointerdown', close); document.removeEventListener('keydown', close); };
+  }, []);
   useEffect(() => {
     const unload = (e: BeforeUnloadEvent) => {
       if (dirtyRef.current) {
@@ -238,15 +266,23 @@ export function WorksManager() {
     ]);
     setNotice(`${files.length} portfolio ditambahkan ke draft.`);
   }
+  const addLabel = kind === 'video' ? 'Tambah video' : kind === 'design' ? 'Tambah desain' : 'Tambah website / app';
+  function closeMenu(target: HTMLElement) {
+    const menu = target.closest('details');
+    if (menu) { menu.open = false; menu.querySelector<HTMLElement>('summary')?.focus(); }
+  }
   const item = items.find((value) => value.id === editing),
     visible = items.filter((value) => value.kind === kind && value.title.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+  const publicItem = published.find(value => value.id === editing && value.published);
   async function openVisual() {
     if (!item || busy) return;
     if (dirty && !(await save('save'))) return;
     window.location.assign(`/admintgadink/dashboard/editor/${item.id}`);
   }
   return (
-    <div className="works-manager cms-manager">
+    <div className="works-manager cms-manager wm-workspace" onDragEnter={event => {
+      if (!editing && !busy && event.dataTransfer.types.includes('Files')) setShowImport(true);
+    }}>
       {confirmation}
       <div className="wm-heading">
         <div>
@@ -260,11 +296,12 @@ export function WorksManager() {
               Semua portfolio
             </button>
           )}
-          <h1>{item ? item.title : 'Portfolio'}</h1>
+          <h1>{item ? 'Edit portfolio' : 'Portfolio'}</h1>
+          {revision !== null && !dirty && !unpublished && <p className="wm-clean-status" role="status">Semua perubahan sudah tayang</p>}
         </div>
         <a
-          className="wm-button"
-          href={`/${kind}`}
+          className="wm-public-link"
+          href={publicItem?.caseStudy ? `/work/${publicItem.caseStudy.slug}` : `/${kind}`}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -272,47 +309,9 @@ export function WorksManager() {
           <ExternalLink size={18} />
         </a>
       </div>
-      <div className="cms-sticky-toolbar">
-        <span role="status">
-          {busy
-            ? 'Memproses…'
-            : dirty
-              ? 'Belum disimpan'
-              : unpublished
-                ? 'Draft tersimpan'
-                : 'Sudah dipublikasikan'}
-        </span>
-        <button
-          className="wm-button"
-          type="button"
-          disabled={busy || !dirty}
-          onClick={() => {
-            setItems(saved);
-            setRemoved(null);
-            setError('');
-          }}
-        >
-          Batalkan
-        </button>
-        <button
-          className="wm-button"
-          type="button"
-          disabled={busy || revision === null || (!dirty && revision > 0)}
-          onClick={() => save('save')}
-          aria-busy={operation === 'save'}
-        >
-          <AdminActionLabel pending={operation === 'save'} idle="Simpan draft" busy="Menyimpan…" icon={<Save size={18} />} />
-        </button>
-        <button
-          className="wm-button wm-primary"
-          type="button"
-          disabled={busy || revision === null || (!unpublished && revision > 0)}
-          onClick={() => save('publish')}
-          aria-busy={operation === 'publish'}
-        >
-          <AdminActionLabel pending={operation === 'publish'} idle="Publikasikan" busy="Memublikasikan…" />
-        </button>
-      </div>
+      {revision !== null && <PublicationBar dirty={dirty} unpublished={unpublished} busy={busy} operation={operation} scope="Berlaku untuk seluruh perubahan koleksi."
+        onCancel={() => { setItems(saved); setRemoved(null); setError(''); if (editing && !saved.some(work => work.id === editing)) setEditing(null); }}
+        onSave={() => { void save('save'); }} onPublish={() => { void save('publish'); }}/>}
       {error && (
         <div className="wm-message wm-error" role="alert">
           {error}
@@ -344,10 +343,12 @@ export function WorksManager() {
                 type="button"
                 className="wm-button"
                 aria-pressed={kind === value}
+                aria-label={`${workLabels[value]} ${items.filter(work => work.kind === value).length}`}
                 disabled={busy}
-                onClick={() => { setKind(value); setQuery(''); }}
+                onClick={() => { setKind(value); setQuery(''); setShowImport(false); }}
               >
-                {workLabels[value]}
+                <span className="wm-tab-label">{workLabels[value]}</span>
+                <span className="wm-tab-short" aria-hidden="true">{{webapp:'Web / Apps',design:'Desain',video:'Video'}[value]}</span>
                 <span>
                   {items.filter((item) => item.kind === value).length}
                 </span>
@@ -355,25 +356,25 @@ export function WorksManager() {
             ))}
           </div>
           <div className="wm-toolbar">
-            <h2>{workLabels[kind]}</h2>
-            <label className="wm-search">Cari portfolio<input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder="Cari judul…" /></label>
-            <button
-              type="button"
-              className="wm-button"
-              disabled={busy}
-              onClick={add}
-            >
-              <Plus size={18} />
-              Tambah portfolio
-            </button>
+            <label className="wm-search"><span className="wm-sr-only">Cari portfolio</span><Search size={18} aria-hidden="true"/><input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder="Cari judul portfolio…" /></label>
+            {!busy ? <details className="wm-action-menu wm-add-menu">
+              <summary className="wm-button wm-primary"><Plus size={18} aria-hidden="true"/>{addLabel}<ChevronDown size={16} aria-hidden="true"/></summary>
+              <div className="wm-menu-panel">
+                <button type="button" onClick={event => { closeMenu(event.currentTarget); setShowImport(false); add(); }}><Plus size={18}/>Buat satu portfolio</button>
+                <button type="button" onClick={event => { closeMenu(event.currentTarget); setShowImport(true); }}><Upload size={18}/>{kind === 'video' ? 'Upload / pilih video' : 'Upload / pilih gambar'}</button>
+              </div>
+            </details> : <button type="button" className="wm-button wm-primary" disabled>{addLabel}</button>}
           </div>
-          <FileDrop
+          {showImport && <section className="wm-import-panel" aria-label="Tambah dari media">
+            <div className="cms-panel-heading"><h2>{kind === 'video' ? 'Tambahkan video' : 'Tambahkan gambar'}</h2><button type="button" className="wm-button" aria-label="Tutup upload" disabled={busy} onClick={() => setShowImport(false)}><X size={18}/></button></div>
+            <FileDrop
+            key={kind}
             multiple
             accept={kind==='video'?'video/mp4,video/webm':'image/jpeg,image/png,image/webp,image/gif'}
             disabled={busy}
             onBusyChange={setBusy}
             onUploaded={importImages}
-          />
+          /></section>}
           {removed && (
             <div className="wm-message" role="status">
               {removed.item.title} dihapus dari draft.
@@ -415,26 +416,33 @@ export function WorksManager() {
                   <span className="wm-summary">
                     <strong>{work.title}</strong>
                     <span>
-                      {work.published ? 'Tampil' : 'Tersembunyi'}
+                      {JSON.stringify(work) !== JSON.stringify(published.find(value => value.id === work.id)) ? 'Ada perubahan draft' : work.published ? 'Tayang' : 'Disembunyikan'}
                       {work.caseStudy ? ' · Studi kasus' : ''}
-                      {work.demo ? ' · Contoh' : ''}
+
                     </span>
                   </span>
                   <span className="wm-edit">Edit</span>
                 </button>
+                <details className="wm-action-menu wm-row-menu">
+                <summary className="wm-button" aria-label={`Tindakan ${work.title}`}><MoreHorizontal size={20} aria-hidden="true"/></summary>
+                <div className="wm-menu-panel">
+                <button type="button" disabled={busy} onClick={event => {closeMenu(event.currentTarget);setEditing(work.id);}}>Edit portfolio</button>
                 <button
                   type="button"
-                  className="wm-button"
+                  className="wm-menu-delete"
                   disabled={busy}
                   aria-label={`Hapus ${work.title}`}
-                  onClick={async () => {
+                  onClick={async (event) => {
+                    closeMenu(event.currentTarget);
                     if (!(await ask(`Hapus “${work.title}” dari draft?`))) return;
                     setRemoved({ item: work, index: items.indexOf(work) });
                     setItems(items.filter((item) => item.id !== work.id));
                   }}
                 >
                   <Trash2 size={18} />
+                  Hapus dari draft
                 </button>
+                </div></details>
               </div>
             )}
           </SortableList>
@@ -442,6 +450,7 @@ export function WorksManager() {
         </>
       )}
       {item && (
+        <div className="wm-editor-layout">
         <fieldset className="cms-editor-fields" disabled={busy}>
           <div className="cms-edit-heading"><h2>Detail portfolio</h2>{item.caseStudy&&<button type="button" className="wm-button wm-primary" onClick={openVisual}>{dirty?'Simpan & buka editor visual':'Edit studi kasus secara visual'}</button>}</div>
           <div className="cms-inline-fields">
@@ -479,13 +488,6 @@ export function WorksManager() {
               onChange={(e) => update(item.id, { description: e.target.value })}
             />
           </label>
-          {item.kind!=='video'&&item.image && (
-            <img
-              className="cms-image-preview"
-              src={item.image}
-              alt={item.imageAlt}
-            />
-          )}
           {item.kind!=='video'&&<FileDrop
             disabled={busy}
             onBusyChange={setBusy}
@@ -500,7 +502,7 @@ export function WorksManager() {
                   update(item.id, { published: e.target.checked })
                 }
               />
-              <span><strong>Tampilkan di portfolio</strong><small>{item.published?'Ikut tayang setelah klik Publikasikan.':'Disembunyikan setelah klik Publikasikan. Datanya tetap ada.'}</small></span>
+              <span><strong>Tampilkan di portfolio</strong><small>{item.published?'Ikut tayang setelah perubahan dipublikasikan.':'Disembunyikan setelah perubahan dipublikasikan. Datanya tetap ada.'}</small></span>
             </label>
             {item.kind === 'webapp' && (
               <label className="wm-check">
@@ -619,11 +621,19 @@ export function WorksManager() {
                   checked={item.demo}
                   onChange={(e) => update(item.id, { demo: e.target.checked })}
                 />
-                Data contoh
+                Konten sementara
               </label>
             </div>
           </SettingsDisclosure>
         </fieldset>
+        <aside className="wm-card-preview" aria-label="Preview kartu portfolio">
+          <h2>Preview kartu</h2>
+          {item.image ? <img src={item.image} alt={item.imageAlt || item.title}/> : <div className="wm-preview-empty">{item.kind === 'video' ? 'Pilih thumbnail video' : 'Tambahkan gambar portfolio'}</div>}
+          <h3>{item.title}</h3>
+          {item.description && <p>{item.description}</p>}
+          <span>{item.published ? 'Akan ditampilkan' : 'Disembunyikan'}</span>
+        </aside>
+        </div>
       )}
     </div>
   );

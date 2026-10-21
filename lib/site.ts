@@ -47,7 +47,7 @@ export const siteFields: SiteField[] = [
   },
   {
     key: 'heroPrimary',
-    label: 'Tombol karya',
+    label: 'Tombol portfolio',
     group: 'Hero',
     selector: '.hero-bottom .button',
   },
@@ -59,8 +59,8 @@ export const siteFields: SiteField[] = [
   },
   {
     key: 'worksTitle',
-    label: 'Judul bagian karya',
-    group: 'Works',
+    label: 'Judul bagian portfolio',
+    group: 'Portfolio',
     selector: '#work-title',
   },
   {

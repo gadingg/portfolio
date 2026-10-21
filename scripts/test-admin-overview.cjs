@@ -9,9 +9,10 @@ test('Tayang uses the public snapshot; drafts and pending deletions do not misco
   const draft = [item('live', { published:false }), item('new', { published:true }), item('hidden', { published:false, demo:true })];
   const summary = summarizeWorks(draft, published);
   assert.equal(summary.live, 2);
-  assert.equal(summary.drafts, 2);
+  assert.equal(summary.drafts, 1);
+  assert.equal(summary.hidden, 1);
   assert.equal(summary.total, 4);
-  assert.equal(summary.total, summary.live + summary.drafts);
+  assert.equal(summary.total, summary.live + summary.drafts + summary.hidden);
   assert.equal(summary.changed, true);
   assert.equal(summary.recent.find(value => value.id === 'live').isLive, true);
   assert.equal(summary.recent.find(value => value.id === 'new').isLive, false);
@@ -50,4 +51,13 @@ test('saving timestamps preserves the public snapshot and publishing retains met
   assert.equal(doc.published.items[0].updatedAt,timestamp);assert.equal(doc.published.items[0].title,'Edited');
   const projected=runtime()('lib/works.ts').publicWork(doc.published.items[0]);
   assert.equal(projected.updatedAt,undefined);assert.equal(projected.createdAt,undefined);
+});
+test('hidden records remain distinct from new drafts and survive pending deletion counts', () => {
+  const hidden=item('hidden',{published:false});
+  let summary=summarizeWorks([hidden],[hidden]);
+  assert.equal(summary.drafts,0);assert.equal(summary.hidden,1);assert.equal(summary.recent[0].status,'Disembunyikan');
+  summary=summarizeWorks([],[hidden]);
+  assert.equal(summary.total,1);assert.equal(summary.hidden,1);assert.equal(summary.changed,true);
+  const changed=summarizeWorks([item('live',{title:'Updated'})],[item('live')]);
+  assert.equal(changed.recent[0].status,'Ada perubahan draft');assert.equal(changed.live,1);
 });

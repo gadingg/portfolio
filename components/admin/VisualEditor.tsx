@@ -1,4 +1,5 @@
 'use client';
+import { publicationState } from '@/lib/publication-state';
 import { useEffect, useRef, useState } from 'react';
 import type { Editor, Component } from 'grapesjs';
 import { ArrowLeft, Undo2, Redo2, Monitor, Smartphone, Eye, Save, Layers, Plus, SlidersHorizontal, ArrowUp, ArrowDown, Trash2, ExternalLink, Type, Image as ImageIcon, X } from 'lucide-react';
@@ -9,12 +10,14 @@ import { useConfirm } from './ConfirmDialog';
 import 'grapesjs/dist/css/grapes.min.css';
 import './visual-editor.css';
 
-type PageData={revision:number;layout?:{html:string;css:string};seedHtml?:string;title:string;seedUrl:string;previewUrl:string};
+type PageData={unpublished?:boolean;revision:number;layout?:{html:string;css:string};seedHtml?:string;title:string;seedUrl:string;previewUrl:string};
 export function VisualEditor({target}:{target:string}){
   const {ask,confirmation}=useConfirm();
   const canvas=useRef<HTMLDivElement>(null),editor=useRef<Editor|null>(null),meta=useRef<PageData|null>(null),dirtyRef=useRef(false);
   const baseline=useRef({html:'',css:''});
   const saveLock=useRef(false),selectedRef=useRef<Component|null>(null);
+  const [unpublished,setUnpublished]=useState(false);
+  const [toolsOpen,setToolsOpen]=useState(false);
   const [canUndo,setCanUndo]=useState(false),[canRedo,setCanRedo]=useState(false);
   const [tab,setTab]=useState('content'),[title,setTitle]=useState('Editor konten'),[status,setStatus]=useState('Memuat halaman…'),[error,setError]=useState(''),[ready,setReady]=useState(false),[dirty,setDirty]=useState(false),[busy,setBusy]=useState(false),[uploading,setUploading]=useState(false),[device,setDevice]=useState('Desktop'),[preview,setPreview]=useState(false),[panelOpen,setPanelOpen]=useState(false);
   const [selection,setSelection]=useState<SelectionData|null>(null),[sections,setSections]=useState<Component[]>([]),[activeSection,setActiveSection]=useState<Component|null>(null),[action,setAction]=useState('');
@@ -44,7 +47,7 @@ export function VisualEditor({target}:{target:string}){
     async function start(){
       try{
         const [module,res]=await Promise.all([import('grapesjs'),fetch(`/api/admin/visual?target=${encodeURIComponent(target)}`,{signal:controller.signal,cache:'no-store'})]);
-        const data:PageData&{error?:string}=await res.json();if(!res.ok)throw Error(data.error||'Halaman belum bisa dimuat.');
+        const data:PageData&{error?:string}=await res.json();setUnpublished(!!data.unpublished);if(!res.ok)throw Error(data.error||'Halaman belum bisa dimuat.');
         let html=data.layout?.html||'',css=data.layout?.css||'';
         if(!data.layout){
           let seedHtml=data.seedHtml;
@@ -110,7 +113,7 @@ export function VisualEditor({target}:{target:string}){
           const doc=ed.Canvas.getDocument();if(!doc)return;
           ed.getWrapper()?.addClass('showcase');
           ed.getWrapper()?.findType('works-feed').forEach(component=>component.getView()?.render());
-          ed.UndoManager.clear();ed.clearDirtyCount();baseline.current={html:ed.getHtml(),css:ed.getCss()||''};dirtyRef.current=false;setDirty(false);setStatus(data.layout?'Draft dimuat':'Siap diedit');setReady(true);
+          ed.UndoManager.clear();ed.clearDirtyCount();baseline.current={html:ed.getHtml(),css:ed.getCss()||''};dirtyRef.current=false;setDirty(false);setStatus(data.unpublished?'Draft tersimpan, belum tayang':'Semua perubahan tersimpan');setReady(true);
           doc.addEventListener('click',event=>{if((event.target as Element)?.closest('a'))event.preventDefault();});
           const style=doc.createElement('style');style.textContent='html{scroll-behavior:auto!important}body{background:#060706;color:#f3f0e8}.reveal{opacity:1!important;transform:none!important}[data-works-list]:empty{min-height:120px}';doc.head.appendChild(style);
           if(target==='home'){doc.body.dataset.cmsPreview='true';const script=doc.createElement('script');script.src='/assets/js/works.js';doc.body.appendChild(script);}
@@ -120,13 +123,14 @@ export function VisualEditor({target}:{target:string}){
     }
     start();
     const unload=(event:BeforeUnloadEvent)=>{if(dirtyRef.current){event.preventDefault();event.returnValue='';}};
-    const escape=(event:KeyboardEvent)=>{if(event.key==='Escape'){setPanelOpen(false);document.querySelector<HTMLButtonElement>('.visual-panel-toggle')?.focus();}};
+    const escape=(event:KeyboardEvent)=>{if(event.key==='Escape'){if((event.target as HTMLElement).closest('.visual-tools-content,.visual-tools-toggle')){setToolsOpen(false);document.querySelector<HTMLButtonElement>('.visual-tools-toggle')?.focus();}else{setPanelOpen(false);document.querySelector<HTMLButtonElement>('.visual-panel-toggle')?.focus();}}};
     window.addEventListener('keydown',escape);
     window.addEventListener('beforeunload',unload);
     return()=>{cancelled=true;controller.abort();window.removeEventListener('keydown',escape);window.removeEventListener('beforeunload',unload);editor.current?.destroy();editor.current=null;};
   },[target]);
   async function save(action:'save'|'publish'){
     const ed=editor.current,data=meta.current;if(!ed||!data||saveLock.current||uploading)return;
+    if(action==='publish'&&!publicationState(dirty,unpublished,busy||uploading).canPublish)return;
     saveLock.current=true;
     setBusy(true);setAction(action);setError('');
     try{
@@ -134,6 +138,7 @@ export function VisualEditor({target}:{target:string}){
       const layout={html:ed.getHtml(),css:ed.getCss()||''};
       const res=await fetch('/api/admin/visual',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({target,revision:data.revision,action,layout})});
       const result=await res.json();if(!res.ok)throw Error(result.error||'Perubahan belum tersimpan.');
+      setUnpublished(!!result.unpublished);
       const changedDuringSave=ed.getHtml()!==layout.html||(ed.getCss()||'')!==layout.css;
       if(!changedDuringSave&&result.layout&&(result.layout.html!==layout.html||result.layout.css!==layout.css)){
         ed.setComponents(result.layout.html);ed.setStyle(result.layout.css);ed.UndoManager.clear();selectedRef.current=null;ed.select();sync(ed);
@@ -143,7 +148,7 @@ export function VisualEditor({target}:{target:string}){
     }catch(e){setError(e instanceof Error?e.message:'Perubahan belum tersimpan.');}finally{saveLock.current=false;setBusy(false);}
   }
   function leave(event:React.MouseEvent<HTMLAnchorElement>){if(dirtyRef.current){event.preventDefault();const href=event.currentTarget.href;void ask('Editan belum disimpan. Tetap keluar?', 'Tinggalkan').then(yes=>{if(yes){dirtyRef.current=false;window.location.assign(href);}});}}
-  function setViewport(value:string){editor.current?.setDevice(value);setDevice(value);}
+  function setViewport(value:string){editor.current?.setDevice(value);setDevice(value);setToolsOpen(false);if(window.matchMedia('(max-width:700px)').matches)document.querySelector<HTMLButtonElement>('.visual-tools-toggle')?.focus();}
   function editText(index:number,value:string){
     const component=selectedRef.current;if(!component)return;
     const doc=new DOMParser().parseFromString(component.getInnerHTML(),'text/html');
@@ -174,12 +179,15 @@ export function VisualEditor({target}:{target:string}){
     <header className="visual-toolbar">
       <a href={target==='home'?'/admintgadink/dashboard/site':'/admintgadink/dashboard/works'} onClick={leave} className="visual-icon" aria-label="Kembali ke CMS"><ArrowLeft size={20}/></a>
       <div className="visual-title"><h1>{title}</h1><span role="status">{busy?(action==='publish'?'Mempublikasikan…':'Menyimpan draft…'):status}{uploading?' · Mengunggah…':''}</span></div>
+      <button className="visual-tools-toggle" aria-label="Alat editor" aria-expanded={toolsOpen} onClick={()=>setToolsOpen(!toolsOpen)}>Alat</button>
+      <div className={`visual-tools-content ${toolsOpen?'is-open':''}`}>
       <div className="visual-history"><button aria-label="Urungkan" disabled={!ready||busy||uploading||!canUndo} onClick={()=>editor.current?.UndoManager.undo()}><Undo2 size={18}/></button><button aria-label="Ulangi" disabled={!ready||busy||uploading||!canRedo} onClick={()=>editor.current?.UndoManager.redo()}><Redo2 size={18}/></button></div>
       <div className="visual-devices" aria-label="Ukuran kanvas"><button aria-label="Desktop" aria-pressed={device==='Desktop'} disabled={!ready} onClick={()=>setViewport('Desktop')}><Monitor size={18}/></button><button aria-label="Mobile" aria-pressed={device==='Mobile'} disabled={!ready} onClick={()=>setViewport('Mobile')}><Smartphone size={18}/></button></div>
+</div>
       <button className="visual-panel-toggle" aria-label="Panel editor" aria-expanded={panelOpen} onClick={()=>setPanelOpen(!panelOpen)} disabled={preview}><SlidersHorizontal size={18}/><span>Panel</span></button>
       <button aria-label="Preview halaman" aria-pressed={preview} onClick={()=>{const ed=editor.current;if(preview)ed?.stopCommand('preview');else ed?.runCommand('preview');setPreview(!preview);}} disabled={!ready||busy}><Eye size={18}/><span>{preview?'Kembali edit':'Preview'}</span></button>
-      <button aria-label="Simpan draft" aria-busy={busy&&action==='save'} disabled={!ready||busy||uploading||!dirty} onClick={()=>save('save')}><AdminActionLabel pending={busy&&action==='save'} idle="Simpan draft" busy="Menyimpan…" icon={<Save size={18}/>}/></button>
-      <button className="visual-publish" aria-label="Publikasikan" aria-busy={busy&&action==='publish'} disabled={!ready||busy||uploading} onClick={()=>save('publish')}><AdminActionLabel pending={busy&&action==='publish'} idle="Publikasikan" busy="Menerbitkan…"/></button>
+      <button hidden={!dirty} aria-label="Simpan draft" aria-busy={busy&&action==='save'} disabled={!ready||busy||uploading||!dirty} onClick={()=>save('save')}><AdminActionLabel pending={busy&&action==='save'} idle="Simpan draft" busy="Menyimpan…" icon={<Save size={18}/>}/></button>
+      <button hidden={!unpublished||dirty} className="visual-publish" aria-label="Publikasikan" aria-busy={busy&&action==='publish'} disabled={!ready||!publicationState(dirty,unpublished,busy||uploading).canPublish} onClick={()=>save('publish')}><AdminActionLabel pending={busy&&action==='publish'} idle="Publikasikan" busy="Menerbitkan…"/></button>
     </header>
     {error&&<div role="alert" className="visual-error">{error}{!ready?<button onClick={()=>window.location.reload()}>Coba lagi</button>:<button onClick={()=>setError('')} aria-label="Tutup pesan">Tutup</button>}</div>}
     {preview&&<p className="visual-preview-note">Ini preview-nya. <a href={dirty?undefined:meta.current?.previewUrl} aria-disabled={dirty} target="_blank" rel="noopener noreferrer">Buka halaman tersimpan <ExternalLink size={14}/></a>{dirty&&' Simpan draft untuk membuka halaman.'}</p>}

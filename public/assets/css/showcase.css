@@ -559,3 +559,6 @@ html:has(.showcase dialog[open]){overflow:hidden}
 @media(min-width:768px){.showcase .case-skeleton-columns{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @keyframes case-skeleton-sweep{to{transform:translateX(100%)}}
 @media(prefers-reduced-motion:reduce){.showcase .case-skeleton::after{animation:none;transform:none;background:none}}
+.work-loading-skeleton{min-height:260px;aspect-ratio:4/3;background:#171917;border-radius:12px;animation:work-loading-pulse 1.4s ease-in-out infinite alternate}
+@keyframes work-loading-pulse{to{opacity:.45}}
+@media(prefers-reduced-motion:reduce){.work-loading-skeleton{animation:none}}

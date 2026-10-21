@@ -13,5 +13,5 @@ test('requested cases and seven video slots are valid, stable, and preserve unre
 test('optional autoplay media accepts supported files and rejects executable or unrelated sources',()=>{
  const item=base('video');for(const videoFile of ['/api/media/works/clip.mp4','/api/media/works/clip.webm',''])assert.equal(WorkDraftItemSchema.safeParse({...item,videoFile}).success,true);
  for(const videoFile of ['javascript:alert(1)','https://evil.test/clip.mp4','/assets/cover.jpg'])assert.equal(WorkDraftItemSchema.safeParse({...item,videoFile}).success,false);
- assert.equal(WorksSchema.safeParse({items:[{...item,kind:'video',url:'',videoFile:'/api/media/works/clip.mp4'}]}).success,true);
+ assert.equal(WorksSchema.safeParse({items:[{...item,kind:'video',image:'/assets/cover.webp',url:'',videoFile:'/api/media/works/clip.mp4'}]}).success,true);
 });

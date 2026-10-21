@@ -1,3 +1,4 @@
+import { withInitialWorks } from '@/lib/work-card-html';
 import { NextResponse } from 'next/server';
 import { getPublicSite,renderHomepage } from '@/lib/db/site';
 import { getPublicWorks } from '@/lib/db/works';
@@ -8,7 +9,7 @@ export async function GET() {
   try {
     const [site,works]=await Promise.all([getPublicSite(),getPublicWorks()]);
     const html=await renderHomepage(site,works.items.filter(item=>item.caseStudy).flatMap(item=>[item.caseStudy!.slug,...(item.aliases||[])]));
-    return new NextResponse(html, {
+    return new NextResponse(withInitialWorks(html,works.items), {
       status: 200,
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
