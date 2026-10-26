@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-labelledby="title">
+  <title id="title">Branding in motion, Gading Utama</title>
+  <rect width="800" height="1000" fill="#11130f"/>
+  <g font-family="Arial,sans-serif" font-weight="700" letter-spacing="-3">
+    <text x="60" y="340" fill="#f3f0e8" font-size="100">Branding</text>
+    <text x="60" y="455" fill="#ff5a1f" font-size="100">in motion.</text>
+  </g>
+  <path d="M60 720H740" stroke="#f3f0e8" stroke-opacity=".25"/>
+  <text x="60" y="790" fill="#f3f0e8" font-family="Arial,sans-serif" font-size="28">Gading Utama</text>
+</svg>

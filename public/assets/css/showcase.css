@@ -409,7 +409,7 @@ html:has(.showcase dialog[open]){overflow:hidden}
 .showcase #home .actions{gap:8px 20px}
 .showcase #home .button-primary{min-height:44px;padding:10px 14px;font-size:13px;gap:10px}
 .showcase #home .actions .text-link{font-size:13px;text-decoration-thickness:1px}
-.showcase #work.works-section{padding-block:48px 64px}
+.showcase #work.works-section{padding-block:48px 24px}
 .showcase #web-apps .works-grid{gap:44px 28px}
 .showcase .work-card-link{display:flex;flex-direction:column;flex:1;min-width:0;width:100%;padding:0;border:0;border-radius:12px;background:transparent;font:inherit;color:inherit;text-align:left;text-decoration:none;cursor:pointer;transition:transform .2s var(--ease)}
 .showcase .work-card-link .work-card-title{margin:14px 0 8px;transition:color .2s}
@@ -452,16 +452,16 @@ html:has(.showcase dialog[open]){overflow:hidden}
 @media(max-width:959px){
   .showcase .portfolio-header{padding-block:8px;gap:12px}
   .showcase .wordmark{font-size:26px}
-  .showcase #about.about-section{padding-block:56px}
+  .showcase #about.about-section{padding-block:24px 56px}
 }
 @media(min-width:960px){
   .showcase #home.hero{padding-top:40px}
   .showcase #home .hero-intro{margin-bottom:28px}
   .showcase #home .hero-bottom{grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:40px;margin-top:28px}
   .showcase #home .actions{justify-content:flex-end}
-  .showcase #work.works-section{padding-block:64px 88px}
+  .showcase #work.works-section{padding-block:64px 40px}
   .showcase #web-apps .works-grid{row-gap:52px}
-  .showcase #about.about-section{padding-block:72px}
+  .showcase #about.about-section{padding-block:40px 72px}
   .showcase #about .capability-layout{margin-top:48px}
   .showcase #about .about-copy .about-statement{font-size:24px}
 }
@@ -471,7 +471,8 @@ html:has(.showcase dialog[open]){overflow:hidden}
 }
 @media(max-width:599px){
   .showcase{--mobile-section-size:clamp(32px,8.1vw,48px);--mobile-body-size:15px}
-  .showcase :is(.section-heading h2,#about-title,.toolkit-section h2,.contact-layout h2,.case-intro h1,.collection-intro h1,.study-case-blocks h2,.case-narrative>section>h2,#problem-solving-title){font-size:var(--mobile-section-size);line-height:1.08;letter-spacing:-.035em}
+  .showcase :is(.section-heading h2,.toolkit-section h2,.contact-layout h2,.study-case-blocks h2,.case-narrative>section>h2,#problem-solving-title){font-size:28px;line-height:1.15;letter-spacing:-.035em}
+  .showcase :is(.case-intro h1,.collection-intro h1){font-size:var(--mobile-section-size);line-height:1.08;letter-spacing:-.035em}
   .showcase :is(.works-heading :is(h2,h3),.capability-layout>h3){font-size:24px;line-height:1.25}
   .showcase .toolkit-groups h3{font-size:20px;line-height:1.3}
   .showcase .work-card-title,.showcase .work-card-design .work-card-title{font-size:20px;line-height:1.3}
@@ -537,6 +538,18 @@ html:has(.showcase dialog[open]){overflow:hidden}
 .showcase #about .about-quote .about-statement{margin:0;font-size:clamp(18px,1.8vw,22px);font-weight:400;line-height:1.6;font-style:italic;color:var(--ink)}
 .showcase #about .about-copy>.text-link{font-size:14px;gap:8px;min-height:44px}
 .showcase #about .about-copy>.text-link .icon{width:16px;height:16px}
+.showcase .contact-email{display:inline-flex;margin-top:16px}
+.showcase .case-evidence-frame{position:relative;aspect-ratio:640/475;overflow:hidden;border-radius:12px;background:var(--surface)}
+.showcase .case-evidence-frame img{position:absolute;max-width:none;height:auto;width:226.25%;left:-8.59%;top:-52.63%}
+.showcase .case-evidence-frame.meta-batch{aspect-ratio:610/480}
+.showcase .case-evidence-frame.meta-batch img{width:237.38%;left:-127.05%;top:-52.08%}
+.showcase .case-evidence figcaption{margin-top:12px;font-size:14px;line-height:1.6;color:var(--secondary);max-width:65ch}
+.showcase #visuals .editorial-gallery:has(>.work-card:only-child){display:block}
+.showcase #visuals .editorial-gallery>.work-card:only-child{width:100%;max-width:none}
+.showcase #visuals .editorial-gallery>.work-card:only-child .work-media{height:auto;aspect-ratio:auto}
+.showcase #visuals .editorial-gallery>.work-card:only-child .work-media>img{position:static;width:100%;height:auto;object-fit:contain}
+.showcase #visuals .editorial-gallery>.work-card:only-child .design-showcase-caption{position:static;padding:14px 0 0;background:none}
+.showcase .work-image-status{min-height:160px;display:grid;place-items:center;color:var(--secondary)}
 .showcase #home .hero-bottom>p{max-width:52ch}
 .showcase .work-media>.work-video-preview{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:var(--canvas);opacity:0;pointer-events:none}
 .showcase .work-media>.work-video-preview.is-playing{opacity:1}

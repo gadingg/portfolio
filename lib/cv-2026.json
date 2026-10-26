@@ -1,0 +1,52 @@
+{
+  "sourceVersion": "2026-10-26",
+  "name": "Gading Utama",
+  "role": "Creative Marketer & Problem Solver",
+  "profile": "Creative Marketer & Problem Solver with 2+ years of professional experience across creative marketing, digital design, and technology. Combines creative thinking, technology, and AI to develop campaigns, solve workflow problems, and build internal web-apps that improve business operations.",
+  "phone": "089653484274",
+  "email": "rgadingutama@gmail.com",
+  "website": "https://gadingutama.dev",
+  "location": "Sidoarjo, Indonesia, 61256",
+  "capabilities": "Generative AI · Creative Marketing · Campaign Development · Graphic Design · Digital Marketing · Meta Ads · UI/UX Design · Web-App Development.",
+  "languages": "Indonesian & English.",
+  "pdf": "/assets/cv/cv-gading-utama-2026.pdf",
+  "experience": [
+    {
+      "title": "Creative Marketing & Digital Solutions, PT Ferrano Properti Persada (Xavier Marks Tjandra Patos), Surabaya",
+      "period": "May 2026 - Sekarang",
+      "description": "Developed creative concepts for office campaigns, programs, games, and events, contributing from brainstorming through execution.\nDeveloped daily content pillars and designed creative assets across social media, digital campaigns, print, promotional, and internal office needs.\nInitiated and managed Meta Ads campaigns with an IDR 20M budget, contributing to 3 property closings and IDR 118M in gross commission.\nBuilt and designed 10+ internal web-apps to improve workflows across admin, agents, and marketing, including tools for listings, reporting, and campaign gamification.\nAwarded Best Sales Support of the Year within 7 months of joining; also served as an AI speaker, introducing property agents to generative AI for image and video content."
+    },
+    {
+      "title": "Owner & Marketing Lead, Kosan Bu Endang, Surabaya",
+      "period": "Jul 2024 - Sekarang",
+      "description": "Led renovation, interior improvement, and social media marketing, achieving 100% room occupancy within 2 weeks.\nBuilt a custom web-app for rent collection, income and expense tracking, and administrative workflows.\nManaged resident relations and daily operations, resolving tenant issues and handling day-to-day challenges."
+    },
+    {
+      "title": "UI/UX Designer MSIB 6th, PT Adma Digital Solusi (ADS Digital Partner), Surabaya",
+      "period": "Feb 2024 - Jun 2024",
+      "description": "Selected as 1 of 45 participants from approximately 4,500 applicants for the MSIB Batch 6 program.\nLed product research and brainstorming, and contributed to high-fidelity UI/UX design for Helptix and Carbonova."
+    },
+    {
+      "title": "Creative Founder, Geektuku, akkc.id, Diskonlicious, and Retive",
+      "period": "Sep 2017 - Apr 2024",
+      "description": "Built and managed digital brands across branding, creative design, digital marketing, and e-commerce, earning 500+ positive customer reviews across Shopee and Tokopedia."
+    },
+    {
+      "title": "Graphic Designer Intern, PT Peduly Gotong Royong (Peduly.com), Surabaya",
+      "period": "Feb 2023 - May 2023",
+      "description": "Created social media content that achieved 400K+ views, 30K+ likes, and 150K+ Instagram Reels views."
+    }
+  ],
+  "education": [
+    {
+      "title": "State University of Surabaya, Surabaya, Indonesia",
+      "period": "Aug 2020 - Aug 2024",
+      "description": "Bachelor of Information Systems, 3.81/4.00"
+    },
+    {
+      "title": "UI/UX Design Track MSIB Startup Campus",
+      "period": "Oct 2023 - Dec 2023",
+      "description": "Certificate\nTop 5 of 199 participants, Average Score 94.02.\nAdvanced to the top 10 finalists on Showcase Day."
+    }
+  ]
+}

@@ -171,13 +171,14 @@ export function BlockEditor({
                               : 'image/jpeg,image/png,image/webp,image/gif'
                           }
                           onUploaded={(files) =>
-                            patch(block.id, { url: files[0].url })
+                            patch(block.id, { url: files[0].url, focus: 'full' })
                           }
                         />
                         {field(block, 'url', 'URL media')}
                         {block.block_type === 'image' &&
                           field(block, 'alt', 'Deskripsi gambar')}
                         {field(block, 'caption', 'Caption')}
+                        {block.block_type==='image' && content.url==='/assets/work/meta-report-macbooks.webp' && <label>Detail tampilan<select value={content.focus||'full'} onChange={event=>patch(block.id,{focus:event.target.value})}><option value="full">Gambar penuh</option><option value="meta-trend">Detail grafik antar-batch</option><option value="meta-batch">Detail ringkasan batch</option></select></label>}
                       </>
                     )}
                     {block.block_type === 'gallery' && (

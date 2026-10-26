@@ -1,6 +1,7 @@
 import { load } from 'cheerio';
 import { publicWork, type WorkItem } from './works';
 import { cleanPlaceholderCopy } from './placeholder-copy';
+import { workThumbnail } from './work-images';
 
 const escape = (text: string) => text.replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]!));
 const safeURL = (value: string) => {
@@ -14,7 +15,8 @@ export function workCardsHTML(items: WorkItem[], collection = false, showcase = 
     const item = cleanPlaceholderCopy(original);
     const title = escape(item.title), src = safeURL(item.image), href = safeURL(item.caseStudy ? `/work/${item.caseStudy.slug}` : item.url);
     const heading = collection ? 'h2' : 'h4';
-    const picture = src ? `<img src="${escape(src)}" alt="${escape(item.imageAlt || item.title)}" loading="lazy" decoding="async"/>` : `<span class="work-type-art"><span>${title}</span></span>`;
+    const thumbnail=workThumbnail(src);
+    const picture = src ? `<img src="${escape(thumbnail.src)}"${thumbnail.srcSet?` srcset="${escape(thumbnail.srcSet)}" sizes="${thumbnail.sizes}"`:''} alt="${escape(item.imageAlt || item.title)}" loading="lazy" decoding="async"/>` : `<span class="work-type-art"><span>${title}</span></span>`;
     const destination = item.demo ? 'Preview' : item.caseStudy ? 'View case study' : 'Open app';
     const arrow = '<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#arrow-right"></use></svg>';
     if (item.kind === 'webapp') {
@@ -35,7 +37,7 @@ export function withInitialWorks(html: string, items: WorkItem[]): string {
     group.find('.works-recovery').attr('hidden','');
     let selected = items.filter(item => item.published && item.kind === group.attr('data-work-kind'));
     const collection = group.attr('data-collection') === 'true';
-    if (!collection && group.attr('data-work-kind') === 'webapp') selected = selected.slice(0, 6);
+    if (!collection && group.attr('data-work-kind') === 'webapp') selected = selected.slice(0, 3);
     list.html(workCardsHTML(selected, collection, !!group.find('.editorial-gallery').length) || '<p class="works-message">Belum ada portfolio di koleksi ini.</p>').attr('aria-busy', 'false');
   });
   $('#initial-works').remove();

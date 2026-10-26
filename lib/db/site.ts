@@ -5,6 +5,7 @@ import { load } from 'cheerio';
 import { siteFields, defaultCV, defaultLinkedIn, defaultHeroMetadata, capabilityTitles, type SiteContent } from '@/lib/site';
 import { readCMS, readPublishedCMS } from './cms';
 import { cleanVisualLayout } from '../visual-layout';
+import { siteURL } from '../site-url';
 export const homepageTemplate = () =>
   fs.readFile(path.join(process.cwd(), 'public/index.html'), 'utf8');
 export async function initialSite(): Promise<SiteContent> {
@@ -50,7 +51,9 @@ const withSiteDefaults = (site: SiteContent): SiteContent => {
     aboutBody2: [['Buat saya, bukan cuma soal visual yang menarik, tapi juga bagaimana pesan bisa tersampaikan dengan baik & masalah bisa diselesaikan.'], 'Buat saya, bukan cuma soal visual yang menarik, tapi juga bagaimana pesan bisa tersampaikan dengan baik dan pekerjaan jadi lebih simpel.'],
   };
   for (const [key, [previous, next]] of Object.entries(editorialDefaults)) if (previous.includes(values[key]?.replace(/\u00a0/g, ' ').trim())) values[key] = next;
-  return { ...site, values };
+  // Replace the previous CV edition on read, then retain edits saved against this edition.
+  const cv = site.cv.sourceVersion === defaultCV.sourceVersion ? site.cv : structuredClone(defaultCV);
+  return { ...site, values, cv };
 };
 export const getSiteDocument = async () => {
   const document = await readCMS('site', initialSite);
@@ -60,6 +63,11 @@ export const getPublicSite = async () => withSiteDefaults(await readPublishedCMS
 export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
   const $ = load(await homepageTemplate());
   const values = withSiteDefaults(site).values;
+  const baseURL=siteURL();
+  $('link[rel="canonical"],meta[property^="og:"],meta[name^="twitter:"]').remove();
+  $('head').append($('<link rel="canonical">').attr('href',`${baseURL}/`));
+  for(const [property,content] of Object.entries({'og:title':values.seoTitle,'og:description':values.seoDescription,'og:type':'website','og:url':`${baseURL}/`,'og:image':`${baseURL}/opengraph-image`,'og:image:alt':'Gading Utama, Creative Marketing & Digital Solutions'})) $('head').append($('<meta>').attr({property,content}));
+  $('head').append($('<meta>').attr({name:'twitter:card',content:'summary_large_image'}));
   const pipelineTrack = $('.process-pipeline > .pipeline-track').first().clone();
   const designControls = $('#visuals .carousel-controls').first().clone();
   const capabilityCards = $('.capability-list > .capability-card').toArray().map(element => $(element).clone());
@@ -143,6 +151,8 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
     }
   });
   $('.hero .work-strip, .hero .hero-signoff').remove();
+  $('.contact-layout [data-contact-email]').remove();
+  if(site.cv.email) $('.contact-layout>div').last().append($('<a class="text-link contact-email" data-contact-email>').attr('href',`mailto:${site.cv.email}`).text('Email Gading'));
   $('.hero-intro').empty().append($('<p class="hero-metadata">').text(values.heroMetadata));
   $('.about-copy').each((_i, element) => {
     const copy = $(element);

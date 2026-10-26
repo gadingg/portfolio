@@ -1,4 +1,5 @@
 'use client';
+import { workReadiness } from '@/lib/work-readiness';
 import { useEffect, useRef, useState } from 'react';
 import {
   ArrowLeft,
@@ -297,7 +298,7 @@ export function WorksManager() {
             </button>
           )}
           <h1>{item ? 'Edit portfolio' : 'Portfolio'}</h1>
-          {revision !== null && !dirty && !unpublished && <p className="wm-clean-status" role="status">Semua perubahan sudah tayang</p>}
+          {revision !== null && !dirty && !unpublished && <p className="wm-clean-status" role="status">Semua perubahan tersimpan</p>}
         </div>
         <a
           className="wm-public-link"
@@ -416,7 +417,7 @@ export function WorksManager() {
                   <span className="wm-summary">
                     <strong>{work.title}</strong>
                     <span>
-                      {JSON.stringify(work) !== JSON.stringify(published.find(value => value.id === work.id)) ? 'Ada perubahan draft' : work.published ? 'Tayang' : 'Disembunyikan'}
+                      {JSON.stringify(work) !== JSON.stringify(published.find(value => value.id === work.id)) ? 'Ada perubahan draft' : !work.published ? 'Disembunyikan' : workReadiness(work) || 'Tayang'}
                       {work.caseStudy ? ' · Studi kasus' : ''}
 
                     </span>
@@ -631,7 +632,7 @@ export function WorksManager() {
           {item.image ? <img src={item.image} alt={item.imageAlt || item.title}/> : <div className="wm-preview-empty">{item.kind === 'video' ? 'Pilih thumbnail video' : 'Tambahkan gambar portfolio'}</div>}
           <h3>{item.title}</h3>
           {item.description && <p>{item.description}</p>}
-          <span>{item.published ? 'Akan ditampilkan' : 'Disembunyikan'}</span>
+          <span>{!item.published ? 'Disembunyikan' : workReadiness(item) || 'Siap ditampilkan'}</span>
         </aside>
         </div>
       )}

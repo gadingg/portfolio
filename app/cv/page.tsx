@@ -11,25 +11,29 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const experience = [
-  ['Marketing Communication, PropTech & Creative Growth', '2023 to present', 'Menangani creative marketing, Meta Ads, web app internal, dan operational tooling untuk kebutuhan bisnis properti.'],
-  ['Owner & Marketing Lead, Kosan Bu Endang', '2023 to present', 'Memimpin renovasi, pemasaran, operasional, dan membangun aplikasi pencatatan sewa.'],
-  ['Founder, Geektuku, akkc.id, and Diskonlicious', '2021 to 2023', 'Mengelola branding, pemasaran digital, e-commerce, customer engagement, dan operasi bisnis.'],
-];
+function CVDescription({text}:{text:string}) {
+  const lines=text.split('\n').map(line=>line.trim()).filter(Boolean);
+  return lines.length>1 ? <ul className="cv-bullets">{lines.map((line,index)=><li key={index}>{line}</li>)}</ul> : <p>{text}</p>;
+}
 
 export default async function CvPage({searchParams}:{searchParams:Promise<{preview?:string}>}) {
   const preview=(await searchParams).preview==='1';if(preview&&!await verifyAdminSession())redirect('/admintgadink');
   const site=preview?(await getSiteDocument()).draft:await getPublicSite();const {cv,values}=site;
   return (
-    <article className="cv-page">
+    <article className="cv-page" lang="en">
       <header className="cv-header">
         <div>
-          <p className="cv-kicker">Creative Marketing · Design · Technology</p>
           <h1>{cv.name}</h1>
           <p className="cv-role">{cv.role}</p>
+          <div className="cv-contact">
+            {cv.phone && <a href={`tel:${cv.phone.replace(/[^+\d]/g,'')}`}>{cv.phone}</a>}
+            {cv.email && <a href={`mailto:${cv.email}`}>{cv.email}</a>}
+            {cv.website && <a href={cv.website} target="_blank" rel="noreferrer">{cv.website.replace(/^https?:\/\//,'')}</a>}
+            {cv.location && <span>{cv.location}</span>}
+          </div>
         </div>
         <div className="cv-actions">
-          <a href={preview?'/api/cv?preview=1':'/api/cv'} className="button button--primary">Download PDF</a>
+          <a href={preview?'/api/cv?preview=1':'/api/cv'} download className="button button--primary">Download PDF</a>
           <Link href="/" className="button button--secondary">Portfolio</Link>
         </div>
       </header>
@@ -45,16 +49,24 @@ export default async function CvPage({searchParams}:{searchParams:Promise<{previ
           {cv.experience.map(({title:role,period,description}) => (
             <div className="cv-entry" key={role}>
               <div><h3>{role}</h3><p>{period}</p></div>
-              <p>{description}</p>
+              <CVDescription text={description}/>
             </div>
           ))}
         </div>
       </section>
 
+      {!!cv.education?.length && <section>
+        <h2>Education</h2>
+        <div className="cv-list">{cv.education.map(({title,period,description},index)=><div className="cv-entry" key={index}>
+          <div><h3>{title}</h3><p>{period}</p></div><CVDescription text={description}/>
+        </div>)}</div>
+      </section>}
+
       <section>
         <h2>Core Capabilities</h2>
         <p>{cv.capabilities}</p>
       </section>
+      {cv.languages && <section><h2>Languages</h2><p>{cv.languages}</p></section>}
 
       <footer className="cv-footer">
         <a href={values.whatsapp} target="_blank" rel="noreferrer">WhatsApp</a>

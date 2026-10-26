@@ -18,6 +18,7 @@ const nextConfig = {
   async redirects(){return Object.entries(caseSlugRedirects).map(([old,slug])=>({source:`/work/${old}`,destination:`/work/${slug}`,permanent:true}));},
   outputFileTracingIncludes: {
     '/': ['./public/index.html'],
+    '/api/cv': ['./public/assets/cv/cv-gading-utama-2026.pdf'],
   },
   async headers() {
     return [{ source: '/(.*)', headers: securityHeaders }];

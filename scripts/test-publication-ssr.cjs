@@ -19,7 +19,8 @@ test('server HTML contains usable case links before JavaScript and no nested int
   assert.equal($('.work-card-link').attr('href'),'/work/one');
   assert.equal($('.work-card-link').text().includes('Project'),true);
   assert.equal($('a a,a button,button a').length,0);
-  assert.equal($('img').attr('src'),'/assets/cover.webp');
+  assert.equal(new URL($('img').attr('src'),'https://portfolio.test').searchParams.get('url'),'/assets/cover.webp');
+  assert.match($('img').attr('srcset'),/384w/);
 });
 test('server cards and bootstrap escape untrusted copy and executable destinations',()=>{
   const dangerous=item({title:'</script><img src=x onerror=alert(1)>',description:'<script>alert(1)</script>',url:'javascript:alert(1)',image:'javascript:alert(1)'});
@@ -39,7 +40,7 @@ test('homepage snapshot respects visibility, collection limits and includes an a
   const html='<main id="main-content"><section data-work-kind="webapp"><div data-works-list></div></section></main>';
   const items=[...Array.from({length:8},(_,i)=>item({id:String(i),title:'Project '+i})),item({id:'hidden',published:false,title:'Private draft'})];
   const $=load(withInitialWorks(html,items));
-  assert.equal($('.work-card').length,6);assert.equal($('a[href="#main-content"]').length,1);
+  assert.equal($('.work-card').length,3);assert.equal($('a[href="#main-content"]').length,1);
   assert.equal($('[data-works-list]').attr('aria-busy'),'false');
   assert.equal($('#initial-works').text().includes('Private draft'),false);
 });

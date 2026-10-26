@@ -18,6 +18,8 @@ import { applyRequestedWorks } from '@/lib/work-content-update';
 import { stampWorkUpdates } from '@/lib/admin-overview';
 import { normalizeWorkSlugs } from '@/lib/work-slugs';
 import { cleanPlaceholderCopy } from '@/lib/placeholder-copy';
+import { isReadyWork, presentWork } from '@/lib/work-readiness';
+import { withWorkEvidence } from '@/lib/work-evidence';
 
 const bucket = 'portfolio-public';
 const filename = 'content/works.json';
@@ -250,7 +252,7 @@ export async function initialWorks() {
 }
 export const getWorksDocument = async () => {
   const doc=await readCMS('works',initialWorks);
-  return {...doc,draft:{...doc.draft,items:normalizeWorkSlugs(doc.draft.items).map(cleanPlaceholderCopy)},published:{...doc.published,items:normalizeWorkSlugs(doc.published.items).map(cleanPlaceholderCopy)}};
+  return {...doc,draft:{...doc.draft,items:normalizeWorkSlugs(doc.draft.items).map(cleanPlaceholderCopy).map(presentWork).map(withWorkEvidence)},published:{...doc.published,items:normalizeWorkSlugs(doc.published.items).map(cleanPlaceholderCopy).map(presentWork).map(withWorkEvidence)}};
 };
 export async function getWorks() {
   const doc = await getWorksDocument();
@@ -266,7 +268,9 @@ export async function getPublicWorks() {
   const doc = await readPublishedCMS('works', initialWorks, { cached: true });
   return {
     items: normalizeWorkSlugs(doc.items).map(cleanPlaceholderCopy)
-      .filter((item) => item.published)
+      .filter((item) => item.published && isReadyWork(item))
+      .map(presentWork)
+      .map(withWorkEvidence)
       .map(publicWork),
   };
 }
@@ -310,7 +314,7 @@ export async function changeWorks(body: {
         ? {...item,archivedCaseStudy:previous?.caseStudy||previous?.archivedCaseStudy}
         : item;
       const normalized=setWorkKind(retained,item.kind);
-      return {...normalized,url:normalized.caseStudy?`/work/${normalized.caseStudy.slug}`:normalized.url};
+      return withWorkEvidence(presentWork({...normalized,url:normalized.caseStudy?`/work/${normalized.caseStudy.slug}`:normalized.url}));
     }),
   };
   if(body.action==='publish')for(const item of draft.items){

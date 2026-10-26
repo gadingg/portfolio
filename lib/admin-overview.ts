@@ -1,7 +1,9 @@
 import { workKinds, type WorkItem } from './works';
+import { isReadyWork, workReadiness } from './work-readiness';
 
 export function summarizeWorks(draft: WorkItem[], published: WorkItem[]) {
-  const live = published.filter(item => item.published);
+  const live = published.filter(item => item.published && isReadyWork(item));
+  const incomplete = published.filter(item => item.published && !isReadyWork(item));
   const visible = new Map(live.map(item => [item.id, item]));
   const collection = new Map(published.map(item => [item.id, item]));
   draft.forEach(item => collection.set(item.id, item));
@@ -9,10 +11,10 @@ export function summarizeWorks(draft: WorkItem[], published: WorkItem[]) {
   const stored = new Map(published.map(item => [item.id,item]));
   const drafts = items.filter(item => !stored.has(item.id));
   const hidden = published.filter(item => !item.published);
-  const status = (item: WorkItem) => !stored.has(item.id) ? 'Draft baru' : JSON.stringify(item) !== JSON.stringify(stored.get(item.id)) ? 'Ada perubahan draft' : item.published ? 'Tayang' : 'Disembunyikan';
+  const status = (item: WorkItem) => !stored.has(item.id) ? 'Draft baru' : JSON.stringify(item) !== JSON.stringify(stored.get(item.id)) ? 'Ada perubahan draft' : !item.published ? 'Disembunyikan' : workReadiness(item) || 'Tayang';
   const recent = [...draft].sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')).slice(0, 5);
   return {
-    total: items.length, live: live.length, drafts: drafts.length, hidden: hidden.length,
+    total: items.length, live: live.length, drafts: drafts.length, hidden: hidden.length, incomplete:incomplete.length,
     examples: items.filter(item => item.demo).length,
     changed: JSON.stringify(draft) !== JSON.stringify(published),
     categories: workKinds.map(kind => ({ kind, total: items.filter(item => item.kind === kind).length })),

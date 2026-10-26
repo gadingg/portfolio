@@ -1,3 +1,4 @@
+import latestCV from './cv-2026.json';
 import { z } from 'zod';
 import { contentURL, mediaURL } from './content-blocks';
 import { VisualLayoutSchema } from './visual-layout';
@@ -197,45 +198,28 @@ export const siteFields: SiteField[] = [
     selector: '.site-footer p',
   },
 ];
-export const defaultCV = {
-  name: 'R. Gading Utama',
-  role: 'Creative Marketer & Digital Problem Solver',
-  profile:
-    'Creative problem solver yang menggabungkan marketing, design, technology, dan AI untuk mengubah kendala bisnis menjadi kampanye, workflow, atau digital tool yang dapat dipakai.',
-  capabilities:
-    'Creative marketing, graphic design, Meta Ads, web app development, workflow automation, generative AI, campaign ideation, dan digital operations.',
-  pdf: '',
-  experience: [
-    {
-      title: 'Marketing Communication, PropTech & Creative Growth',
-      period: '2023 to present',
-      description:
-        'Menangani creative marketing, Meta Ads, web app internal, dan operational tooling untuk kebutuhan bisnis properti.',
-    },
-    {
-      title: 'Owner & Marketing Lead, Kosan Bu Endang',
-      period: '2023 to present',
-      description:
-        'Memimpin renovasi, pemasaran, operasional, dan membangun aplikasi pencatatan sewa.',
-    },
-    {
-      title: 'Founder, Geektuku, akkc.id, and Diskonlicious',
-      period: '2021 to 2023',
-      description:
-        'Mengelola branding, pemasaran digital, e-commerce, customer engagement, dan operasi bisnis.',
-    },
-  ],
-};
+export const defaultCV = latestCV;
 export const SiteSchema = z
   .object({
     layout: VisualLayoutSchema.optional(),
     values: z.record(z.string().max(4000)).transform((values): Record<string, string> => ({ linkedin: defaultLinkedIn, heroMetadata: defaultHeroMetadata, ...values })),
     cv: z.object({
+      sourceVersion: z.string().max(40).default(''),
       name: z.string().min(1).max(150),
       role: z.string().max(300),
       profile: z.string().max(4000),
       capabilities: z.string().max(2000),
       pdf: mediaURL,
+      phone: z.string().max(100).default(''),
+      email: z.union([z.literal(''), z.string().email().max(300)]).default(''),
+      website: contentURL.default(''),
+      location: z.string().max(300).default(''),
+      languages: z.string().max(500).default(''),
+      education: z.array(z.object({
+        title: z.string().max(300),
+        period: z.string().max(150),
+        description: z.string().max(2000),
+      })).max(30).default([]),
       experience: z
         .array(
           z.object({

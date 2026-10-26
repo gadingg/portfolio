@@ -39,6 +39,7 @@ const blockContent = {
   }),
   paragraph: z.object({ text }),
   image: picture.extend({
+    focus: z.enum(['full','meta-trend','meta-batch']).optional(),
     width_mode: z.enum(['standard', 'wide', 'full']).optional(),
   }),
   gallery: z.object({

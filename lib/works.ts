@@ -52,6 +52,7 @@ const imageURL = (value: string) => {
 };
 
 export const WorkDraftItemSchema = z.object({
+  evidenceEdition: z.string().max(40).optional(),
   createdAt: z.string().datetime().optional(),
   updatedAt: z.string().datetime().optional(),
   videoFile: mediaURL.refine(value=>!value||/\.(mp4|webm)(?:[?#].*)?$/i.test(value),'Gunakan file MP4 atau WebM.').optional(),

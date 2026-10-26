@@ -34,6 +34,7 @@ export function Overview({ draft, published, data, days }: {
       <div className="overview-stat"><h2>Disembunyikan</h2><strong>{number(summary.hidden)}</strong><p>Tersimpan, tidak tampil di website</p></div>
     </section>
 
+    {summary.incomplete>0 && <div className="overview-publication-note"><span>{number(summary.incomplete)} portfolio masih perlu dilengkapi. Datanya aman di admin dan belum tampil di website.</span><AdminLink href="/admintgadink/dashboard/works">Lengkapi portfolio</AdminLink></div>}
     {summary.changed && <div className="overview-publication-note"><span>Draft sudah tersimpan, tapi belum tayang.</span><AdminLink href="/admintgadink/dashboard/works">Tinjau perubahan</AdminLink></div>}
 
     <div className="overview-content-grid">

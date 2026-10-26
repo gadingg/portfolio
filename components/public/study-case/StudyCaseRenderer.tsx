@@ -63,6 +63,10 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
           case 'image': {
             const image = content as ImageBlockContent;
             const widthMode = image.width_mode || 'standard';
+            if(image.url==='/assets/work/meta-report-macbooks.webp' && ['meta-trend','meta-batch'].includes(image.focus||''))return <figure key={block.id||index} className="case-visual case-evidence my-10">
+              <div className={`case-evidence-frame ${image.focus}`}><Image src={image.url} alt={image.alt} width={1448} height={1086} sizes="(max-width: 767px) 200vw, 1600px"/></div>
+              {image.caption&&<figcaption>{image.caption}</figcaption>}
+            </figure>;
             return (
               <figure
                 key={block.id || index}

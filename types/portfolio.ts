@@ -22,6 +22,7 @@ export interface ParagraphBlockContent {
 }
 
 export interface ImageBlockContent {
+  focus?: 'full' | 'meta-trend' | 'meta-batch';
   url: string;
   alt: string;
   caption?: string;

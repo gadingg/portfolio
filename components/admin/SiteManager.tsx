@@ -199,10 +199,10 @@ export function SiteManager() {
               ))}
             {group === 'CV' && (
               <>
-                {(['name', 'role', 'profile', 'capabilities'] as const).map(
+                {(['name', 'role', 'profile', 'capabilities', 'phone', 'email', 'website', 'location', 'languages'] as const).map(
                   (key, i) => (
                     <label key={key}>
-                      {['Nama', 'Posisi', 'Profil', 'Kemampuan'][i]}
+                      {['Nama', 'Posisi', 'Profil', 'Kemampuan', 'Telepon', 'Email', 'Website', 'Lokasi', 'Bahasa'][i]}
                       <textarea
                         rows={key === 'profile' ? 4 : 2}
                         value={content.cv[key]}
@@ -211,15 +211,17 @@ export function SiteManager() {
                     </label>
                   ),
                 )}
-                <h3>Pengalaman</h3>
+                {(['experience','education'] as const).map(section => <div key={section}>
+                <h3>{section==='experience'?'Pengalaman':'Pendidikan'}</h3>
+                <p className="wm-muted">Satu poin per baris di deskripsi agar enak dibaca di halaman CV.</p>
                 <SortableList
-                  items={content.cv.experience.map((item, i) => ({
+                  items={(content.cv[section]||[]).map((item, i) => ({
                     ...item,
                     id: String(i),
                   }))}
                   disabled={busy}
                   onChange={(next) =>
-                    cv({ experience: next.map(({ id, ...item }) => item) })
+                    cv({ [section]: next.map(({ id, ...item }) => item) })
                   }
                 >
                   {(item, i, handle) => (
@@ -235,7 +237,7 @@ export function SiteManager() {
                                 value={item[key]}
                                 onChange={(e) =>
                                   cv({
-                                    experience: content.cv.experience.map(
+                                    [section]: content.cv[section].map(
                                       (entry, index) =>
                                         index === i
                                           ? { ...entry, [key]: e.target.value }
@@ -251,10 +253,10 @@ export function SiteManager() {
                       <button
                         type="button"
                         className="wm-button"
-                        aria-label={`Hapus pengalaman ${i + 1}`}
+                        aria-label={`Hapus ${section==='experience'?'pengalaman':'pendidikan'} ${i + 1}`}
                         onClick={async () =>
-                          await ask('Hapus pengalaman ini dari draft?') && cv({
-                            experience: content.cv.experience.filter(
+                          await ask('Hapus bagian ini dari draft?') && cv({
+                            [section]: content.cv[section].filter(
                               (_item, index) => index !== i,
                             ),
                           })
@@ -270,17 +272,19 @@ export function SiteManager() {
                   type="button"
                   onClick={() =>
                     cv({
-                      experience: [
-                        ...content.cv.experience,
+                      [section]: [
+                        ...content.cv[section],
                         { title: '', period: '', description: '' },
                       ],
                     })
                   }
                 >
                   <Plus size={18} />
-                  Tambah pengalaman
+                  Tambah {section==='experience'?'pengalaman':'pendidikan'}
                 </button>
+                </div>)}
                 <h3>PDF CV</h3>
+                <p className="wm-muted">Download di halaman publik memakai file PDF ini. Mengedit teks CV tidak mengubah isi PDF. Upload PDF baru kalau dokumennya ikut diperbarui.</p>
                 <FileDrop
                   folder="cv"
                   accept="application/pdf"
