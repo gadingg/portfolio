@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000">
+  <rect width="1600" height="1000" fill="#ff5a1f"/>
+  <circle cx="1200" cy="490" r="310" fill="#d8cbb5"/>
+  <circle cx="1200" cy="490" r="220" fill="#ff5a1f"/>
+  <circle cx="1200" cy="490" r="120" fill="#10110f"/>
+  <rect x="155" y="190" width="690" height="570" rx="16" fill="#10110f" transform="rotate(-7 500 475)"/>
+  <g fill="#f3f0e8">
+    <rect x="230" y="280" width="150" height="14" rx="7" opacity=".6"/>
+    <rect x="230" y="356" width="480" height="56" rx="6"/>
+    <rect x="230" y="436" width="310" height="56" rx="6"/>
+    <rect x="230" y="550" width="430" height="14" rx="7" opacity=".35"/>
+    <rect x="230" y="590" width="310" height="14" rx="7" opacity=".35"/>
+    <rect x="230" y="654" width="170" height="44" rx="6" fill="#d8cbb5"/>
+  </g>
+  <text x="108" y="918" fill="#10110f" font-family="Arial,sans-serif" font-size="28" font-weight="700" letter-spacing="3">CAMPAIGN SYSTEMS</text>
+  <text x="1492" y="918" text-anchor="end" fill="#10110f" font-family="Arial,sans-serif" font-size="20" letter-spacing="2">DUMMY THUMBNAIL</text>
+</svg>

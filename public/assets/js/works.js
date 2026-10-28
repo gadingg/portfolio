@@ -110,7 +110,11 @@
     groups.forEach(group=>{group.querySelector('[data-works-list]').setAttribute('aria-busy','true');group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=true);group.querySelectorAll('[data-retry-works]').forEach(node=>node.disabled=true);});
     try {
       const res=await fetch(document.body.dataset.cmsPreview?'/api/admin/works-preview':'/api/works',{signal:controller.signal,cache:'no-store'});if(!res.ok)throw Error('load');const data=await res.json();if(!Array.isArray(data.items))throw Error('data');
-      groups.forEach(group=>{const list=group.querySelector('[data-works-list]');let items=data.items.filter(item=>item.kind===group.dataset.workKind&&item.published);if(group.dataset.workKind==='webapp'&&!group.dataset.collection)items=items.slice(0,6);
+      groups.forEach(group=>{const list=group.querySelector('[data-works-list]');let items=data.items.filter(item=>item.kind===group.dataset.workKind&&item.published);if(group.dataset.workKind==='webapp'&&!group.dataset.collection){
+        const count=items.filter(item=>!item.demo&&item.caseStudy).length,heading=group.querySelector('.works-heading');
+        if(heading){let label=heading.querySelector('[data-works-count]');if(!label){label=node('p','works-count');label.setAttribute('data-works-count','');label.setAttribute('aria-live','polite');heading.append(label);}label.textContent=`${count} case ${count===1?'study':'studies'}`;}
+        items=items.slice(0,3);
+      }
         list.replaceChildren(...items.map(item=>card(item,items,group.dataset.collection?'h2':'h4')));if(!items.length)list.append(node('p','works-message','Belum ada karya di koleksi ini.'));list.scrollLeft=0;group._updateCarousel?.();
       });
     } catch {groups.forEach(group=>{const list=group.querySelector('[data-works-list]');if(!list.querySelector('.work-card'))list.replaceChildren();group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=false);});}

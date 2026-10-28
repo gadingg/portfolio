@@ -4,6 +4,18 @@ const { runtime } = require('./cms-script-runtime.cjs');
 const { summarizeWorks, stampWorkUpdates } = runtime()('lib/admin-overview.ts');
 const item = (id, extra = {}) => ({ id, kind:'webapp', title:id, description:'', image:'', imageAlt:'', url:'https://example.com', published:true, demo:false, artwork:'hub', ...extra });
 
+test('work status reports the public snapshot until draft edits are published', () => {
+  const {workPublicationStatus: status}=runtime()('lib/admin-overview.ts');
+  const live=item('one'), hidden=item('hidden',{published:false});
+  assert.deepEqual(status(item('new'),[live]),{isLive:false,pending:true});
+  assert.deepEqual(status({...live,published:false},[live]),{isLive:true,pending:true});
+  assert.deepEqual(status({...hidden,published:true},[hidden]),{isLive:false,pending:true});
+  assert.deepEqual(status({...live,title:'Edited'},[live]),{isLive:true,pending:true});
+  assert.deepEqual(status({...live,updatedAt:'2026-10-18'},[live]),{isLive:true,pending:false});
+  const edited={...live,published:false};
+  assert.deepEqual(status(edited,[edited]),{isLive:false,pending:false});
+});
+
 test('publication review counts changes across categories, additions and removals separately from reordering', () => {
   const {summarizeWorksPublication}=runtime()('lib/admin-overview.ts');
   const published=[item('one'),item('two',{kind:'design'}),item('removed')];

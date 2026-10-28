@@ -4,6 +4,7 @@ const React = require('react');
 const { renderToStaticMarkup } = require('react-dom/server');
 
 const icons = {
+  'pen-tool': 'PenTool', 'sliders-horizontal': 'SlidersHorizontal',
   'arrow-right': 'ArrowRight', 'arrow-up-right': 'ArrowUpRight',
   'arrow-left': 'ArrowLeft', 'arrow-up': 'ArrowUp', 'arrow-down': 'ArrowDown',
   'external-link': 'ExternalLink', menu: 'Menu', x: 'X', instagram: 'Instagram', linkedin: 'Linkedin', lightbulb: 'Lightbulb', 'code-2': 'CodeXml', users: 'Users',

@@ -86,7 +86,7 @@ export function VisualEditor({target}:{target:string}){
             });
           }],
           panels:{defaults:[]},
-          canvas:{styles:['/assets/css/portfolio.css','/assets/css/showcase.css','/assets/css/visual-content.css']},
+          canvas:{styles:['/assets/css/showcase.css','/assets/css/expertise.css','/assets/css/visual-content.css']},
           styleManager:{sectors:[]},
           deviceManager:{devices:[{id:'Desktop',name:'Desktop',width:''},{id:'Tablet',name:'Tablet',width:'768px',widthMedia:'1024px'},{id:'Mobile',name:'Mobile',width:'390px',widthMedia:'600px'}]},
           assetManager:{custom:true},
@@ -246,7 +246,7 @@ function sectionTitle(component:Component){
 }
 const templates=[
   {title:'Judul & teks',icon:Type,html:'<section class="visual-section" data-cms-section="text"><h2>Judul bagian</h2><p>Tulis konten Anda di sini.</p></section>'},
-  {title:'Gambar & keterangan',icon:ImageIcon,html:'<section class="visual-section" data-cms-section="image"><figure><img src="/assets/images/hero-dark.jpg" alt="Ganti dengan gambar Anda"/><figcaption>Keterangan gambar</figcaption></figure></section>'},
+  {title:'Gambar & keterangan',icon:ImageIcon,html:'<section class="visual-section" data-cms-section="image"><figure><img src="/assets/work/listing-hub.jpg" alt="Ganti dengan gambar Anda"/><figcaption>Keterangan gambar</figcaption></figure></section>'},
   {title:'Dua kolom',icon:Layers,html:'<section class="visual-section visual-columns" data-cms-section="columns"><div class="visual-column"><h2>Judul pertama</h2><p>Tulis konten Anda di sini.</p></div><div class="visual-column"><h2>Judul kedua</h2><p>Tulis konten Anda di sini.</p></div></section>'},
   {title:'Ajakan & tombol',icon:ExternalLink,html:'<section class="visual-section" data-cms-section="cta"><h2>Mari terhubung</h2><a class="button button-solid" href="#contact">Hubungi saya</a></section>'},
 ];

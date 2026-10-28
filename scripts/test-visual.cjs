@@ -36,7 +36,7 @@ test('homepage visual save synchronizes copy without duplicating copyright or pu
 });
 test('converting the incumbent homepage preserves menu and carousel runtime hooks',()=>{
  const fs=require('node:fs'),cheerio=require('cheerio');
- const original=cheerio.load(fs.readFileSync('public/index.html','utf8')),converted=cheerio.load(clean({html:original('body').html(),css:''}).html);
+ const original=cheerio.load(fs.readFileSync('templates/active/homepage.html','utf8')),converted=cheerio.load(clean({html:original('body').html(),css:''}).html);
  for(const selector of ['dialog#mobile-menu','[data-close-dialog]','[data-carousel-toggle]','[data-carousel-prev]','[data-carousel-next]','[data-retry-works]','[data-works-list]','[data-work-kind]'])assert.equal(converted(selector).length,original(selector).length,selector);
 });
 

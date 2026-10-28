@@ -25,6 +25,8 @@ The latest request prioritizes visual work and problem solving over roles, dates
 - `docs/briefs/2026-10-12-enhancement-intake.md`
 
 ## Implementation Authorization
+
+On 19 October 2026, the owner chose `gadingg/portfolio` as the active visual and application source, with only What I Do adapted from `gadingg/portfo`. Preserve the other active public sections. Keep the complete older template as a private admin archive, remove unused legacy assets from public serving, and consolidate GitHub changes in the active repository. See `docs/template-consolidation.md`.
 The user approved continuation with “Go ahead.” Existing dark and orange identity is retained as the conservative interpretation of the master brief; composition and interaction are refined to meet the latest request.
 
 The October 17 request also approves icon-only pause/resume controls and five-second advancement for the existing work carousels. See `docs/briefs/2026-10-17-works-videos.md` for the supplied Reel, example slots, and playback limitations.

@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>R. Gading Utama · Creative Marketer &amp; Problem Solver</title>
+  <meta name="description" content="Creative marketing, design, and practical digital tools by R. Gading Utama. See campaigns, Meta Ads, and web apps built around real work problems." />
+  
+  <link rel="stylesheet" href="./assets/css/portfolio.css" />
+  <link rel="preload" href="/assets/fonts/inter-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preconnect" href="https://hoirqrkdgbmvpwutwuwj.supabase.co" crossorigin="" />
+
+  <style>
+    :root {
+      --bg: #060706;
+      --panel: #10110f;
+      --panel-2: #151713;
+      --cream: #f3f0e8;
+      --muted: rgba(243, 240, 232, 0.65);
+      --soft: rgba(243, 240, 232, 0.12);
+      --line: rgba(243, 240, 232, 0.10);
+      --orange: #ff5a1f;
+      --orange-soft: rgba(255, 90, 31, 0.22);
+      --ease: cubic-bezier(.22, 1, .36, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--bg);
+      color-scheme: dark;
+      scroll-behavior: auto;
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 70% 10%, rgba(255, 90, 31, 0.12), transparent 34rem),
+        radial-gradient(circle at 15% 45%, rgba(243, 240, 232, 0.05), transparent 26rem),
+        var(--bg);
+      color: var(--cream);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    ::selection {
+      background: var(--cream);
+      color: var(--bg);
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: .025;
+      background-image: radial-gradient(rgba(255, 255, 255, .18) 1px, transparent 1px);
+      background-size: 4px 4px;
+      mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+    }
+
+    .wordmark {
+      letter-spacing: -0.04em;
+      white-space: nowrap;
+      overflow-wrap: normal;
+    }
+
+    .nav-link {
+      position: relative;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+    }
+
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -8px;
+      height: 1px;
+      transform: scaleX(0);
+      transform-origin: right;
+      background: currentColor;
+      transition: transform .45s var(--ease);
+    }
+
+    .nav-link:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: .7rem;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(243, 240, 232, .65);
+    }
+
+    .section-label::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--orange);
+    }
+
+    .reveal,
+    [data-reveal] {
+      opacity: 1;
+    }
+
+    /* 3D and GPU-accelerated layer styles */
+    .hero-stack-container {
+      perspective: 1200px;
+    }
+
+    .hero-stack {
+      transform-style: preserve-3d;
+    }
+
+    .hero-card {
+      transform-origin: center;
+      border: 1px solid var(--line);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, .65);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .glass {
+      border: 1px solid var(--line);
+      background: rgba(18, 20, 18, 0.65);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .magnetic-button {
+      transition: transform .4s var(--ease), background .4s var(--ease), border-color .4s var(--ease);
+      min-height: 44px;
+    }
+
+    .magnetic-button:hover {
+      transform: translateY(-2px);
+      background: #ff7845;
+    }
+
+    .pricing-card,
+    .note-card,
+    .archive-card {
+      transition: transform .45s var(--ease), border-color .45s var(--ease), background .45s var(--ease);
+      backface-visibility: hidden;
+    }
+
+    .pricing-card:hover,
+    .note-card:hover,
+    .archive-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255, 90, 31, .34);
+      background: rgba(255, 255, 255, .06);
+    }
+
+    .note-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      background: linear-gradient(135deg, rgba(243, 240, 232, 0.14), transparent 42%);
+      transition: opacity 400ms var(--ease);
+    }
+
+    .note-card:hover::after {
+      opacity: 1;
+    }
+
+    .masked-number {
+      color: transparent;
+      background-image: var(--number-image);
+      background-position: 50% 50%;
+      background-size: 118%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      filter: saturate(.85) brightness(1.06);
+      will-change: transform, background-position;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .strip-image,
+    .archive-card img {
+      will-change: transform;
+      transform: scale(1.06) translate3d(0, 0, 0);
+      transition: transform .6s var(--ease);
+    }
+
+    .archive-card:hover img {
+      transform: scale(1.14) translate3d(0, 0, 0);
+      opacity: 0.95;
+    }
+
+    .parallax-image {
+      position: absolute;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #101310;
+      opacity: .68;
+      will-change: transform;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .parallax-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(.72) brightness(.72);
+      transform: scale(1.14) translate3d(0, 0, 0);
+      will-change: transform;
+    }
+
+    .timeline-bar {
+      transform: scaleX(0);
+      transform-origin: left center;
+      background: linear-gradient(90deg, var(--orange), rgba(243, 240, 232, .82));
+      will-change: transform;
+    }
+
+    .brand-word {
+      transform-origin: center left;
+    }
+
+    .project-card {
+      will-change: transform;
+      transform: translate3d(0, 0, 0);
+    }
+
+    /* Scrollbar hide for galleries */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    @media (max-width: 767px) {
+      .wordmark { letter-spacing: -0.05em; }
+      .page-rail { display: none; }
+      .hero-section { width: 100%; max-width: 100vw; }
+      .hero-section > div, .hero-copy, .hero-stack-container { min-width: 0; width: 100%; max-width: calc(100vw - 40px); }
+      .hero-copy > *, .hero-copy p, .hero-copy h2 { min-width: 0; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+      .section-label { display: flex; width: 100%; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+      .hero-actions-mobile { display: grid; grid-template-columns: minmax(0, 1fr); width: 100%; max-width: 100%; }
+      .hero-actions-mobile > :where(a, button) { width: 100%; max-width: 100%; justify-content: center; }
+      header { width: 100%; max-width: 100vw; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .001ms !important;
+      }
+
+      .reveal,
+      [data-reveal],
+      .timeline-bar {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="relative">
+  <div class="noise" aria-hidden="true"></div>
+
+  <a href="#home" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-[#f3f0e8] focus:px-4 focus:py-3 focus:text-[#060706]">Skip to content</a>
+
+  <!-- HEADER -->
+  <header class="site-header fixed inset-x-0 top-0 z-40 flex items-center justify-between px-5 py-4 bg-[#060706]/95 md:px-8 lg:px-12 transition-all duration-300">
+    <a href="#home" class="text-lg font-bold tracking-[-0.04em] text-[#f3f0e8] md:text-xl flex items-center gap-2">
+      Gading Utama.
+    </a>
+
+    <nav class="hidden items-center gap-8 text-xs font-bold text-[#f3f0e8]/85 md:flex">
+      <a href="#work" class="nav-link">
+        Works
+      </a>
+      <a href="#studio" class="nav-link">About</a>
+      <a href="#experience" class="nav-link">Experience</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <a href="https://wa.me/6289653484274?text=Hi%20Gading%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20talk." target="_blank" rel="noopener noreferrer"
+        class="hidden min-h-[44px] items-center rounded-lg border border-[#f3f0e8]/15 px-4 text-sm font-bold text-[#f3f0e8] hover:border-[#ff5a1f] hover:text-[#ff5a1f] transition sm:inline-flex">
+        Chat on WhatsApp
+      </a>
+      <button id="openDrawerBtn" type="button" class="menu-button flex h-12 w-12 shrink-0 items-center justify-center md:hidden" aria-label="Open mobile navigation menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MOBILE DRAWER -->
+  <div id="mobileDrawer" role="dialog" aria-modal="true" aria-label="Navigation" class="fixed inset-0 z-50 pointer-events-none opacity-0 transition-opacity duration-300 md:hidden" aria-hidden="true">
+    <!-- Backdrop -->
+    <div id="drawerBackdrop" class="absolute inset-0 bg-black/85"></div>
+    
+    <!-- Drawer Panel -->
+    <div id="drawerPanel" class="absolute right-0 top-0 bottom-0 editorial-drawer w-[85%] max-w-sm flex flex-col justify-between transform translate-x-full">
+      <div>
+        <div class="drawer-heading flex items-center justify-between">
+          <span class="drawer-brand">Gading Utama.</span>
+          <button id="closeDrawerBtn" type="button" class="menu-button flex h-12 w-12 items-center justify-center" aria-label="Close navigation menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg>
+          </button>
+        </div>
+
+        <nav class="editorial-menu" aria-label="Mobile navigation"><a href="#home" class="mobile-drawer-link editorial-menu-link"><span>Home</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a><a href="#studio" class="mobile-drawer-link editorial-menu-link"><span>About</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a><a href="#work" class="mobile-drawer-link editorial-menu-link"><span>Works</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a><a href="#experience" class="mobile-drawer-link editorial-menu-link"><span>Experience</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a><a href="#contact" class="mobile-drawer-link editorial-menu-link"><span>Contact</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></nav>
+      </div>
+
+      <div class="drawer-contact">
+        <a href="https://wa.me/6289653484274?text=Hi%20Gading%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20talk." target="_blank" rel="noopener noreferrer" class="mobile-drawer-link drawer-whatsapp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 21l1.9-5.5a9 9 0 0 1-.9-4A8.5 8.5 0 0 1 12.5 3 8.5 8.5 0 0 1 21 11.5Z"/><path d="M8 9h8M8 13h5"/></svg><span>Chat on WhatsApp</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <main id="home" class="relative z-10 overflow-hidden">
+    <!-- HERO -->
+    <section class="hero-section relative min-h-screen flex items-center overflow-hidden px-5 pt-28 pb-16 md:px-8 lg:px-12">
+      <div class="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8 z-10">
+        <!-- Left: Hero Copy -->
+        <div class="hero-copy relative z-20 flex flex-col justify-center lg:col-span-6">
+          <p class="hero-role mb-6 text-sm font-bold text-[#ff8a5c]">Creative Marketer &amp; Problem Solver</p>
+
+          <h1 class="hero-title mb-6 font-black text-[#f3f0e8]"><span class="hero-line">I think.</span><span class="hero-line">I create.</span><span class="hero-line">I solve.</span></h1>
+
+          <div class="hero-actions-mobile mt-8 sm:mt-10 flex flex-wrap items-center gap-3">
+            <a href="#work" class="magnetic-button inline-flex min-h-[48px] items-center justify-center rounded-xl bg-[#ff5a1f] px-6 text-sm font-bold text-[#060706]">
+              View Case Studies
+            </a>
+            <a href="#contact" class="inline-flex min-h-[48px] items-center justify-center rounded-xl border border-[#f3f0e8]/20 px-6 text-sm font-bold text-[#f3f0e8] hover:border-[#ff5a1f]">Discuss a Project</a>
+          </div>
+          <div class="hero-note"><span>Surabaya / Remote</span><button type="button" class="open-cv">View CV</button></div>
+        </div>
+
+        <!-- Right: 3D Hero Card Stack -->
+        <div class="hero-stack-container relative z-10 flex items-center justify-center lg:col-span-6 py-6 lg:py-0">
+          <div class="hero-stack relative h-[360px] w-[260px] sm:h-[440px] sm:w-[320px] md:h-[500px] md:w-[370px] lg:h-[560px] lg:w-[410px]">
+            <!-- Card 1: Back warm dark layer -->
+            <div
+              class="hero-card absolute inset-0 -translate-x-6 sm:-translate-x-10 translate-y-6 sm:translate-y-8 -rotate-[14deg] rounded-[24px] bg-[#151713]">
+              <div class="h-full w-full rounded-[24px] bg-gradient-to-br from-[#ff5a1f]/30 via-transparent to-black"></div>
+            </div>
+
+            <!-- Card 2: Editorial typography layer -->
+            <div
+              class="hero-card absolute inset-0 translate-x-6 sm:translate-x-10 translate-y-4 sm:translate-y-6 rotate-[10deg] rounded-[24px] bg-[#d8cbb5]">
+              <div aria-hidden="true" class="absolute right-8 top-16 font-serif text-[80px] sm:text-[100px] text-[#9a330b] select-none">
+                A
+              </div>
+              <div class="absolute bottom-10 left-8 h-24 w-24 sm:h-28 sm:w-28 rounded-full border border-black/20"></div>
+            </div>
+
+            <!-- Card 3: Deep shadow angle -->
+            <div
+              class="hero-card absolute inset-0 translate-x-10 sm:translate-x-14 translate-y-8 sm:translate-y-12 rotate-[16deg] rounded-[24px] bg-[#080808]">
+              <div class="h-full w-full rounded-[24px] bg-[linear-gradient(135deg,rgba(255,255,255,.16),transparent_45%)]">
+              </div>
+            </div>
+
+            <!-- Card 4: Foreground portrait with rich warm overlay -->
+            <div class="hero-card absolute inset-0 rotate-[3deg] overflow-hidden rounded-[24px] bg-[#201714] shadow-2xl">
+              <img
+                src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/917d6f93-fb36-439a-8c48-884b67b35381_1600w.jpg"
+                alt="Portrait featured in the portfolio" width="1600" height="2000" class="h-full w-full object-cover saturate-125" loading="eager" fetchpriority="high" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-orange-950/10"></div>
+              <div class="absolute inset-0 bg-[#ff5a1f]/10 mix-blend-overlay"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Giant Fluid Watermark -->
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 z-0 select-none overflow-hidden text-center opacity-70">
+        <p
+          class="hero-wordmark wordmark inline-block text-[clamp(4.5rem,15vw,13rem)] font-black leading-none text-[#f3f0e8]/[0.04] tracking-[-0.08em]">
+          Gading
+        </p>
+      </div>
+
+    </section>
+
+    <section class="proof-strip section-card" aria-label="Selected highlights">
+      <div class="section-shell proof-grid">
+        <p>Marketing <span>×</span> Design <span>×</span> Technology</p>
+        <p><strong>Best Sales Support</strong><span>of the Year, within 8 months</span></p>
+        <p><strong>10+ internal web-apps</strong><span>built for day-to-day work</span></p>
+      </div>
+    </section>
+
+    <!-- STUDIO / ABOUT -->
+    <section id="studio" data-alias="about"
+      class="brand-section section-card relative flex items-center overflow-hidden">
+      <div id="about" class="sr-only"></div>
+      <!-- Watermark Background -->
+      <div class="pointer-events-none absolute inset-x-0 top-6 z-0 select-none overflow-hidden opacity-60">
+        <p aria-hidden="true"
+          class="brand-drift wordmark text-[clamp(4.5rem,16vw,14rem)] font-black leading-none text-[#f3f0e8]/[0.04]">
+          About
+        </p>
+      </div>
+
+      <div class="relative z-10 mx-auto grid w-full max-w-6xl gap-12 md:grid-cols-12 items-center">
+        <div class="md:col-span-5">
+          <h2 class="mt-6 text-3xl font-black tracking-[-0.04em] text-[#f3f0e8] sm:text-4xl lg:text-[42px] leading-tight">
+            More than executing the brief.
+          </h2>
+        </div>
+
+        <div class="brand-words grid gap-4 sm:gap-6 md:col-span-7">
+          <p class="brand-word text-[clamp(2.5rem,6vw,5.5rem)] font-black tracking-[-0.07em] leading-none text-[#f3f0e8]">
+            marketing
+          </p>
+          <p class="brand-word text-right text-[clamp(2.5rem,6vw,5.5rem)] font-black tracking-[-0.07em] leading-none text-[#ff5a1f]">
+            design
+          </p>
+          <p class="brand-word text-[clamp(2.5rem,6vw,5.5rem)] font-black tracking-[-0.07em] leading-none text-[#f3f0e8]">
+            create
+          </p>
+          <p class="brand-word text-right text-[clamp(2.5rem,6vw,5.5rem)] font-black tracking-[-0.07em] leading-none text-[#f3f0e8]/80">
+            build
+          </p>
+          <p class="brand-word text-[clamp(2.5rem,6vw,5.5rem)] font-black tracking-[-0.07em] leading-none text-[#ff5a1f]">
+            solve
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="expertise" class="services-section section-card relative">
+      <div class="mx-auto max-w-6xl">
+        <h2 class="services-copy section-title section-heading">What I do.</h2>
+        <div class="expertise-grid"><article class="expertise-card expertise-card-1"><div class="expertise-heading"><svg class="expertise-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="m15 9-2 4-4 2 2-4 4-2ZM12 2v2m0 16v2M2 12h2m16 0h2"/></svg><h3>Creative Strategy &amp; Digital Marketing</h3></div><div class="expertise-art" aria-hidden="true"><div class="strategy-visual"><div class="strategy-sheet sheet-back"></div><div class="strategy-sheet sheet-mid"></div><div class="strategy-sheet sheet-front"><i></i><div class="strategy-bars"><b></b><b></b><b></b><b></b><b></b></div></div></div></div></article><article class="expertise-card expertise-card-2"><div class="expertise-heading"><svg class="expertise-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 3 5 5-12 12-6 1 1-6L16 3ZM13 6l5 5M4 15l5 5"/></svg><h3>Visual Design &amp; Branding</h3></div><div class="expertise-art" aria-hidden="true"><div class="identity-visual"><div class="identity-type">Aa</div><div class="identity-swatches"><i></i><i></i><i></i></div><div class="identity-mark"><svg viewBox="0 0 80 80" fill="none"><path d="M20 54V26h28v28H20Zm12-40h28v28H32V14Z" stroke="currentColor" stroke-width="3"/></svg></div></div></div></article><article class="expertise-card expertise-card-3"><div class="expertise-heading"><svg class="expertise-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18m-12 3-3 3 3 3m6-6 3 3-3 3"/></svg><h3>Web Apps &amp; Digital Solutions</h3></div><div class="expertise-art" aria-hidden="true"><div class="app-visual"><div class="app-toolbar"><i></i><i></i><i></i></div><div class="app-layout"><div class="app-sidebar"><i></i><i></i><i></i></div><div class="app-canvas"><span>&lt;/&gt;</span><div><i></i><i></i><i></i></div></div></div></div></div></article><article class="expertise-card expertise-card-4"><div class="expertise-heading"><svg class="expertise-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M12 3v6m0 6v6M3 12h6m6 0h6M6 6l3 3m6 6 3 3M18 6l-3 3m-6 6-3 3"/></svg><h3>Generative AI &amp; Automation</h3></div><div class="expertise-art" aria-hidden="true"><div class="automation-visual"><svg class="automation-lines" viewBox="0 0 420 140" fill="none"><path d="M60 70h80c30 0 30-40 70-40s40 40 70 40h80M140 70c30 0 30 40 70 40s40-40 70-40" stroke="currentColor" stroke-width="1"/></svg><div class="automation-node node-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 5H5v14h14v-3M12 3v9m-4-4 4 4 4-4"/></svg></div><div class="automation-node node-core"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="6" width="12" height="12" rx="3"/><path d="M9 2v4m6-4v4M9 18v4m6-4v4M2 9h4m-4 6h4m12-6h4m-4 6h4"/></svg></div><div class="automation-node node-output"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m5 12 4 4L19 6"/></svg></div></div></div></article></div>
+      </div>
+    </section>
+
+    <!-- SELECTED WORKS -->
+    <section id="work" class="work-section section-card relative">
+      <div id="recent-works" class="sr-only"></div>
+      <div class="mx-auto max-w-7xl">
+        <header>
+          <h2 id="workCountHeading" class="section-title">Selected Works</h2>
+        </header>
+
+        <div id="projectGalleryContainer" class="project-gallery mt-10 grid gap-x-5 gap-y-12 md:grid-cols-2">
+          <a href="/work/program-mbg-real-time-leaderboard" class="project-gallery-card group">
+            <figure class="relative aspect-[4/3] overflow-hidden rounded-[20px] bg-[#10110f] sm:rounded-[26px]">
+              <img src="/assets/images/thumbnail-tools.svg" alt="Dummy thumbnail for PROGRAM MBG leaderboard" width="1600" height="1000" class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]" loading="lazy" decoding="async" />
+            </figure>
+            <div class="project-card-content">
+            <p class="project-category">Creative Campaign / Gamification</p>
+            <h3 class="text-2xl font-black tracking-[-.03em] text-[#f3f0e8]">PROGRAM MBG</h3>
+            <p class="mt-3 text-sm leading-7 text-[#f3f0e8]/65">A clear points, ranking, and reward system that makes progress visible and gives admins one place to run the program.</p>
+            <span class="case-link">Read case study <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span>
+            </div>
+          </a>
+
+          <a href="/work/meta-ads-campaign-system" class="project-gallery-card group">
+            <figure class="relative aspect-[4/3] overflow-hidden rounded-[20px] bg-[#10110f] sm:rounded-[26px]">
+              <img src="/assets/images/thumbnail-campaign.svg" alt="Dummy thumbnail for Meta Ads campaign workflow" width="1600" height="1000" class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]" loading="lazy" decoding="async" />
+            </figure>
+            <div class="project-card-content">
+            <p class="project-category">Digital Marketing / Internal Web-App</p>
+            <h3 class="text-2xl font-black tracking-[-.03em] text-[#f3f0e8]">Meta Ads Reporting &amp; Performance Hub</h3>
+            <p class="mt-3 text-sm leading-7 text-[#f3f0e8]/65">One dashboard for campaign reports, lead distribution, agent performance, and advertising subsidies.</p>
+            <span class="case-link">Read case study <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span>
+            </div>
+          </a>
+
+          <a href="/work/internal-listing-hub" class="project-gallery-card group">
+            <figure class="relative aspect-[4/3] overflow-hidden rounded-[20px] bg-[#10110f] sm:rounded-[26px]">
+              <img src="/assets/images/thumbnail-workflow.svg" alt="Dummy thumbnail for Internal listing hub" width="1600" height="1000" class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]" loading="lazy" decoding="async" />
+            </figure>
+            <div class="project-card-content">
+            <p class="project-category">Digital Solutions / Property Workflow</p>
+            <h3 class="text-2xl font-black tracking-[-.03em] text-[#f3f0e8]">Internal Listing Hub</h3>
+            <p class="mt-3 text-sm leading-7 text-[#f3f0e8]/65">A searchable portal that turns property listings buried in WhatsApp chats into clear, comparable options.</p>
+            <span class="case-link">Read case study <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="visuals" class="archive-section section-card">
+      <div class="section-shell">
+        <div class="section-heading"><h2 class="section-title">Ideas, made visible.</h2></div>
+        <div class="archive-grid">
+          <figure><img src="/assets/images/thumbnail-campaign.svg" width="1600" height="1000" loading="lazy" decoding="async" alt="Dummy preview for campaign and digital ads"/><figcaption><span>Campaign &amp; Digital Ads</span><span>Dummy preview</span></figcaption></figure>
+          <figure><img src="/assets/images/thumbnail-workflow.svg" width="1600" height="1000" loading="lazy" decoding="async" alt="Dummy preview for property marketing and UI"/><figcaption><span>Property Marketing &amp; UI</span><span>Dummy preview</span></figcaption></figure>
+          <figure><img src="/assets/images/thumbnail-tools.svg" width="1600" height="1000" loading="lazy" decoding="async" alt="Dummy preview for social and print design"/><figcaption><span>Social &amp; Print Design</span><span>Dummy preview</span></figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="web-apps" class="tools-section section-card">
+      <div class="section-shell">
+        <div class="section-heading"><h2 class="section-title">Web apps.</h2></div>
+        <div class="tool-list">
+          <a href="https://patosser.my.id/gading/" target="_blank" rel="noopener noreferrer" class="tool-row"><div><h3>Mega App Gading</h3><p>Daily Marketing Workflow Hub</p></div><p>Kanban boards, prompt and link libraries, listing captions, watermarks, contributor reports, and birthday reminders in one place.</p><span class="tool-action">Open live app <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg></span></a>
+          <a href="https://patosser.my.id/reqvideo" target="_blank" rel="noopener noreferrer" class="tool-row"><div><h3>Req Video Bareng Patosser</h3><p>Video Request &amp; Scheduling Dashboard</p></div><p>Agents submit their own video requests, while admins follow up and manage the schedule from the same dashboard.</p><span class="tool-action">Open live app <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg></span></a>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-i-work" class="process-section section-card">
+      <div class="section-shell">
+        <div class="section-heading"><h2 class="section-title">How I work.</h2></div>
+        <div class="principle-grid">
+          <article><h3>Observe</h3></article>
+          <article><h3>Brainstorm</h3></article>
+          <article><h3>Build</h3></article>
+          <article><h3>Collaborate</h3></article>
+          <article><h3>Own the Outcome</h3></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience" class="experience-section section-card">
+      <div class="section-shell">
+        <div class="section-heading"><h2 class="section-title">Experience.</h2></div>
+        <div class="experience-list">
+          <article class="experience-row"><div><h3>Xavier Marks Tjandra Patos</h3><p>Creative Marketing &amp; Digital Solutions</p></div><div><p>Develop campaigns, content pillars, marketing visuals, Meta Ads, and internal tools for a property team.</p><p class="experience-proof">Managed an IDR 20M Meta Ads budget and contributed to 3 property closings and IDR 118M in gross commission.</p><p class="experience-proof">Named Best Sales Support of the Year within 8 months · Invited several times to speak about AI with property agents.</p></div></article>
+          <article class="experience-row"><div><h3>Kosan Bu Endang</h3><p>Owner &amp; Marketing Lead</p><span>Jul 2024 to Present</span></div><div><p>Manage renovations, marketing, resident relations, and daily operations. Built a web app for boarding house administration.</p><p class="experience-proof">Reached 100% occupancy within 2 weeks.</p></div></article>
+          <article class="experience-row"><div><h3>ADS Digital Partner</h3><p>UI/UX Designer · MSIB Batch 6</p><span>Feb 2024 to Jun 2024</span></div><div><p>Led product research and brainstorming, and contributed to high-fidelity designs for Helptix and Carbonova.</p><p class="experience-proof">Selected as 1 of 45 participants from approximately 4,500 applicants.</p></div></article>
+          <article class="experience-row"><div><h3>Peduly.com</h3><p>UI/UX &amp; Graphic Designer Intern</p><span>Feb 2023 to May 2023</span></div><div><p>Created visuals and social media content for the platform.</p><p class="experience-proof">Content reached 400K+ views, 30K+ likes, and 150K+ Instagram Reels views.</p></div></article>
+          <article class="experience-row"><div><h3>Geektuku, Akkc.id, Diskonlicious &amp; Retive</h3><p>Creative Founder</p></div><div><p>Built digital brands across branding, creative design, digital marketing, and e-commerce.</p><p class="experience-proof">Earned 500+ positive customer reviews on Shopee and Tokopedia.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="toolkit" class="toolkit-section section-card">
+      <div id="pricing" class="sr-only"></div>
+      <div class="section-shell">
+        <div class="section-heading"><h2 class="section-title">My toolkit.</h2></div>
+        <div class="toolkit-grid">
+          <section><h3>Design &amp; Content</h3><ul><li>Figma</li><li>Adobe Illustrator</li><li>Canva</li><li>CapCut</li></ul></section>
+          <section><h3>Marketing</h3><ul><li>Meta Ads Manager</li><li>Reporting &amp; Analytics</li></ul></section>
+          <section><h3>Build &amp; Automation</h3><ul><li>AI-Assisted Web-App Building</li><li>Automation Tools</li><li>Generative AI</li></ul></section>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="contact-section px-5 py-24 md:px-8 lg:px-12">
+      <div class="section-shell contact-panel contact-editorial">
+        <h2 class="section-title">Let's make<br />something <span>useful.</span></h2>
+        <div class="contact-editorial-actions">
+          <a href="https://wa.me/6289653484274?text=Hi%20Gading%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20talk." target="_blank" rel="noopener noreferrer" class="contact-whatsapp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 21l1.9-5.5a9 9 0 0 1-.9-4A8.5 8.5 0 0 1 12.5 3 8.5 8.5 0 0 1 21 11.5Z"/><path d="M8 9h8M8 13h5"/></svg><span>Let's Talk on WhatsApp</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+          <div class="contact-text-actions"><button type="button" class="open-cv">View CV <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button><a href="https://instagram.com/gadingg_" target="_blank" rel="noopener noreferrer">Instagram <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer-section px-5 pb-10 md:px-8 lg:px-12">
+      <div class="section-shell portfolio-footer">
+        <div><p class="footer-name">Gading Utama.</p><p>Creative Marketer &amp; Problem Solver</p></div>
+        <nav aria-label="Footer"><a href="#work">Selected Works</a><a href="#experience">Experience</a><a href="#studio">About</a><a href="#contact">Contact</a><a href="#home">Back to top</a></nav>
+        <p>© 2026 · Surabaya / Remote</p>
+      </div>
+    </footer>
+  </main>
+
+  <dialog id="cvDialog" class="m-auto h-[min(88vh,820px)] w-[min(94vw,980px)] overflow-hidden rounded-[24px] border border-[#f3f0e8]/20 bg-[#10110f] p-0 text-[#f3f0e8] backdrop:bg-black/80">
+    <div class="flex h-full flex-col">
+      <div class="flex items-center justify-between gap-4 border-b border-[#f3f0e8]/10 px-5 py-4">
+        <div>
+          <p class="text-xs font-bold text-[#ff8a5c]">Curriculum Vitae</p>
+          <h2 class="mt-1 text-lg font-bold">R. Gading Utama</h2>
+        </div>
+        <button id="closeCvDialog" type="button" class="min-h-[44px] rounded-full border border-[#f3f0e8]/20 px-4 text-xs font-bold uppercase" aria-label="Close CV preview">Close</button>
+      </div>
+      <div class="min-h-0 flex-1 overflow-y-auto bg-[#f3f0e8] p-6 text-[#11130f] sm:p-10">
+        <p class="text-xs font-black uppercase tracking-[.16em] text-[#b93608]">Creative Marketing · Design · Digital Solutions</p>
+        <h3 class="mt-3 text-4xl font-black tracking-[-.05em] sm:text-6xl">R. Gading Utama</h3>
+        <p class="mt-2 text-lg font-bold">Creative Marketer &amp; Problem Solver</p>
+        <div class="mt-8 grid gap-7 border-t border-black/20 pt-7 sm:grid-cols-2">
+          <section><h4 class="text-xs font-black uppercase tracking-[.14em]">Profile</h4><p class="mt-3 text-sm leading-7">I combine marketing, design, technology, and AI to build campaigns, workflows, and digital tools people can use.</p></section>
+          <section><h4 class="text-xs font-black uppercase tracking-[.14em]">Core capabilities</h4><p class="mt-3 text-sm leading-7">Creative marketing, graphic design, Meta Ads, web app development, workflow automation, and generative AI.</p></section>
+        </div>
+        <section class="mt-8 border-t border-black/20 pt-7"><h4 class="text-xs font-black uppercase tracking-[.14em]">Selected experience</h4><ul class="mt-4 space-y-3 text-sm leading-6"><li><strong>Xavier Marks Tjandra Patos</strong><br />Creative Marketing &amp; Digital Solutions</li><li><strong>Kosan Bu Endang</strong><br />Owner &amp; Marketing Lead · Jul 2024 to Present</li><li><strong>ADS Digital Partner</strong><br />UI/UX Designer · Feb 2024 to Jun 2024</li><li><strong>Peduly.com</strong><br />UI/UX &amp; Graphic Designer Intern · Feb 2023 to May 2023</li><li><strong>Geektuku, Akkc.id, Diskonlicious &amp; Retive</strong><br />Creative Founder</li></ul></section>
+      </div>
+      <div class="flex flex-wrap justify-end gap-3 border-t border-[#f3f0e8]/10 p-4">
+        <a href="/cv" target="_blank" rel="noopener" class="inline-flex min-h-[44px] items-center rounded-full border border-[#f3f0e8]/20 px-5 text-xs font-bold uppercase">Open full preview</a>
+        <a href="/api/cv" class="inline-flex min-h-[44px] items-center rounded-full bg-[#ff5a1f] px-5 text-xs font-bold uppercase text-[#060706]">Download PDF</a>
+      </div>
+    </div>
+  </dialog>
+
+  <script defer src="/assets/js/gsap.min.js"></script>
+  <script defer src="/assets/js/ScrollTrigger.min.js"></script>
+  <script defer src="/assets/js/portfolio-motion.js"></script>
+  <script>
+    const iconText = { menu: 'Menu', x: 'Close', 'arrow-right': '→', 'arrow-down': '↓', check: '✓', send: '→' };
+    document.querySelectorAll('[data-lucide]').forEach((icon) => {
+      const name = icon.getAttribute('data-lucide');
+      icon.textContent = iconText[name] || '';
+      icon.setAttribute('aria-hidden', 'true');
+      if (name === 'menu' || name === 'x') icon.classList.add('text-[10px]', 'font-bold', 'uppercase');
+    });
+
+    const cvDialog = document.getElementById('cvDialog');
+    const closeCvDialog = document.getElementById('closeCvDialog');
+    document.querySelectorAll('.open-cv').forEach((button) => {
+      button.addEventListener('click', () => cvDialog?.showModal());
+    });
+    closeCvDialog?.addEventListener('click', () => cvDialog?.close());
+    cvDialog?.addEventListener('click', (event) => {
+      if (event.target === cvDialog) cvDialog.close();
+    });
+
+    // Mobile drawer
+    const openDrawerBtn = document.getElementById("openDrawerBtn");
+    const closeDrawerBtn = document.getElementById("closeDrawerBtn");
+    const mobileDrawer = document.getElementById("mobileDrawer");
+    const drawerBackdrop = document.getElementById("drawerBackdrop");
+    const drawerPanel = document.getElementById("drawerPanel");
+    const drawerLinks = document.querySelectorAll(".mobile-drawer-link");
+
+    function updateDrawerActive() {
+      let active = '#home';
+      ['studio', 'work', 'experience', 'contact'].forEach((id) => {
+        const section = document.getElementById(id);
+        if (section && section.getBoundingClientRect().top <= window.innerHeight * .4) active = '#' + id;
+      });
+      drawerPanel?.querySelectorAll('.editorial-menu-link').forEach((link) => {
+        if (link.getAttribute('href') === active) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    }
+
+    function openMenu() {
+      if (!mobileDrawer || !drawerPanel) return;
+      updateDrawerActive();
+      mobileDrawer.classList.remove("pointer-events-none", "opacity-0");
+      mobileDrawer.classList.add("pointer-events-auto", "opacity-100");
+      drawerPanel.classList.remove("translate-x-full");
+      drawerPanel.classList.add("translate-x-0");
+      mobileDrawer.setAttribute('aria-hidden', 'false');
+      mobileDrawer.inert = false;
+      document.querySelector('main').inert = true;
+      document.querySelector('body > header').inert = true;
+      openDrawerBtn?.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = "hidden";
+      closeDrawerBtn?.focus();
+    }
+
+    function closeMenu({ restoreFocus = true } = {}) {
+      if (!mobileDrawer || !drawerPanel) return;
+      drawerPanel.classList.remove("translate-x-0");
+      drawerPanel.classList.add("translate-x-full");
+      mobileDrawer.classList.remove("pointer-events-auto", "opacity-100");
+      mobileDrawer.classList.add("pointer-events-none", "opacity-0");
+      mobileDrawer.setAttribute('aria-hidden', 'true');
+      mobileDrawer.inert = true;
+      document.querySelector('main').inert = false;
+      document.querySelector('body > header').inert = false;
+      openDrawerBtn?.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = "";
+      if (restoreFocus) openDrawerBtn?.focus();
+    }
+
+    openDrawerBtn?.setAttribute('aria-expanded', 'false');
+    openDrawerBtn?.setAttribute('aria-controls', 'mobileDrawer');
+    if (mobileDrawer) mobileDrawer.inert = true;
+    openDrawerBtn?.addEventListener("click", openMenu);
+    closeDrawerBtn?.addEventListener("click", () => closeMenu());
+    drawerBackdrop?.addEventListener("click", () => closeMenu());
+    drawerLinks.forEach((link) => link.addEventListener("click", () => closeMenu({ restoreFocus: false })));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && mobileDrawer?.getAttribute('aria-hidden') === 'false') closeMenu();
+      if (event.key === 'Tab' && mobileDrawer?.getAttribute('aria-hidden') === 'false') {
+        const controls = [...mobileDrawer.querySelectorAll('a[href], button')];
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
+    });
+    window.matchMedia('(min-width: 768px)').addEventListener('change', (event) => {
+      if (event.matches && mobileDrawer?.getAttribute('aria-hidden') === 'false') closeMenu({ restoreFocus: false });
+    });
+
+    // CMS content is rendered with DOM APIs so stored text never becomes markup.
+    function appendText(parent, tag, text, className) {
+      const element = document.createElement(tag);
+      element.textContent = String(text || '');
+      if (className) element.className = className;
+      parent.appendChild(element);
+      return element;
+    }
+
+    async function syncCmsProjects() {
+      try {
+        const res = await fetch('/api/projects');
+        if (!res.ok) return;
+        const data = await res.json();
+        const projects = data.projects;
+        if (!projects || !Array.isArray(projects) || projects.length === 0) return;
+
+        const gallery = document.getElementById('projectGalleryContainer');
+        if (!gallery) return;
+        const fragment = document.createDocumentFragment();
+
+        const featuredOrder = ['program-mbg-real-time-leaderboard', 'meta-ads-campaign-system', 'internal-listing-hub'];
+        const rank = (project) => { const index = featuredOrder.indexOf(project.slug); return index < 0 ? featuredOrder.length : index; };
+        [...projects].sort((a, b) => rank(a) - rank(b)).slice(0, 4).forEach((project) => {
+          if (!project.slug || !project.title) return;
+          const slug = String(project.slug).toLowerCase();
+          const cover = `/assets/images/thumbnail-${slug.includes('ads') || slug.includes('campaign') ? 'campaign' : slug.includes('listing') || slug.includes('workflow') ? 'workflow' : 'tools'}.svg`;
+
+          const link = document.createElement('a');
+          link.href = `/work/${encodeURIComponent(String(project.slug))}`;
+          link.className = 'project-gallery-card group';
+
+          const figure = document.createElement('figure');
+          figure.className = 'relative aspect-[4/3] overflow-hidden rounded-[20px] bg-[#10110f] sm:rounded-[26px]';
+          const image = document.createElement('img');
+          image.src = cover;
+          image.alt = `Dummy thumbnail for ${String(project.title)}`;
+          image.width = 1600;
+          image.height = 1000;
+          image.loading = 'lazy';
+          image.decoding = 'async';
+          image.className = 'h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]';
+          figure.appendChild(image);
+          link.appendChild(figure);
+
+          const content = document.createElement('div');
+          content.className = 'project-card-content';
+          appendText(content, 'p', project.category, 'project-category');
+          appendText(content, 'h3', project.title, 'text-2xl font-bold tracking-[-.03em] text-[#f3f0e8]');
+          appendText(content, 'p', project.description || project.subtitle || '', 'mt-3 max-w-xl text-sm leading-7 text-[#f3f0e8]/65');
+          const action = appendText(content, 'span', 'Read case study', 'case-link');
+          const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          arrow.setAttribute('viewBox', '0 0 24 24');
+          arrow.setAttribute('aria-hidden', 'true');
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', 'M5 12h14m-6-6 6 6-6 6');
+          arrow.appendChild(path);
+          action.appendChild(arrow);
+          link.appendChild(content);
+          fragment.appendChild(link);
+        });
+
+        if (fragment.childElementCount === 0) return;
+        document.dispatchEvent(new Event('portfolio:projects-before-update'));
+        gallery.replaceChildren(fragment);
+        document.dispatchEvent(new Event('portfolio:projects-updated'));
+      } catch (err) {
+        console.log('Using static verified projects fallback:', err);
+      }
+    }
+    function initCmsSync() {
+      syncCmsProjects();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCmsSync);
+    } else {
+      initCmsSync();
+    }
+  </script>
+</body>
+
+</html>

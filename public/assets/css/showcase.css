@@ -139,16 +139,6 @@ body.showcase{margin:0}
 .showcase .about-signature span{font-size:12px;font-weight:400;color:var(--secondary)}
 .showcase .about-copy p{color:var(--secondary);font-size:15px;line-height:1.85;margin-bottom:18px;max-width:60ch}
 .showcase .about-copy .lead-copy{color:var(--ink);font-size:24px;font-weight:700;line-height:1.45}
-.showcase .capability-layout{display:grid;gap:24px;margin-top:56px}
-.showcase .capability-layout>h3{font-size:24px}
-.showcase .capability-list{border-top:1px solid var(--line)}
-.showcase .capability-list details{border-bottom:1px solid var(--line)}
-.showcase .capability-list summary{display:flex;align-items:center;justify-content:space-between;gap:20px;list-style:none;cursor:pointer;min-height:64px;padding:18px 0;font-size:16px;font-weight:700;line-height:1.5}
-.showcase .capability-list summary::-webkit-details-marker{display:none}
-.showcase .capability-list summary .icon{transition:transform .25s var(--ease)}
-.showcase .capability-list details[open] summary{color:var(--accent)}
-.showcase .capability-list details[open] .icon{transform:rotate(45deg)}
-.showcase .capability-list details p{max-width:62ch;color:var(--secondary);font-size:14px;padding-bottom:22px}
 .showcase .process-pipeline{position:relative;height:650px;--pipeline-progress:1}
 .showcase .pipeline-track{position:absolute;inset:0;pointer-events:none}
 .showcase .pipeline-svg{width:100%;height:100%;overflow:visible;fill:none}
@@ -166,6 +156,7 @@ body.showcase{margin:0}
 .showcase .principles li:nth-child(5){top:90.77%}
 .showcase .principles li::before{content:counter(principle,decimal-leading-zero);position:absolute;right:14px;top:14px;font-size:12px;line-height:1;font-variant-numeric:tabular-nums;color:var(--secondary)}
 .showcase .principles .pipeline-step-icon{width:24px;height:24px;color:var(--accent)}
+.showcase .principles .pipeline-step-icons{display:flex;align-items:center;gap:8px}
 .showcase .principles h3{font-size:16px;line-height:1.5;margin:0}
 .showcase .principles li.is-reached{border-color:var(--accent)}
 .showcase .pipeline-animated .principles li:not(.is-reached) .pipeline-step-icon{color:var(--secondary)}
@@ -314,7 +305,6 @@ html:has(.showcase dialog[open]){overflow:hidden}
   .showcase .about-layout{grid-template-columns:1fr 1fr;gap:100px}
   .showcase .about-copy{padding-top:8px}
   .showcase .about-copy .lead-copy{font-size:28px}
-  .showcase .capability-layout{grid-template-columns:1fr 1fr;gap:100px;margin-top:64px}
   .showcase .toolkit-section{padding-bottom:96px}
   .showcase .contact-section{padding-block:72px 24px}
   .showcase .contact-layout{grid-template-columns:1.3fr 1fr;gap:100px;align-items:center}
@@ -327,7 +317,8 @@ html:has(.showcase dialog[open]){overflow:hidden}
 
 .showcase .works-section{padding-block:80px}
 .showcase .works-group+.works-group{margin-top:80px;padding-top:64px;border-top:1px solid var(--line)}
-.showcase .works-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:28px}
+.showcase .works-heading{display:flex;align-items:center;justify-content:space-between;gap:12px 20px;flex-wrap:wrap;margin-bottom:28px}
+.showcase .works-count{flex-basis:100%;color:var(--secondary);font-size:14px;font-variant-numeric:tabular-nums}
 .showcase .works-heading h3{font-size:clamp(24px,3vw,36px)}
 .showcase .works-heading .button{flex-shrink:0}
 .showcase .works-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:36px 24px}

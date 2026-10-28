@@ -1,5 +1,13 @@
 import { workKinds, type WorkItem } from './works';
 
+export function workPublicationStatus(work: WorkItem, published: WorkItem[]) {
+  const live = published.find(item => item.id === work.id);
+  return {
+    isLive: !!live?.published,
+    pending: summarizeWorksPublication([work], live ? [live] : []).count > 0,
+  };
+}
+
 export function summarizeWorksPublication(draft: WorkItem[], published: WorkItem[]) {
   const content = ({ createdAt, updatedAt, ...item }: WorkItem) => item;
   const stable = (value: unknown): unknown => Array.isArray(value) ? value.map(stable)

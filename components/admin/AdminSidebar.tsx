@@ -69,6 +69,7 @@ export function AdminSidebar() {
     { label: 'Works', href: '/admintgadink/dashboard/works' },
     { label: 'Editor visual', href: '/admintgadink/dashboard/editor/home' },
     { label: 'Website & CV', href: '/admintgadink/dashboard/site' },
+    { label: 'Arsip template', href: '/admintgadink/dashboard/templates' },
   ];
 
   return (

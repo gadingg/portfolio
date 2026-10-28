@@ -2,9 +2,21 @@
 
 Next.js portfolio with a private Supabase-backed CMS. Public presentation emphasizes visual work and problem solving.
 
+## Canonical repository and templates
+
+`gadingg/portfolio` is the active application. Keep its public design, CMS, and publication workflow. Only the What I Do bento section is adapted from `gadingg/portfo`. The latter is a historical design source, not a second application to deploy or merge wholesale.
+
+- `templates/active/homepage.html`: active homepage shell, rendered by the server.
+- `templates/active/what-i-do.html`: four-card bento with editable titles.
+- `public/assets/css/expertise.css`: scoped bento styling, preserving the active Manrope typography.
+- `templates/portfo/source/`: original template and assets, outside public serving.
+- **Arsip template** in admin: authenticated reference preview; never changes CMS content or publishes a template.
+
+Stored homepage layouts containing the old capabilities accordion are upgraded at render time. Other saved sections, copy, CSS, draft and published snapshots are preserved. New bento titles remain editable in Website & CV and the visual editor. See [template consolidation](docs/template-consolidation.md).
+
 ## Visual editor
 
-Open **Editor visual** for the homepage, or **Buka editor visual** from a case study. Double-click text in the GrapesJS canvas to edit copy, drag section/column blocks, or use the structure tree and element controls to move, duplicate, and delete content. Device controls preview desktop/mobile layouts; Style edits spacing, typography, color, and flex/grid arrangements. Double-click an image to use the existing private upload/media library.
+Open **Editor visual** for the homepage, or **Edit studi kasus secara visual** from a case study. Select text, images, or button links to edit them in the compact panel. Add a section from a template, move it up or down, or remove it with confirmation. Device controls preview desktop/mobile layouts.
 
 **Simpan draft** persists the layout privately. **Publikasikan** makes it public. Case-study publishing updates the selected work while retaining other unpublished Works drafts. Existing pages retain their original rendering until a visual layout is published. Visual HTML/CSS is sanitized on the server; arbitrary scripts, forms, and external embeds cannot be inserted. Dynamic Works collections remain connected to the existing CMS.
 
@@ -25,7 +37,7 @@ The existing production project is `portfolio-gading`, connected to `gadingg/por
 - **Works:** Website / Apps, Visual Design, and Branding & Video. Drop multiple images to create hidden draft works, select an existing media asset, or edit an individual work. Add a case study to a web/app item to edit its problem, solution, outcome, and content blocks.
 - **Website & CV:** hero, About, capabilities, process, tools, contact, search metadata, and CV content/PDF.
 - **Simpan draft** changes private content. **Publikasikan** publishes the Works document or Site document being edited. Visibility changes and deletions become public only when that document is published.
-- Drag handles support pointer, touch, and keyboard (Space, arrows, Space; Escape cancels). Works ordering saves automatically and updates the order of already published items without publishing draft fields. Case-study block order is part of the draft and is published with that work.
+- Drag handles support pointer, touch, and keyboard (Space, arrows, Space; Escape cancels). Works ordering stays local until **Simpan draft**, then becomes public with **Publikasikan semua**. Case-study block order is part of the draft and is published with that work. Tayang/Belum tayang describes the actual public snapshot; pending edits are identified separately.
 - Case-study slugs redirect from previous published slugs after a rename. Collection URLs remain `/webapp`, `/design`, and `/video`.
 - Draft preview requires an authorized session. Save first, then open preview.
 

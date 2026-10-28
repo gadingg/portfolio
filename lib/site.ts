@@ -2,6 +2,12 @@ import { z } from 'zod';
 import { contentURL, mediaURL } from './content-blocks';
 import { VisualLayoutSchema } from './visual-layout';
 export const defaultLinkedIn = 'https://www.linkedin.com/in/gadingutama/';
+export const expertiseDefaults = {
+  expertiseTitle0: 'Creative Strategy & Digital Marketing',
+  expertiseTitle1: 'Visual Design & Branding',
+  expertiseTitle2: 'Web Apps & Digital Solutions',
+  expertiseTitle3: 'Generative AI & Automation',
+};
 export type SiteField = {
   key: string;
   label: string;
@@ -68,12 +74,6 @@ export const siteFields: SiteField[] = [
     selector: '#work-title',
   },
   {
-    key: 'worksIntro',
-    label: 'Pengantar karya',
-    group: 'Works',
-    selector: '.works-section > .section-heading p',
-  },
-  {
     key: 'aboutTitle',
     label: 'Judul About',
     group: 'About',
@@ -109,20 +109,14 @@ export const siteFields: SiteField[] = [
     key: 'capabilitiesTitle',
     label: 'Judul kemampuan',
     group: 'About',
-    selector: '.capability-layout > h3',
+    selector: '.expertise-section > h3',
   },
-  ...Array.from({ length: 5 }, (_, i) => [
+  ...Array.from({ length: 4 }, (_, i) => [
     {
-      key: `capabilityTitle${i}`,
+      key: `expertiseTitle${i}`,
       label: `Kemampuan ${i + 1}`,
       group: 'Kemampuan',
-      selector: `.capability-list details:nth-child(${i + 1}) summary`,
-    },
-    {
-      key: `capabilityBody${i}`,
-      label: `Isi kemampuan ${i + 1}`,
-      group: 'Kemampuan',
-      selector: `.capability-list details:nth-child(${i + 1}) p`,
+      selector: `.expertise-card:nth-child(${i + 1}) .expertise-heading h4`,
     },
   ]).flat(),
   {
@@ -251,7 +245,7 @@ export const defaultCV = {
 export const SiteSchema = z
   .object({
     layout: VisualLayoutSchema.optional(),
-    values: z.record(z.string().max(4000)).transform((values): Record<string, string> => ({ linkedin: defaultLinkedIn, ...values })),
+    values: z.record(z.string().max(4000)).transform((values): Record<string, string> => ({ ...expertiseDefaults, linkedin: defaultLinkedIn, ...values })),
     cv: z.object({
       name: z.string().min(1).max(150),
       role: z.string().max(300),

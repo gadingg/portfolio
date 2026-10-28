@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import '../public/assets/css/showcase.css';
+import '../public/assets/css/expertise.css';
 import '../public/assets/css/visual-content.css';
 import { ThemeProvider } from '@/context/ThemeContext';
 import Script from 'next/script';

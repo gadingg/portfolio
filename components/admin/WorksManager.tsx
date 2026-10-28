@@ -25,7 +25,7 @@ import { BlockEditor } from './BlockEditor';
 import { useConfirm } from './ConfirmDialog';
 import './works-manager.css';
 import { AdminActionLabel } from './AdminActionLabel';
-import { summarizeWorksPublication } from '@/lib/admin-overview';
+import { summarizeWorksPublication, workPublicationStatus } from '@/lib/admin-overview';
 export function WorksManager() {
   const {ask,confirmation}=useConfirm();
   const [items, setItems] = useState<WorkItem[]>([]),
@@ -400,10 +400,11 @@ export function WorksManager() {
                   <span className="wm-summary">
                     <strong>{work.title}</strong>
                     <span>
-                      {work.published ? 'Tampil' : 'Tersembunyi'}
+                      {workPublicationStatus(work, published).isLive ? 'Tayang' : 'Belum tayang'}
                       {work.caseStudy ? ' · Studi kasus' : ''}
                       {work.demo ? ' · Contoh' : ''}
                     </span>
+                    {workPublicationStatus(work, published).pending && <span>Perubahan belum dipublikasikan</span>}
                   </span>
                   <span className="wm-edit">Edit</span>
                 </button>
@@ -429,6 +430,7 @@ export function WorksManager() {
       {item && (
         <fieldset className="cms-editor-fields" disabled={busy}>
           <div className="cms-edit-heading"><h2>Detail karya</h2>{item.caseStudy&&<button type="button" className="wm-button wm-primary" onClick={openVisual}>{dirty?'Simpan & buka editor visual':'Edit studi kasus secara visual'}</button>}</div>
+          <p>{workPublicationStatus(item, published).isLive ? 'Tayang di website.' : 'Belum tayang di website.'}{workPublicationStatus(item, published).pending ? ' Perubahan belum dipublikasikan.' : ''}</p>
           <div className="cms-inline-fields">
             <label>
               Judul
@@ -485,7 +487,7 @@ export function WorksManager() {
                   update(item.id, { published: e.target.checked })
                 }
               />
-              Tampilkan karya
+              Tampilkan setelah publikasi
             </label>
             {item.kind === 'webapp' && (
               <label className="wm-check">

@@ -98,6 +98,8 @@ components:
 
 ## Overview
 
+Owner-approved exception, 19 October 2026: What I Do uses the four-card editorial bento from `portfo`, with subtle translucent surfaces and decorative mockups. Its composition is full width, two columns, full width on desktop and a single column on mobile. It inherits this site's Manrope and palette. Scope all imported rules to `.expertise-section`; keep the active header, navigation, hero, Works, About copy, and orange contact treatment. The full older design lives only in the admin template archive.
+
 **Creative North Star: "The Work Leads"**
 
 A near-black canvas gives actual work the visual space to carry Gading's creative marketing and problem-solving identity. Warm white, broad Manrope lettering, and clear orange actions make the interface confident without competing with the artwork. English headings and action labels sit alongside natural Indonesian explanations.

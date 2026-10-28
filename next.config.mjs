@@ -14,7 +14,8 @@ const securityHeaders = [
 
 const nextConfig = {
   outputFileTracingIncludes: {
-    '/': ['./public/index.html'],
+    '/*': ['./templates/active/*.html'],
+    '/api/admin/templates/portfo/*': ['./templates/portfo/source/**/*'],
   },
   async headers() {
     return [{ source: '/(.*)', headers: securityHeaders }];

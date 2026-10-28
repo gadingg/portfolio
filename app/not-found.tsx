@@ -30,7 +30,7 @@ export default function NotFound() {
         <p style={{ color: 'var(--muted)', fontSize: '15px', lineHeight: 1.7, marginBottom: '32px' }}>
           The case study you are looking for might have been moved, unpublished, or does not exist.
         </p>
-        <Link href="/#recent-works" className="button button--primary">
+        <Link href="/#work" className="button button--primary">
           BACK TO WORKS →
         </Link>
       </div>
