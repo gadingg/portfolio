@@ -3,9 +3,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { AdminLink } from './AdminLink';
+import { useAdminChanges } from './AdminChanges';
+import { useConfirm } from './ConfirmDialog';
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const changes = useAdminChanges();
+  const {ask, confirmation} = useConfirm();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -52,6 +56,7 @@ export function AdminSidebar() {
 
   const handleLogout = async () => {
     if(loggingOut)return;
+    if(changes?.isDirty() && !(await ask('Ada perubahan yang belum disimpan. Keluar akan membuang perubahan tersebut.', 'Keluar tanpa menyimpan'))) return;
     setLoggingOut(true);setLogoutError('');
     try {
       const response=await fetch('/api/admin/logout', { method: 'POST' });
@@ -73,6 +78,7 @@ export function AdminSidebar() {
 
   return (
     <>
+      {confirmation}
       <header className="admin-mobile-header">
         <div><strong>Gading Admin</strong><span>Portfolio CMS</span></div>
         <button ref={menuButton} type="button" onClick={() => setIsOpen(value => !value)} aria-expanded={isOpen} aria-controls="admin-navigation">{isOpen ? 'Tutup' : 'Menu'}</button>

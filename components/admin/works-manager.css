@@ -152,3 +152,7 @@
 .wm-site-workspace .wm-clean-status{font-size:12px;margin-top:8px}
 @media(max-width:760px){.wm-site-layout{grid-template-columns:minmax(0,1fr);gap:24px}.wm-site-layout .cms-section-tabs{display:none}.wm-section-select{display:flex!important;gap:8px!important}.wm-savebar>span{flex-basis:100%}.wm-savebar .wm-button{font-size:12px;min-width:0!important;flex:1 1 auto}.wm-site-workspace .wm-heading{margin-bottom:24px}.wm-site-workspace .wm-heading h1{font-size:28px}}
 .wm-form-loading{display:grid;gap:16px;padding-block:24px;color:var(--muted);font-size:13px}.wm-form-loading>div{height:64px;border-radius:8px;background:var(--surface)}
+.works-manager .video-source-choice{display:flex;flex-wrap:wrap;gap:12px 24px;border:0;padding:0;margin:0 0 20px}
+.works-manager .video-source-choice legend{font-weight:600;margin-bottom:10px}
+.works-manager .video-source-choice label{display:flex;flex-direction:row;align-items:center;gap:8px;min-height:44px}
+.works-manager .video-source-choice input{width:20px;height:20px;accent-color:var(--amber)}

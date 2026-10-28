@@ -3,6 +3,22 @@ const {runtime}=require('./cms-script-runtime.cjs');
 const {NextRequest,NextResponse}=require('next/server');
 const path='video-staging/123-00000000-0000-0000-0000-000000000000.mp4';
 const request=body=>new NextRequest('https://portfolio.test/api/admin/media/video',{method:'POST',headers:{origin:'https://portfolio.test','Content-Type':'application/json'},body:JSON.stringify(body)});
+test('chosen source controls readiness, validation and public playback while retaining alternate draft data',()=>{
+ const schema=runtime()('lib/works.ts'),{workReadiness}=runtime()('lib/work-readiness.ts');
+ const item={id:'video',kind:'video',title:'Video',url:'https://www.instagram.com/reel/Example/',image:'/assets/cover.jpg',description:'',imageAlt:'',videoFile:'/api/media/works/video.mp4',published:true,demo:false,artwork:'sample'};
+ assert.equal(schema.activeVideoSource(item),'file');
+ assert.equal(schema.publicWork({...item,videoSource:'instagram'}).videoFile,'');
+ assert.equal(schema.publicWork({...item,videoSource:'instagram'}).url,item.url);
+ assert.equal(schema.publicWork({...item,videoSource:'file'}).videoFile,item.videoFile);
+ assert.equal(schema.WorkItemSchema.safeParse({...item,videoSource:'file',url:'https://example.com/old'}).success,true);
+ assert.equal(schema.publicWork({...item,videoSource:'file',url:'https://example.com/old'}).url,'');
+ assert.equal(schema.WorkItemSchema.safeParse({...item,videoSource:'instagram',url:'https://example.com/old'}).success,false);
+ assert.match(workReadiness({...item,videoSource:'file',image:''}),/thumbnail/i);
+ assert.equal(schema.WorkItemSchema.safeParse({...item,videoSource:'file',image:''}).success,false);
+ assert.equal(workReadiness({...item,videoSource:'instagram',image:''}),null);
+ assert.match(workReadiness({...item,videoSource:'instagram',url:''}),/Instagram/);
+ assert.match(workReadiness({...item,videoSource:'file',videoFile:''}),/video/);
+});
 test('file-only video supports drafts and requires a thumbnail when published',()=>{
  const schema=runtime()('lib/works.ts');const item={id:'video',kind:'video',title:'Video',url:'',image:'',description:'',imageAlt:'',videoFile:'/api/media/works/video.mp4',published:false,demo:false};
  assert.equal(schema.WorkDraftItemSchema.safeParse(item).success,true);

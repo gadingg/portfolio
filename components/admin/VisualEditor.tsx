@@ -10,7 +10,7 @@ import { useConfirm } from './ConfirmDialog';
 import 'grapesjs/dist/css/grapes.min.css';
 import './visual-editor.css';
 
-type PageData={unpublished?:boolean;revision:number;layout?:{html:string;css:string};seedHtml?:string;title:string;seedUrl:string;previewUrl:string};
+type PageData={unpublished?:boolean;publicationSections?:string[];revision:number;layout?:{html:string;css:string};seedHtml?:string;title:string;seedUrl:string;previewUrl:string};
 export function VisualEditor({target}:{target:string}){
   const {ask,confirmation}=useConfirm();
   const canvas=useRef<HTMLDivElement>(null),editor=useRef<Editor|null>(null),meta=useRef<PageData|null>(null),dirtyRef=useRef(false);
@@ -131,6 +131,8 @@ export function VisualEditor({target}:{target:string}){
   async function save(action:'save'|'publish'){
     const ed=editor.current,data=meta.current;if(!ed||!data||saveLock.current||uploading)return;
     if(action==='publish'&&!publicationState(dirty,unpublished,busy||uploading).canPublish)return;
+    if(action==='publish' && target==='home' && !(await ask(`Publikasikan perubahan ${data.publicationSections?.join(' dan ') || 'Website & CV'}? Semua draft tersimpan di bagian tersebut akan tayang.`, 'Publikasikan'))) return;
+    if(saveLock.current||uploading)return;
     saveLock.current=true;
     setBusy(true);setAction(action);setError('');
     try{
@@ -144,7 +146,7 @@ export function VisualEditor({target}:{target:string}){
         ed.setComponents(result.layout.html);ed.setStyle(result.layout.css);ed.UndoManager.clear();selectedRef.current=null;ed.select();sync(ed);
       }
       if(!changedDuringSave)baseline.current={html:ed.getHtml(),css:ed.getCss()||''};
-      meta.current={...data,revision:result.revision,layout:result.layout};if(result.title)setTitle(result.title);const changed=changedDuringSave;dirtyRef.current=changed;setDirty(changed);if(!changed)ed.clearDirtyCount();setStatus(changed?'Tersimpan, ada perubahan baru':action==='publish'?'Sudah dipublikasikan':'Draft tersimpan');
+      meta.current={...data,revision:result.revision,layout:result.layout,publicationSections:result.publicationSections};if(result.title)setTitle(result.title);const changed=changedDuringSave;dirtyRef.current=changed;setDirty(changed);if(!changed)ed.clearDirtyCount();setStatus(changed?'Tersimpan, ada perubahan baru':action==='publish'?'Sudah dipublikasikan':'Draft tersimpan');
     }catch(e){setError(e instanceof Error?e.message:'Perubahan belum tersimpan.');}finally{saveLock.current=false;setBusy(false);}
   }
   function leave(event:React.MouseEvent<HTMLAnchorElement>){if(dirtyRef.current){event.preventDefault();const href=event.currentTarget.href;void ask('Editan belum disimpan. Tetap keluar?', 'Tinggalkan').then(yes=>{if(yes){dirtyRef.current=false;window.location.assign(href);}});}}

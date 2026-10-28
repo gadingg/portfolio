@@ -35,6 +35,8 @@ import './works-manager.css';
 import { PublicationBar } from './PublicationBar';
 import { VideoSourceEditor } from './VideoSourceEditor';
 import { SettingsDisclosure } from './SettingsDisclosure';
+import { useRegisterAdminDirty } from './AdminChanges';
+import { portfolioPublicationMessage } from '@/lib/publication-review';
 export function WorksManager() {
   const {ask,confirmation}=useConfirm();
   const [items, setItems] = useState<WorkItem[]>([]),
@@ -59,6 +61,7 @@ export function WorksManager() {
     unpublished = JSON.stringify(items) !== JSON.stringify(published);
   const dirtyRef = useRef(dirty);
   dirtyRef.current = dirty;
+  useRegisterAdminDirty(dirtyRef);
   function adopt(data: any) {
     dirtyRef.current = false;
     setItems(data.items);
@@ -166,6 +169,8 @@ export function WorksManager() {
       setError(`${index!==null&&items[index]?items[index].title+': ':''}${issue.message}`);
       return false;
     }
+    if(action==='publish' && !(await ask(portfolioPublicationMessage(items, published), 'Publikasikan semua'))) return false;
+    if (busy || mutationLock.current) return false;
     mutationLock.current = true;
     setOperation(action);
     setBusy(true);
@@ -187,44 +192,16 @@ export function WorksManager() {
       setBusy(false);
     }
   }
-  async function order(next: WorkItem[]) {
+  function order(next: WorkItem[]) {
     if (busy || mutationLock.current) return;
-    mutationLock.current = true;
-    const focused = (document.activeElement as HTMLElement)
-      ?.closest('[data-sortable]')
-      ?.getAttribute('data-sortable');
     const positions = items
       .map((item, i) => (item.kind === kind ? i : -1))
       .filter((i) => i >= 0);
     const ordered = [...items];
     positions.forEach((position, i) => (ordered[position] = next[i]));
     setItems(ordered);
-    setBusy(true);
     setError('');
-    try {
-      if (dirty) await send('save', items);
-      adopt(
-        await send(
-          'order',
-          ordered,
-          ordered.map((item) => item.id),
-        ),
-      );
-      setNotice('Urutan tersimpan.');
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Urutan belum tersimpan.');
-    } finally {
-      mutationLock.current = false;
-      setBusy(false);
-      if (focused)
-        requestAnimationFrame(() =>
-          document
-            .querySelector<HTMLElement>(
-              `[data-sortable="${CSS.escape(focused)}"] .cms-grip`,
-            )
-            ?.focus(),
-        );
-    }
+    setNotice('Urutan berubah. Simpan draft, lalu publikasikan untuk memperbarui website.');
   }
   function update(id: string, patch: Partial<WorkItem>) {
     setItems((current) =>
@@ -310,8 +287,8 @@ export function WorksManager() {
           <ExternalLink size={18} />
         </a>
       </div>
-      {revision !== null && <PublicationBar dirty={dirty} unpublished={unpublished} busy={busy} operation={operation} scope="Berlaku untuk seluruh perubahan koleksi."
-        onCancel={() => { setItems(saved); setRemoved(null); setError(''); if (editing && !saved.some(work => work.id === editing)) setEditing(null); }}
+      {revision !== null && <PublicationBar dirty={dirty} unpublished={unpublished} busy={busy} operation={operation} scope="Berlaku untuk seluruh perubahan koleksi." publishLabel="Publikasikan semua"
+        onCancel={() => { setItems(saved); setRemoved(null); setError(''); setNotice(''); if (editing && !saved.some(work => work.id === editing)) setEditing(null); }}
         onSave={() => { void save('save'); }} onPublish={() => { void save('publish'); }}/>}
       {error && (
         <div className="wm-message wm-error" role="alert">
@@ -519,9 +496,9 @@ export function WorksManager() {
             )}
           </div>
           {!item.caseStudy&&item.archivedCaseStudy&&<p className="wm-message" role="status">{item.kind==='webapp'?'Studi kasusnya masih aman. Aktifkan lagi buat lanjut edit.':'Studi kasusnya masih aman. Pilih Website / Apps buat lanjut edit.'}</p>}
-          {!item.caseStudy && item.kind !== 'design' && (
+          {!item.caseStudy && item.kind === 'webapp' && (
             <label>
-              {item.kind === 'video' ? 'Link Instagram (boleh kosong kalau ada file video)' : 'Link aplikasi'}
+              Link aplikasi
               <input
                 value={item.url}
                 inputMode="url"
@@ -529,7 +506,7 @@ export function WorksManager() {
               />
             </label>
           )}
-          {item.kind==='video'&&<VideoSourceEditor key={item.id} value={item.videoFile||''} cover={item.image} disabled={busy} onBusyChange={setBusy} onChange={patch=>update(item.id,patch)}/>}
+          {item.kind==='video'&&<VideoSourceEditor key={item.id} item={item} disabled={busy} onBusyChange={setBusy} onChange={patch=>update(item.id,patch)}/>}
           {item.caseStudy && (
             <SettingsDisclosure title="Studi Kasus & Editor Blok" icon={<FileText size={20}/>}>
               <div className="cms-block-fields">

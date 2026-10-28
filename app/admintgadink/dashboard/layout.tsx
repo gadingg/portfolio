@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
+import { AdminChangesProvider } from '@/components/admin/AdminChanges';
 import { verifyAdminSession } from '@/lib/auth/session';
 import '@/components/admin/admin-controls.css';
 
@@ -21,9 +22,9 @@ export default async function AdminDashboardLayout({
   if (!(await verifyAdminSession())) redirect('/admintgadink');
 
   return (
-    <div className="admin-shell">
+    <AdminChangesProvider><div className="admin-shell">
       <AdminSidebar />
       <main className="admin-main">{children}</main>
-    </div>
+    </div></AdminChangesProvider>
   );
 }

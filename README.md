@@ -24,8 +24,8 @@ The existing production project is `portfolio-gading`, connected to `gadingg/por
 
 - **Works:** Website / Apps, Visual Design, and Branding & Video. Drop multiple images to create hidden draft works, select an existing media asset, or edit an individual work. Add a case study to a web/app item to edit its problem, solution, outcome, and content blocks.
 - **Website & CV:** hero, About, capabilities, process, tools, contact, search metadata, and CV content/PDF.
-- **Simpan draft** changes private content. **Publikasikan** publishes the Works document or Site document being edited. Visibility changes and deletions become public only when that document is published.
-- Drag handles support pointer, touch, and keyboard (Space, arrows, Space; Escape cancels). Works ordering saves automatically and updates the order of already published items without publishing draft fields. Case-study block order is part of the draft and is published with that work.
+- **Simpan draft** changes private content. **Publikasikan semua** publishes the entire Works collection; review shows changed works and order before confirmation. Website & CV publication reviews which of those areas changed. A case-study visual editor publishes only that study.
+- Drag handles support pointer, touch, and keyboard (Space, arrows, Space; Escape cancels). Works ordering stays in the local draft until saved, then becomes public only on publication. Case-study block order is part of the draft and is published with that work.
 - Case-study slugs redirect from previous published slugs after a rename. Collection URLs remain `/webapp`, `/design`, and `/video`.
 - Draft preview requires an authorized session. Save first, then open preview.
 
@@ -37,7 +37,7 @@ New uploads are immutable files in the private `portfolio-cms-media` bucket. `/a
 
 Uploads support JPG, PNG, WebP, GIF, MP4, WebM, and PDF, with file-signature checks and a 4 MB per-file limit suitable for the Vercel request limit. Cover pickers accept images; the CV picker accepts PDF. The media picker lists both buckets with pagination and reports storage failures instead of substituting stock assets.
 
-Instagram videos use public `/reel/`, `/p/`, or `/tv/` URLs. An embed loads after a tap and is removed on close. Instagram may require Play within its player or disallow embedding; an external fallback remains available.
+Choose File video or Instagram as the active video source. Switching retains the other source in the draft, while the published player uses the selected source. Existing items without a selection retain their previous behavior: file first when present, otherwise Instagram. File video needs a thumbnail before publication. Instagram videos use public `/reel/`, `/p/`, or `/tv/` URLs; an embed loads after a tap, and an external fallback remains available.
 
 Legacy Portfolio/Gallery editor URLs redirect to Works. Their old write APIs are closed with authenticated HTTP 410 responses. The old database rows and approved brief remain intact as migration/archive sources.
 

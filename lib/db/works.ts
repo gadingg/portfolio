@@ -304,7 +304,7 @@ export async function changeWorks(body: {
       'works',
       current,
       { items: orderedItems(current.draft.items, ids) },
-      { items: orderedItems(current.published.items, ids) },
+      current.published,
     );
   }
   const draft = {

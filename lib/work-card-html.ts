@@ -12,7 +12,7 @@ export const worksJSON = (items: WorkItem[]) => JSON.stringify({items:items.filt
 
 export function workCardsHTML(items: WorkItem[], collection = false, showcase = false): string {
   return items.map(original => {
-    const item = cleanPlaceholderCopy(original);
+    const item = cleanPlaceholderCopy(publicWork(original));
     const title = escape(item.title), src = safeURL(item.image), href = safeURL(item.caseStudy ? `/work/${item.caseStudy.slug}` : item.url);
     const heading = collection ? 'h2' : 'h4';
     const thumbnail=workThumbnail(src);

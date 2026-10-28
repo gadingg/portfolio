@@ -7,6 +7,8 @@ import { SortableList } from './SortableList';
 import { useConfirm } from './ConfirmDialog';
 import './works-manager.css';
 import { PublicationBar } from './PublicationBar';
+import { useRegisterAdminDirty } from './AdminChanges';
+import { sitePublicationSummary } from '@/lib/publication-review';
 export function SiteManager() {
   const {ask,confirmation}=useConfirm();
   const [content, setContent] = useState<SiteContent | null>(null),
@@ -18,10 +20,11 @@ export function SiteManager() {
     [error, setError] = useState(''),
     [notice, setNotice] = useState('');
   const [operation, setOperation] = useState<'save' | 'publish' | null>(null);
-  const dirty = content && JSON.stringify(content) !== saved;
+  const dirty = !!content && JSON.stringify(content) !== saved;
   const dirtyRef = useRef(dirty);
   const mutationLock = useRef(false);
   dirtyRef.current = dirty;
+  useRegisterAdminDirty(dirtyRef);
   function adopt(data: any) {
     setContent(data.draft);
     setSaved(JSON.stringify(data.draft));
@@ -74,6 +77,11 @@ export function SiteManager() {
   }, []);
   async function save(action: 'save' | 'publish') {
     if (busy || mutationLock.current) return;
+    if (action === 'publish' && content && published) {
+      const sections = sitePublicationSummary(content, JSON.parse(published));
+      if (!(await ask(`Publikasikan perubahan ${sections.join(' dan ') || 'Website & CV'}? Semua draft tersimpan di bagian tersebut akan tayang.`, 'Publikasikan'))) return;
+      if (mutationLock.current) return;
+    }
     mutationLock.current = true;
     setOperation(action);
     setBusy(true);

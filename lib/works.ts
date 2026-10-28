@@ -3,6 +3,9 @@ import { CaseStudySchema, mediaURL } from './content-blocks';
 
 export const workKinds = ['webapp', 'design', 'video'] as const;
 export type WorkKind = (typeof workKinds)[number];
+export function activeVideoSource(item: { videoSource?: 'file' | 'instagram'; videoFile?: string }) {
+  return item.videoSource || (item.videoFile ? 'file' : 'instagram');
+}
 export const workLabels: Record<WorkKind, string> = {
   webapp: 'Website / Apps',
   design: 'Visual Design',
@@ -56,6 +59,7 @@ export const WorkDraftItemSchema = z.object({
   createdAt: z.string().datetime().optional(),
   updatedAt: z.string().datetime().optional(),
   videoFile: mediaURL.refine(value=>!value||/\.(mp4|webm)(?:[?#].*)?$/i.test(value),'Gunakan file MP4 atau WebM.').optional(),
+  videoSource: z.enum(['file', 'instagram']).optional(),
   id: z
     .string()
     .min(1)
@@ -88,14 +92,14 @@ export const WorkDraftItemSchema = z.object({
   aliases:z.array(z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)).max(30).optional(),
 });
 export const WorkItemSchema = WorkDraftItemSchema.superRefine((item, ctx) => {
-  if(item.kind==='video'&&item.videoFile&&item.published&&!item.demo&&!item.image)ctx.addIssue({code:'custom',path:['image'],message:'Tambahkan thumbnail sebelum video dipublikasikan.'});
-  if (item.kind === 'video' && item.url && !instagramURL(item.url))
+  if(item.kind==='video'&&activeVideoSource(item)==='file'&&item.videoFile&&item.published&&!item.demo&&!item.image)ctx.addIssue({code:'custom',path:['image'],message:'Tambahkan thumbnail sebelum video dipublikasikan.'});
+  if (item.kind === 'video' && activeVideoSource(item)==='instagram' && item.url && !instagramURL(item.url))
     ctx.addIssue({
       code: 'custom',
       path: ['url'],
       message: 'Gunakan link Instagram /reel/, /p/, atau /tv/.',
     });
-  if (item.published && !item.demo && item.kind !== 'design' && !item.url && !(item.kind==='video'&&item.videoFile))
+  if (item.published && !item.demo && item.kind !== 'design' && (item.kind==='video' ? !(activeVideoSource(item)==='file' ? item.videoFile : item.url) : !item.url))
     ctx.addIssue({
       code: 'custom',
       path: ['url'],
@@ -128,6 +132,10 @@ export function setWorkKind(item: WorkItem, kind: WorkKind): WorkItem {
 
 export function publicWork(item: WorkItem): WorkItem {
   const { archivedCaseStudy, createdAt, updatedAt, ...visible } = item;
+  if (visible.kind === 'video') {
+    if (activeVideoSource(visible) === 'instagram') return { ...visible, videoFile: '', url: visible.url };
+    return { ...visible, url: instagramURL(visible.url) || '' };
+  }
   return { ...visible, url: visible.caseStudy ? `/work/${visible.caseStudy.slug}` : visible.url };
 }
 export const WorksDraftSchema = z

@@ -67,7 +67,7 @@
   modal.addEventListener('keydown',e=>{if(modal.dataset.mode==='design'&&['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();showDesign(imageIndex+(e.key==='ArrowLeft'?-1:1));}});
   function openVideo(item, trigger) {
     openDialog(trigger,item.title);modal.dataset.mode='video';
-    const file=safeURL(item.videoFile);
+    const file=item.videoSource==='instagram'?'':safeURL(item.videoFile);
     if(file&&/\.(mp4|webm)(?:[?#].*)?$/i.test(file)){
       const video=node('video','portfolio-video-player');video.src=file;video.poster=safeURL(item.image);video.controls=true;video.autoplay=true;video.muted=true;video.playsInline=true;video.preload='metadata';body.append(video);
       const status=node('p','','');status.setAttribute('role','status');bottom.append(status);
@@ -102,7 +102,7 @@
     else if(item.artwork==='listing')media.append(image('/assets/work/listing-hub.jpg',item.title,'work-app-capture'));
     else {const art=node('span','work-type-art');for(const line of artworkText[item.artwork]||[item.title])art.append(node('span','',line));media.append(art);}
     if(item.kind==='video'){
-      const file=safeURL(item.videoFile);
+      const file=item.videoSource==='instagram'?'':safeURL(item.videoFile);
       if(file&&/\.(mp4|webm)(?:[?#].*)?$/i.test(file)){
         const preview=node('video','work-video-preview');preview.dataset.src=file;preview.poster=safeURL(item.image);preview.muted=true;preview.defaultMuted=true;preview.playsInline=true;preview.loop=true;preview.preload='none';preview.setAttribute('aria-hidden','true');
         preview.addEventListener('playing',()=>preview.classList.add('is-playing'));

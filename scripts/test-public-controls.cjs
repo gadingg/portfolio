@@ -48,7 +48,7 @@ test('homepage and stored layouts lead directly to Works and retain only editabl
  assert.equal($('.pipeline-step-icon').length,5);assert.equal($('.pipeline-fill').first().attr('pathLength'),'1');
  assert.equal(site.values.heroImage,'/api/media/retained-image.png');assert.equal(siteFields.some(field=>field.key==='heroImage'||field.key==='processIntro'||field.key.startsWith('processBody')),false);
  assert.equal($('script[src="/assets/vendor/gsap/ScrollTrigger.min.js"]').length,1);
- const route=runtime({'@/lib/cms-http':{cmsAccess:async()=>null,cmsError:error=>{throw error;}},'@/lib/db/site':{getSiteDocument:async()=>({draft:site,revision:1}),renderHomepage:db.renderHomepage},'@/lib/db/works':{getWorksDocument:async()=>({draft:{items:[]}})}})('app/api/admin/visual/route.ts');
+ const route=runtime({'@/lib/cms-http':{cmsAccess:async()=>null,cmsError:error=>{throw error;}},'@/lib/db/site':{getSiteDocument:async()=>({draft:site,published:site,revision:1}),renderHomepage:db.renderHomepage},'@/lib/db/works':{getWorksDocument:async()=>({draft:{items:[]}})}})('app/api/admin/visual/route.ts');
  const response=await route.GET(new (require('next/server').NextRequest)('http://localhost/api/admin/visual?target=home'));
  const editor=load((await response.json()).layout.html);assert.equal(editor('.work-strip').length,0);assert.equal(editor('.process-pipeline').length,1);assert.equal(editor('.process-section p').length,0);
 });

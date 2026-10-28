@@ -1,10 +1,13 @@
-import { instagramURL, type WorkItem } from './works';
+import { activeVideoSource, instagramURL, WorkItemSchema, type WorkItem } from './works';
 
 export function workReadiness(item: WorkItem): string | null {
   const sampleImage = !item.image || /\/sample-design-\d+\.svg(?:[?#]|$)/.test(item.image);
   if (item.kind === 'video') {
-    const playable = !!item.videoFile || (!!instagramURL(item.url) && !/DEMO_VIDEO_/.test(item.url));
-    return playable ? null : 'Tambahkan file video atau link Instagram dulu';
+    const source = activeVideoSource(item);
+    if (source === 'instagram' && (!instagramURL(item.url) || /DEMO_VIDEO_/.test(item.url))) return 'Tambahkan link Instagram dulu';
+    if (source === 'file' && !item.videoFile) return 'Tambahkan file video dulu';
+    const validation = WorkItemSchema.safeParse({ ...item, published: true, demo: false });
+    return validation.success ? null : validation.error.issues[0]?.message || 'Lengkapi video dulu';
   }
   if (item.kind === 'design') return sampleImage ? 'Tambahkan artwork asli dulu' : null;
   return item.demo || (!item.caseStudy && !item.url) ? 'Lengkapi tujuan portfolio dulu' : null;
