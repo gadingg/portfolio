@@ -20,6 +20,7 @@ import { normalizeWorkSlugs } from '@/lib/work-slugs';
 import { cleanPlaceholderCopy } from '@/lib/placeholder-copy';
 import { isReadyWork, presentWork } from '@/lib/work-readiness';
 import { withWorkEvidence } from '@/lib/work-evidence';
+import { syncCaseIdentity } from '@/lib/case-layout';
 
 const bucket = 'portfolio-public';
 const filename = 'content/works.json';
@@ -304,7 +305,7 @@ export async function changeWorks(body: {
       'works',
       current,
       { items: orderedItems(current.draft.items, ids) },
-      { items: orderedItems(current.published.items, ids) },
+      current.published,
     );
   }
   const draft = {
@@ -313,7 +314,7 @@ export async function changeWorks(body: {
       const retained=!item.caseStudy&&!item.archivedCaseStudy
         ? {...item,archivedCaseStudy:previous?.caseStudy||previous?.archivedCaseStudy}
         : item;
-      const normalized=setWorkKind(retained,item.kind);
+      const normalized=syncCaseIdentity(previous,setWorkKind(retained,item.kind));
       return withWorkEvidence(presentWork({...normalized,url:normalized.caseStudy?`/work/${normalized.caseStudy.slug}`:normalized.url}));
     }),
   };

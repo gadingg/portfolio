@@ -1,14 +1,18 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { Eye, Save, Plus, Trash2 } from 'lucide-react';
-import { siteFields, type SiteContent } from '@/lib/site';
+import { SiteSchema, siteFields, type SiteContent } from '@/lib/site';
 import { FileDrop } from './FileDrop';
 import { SortableList } from './SortableList';
+import { useLocalRecovery } from './LocalRecovery';
 import { useConfirm } from './ConfirmDialog';
+import { usePublishReview } from './PublishReview';
+import { summarizeSite } from '@/lib/publish-summary';
 import './works-manager.css';
 import { PublicationBar } from './PublicationBar';
 export function SiteManager() {
   const {ask,confirmation}=useConfirm();
+  const {review,publicationReview}=usePublishReview();
   const [content, setContent] = useState<SiteContent | null>(null),
     [saved, setSaved] = useState(''),
     [published, setPublished] = useState(''),
@@ -19,6 +23,7 @@ export function SiteManager() {
     [notice, setNotice] = useState('');
   const [operation, setOperation] = useState<'save' | 'publish' | null>(null);
   const dirty = content && JSON.stringify(content) !== saved;
+  const {recovery}=useLocalRecovery({scope:'site',ready:!!content,revision,value:content,dirty:!!dirty,validate:value=>SiteSchema.parse(value),onRestore:setContent});
   const dirtyRef = useRef(dirty);
   const mutationLock = useRef(false);
   dirtyRef.current = dirty;
@@ -73,7 +78,9 @@ export function SiteManager() {
     };
   }, []);
   async function save(action: 'save' | 'publish') {
-    if (busy || mutationLock.current) return;
+    if (!content || busy || mutationLock.current) return;
+    if(action==='publish'&&!await review(summarizeSite(content,JSON.parse(published))))return;
+    if(busy||mutationLock.current)return;
     mutationLock.current = true;
     setOperation(action);
     setBusy(true);
@@ -109,6 +116,8 @@ export function SiteManager() {
   return (
     <div className="works-manager cms-manager wm-site-workspace">
       {confirmation}
+      {publicationReview}
+      {recovery}
       <div className="wm-heading">
         <div><h1>Website &amp; CV</h1>{content && !dirty && saved === published && <p className="wm-clean-status">Semua perubahan tersimpan</p>}</div>
         <a
@@ -183,12 +192,9 @@ export function SiteManager() {
                   </label>
                   {field.attribute === 'src' && (
                     <>
-                      <img
-                        className="cms-image-preview"
-                        src={content.values[field.key]}
-                        alt="Preview"
-                      />
                       <FileDrop
+                        previewSrc={content.values[field.key]} previewAlt={field.label}
+                        uploadLabel={content.values[field.key] ? `Ganti ${field.label.toLowerCase()}` : `Upload ${field.label.toLowerCase()}`}
                         disabled={busy}
                         onBusyChange={setBusy}
                         onUploaded={(files) => update(field.key, files[0].url)}
@@ -284,9 +290,10 @@ export function SiteManager() {
                 </button>
                 </div>)}
                 <h3>PDF CV</h3>
-                <p className="wm-muted">Download di halaman publik memakai file PDF ini. Mengedit teks CV tidak mengubah isi PDF. Upload PDF baru kalau dokumennya ikut diperbarui.</p>
+                <p className="wm-muted">File ini dipakai untuk download CV. Edit teks di atas tidak mengubah isi PDF.</p>
                 <FileDrop
                   folder="cv"
+                  uploadLabel={content.cv.pdf ? 'Ganti PDF CV' : 'Upload PDF CV'}
                   accept="application/pdf"
                   disabled={busy}
                   onBusyChange={setBusy}

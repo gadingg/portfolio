@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { editorialCaseLayout } from '@/lib/case-layout';
 import { load } from 'cheerio';
 import { cmsAccess, cmsError } from '@/lib/cms-http';
 import { getSiteDocument, renderHomepage } from '@/lib/db/site';
@@ -8,6 +9,7 @@ import { cleanVisualLayout } from '@/lib/visual-layout';
 import { SiteSchema, siteFields } from '@/lib/site';
 import { WorksDraftSchema, WorksSchema } from '@/lib/works';
 import { z } from 'zod';
+import { summarizeSite, summarizeWorks } from '@/lib/publish-summary';
 export const dynamic='force-dynamic';
 const targetSchema=z.string().regex(/^(home|[a-zA-Z0-9_-]{1,100})$/);
 export async function GET(request:NextRequest){
@@ -18,11 +20,12 @@ export async function GET(request:NextRequest){
       const [doc,works]=await Promise.all([getSiteDocument(),getWorksDocument()]);
       const rendered=await renderHomepage(doc.draft,works.draft.items.filter(item=>item.published&&item.caseStudy).flatMap(item=>[item.caseStudy!.slug,...(item.aliases||[])]));
       const layout=doc.draft.layout?cleanVisualLayout({html:load(rendered)('body').html()||'',css:doc.draft.layout.css}):undefined;
-      return NextResponse.json({unpublished:JSON.stringify(doc.draft)!==JSON.stringify(doc.published),revision:doc.revision,layout,seedHtml:layout?undefined:rendered,title:'Homepage',seedUrl:'/api/admin/preview/site',previewUrl:'/api/admin/preview/site'}, {headers:{'Cache-Control':'no-store'}});
+      return NextResponse.json({publishSummary:doc.published?summarizeSite(doc.draft,doc.published):undefined,unpublished:JSON.stringify(doc.draft)!==JSON.stringify(doc.published),revision:doc.revision,layout,seedHtml:layout?undefined:rendered,title:'Homepage',seedUrl:'/api/admin/preview/site',previewUrl:'/api/admin/preview/site'}, {headers:{'Cache-Control':'no-store'}});
     }
     const doc=await getWorksDocument(),item=doc.draft.items.find(item=>item.id===target);
     if(!item?.caseStudy)return NextResponse.json({error:'Studi kasus tidak ditemukan.'},{status:404});
-    return NextResponse.json({unpublished:JSON.stringify(item)!==JSON.stringify(doc.published.items.find(value=>value.id===target)),revision:doc.revision,layout:item.caseStudy.layout?cleanVisualLayout(item.caseStudy.layout):undefined,title:item.title,seedUrl:`/admintgadink/preview/${target}`,previewUrl:`/admintgadink/preview/${target}`},{headers:{'Cache-Control':'no-store'}});
+    const previous=doc.published.items.find(value=>value.id===target);
+    return NextResponse.json({publishSummary:{...summarizeWorks([item],previous?[previous]:[]),scope:'Berlaku hanya untuk studi kasus ini.'},unpublished:JSON.stringify(item)!==JSON.stringify(previous),revision:doc.revision,layout:item.caseStudy.layout?editorialCaseLayout(cleanVisualLayout(item.caseStudy.layout),item.caseStudy):undefined,title:item.title,seedUrl:`/admintgadink/preview/${target}`,previewUrl:`/admintgadink/preview/${target}`},{headers:{'Cache-Control':'no-store'}});
   }catch(error){return cmsError(error);}
 }
 export async function PUT(request:NextRequest){
@@ -42,12 +45,17 @@ export async function PUT(request:NextRequest){
       }
       const draft=SiteSchema.parse({...doc.draft,values,layout});
       const saved=await writeCMS('site',doc,draft,action==='publish'?draft:doc.published);
-      return NextResponse.json({unpublished:JSON.stringify(saved.draft)!==JSON.stringify(saved.published),revision:saved.revision,layout:saved.draft.layout});
+      return NextResponse.json({publishSummary:summarizeSite(saved.draft,saved.published),unpublished:JSON.stringify(saved.draft)!==JSON.stringify(saved.published),revision:saved.revision,layout:saved.draft.layout});
     }
     const doc=await getWorksDocument();if(doc.revision!==revision)throw new CMSConflict();
     const current=doc.draft.items.find(item=>item.id===target);if(!current?.caseStudy)return NextResponse.json({error:'Studi kasus tidak ditemukan.'},{status:404});
     const $=load(layout.html),title=$('h1').first().text().trim(),description=$('.case-intro p').first().text().trim();
-    const items=doc.draft.items.map(item=>item.id===target?{...item,...(title?{title}:{}),...(description?{description}:{}),caseStudy:{...item.caseStudy!,layout}}:item);
+    const overview=$('.case-summary-step p');
+    const summary=overview.length===3?{problem:overview.eq(0).text(),solution:overview.eq(1).text(),impact:overview.eq(2).text()}:{};
+    const actions=$('.case-app-actions');
+    const appLinks=actions.find('a').toArray().map(element=>({label:$(element).text().trim(),url:$(element).attr('href')||''}));
+    const linkPatch=actions.length?{appLinks,appUrl:appLinks[0]?.url||''}:{};
+    const items=doc.draft.items.map(item=>item.id===target?{...item,...(title?{title}:{}),...(description?{description}:{}),caseStudy:{...item.caseStudy!,...summary,...linkPatch,layout}}:item);
     const draft=WorksDraftSchema.parse({items});
     let published=doc.published;
     if(action==='publish'){
@@ -58,6 +66,7 @@ export async function PUT(request:NextRequest){
     }
     const saved=await writeCMS('works',doc,draft,published);
     const updated=saved.draft.items.find(item=>item.id===target)!;
-    return NextResponse.json({unpublished:JSON.stringify(updated)!==JSON.stringify(saved.published.items.find(value=>value.id===target)),revision:saved.revision,layout:updated.caseStudy!.layout,title:updated.title});
+    const previousPublished=saved.published.items.find(value=>value.id===target);
+    return NextResponse.json({publishSummary:{...summarizeWorks([updated],previousPublished?[previousPublished]:[]),scope:'Berlaku hanya untuk studi kasus ini.'},unpublished:JSON.stringify(updated)!==JSON.stringify(previousPublished),revision:saved.revision,layout:updated.caseStudy!.layout,title:updated.title});
   }catch(error){return cmsError(error);}
 }

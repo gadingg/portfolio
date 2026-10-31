@@ -45,16 +45,19 @@ test('video media gateway only signs visible published references or authenticat
  published=true;const response=await handler.GET({},params);assert.equal(response.status,307);assert.match(response.headers.get('location'),/^https:\/\/storage.test/);assert.equal(response.headers.get('cache-control'),'no-store');
  published=false;admin=true;assert.equal((await handler.GET({},params)).status,307);
 });
-test('only the dominant visible preview plays; modal, reduced motion and hidden tabs pause it',async()=>{
- const source=fs.readFileSync('public/assets/js/works.js','utf8');
- const document={hidden:false},modal={open:false},reduced={matches:false};
- const code=source.slice(source.indexOf('  const videoPreviews'),source.indexOf('  const videoObserver'))+';({videoPreviews,syncVideoPreviews})';
- const state=vm.runInNewContext(code,{document,modal,reduced});
- const video=()=>({isConnected:true,paused:true,dataset:{src:'https://storage.test/video.mp4'},pause(){this.paused=true;},play(){this.paused=false;return Promise.resolve();},classList:{remove(){}}});
- const a=video(),b=video();state.videoPreviews.set(a,{ratio:.9});state.videoPreviews.set(b,{ratio:.7});state.syncVideoPreviews();assert.equal(a.paused,false);assert.equal(b.paused,true);assert.equal(b.src,undefined);
- state.videoPreviews.get(b).ratio=1;state.syncVideoPreviews();assert.equal(a.paused,true);assert.equal(b.paused,false);
- for(const target of [modal,reduced,document]){const key=target===modal?'open':target===reduced?'matches':'hidden';target[key]=true;state.syncVideoPreviews();assert.equal(b.paused,true);target[key]=false;state.syncVideoPreviews();assert.equal(b.paused,false);}
- b.play=()=>Promise.reject(Error('blocked'));b.paused=true;state.syncVideoPreviews();await new Promise(resolve=>setImmediate(resolve));
+test('video loads only in the popup, offers a Play fallback and releases its source on close',async()=>{
+ const source=fs.readFileSync('public/assets/js/works.js','utf8'),created=[];
+ function node(tag,cls,text){const el={tag,cls,textContent:text,children:[],listeners:{},append(...children){this.children.push(...children);},setAttribute(){},addEventListener(event,fn){this.listeners[event]=fn;},play(){this.played=true;return Promise.reject(Error('blocked'));},pause(){this.paused=true;},removeAttribute(name){delete this[name];},querySelectorAll(){return[];},load(){this.loads=(this.loads||0)+1;}};created.push(el);return el;}
+ const body=node('div'),bottom=node('div'),modal={dataset:{}},openDialog=()=>{};
+ const openVideo=vm.runInNewContext(source.slice(source.indexOf('  function openVideo'),source.indexOf('  const artworkText'))+';openVideo',{node,body,bottom,modal,openDialog,safeURL:value=>value||'',instagram:value=>value||'',image:()=>node('img'),icon:()=>node('svg')});
+ assert.equal(created.some(el=>el.tag==='video'),false);
+ openVideo({title:'Film',videoFile:'/api/media/works/film.mp4',image:'/cover.jpg',url:'https://www.instagram.com/reel/real/'},{});
+ const video=created.find(el=>el.tag==='video');assert.equal(video.src,'/api/media/works/film.mp4');assert.equal(video.played,true);assert.equal(video.preload,'none');assert.equal(video.controls,true);
+ await new Promise(resolve=>setImmediate(resolve));assert.ok(bottom.children.some(el=>el.textContent==='Tekan Play untuk memutar video.'));
+ assert.ok(bottom.children.some(el=>el.textContent==='View on Instagram'&&el.href==='https://www.instagram.com/reel/real/'));
+ const release=vm.runInNewContext(source.slice(source.indexOf('  function releaseVideo'),source.indexOf('  const modal ='))+';releaseVideo',{body:{querySelectorAll:()=>[video]}});
+ release();assert.equal(video.paused,true);assert.equal(video.src,undefined);assert.equal(video.loads,1);
+ assert.doesNotMatch(source,/work-video-preview|videoPreviews|syncVideoPreviews/);
 });
 test('client transfer retries a disconnected upload and only then finalizes the scoped object',async()=>{
  const originalFetch=global.fetch,originalXHR=global.XMLHttpRequest;let transfers=0;const actions=[],progress=[];
@@ -64,4 +67,18 @@ test('client transfer retries a disconnected upload and only then finalizes the 
    const {uploadPortfolioVideo}=runtime()('lib/video-upload.ts');const result=await uploadPortfolioVideo(new File(['video'],'qa.mp4',{type:'video/mp4'}),value=>progress.push(value));
    assert.equal(transfers,2);assert.deepEqual(actions,['sign','complete']);assert.equal(result.url,'/api/media/works/final.mp4');assert.deepEqual(progress,[0,100]);
  }finally{global.fetch=originalFetch;global.XMLHttpRequest=originalXHR;}
+});
+
+test('video cards distinguish uploaded playback, direct Instagram destinations and previews before and after hydration',()=>{
+ const source=fs.readFileSync('public/assets/js/works.js','utf8'),created=[],opened=[];
+ function node(tag,cls,text){const el={tag,cls,textContent:text,dataset:{},children:[],listeners:{},append(...items){this.children.push(...items);},prepend(...items){this.children.unshift(...items);},setAttribute(name,value){this[name]=value;},addEventListener(name,listener){this.listeners[name]=listener;}};created.push(el);return el;}
+ const code=source.slice(source.indexOf('  const safeURL'),source.indexOf('  const shell'))+source.slice(source.indexOf('  function videoAction'),source.indexOf('  function setupEditorialGallery'))+';card';
+ const card=vm.runInNewContext(code,{node,URL,location:{origin:'https://portfolio.test'},image:()=>node('img'),icon:name=>node('svg',name),summary:value=>value,openVideo:item=>opened.push(item),openDialog(){}});
+ const base={id:'video',kind:'video',title:'Film',description:'',image:'/cover.webp',imageAlt:'Film cover',url:'https://www.instagram.com/reel/real/?utm_source=share',published:true,demo:false,artwork:'sample'};
+ const media=card(base,[],'h2').children[0];assert.equal(media.tag,'a');assert.equal(media.href,'https://www.instagram.com/reel/real/');assert.equal(media.target,'_blank');assert.equal(media.rel,'noopener noreferrer');assert.equal(media['aria-label'],'View on Instagram: Film');assert.equal(media.listeners.click,undefined);
+ const uploaded={...base,videoFile:'/api/media/works/film.mp4?version=1'},player=card(uploaded,[],'h2').children[0];assert.equal(player.tag,'button');assert.equal(player['aria-label'],'Watch video: Film');assert.equal(created.some(el=>el.tag==='video'),false);player.listeners.click();assert.equal(opened[0],uploaded);
+ const placeholder=card({...base,url:'https://www.instagram.com/reel/DEMO_VIDEO_2/',demo:true},[],'h2').children[0];assert.equal(placeholder['aria-label'],'Preview: Film');
+ const {workCardsHTML}=runtime()('lib/work-card-html.ts'),{load}=require('cheerio');
+ let $=load(workCardsHTML([base]));assert.equal($('.video-play').text(),'View on Instagram');assert.equal($('.work-media').attr('href'),'https://www.instagram.com/reel/real/');assert.equal($('.work-media').attr('target'),'_blank');assert.doesNotMatch($.html(),/Watch video/);
+ $=load(workCardsHTML([uploaded]));assert.equal($('.video-play').text(),'Watch video');assert.equal($('.work-media').attr('target'),undefined);
 });

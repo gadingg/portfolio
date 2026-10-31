@@ -67,8 +67,10 @@ export function AdminSidebar() {
   const navItems = [
     { label: 'Overview', href: '/admintgadink/dashboard' },
     { label: 'Portfolio', href: '/admintgadink/dashboard/works' },
+    { label: 'AI Study Case', href: '/admintgadink/dashboard/ai' },
     { label: 'Editor visual', href: '/admintgadink/dashboard/editor/home' },
     { label: 'Website & CV', href: '/admintgadink/dashboard/site' },
+    { label: 'Pengaturan AI', href: '/admintgadink/dashboard/settings' },
   ];
 
   return (

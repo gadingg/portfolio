@@ -52,6 +52,12 @@ const imageURL = (value: string) => {
 };
 
 export const WorkDraftItemSchema = z.object({
+  aiDraft: z.object({
+    brief: z.string().max(30000), confirmations: z.array(z.string().max(500)).max(12),
+    screenshots: z.array(z.object({ afterSection:z.number().int().min(0).max(7), description:z.string().max(500), caption:z.string().max(300) })).max(8),
+    generatedAt: z.string().datetime(),
+  }).optional(),
+  homepageFeatured: z.boolean().optional(),
   evidenceEdition: z.string().max(40).optional(),
   createdAt: z.string().datetime().optional(),
   updatedAt: z.string().datetime().optional(),
@@ -127,12 +133,14 @@ export function setWorkKind(item: WorkItem, kind: WorkKind): WorkItem {
 }
 
 export function publicWork(item: WorkItem): WorkItem {
-  const { archivedCaseStudy, createdAt, updatedAt, ...visible } = item;
+  const { archivedCaseStudy, createdAt, updatedAt, aiDraft, ...visible } = item;
   return { ...visible, url: visible.caseStudy ? `/work/${visible.caseStudy.slug}` : visible.url };
 }
 export const WorksDraftSchema = z
   .object({ items: z.array(WorkDraftItemSchema).max(150) })
   .superRefine(({ items }, ctx) => {
+    if (items.filter(item => item.kind === 'webapp' && item.homepageFeatured).length > 3)
+      ctx.addIssue({ code: 'custom', path: ['items'], message: 'Pilih maksimal 3 portfolio unggulan untuk homepage.' });
     if (new Set(items.map((item) => item.id)).size !== items.length)
       ctx.addIssue({
         code: 'custom',

@@ -118,5 +118,6 @@ export const CaseStudySchema = z.object({
   solution: text.default(''),
   impact: text.default(''),
   appUrl: contentURL.default(''),
+  appLinks: z.array(z.object({label:z.string().trim().min(1).max(80),url:contentURL})).max(4).optional(),
   blocks: z.array(CMSBlockSchema).max(150).default([]),
 });

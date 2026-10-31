@@ -7,7 +7,7 @@ import {
   useSensor,
   useSensors,
   type DragEndEvent,
-  type CollisionDetection,
+  closestCorners,
 } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -17,17 +17,25 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical } from 'lucide-react';
+import { GripVertical, ArrowUp, ArrowDown } from 'lucide-react';
 
 function Row({
   id,
   label,
   disabled,
+  index,
+  count,
+  move,
+  canMove,
   children,
 }: {
   id: string;
   label: string;
   disabled: boolean;
+  index: number;
+  count: number;
+  move: (from: number, to: number) => void;
+  canMove: (from: number, to: number) => boolean;
   children: (handle: ReactNode) => ReactNode;
 }) {
   const {
@@ -52,6 +60,7 @@ function Row({
       }}
     >
       {children(
+        <span className="cms-sort-controls">
         <button
           type="button"
           ref={setActivatorNodeRef}
@@ -62,7 +71,12 @@ function Row({
           aria-label={`Urutkan ${label}`}
         >
           <GripVertical size={20} aria-hidden="true" />
-        </button>,
+        </button>
+        <span className="cms-sort-steps">
+          <button type="button" className="wm-button" aria-label={`Naikkan ${label}`} disabled={disabled || index === 0 || !canMove(index,index-1)} onClick={()=>move(index,index-1)}><ArrowUp size={16} aria-hidden="true"/></button>
+          <button type="button" className="wm-button" aria-label={`Turunkan ${label}`} disabled={disabled || index === count-1 || !canMove(index,index+1)} onClick={()=>move(index,index+1)}><ArrowDown size={16} aria-hidden="true"/></button>
+        </span>
+        </span>,
       )}
     </div>
   );
@@ -71,11 +85,17 @@ export function SortableList<T extends { id: string; title?: string }>({
   items,
   onChange,
   disabled = false,
+  reorderable = true,
+  canMove = () => true,
+  onMove,
   children,
 }: {
   items: T[];
   onChange: (items: T[]) => void;
   disabled?: boolean;
+  reorderable?: boolean;
+  canMove?: (from: number, to: number) => boolean;
+  onMove?: (from: number, to: number) => void;
   children: (item: T, index: number, handle: ReactNode) => ReactNode;
 }) {
   const id = useId();
@@ -83,43 +103,25 @@ export function SortableList<T extends { id: string; title?: string }>({
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
+      scrollBehavior: 'auto',
     }),
   );
-  const end = ({ active, over }: DragEndEvent) => {
-    if (over && active.id !== over.id)
-      onChange(
-        arrayMove(
-          items,
-          items.findIndex((item) => item.id === active.id),
-          items.findIndex((item) => item.id === over.id),
-        ),
-      );
+  const move = (from: number,to: number) => {
+    if(disabled || from<0 || to<0 || from>=items.length || to>=items.length || from===to || !canMove(from,to))return;
+    if(onMove)onMove(from,to);else onChange(arrayMove(items,from,to));
   };
-  const collision: CollisionDetection = (args) =>
-    args.droppableContainers
-      .flatMap((container) => {
-        const rect = args.droppableRects.get(container.id);
-        return rect
-          ? [
-              {
-                id: container.id,
-                data: {
-                  droppableContainer: container,
-                  value: Math.abs(rect.top - args.collisionRect.top),
-                },
-              },
-            ]
-          : [];
-      })
-      .sort((a, b) => a.data.value - b.data.value);
+  const end = ({ active, over }: DragEndEvent) => {
+    if(over)move(items.findIndex(item=>item.id===active.id),items.findIndex(item=>item.id===over.id));
+  };
   const label = (value: string | number) =>
     items.find((item) => item.id === value)?.title ||
     `Blok ${items.findIndex((item) => item.id === value) + 1}`;
+  if(!reorderable)return <div className="wm-list">{items.map((item,index)=><div key={item.id}>{children(item,index,null)}</div>)}</div>;
   return (
     <DndContext
       id={id}
       sensors={sensors}
-      collisionDetection={collision}
+      collisionDetection={closestCorners}
       onDragEnd={end}
       accessibility={{
         screenReaderInstructions: {
@@ -151,6 +153,10 @@ export function SortableList<T extends { id: string; title?: string }>({
               id={item.id}
               label={item.title || `blok ${index + 1}`}
               disabled={disabled}
+              index={index}
+              count={items.length}
+              move={move}
+              canMove={canMove}
             >
               {(handle) => children(item, index, handle)}
             </Row>

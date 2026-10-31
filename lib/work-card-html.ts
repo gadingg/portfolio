@@ -1,7 +1,8 @@
 import { load } from 'cheerio';
-import { publicWork, type WorkItem } from './works';
+import { instagramURL, publicWork, type WorkItem } from './works';
 import { cleanPlaceholderCopy } from './placeholder-copy';
 import { workThumbnail } from './work-images';
+import { homepageWorks, homepageWorkSummary } from './homepage-works';
 
 const escape = (text: string) => text.replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]!));
 const safeURL = (value: string) => {
@@ -23,7 +24,13 @@ export function workCardsHTML(items: WorkItem[], collection = false, showcase = 
       const content = `<span class="work-media work-art-${item.artwork}">${picture}</span><${heading} class="work-card-title">${title}</${heading}>${item.description ? `<p class="work-card-description">${escape(item.description)}</p>` : ''}<div class="work-card-meta"><span class="work-destination">${destination}${arrow}</span></div>`;
       return `<article class="work-card work-card-webapp">${href ? `<a class="work-card-link" href="${escape(href)}" aria-label="${destination}: ${title}"${href.startsWith('/') ? '' : ' target="_blank" rel="noopener noreferrer"'}>${content}</a>` : `<div class="work-card-link">${content}</div>`}</article>`;
     }
-    const media = `<a class="work-media work-art-${item.artwork}" href="${escape(item.kind === 'video' && !item.demo ? safeURL(item.videoFile || item.url) || src : src)}" aria-label="${item.kind === 'design' ? 'Enlarge' : item.demo ? 'Preview' : 'Watch'}: ${title}">${picture}${item.kind === 'video' ? `<span class="video-bottom"><span class="video-play">${item.demo ? 'Preview' : 'Watch video'}</span><strong>${title}</strong></span>` : ''}</a>`;
+    const file=safeURL(item.videoFile||''),instagramOriginal=instagramURL(item.url);
+    const playable=!!file&&/\.(mp4|webm)(?:[?#].*)?$/i.test(file);
+    const instagram=!!instagramOriginal&&!/\/DEMO_VIDEO_\d+\//.test(instagramOriginal);
+    const videoLabel=playable?'Watch video':instagram?'View on Instagram':'Preview';
+    const destinationURL=item.kind==='video'?(playable?file:instagram?instagramOriginal!:src):src;
+    const external=item.kind==='video'&&!playable&&instagram;
+    const media = `<a class="work-media work-art-${item.artwork}" href="${escape(destinationURL)}" aria-label="${item.kind === 'design' ? 'Enlarge' : videoLabel}: ${title}"${external?' target="_blank" rel="noopener noreferrer"':''}>${picture}${item.kind === 'video' ? `<span class="video-bottom"><span class="video-play">${videoLabel}</span><strong>${title}</strong></span>` : ''}</a>`;
     const caption = item.kind === 'design' ? `<div class="${showcase ? 'video-bottom design-showcase-caption' : 'work-caption'}"><${heading} class="work-card-title">${href ? `<a class="design-title-link" href="${escape(href)}">${title}</a>` : title}</${heading}><p class="work-category">Visual Design</p></div>` : '';
     return `<article class="work-card work-card-${item.kind}">${media}${caption}</article>`;
   }).join('');
@@ -37,7 +44,17 @@ export function withInitialWorks(html: string, items: WorkItem[]): string {
     group.find('.works-recovery').attr('hidden','');
     let selected = items.filter(item => item.published && item.kind === group.attr('data-work-kind'));
     const collection = group.attr('data-collection') === 'true';
-    if (!collection && group.attr('data-work-kind') === 'webapp') selected = selected.slice(0, 3);
+    if (!collection && group.attr('data-work-kind') === 'webapp') {
+      const all = selected;
+      selected = homepageWorks(all);
+      group.find('.work-collection-summary').remove();
+      const summary = $('<p class="work-collection-summary"></p>').text(homepageWorkSummary(selected.length, all.length, all.filter(item => item.caseStudy).length));
+      const heading = group.find('.works-heading').first();
+      if (heading.length) heading.after(summary); else list.before(summary);
+      group.find('a[href="/webapp"]').each((_i, anchor) => {
+        $(anchor).attr('aria-label', `View all ${all.length} projects`).contents().filter((_n, node) => node.type === 'text').first().replaceWith(`View all ${all.length} projects `);
+      });
+    }
     list.html(workCardsHTML(selected, collection, !!group.find('.editorial-gallery').length) || '<p class="works-message">Belum ada portfolio di koleksi ini.</p>').attr('aria-busy', 'false');
   });
   $('#initial-works').remove();
