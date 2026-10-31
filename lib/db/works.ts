@@ -21,6 +21,7 @@ import { cleanPlaceholderCopy } from '@/lib/placeholder-copy';
 import { isReadyWork, presentWork } from '@/lib/work-readiness';
 import { withWorkEvidence } from '@/lib/work-evidence';
 import { syncCaseIdentity } from '@/lib/case-layout';
+import {withCaseMotion} from '@/lib/case-motion';
 
 const bucket = 'portfolio-public';
 const filename = 'content/works.json';
@@ -253,7 +254,7 @@ export async function initialWorks() {
 }
 export const getWorksDocument = async () => {
   const doc=await readCMS('works',initialWorks);
-  return {...doc,draft:{...doc.draft,items:normalizeWorkSlugs(doc.draft.items).map(cleanPlaceholderCopy).map(presentWork).map(withWorkEvidence)},published:{...doc.published,items:normalizeWorkSlugs(doc.published.items).map(cleanPlaceholderCopy).map(presentWork).map(withWorkEvidence)}};
+  return {...doc,draft:{...doc.draft,items:normalizeWorkSlugs(doc.draft.items).map(cleanPlaceholderCopy).map(presentWork).map(withWorkEvidence).map(withCaseMotion)},published:{...doc.published,items:normalizeWorkSlugs(doc.published.items).map(cleanPlaceholderCopy).map(presentWork).map(withWorkEvidence).map(withCaseMotion)}};
 };
 export async function getWorks() {
   const doc = await getWorksDocument();
@@ -272,6 +273,7 @@ export async function getPublicWorks() {
       .filter((item) => item.published && isReadyWork(item))
       .map(presentWork)
       .map(withWorkEvidence)
+      .map(withCaseMotion)
       .map(publicWork),
   };
 }

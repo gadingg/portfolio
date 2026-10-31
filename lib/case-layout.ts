@@ -2,6 +2,7 @@ import { load } from 'cheerio';
 import type { VisualLayout } from './visual-layout';
 import type { WorkItem } from './works';
 import {caseAppLinks,type CaseAppLink} from './case-app-links';
+import {caseMotion,type CaseMotionConfig} from './case-motion';
 
 function applyAppActions($:ReturnType<typeof load>,study:{slug?:string;appUrl?:string;appLinks?:CaseAppLink[]}){
   const intro=$('.case-intro').first();if(!intro.length)return;
@@ -35,7 +36,7 @@ export function syncCaseIdentity(previous: WorkItem | undefined, next: WorkItem)
 }
 
 // Apply the shared reading structure without rewriting saved custom layouts.
-export function editorialCaseLayout(layout: VisualLayout, summary?: { problem: string; solution: string; impact: string;slug?:string;appUrl?:string;appLinks?:CaseAppLink[] }): VisualLayout {
+export function editorialCaseLayout(layout: VisualLayout, summary?: { problem: string; solution: string; impact: string;slug?:string;appUrl?:string;appLinks?:CaseAppLink[];motion?:CaseMotionConfig }): VisualLayout {
   const $ = load(layout.html, null, false);
   // Older visual pages were seeded from the former draft preview's three sections.
   const legacy = $('.case-narrative>section').filter((_index, section) =>
@@ -78,5 +79,12 @@ export function editorialCaseLayout(layout: VisualLayout, summary?: { problem: s
     if(!section.children('.case-summary-heading').length)section.prepend('<h2 class="case-summary-heading">The thinking behind the output</h2>');
   });
   if(summary?.slug)applyAppActions($,summary);
+  $('[data-cms-motion-slot]').remove();
+  if(summary?.slug&&caseMotion({...summary,slug:summary.slug}))$('.case-overview').first().after('<div data-cms-motion-slot class="case-motion-slot"></div>');
+  $('.case-summary-step').each((index,element)=>{
+    const title=$(element).find('h2,h3').first();
+    title.children('svg').remove();
+    title.prepend(`<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#${['search','lightbulb','check-check'][index%3]}"></use></svg>`);
+  });
   return { ...layout, html: $.html() };
 }

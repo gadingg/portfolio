@@ -1,0 +1,19 @@
+<template><style>
+ *{box-sizing:border-box;margin:0}#root{position:absolute;inset:0;background:#0b0c0b;color:#f3f0e8;font-family:Inter,sans-serif;overflow:hidden}
+ .screen{position:absolute;left:60px;top:60px;width:960px;height:830px;overflow:hidden;border-radius:24px;background:#eff1f2}.screen img{position:absolute;left:0;top:0;width:960px;height:auto;max-width:none;transform-origin:0 0}
+ .copy{position:absolute;left:60px;top:970px;width:960px;height:310px}.copy h2{font-size:76px;font-weight:700;line-height:1.08;letter-spacing:-.035em;margin-bottom:28px}.copy p{font-size:42px;line-height:1.45;color:#c4c5bf;max-width:900px}
+ .progress{position:absolute;left:60px;top:925px;display:flex;gap:14px}.progress span{display:block;width:180px;height:6px;border-radius:3px;background:#f3f0e838}
+ </style><div id="root" data-composition-id="workflow" data-width="1080" data-height="1350">
+ <div id="screen" class="clip" data-start="0" data-duration="12" data-track-index="1" data-track-kind="graphics"><div class="screen" data-layout-allow-overflow="true"><img id="ui" src="assets/ui.webp" alt="Meta Ads Report UI" data-var-src="ui"/></div></div>
+ <div id="copy-0" class="clip copy" data-start="0" data-duration="3" data-track-index="2" data-track-kind="graphics" data-beat="Read the report"><div class="copy-inner"><h2>Read the report</h2><p>Mulai dari ringkasan performa campaign.</p></div></div><div id="copy-1" class="clip copy" data-start="3" data-duration="3" data-track-index="3" data-track-kind="graphics" data-beat="Compare the signals"><div class="copy-inner"><h2>Compare the signals</h2><p>Lihat hasil Meta Ads dan respons WhatsApp.</p></div></div><div id="copy-2" class="clip copy" data-start="6" data-duration="3" data-track-index="4" data-track-kind="graphics" data-beat="Review the cost"><div class="copy-inner"><h2>Review the cost</h2><p>Baca anggaran dan biaya per pesan.</p></div></div><div id="copy-3" class="clip copy" data-start="9" data-duration="3" data-track-index="5" data-track-kind="graphics" data-beat="Plan the next action"><div class="copy-inner"><h2>Plan the next action</h2><p>Gunakan rekap sebagai dasar evaluasi.</p></div></div><div id="progress" class="clip" data-start="0" data-duration="12" data-track-index="7"><div class="progress"><span id="tick-0"></span><span id="tick-1"></span><span id="tick-2"></span><span id="tick-3"></span></div></div>
+ </div><script>
+ const tl=gsap.timeline({paused:true});const img=document.querySelector('#ui');
+ const steps=[["Read the report","Mulai dari ringkasan performa campaign.",0.5,0.38,1.35],["Compare the signals","Lihat hasil Meta Ads dan respons WhatsApp.",0.52,0.77,1.65],["Review the cost","Baca anggaran dan biaya per pesan.",0.76,0.43,1.8],["Plan the next action","Gunakan rekap sebagai dasar evaluasi.",0.43,0.28,1.4]];const sw=960,sh=830;const ih=sw*0.75;
+ steps.forEach((step,i)=>{const scale=step[4],x=Math.min(0,Math.max(sw-sw*scale,sw/2-step[2]*sw*scale)),y=Math.min(0,Math.max(sh-ih*scale,sh/2-step[3]*ih*scale));
+ if(i===0)tl.set(img,{x,y,scale},0);else tl.to(img,{x,y,scale,duration:.65,ease:'power3.inOut'},i*3);
+ tl.fromTo('#copy-'+i+' .copy-inner',{y:24,opacity:i===0?1:0},{y:0,opacity:1,duration:.35,ease:'power3.out'},i*3);
+ tl.to('#tick-'+i,{backgroundColor:'#ff5a1f',duration:.2},i*3);
+ });
+ const first=steps[0],scale=first[4];tl.to(img,{x:Math.min(0,Math.max(sw-sw*scale,sw/2-first[2]*sw*scale)),y:Math.min(0,Math.max(sh-ih*scale,sh/2-first[3]*ih*scale)),scale,duration:.35,ease:'power2.inOut'},11.65);
+ window.__timelines=window.__timelines||{};window.__timelines.workflow=tl;
+ </script></template>

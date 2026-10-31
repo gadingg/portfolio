@@ -21,7 +21,7 @@ test('a demo without a destination is a single named button with no nested links
 test('artwork lightbox and optional detail link remain separate sibling interactions',()=>{
  const design={...item,kind:'design',caseStudy:undefined,url:'/work/design'};const root=cards()(design,[design],'h4'),all=descendants(root),button=all.find(node=>node.tagName==='BUTTON');
  assert.ok(button.listeners.click);assert.equal(descendants(button).filter(node=>node.tagName==='A').length,0);
- assert.equal(all.find(node=>node.tagName==='A').href,'https://portfolio.test/work/design');assert.equal(all.find(node=>node.className==='work-category').textContent,'Visual Design');
+ assert.equal(all.find(node=>node.tagName==='A').href,'https://portfolio.test/work/design');assert.equal(all.filter(node=>node.className==='work-category').length,0);
  assert.equal(all.find(node=>node.tagName==='IMG').src,design.image);
  assert.equal(all.filter(node=>node.className==='work-enlarge').length,0);
  const demo=descendants(cards()({...design,demo:true},[design],'h4'));

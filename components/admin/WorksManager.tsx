@@ -2,6 +2,7 @@
 import { workReadiness } from '@/lib/work-readiness';
 import { homepageWorks, setHomepageFeatured } from '@/lib/homepage-works';
 import { CaseAppLinksEditor } from './CaseAppLinksEditor';
+import {CaseMotionEditor} from './CaseMotionEditor';
 import { CaseLayoutImages } from './CaseLayoutImages';
 import { CaseLayoutText } from './CaseLayoutText';
 import { useEffect, useRef, useState } from 'react';
@@ -564,6 +565,7 @@ export function WorksManager() {
                 </label>
               </div>
               <CaseAppLinksEditor study={item.caseStudy} onChange={appLinks=>update(item.id,{caseStudy:{...item.caseStudy!,appUrl:appLinks[0]?.url||'',appLinks}})}/>
+              <CaseMotionEditor study={item.caseStudy} disabled={busy} onBusyChange={setBusy} onChange={motion=>update(item.id,{caseStudy:{...item.caseStudy!,motion}})}/>
               {(['problem', 'solution', 'impact'] as const).map((key, i) => (
                 <label key={key}>
                   {['Masalah', 'Solusi', 'Hasil'][i]}

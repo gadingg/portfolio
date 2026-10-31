@@ -55,6 +55,7 @@ export async function PUT(request:NextRequest){
     const actions=$('.case-app-actions');
     const appLinks=actions.find('a').toArray().map(element=>({label:$(element).text().trim(),url:$(element).attr('href')||''}));
     const linkPatch=actions.length?{appLinks,appUrl:appLinks[0]?.url||''}:{};
+    if($('[data-cms-motion-slot]').length){const source=load(layout.html,null,false);source('[data-cms-motion-slot]').empty();layout.html=source.html();}
     const items=doc.draft.items.map(item=>item.id===target?{...item,...(title?{title}:{}),...(description?{description}:{}),caseStudy:{...item.caseStudy!,...summary,...linkPatch,layout}}:item);
     const draft=WorksDraftSchema.parse({items});
     let published=doc.published;

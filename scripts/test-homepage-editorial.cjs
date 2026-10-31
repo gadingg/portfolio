@@ -32,7 +32,7 @@ test('homepage counts distinguish all apps and case studies while collections re
   const items=['a','b','c','d'].map((id,index)=>app(id,{homepageFeatured:index!==1,...(index===0?{caseStudy:{slug:'a'}}:{})}));
   const $=load(withInitialWorks(html,items));
   assert.deepEqual($('.work-card-title').map((_,el)=>$(el).text()).get(),['a','c','d']);
-  assert.equal($('.work-collection-summary').text(),'3 selected projects from 4 web apps · 1 case study');
+  assert.equal($('.work-collection-summary').length,0);
   assert.equal($('a[href="/webapp"]').text(),'View all 4 projects ');
   assert.equal($('a[href="/webapp"] svg').length,1);
   assert.equal(load(withInitialWorks(html.replace('data-work-kind','data-collection="true" data-work-kind'),items))('.work-card').length,4);

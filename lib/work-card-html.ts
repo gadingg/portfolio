@@ -2,7 +2,7 @@ import { load } from 'cheerio';
 import { instagramURL, publicWork, type WorkItem } from './works';
 import { cleanPlaceholderCopy } from './placeholder-copy';
 import { workThumbnail } from './work-images';
-import { homepageWorks, homepageWorkSummary } from './homepage-works';
+import { homepageWorks } from './homepage-works';
 
 const escape = (text: string) => text.replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]!));
 const safeURL = (value: string) => {
@@ -31,7 +31,7 @@ export function workCardsHTML(items: WorkItem[], collection = false, showcase = 
     const destinationURL=item.kind==='video'?(playable?file:instagram?instagramOriginal!:src):src;
     const external=item.kind==='video'&&!playable&&instagram;
     const media = `<a class="work-media work-art-${item.artwork}" href="${escape(destinationURL)}" aria-label="${item.kind === 'design' ? 'Enlarge' : videoLabel}: ${title}"${external?' target="_blank" rel="noopener noreferrer"':''}>${picture}${item.kind === 'video' ? `<span class="video-bottom"><span class="video-play">${videoLabel}</span><strong>${title}</strong></span>` : ''}</a>`;
-    const caption = item.kind === 'design' ? `<div class="${showcase ? 'video-bottom design-showcase-caption' : 'work-caption'}"><${heading} class="work-card-title">${href ? `<a class="design-title-link" href="${escape(href)}">${title}</a>` : title}</${heading}><p class="work-category">Visual Design</p></div>` : '';
+    const caption = item.kind === 'design' ? `<div class="${showcase ? 'video-bottom design-showcase-caption' : 'work-caption'}"><${heading} class="work-card-title">${href ? `<a class="design-title-link" href="${escape(href)}">${title}</a>` : title}</${heading}></div>` : '';
     return `<article class="work-card work-card-${item.kind}">${media}${caption}</article>`;
   }).join('');
 }
@@ -48,9 +48,6 @@ export function withInitialWorks(html: string, items: WorkItem[]): string {
       const all = selected;
       selected = homepageWorks(all);
       group.find('.work-collection-summary').remove();
-      const summary = $('<p class="work-collection-summary"></p>').text(homepageWorkSummary(selected.length, all.length, all.filter(item => item.caseStudy).length));
-      const heading = group.find('.works-heading').first();
-      if (heading.length) heading.after(summary); else list.before(summary);
       group.find('a[href="/webapp"]').each((_i, anchor) => {
         $(anchor).attr('aria-label', `View all ${all.length} projects`).contents().filter((_n, node) => node.type === 'text').first().replaceWith(`View all ${all.length} projects `);
       });

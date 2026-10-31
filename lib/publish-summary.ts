@@ -18,6 +18,7 @@ function images(item: WorkItem) {
   const result = new Set<string>();
   const add = (value: unknown) => { if(typeof value==='string'&&value)result.add(value); };
   add(item.image);
+  add(item.caseStudy?.motion?.poster);add(item.caseStudy?.motion?.mobilePoster);
   for(const block of item.caseStudy?.blocks || []) {
     const content=block.content_json;
     if(block.block_type==='image')add(content.url);

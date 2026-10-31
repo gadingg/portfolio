@@ -1,4 +1,6 @@
 import { CaseAppActions } from '@/components/public/study-case/CaseAppActions';
+import {CaseMotion} from '@/components/public/study-case/CaseMotion';
+import {caseMotion} from '@/lib/case-motion';
 import React from 'react';
 import { CaseOverview } from '@/components/public/study-case/CaseOverview';
 import { editorialCaseLayout } from '@/lib/case-layout';
@@ -100,6 +102,7 @@ export default async function StudyCasePage({
   if(presentation?.layout)return <div className="showcase" id="case-top">
     <StudyCaseHeader projectTitle={project.title}/>
     <div className="case-editorial"><VisualLayout layout={editorialCaseLayout(presentation.layout, presentation)}/></div>
+    <CaseMotion motion={caseMotion(presentation)} portal/>
     <div className="section-shell case-narrative mx-auto max-w-3xl"><NextProjectNav nextProject={nextProject}/></div>
     <AuraFooter/>
   </div>;
@@ -137,6 +140,7 @@ export default async function StudyCasePage({
           </figure>
 
           <CaseOverview problem={problem} approach={approach} outcome={outcome}/>
+          {presentation&&<CaseMotion motion={caseMotion(presentation)}/>}
 
           <div className="case-narrative mx-auto mt-12 max-w-3xl">
             {blocks.length > 0 && <StudyCaseRenderer blocks={blocks} />}

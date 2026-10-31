@@ -112,11 +112,10 @@
       if(item.kind==='design'&&href){const details=node('a','design-title-link',item.title);details.href=href;if(!href.startsWith(location.origin+'/')){details.target='_blank';details.rel='noopener noreferrer';}details.append(icon('arrow-up-right'));heading.append(details);}else heading.textContent=item.title;
       if(item.kind==='design'&&showcase){
         const caption=node('div','video-bottom design-showcase-caption');
-        caption.append(heading,node('p','work-category','Visual Design'));unit.append(caption);
+        caption.append(heading);unit.append(caption);
       }else{
         unit.append(heading);
         if(app)unit.append(node(href?'p':'span','work-card-description',summary(item.description)));
-        if(item.kind==='design')unit.append(node('p','work-category','Visual Design'));
       }
     }
     const meta=node(app&&!href?'span':'div','work-card-meta');
@@ -202,10 +201,7 @@
       groups.forEach(group=>{group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=true);const list=group.querySelector('[data-works-list]');let items=data.items.filter(item=>item.kind===group.dataset.workKind&&item.published);if(group.dataset.workKind==='webapp'&&!group.dataset.collection){
         const all=items,manual=all.some(item=>item.homepageFeatured!==undefined);
         items=all.filter(item=>!manual||item.homepageFeatured===true).slice(0,3);
-        let summary=group.querySelector('.work-collection-summary');
-        if(!summary){summary=node('p','work-collection-summary');(group.querySelector('.works-heading')||list).insertAdjacentElement(group.querySelector('.works-heading')?'afterend':'beforebegin',summary);}
-        const studies=all.filter(item=>item.caseStudy).length;
-        summary.textContent=`${items.length} selected ${items.length===1?'project':'projects'} from ${all.length} web ${all.length===1?'app':'apps'} · ${studies} case ${studies===1?'study':'studies'}`;
+        group.querySelector('.work-collection-summary')?.remove();
         const link=group.querySelector('a[href="/webapp"]');if(link){const copy=[...link.childNodes].find(child=>child.nodeType===3);if(copy)copy.textContent=`View all ${all.length} projects `;link.setAttribute('aria-label',`View all ${all.length} projects`);}
       }
         list.replaceChildren(...items.map(item=>card(item,items,group.dataset.collection?'h2':'h4',!!group.querySelector('.editorial-gallery'))));if(!items.length)list.append(node('p','works-message','Belum ada portfolio di koleksi ini.'));list.scrollLeft=0;list.setAttribute('aria-busy','false');group._updateCarousel?.();

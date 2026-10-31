@@ -94,6 +94,10 @@ export const WorkDraftItemSchema = z.object({
   aliases:z.array(z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)).max(30).optional(),
 });
 export const WorkItemSchema = WorkDraftItemSchema.superRefine((item, ctx) => {
+  if(item.published&&item.caseStudy?.motion?.enabled){
+    if(!item.caseStudy.motion.video)ctx.addIssue({code:'custom',path:['caseStudy','motion','video'],message:'Tambahkan video animasi atau matikan Tampilkan animasi alur.'});
+    if(!item.caseStudy.motion.poster)ctx.addIssue({code:'custom',path:['caseStudy','motion','poster'],message:'Tambahkan poster animasi sebelum dipublikasikan.'});
+  }
   if(item.kind==='video'&&item.videoFile&&item.published&&!item.demo&&!item.image)ctx.addIssue({code:'custom',path:['image'],message:'Tambahkan thumbnail sebelum video dipublikasikan.'});
   if (item.kind === 'video' && item.url && !instagramURL(item.url))
     ctx.addIssue({
