@@ -36,7 +36,7 @@ test('stored CMS layouts receive editorial hero, exact bio, and matching design/
  site.layout={html:old('body').html(),css:''};const $=load(await db.renderHomepage(site));
  assert.equal($('.hero-metadata').text(),'2+ years in creative marketing & product development');assert.equal($('#hero-title').text(),'I Think. I Create.I Solve.');
  assert.equal($('.about-copy>p').length,1);
- assert.equal($('.about-statement').text(),'I take part in planning campaigns, designing the visuals, and building the tools the team needs.');assert.equal($('.about-copy>p').text(),'I take part in planning campaigns, designing the visuals, and building the tools the team needs.');
+ assert.equal($('.about-statement').text(),'Plan campaigns. Design visuals. Build useful tools.');assert.equal($('.about-copy>p').text(),'Plan campaigns. Design visuals. Build useful tools.');
  assert.equal($('#visuals').attr('data-carousel'),'true');assert.equal($('#visuals .carousel-controls').length,1);assert.equal($('#visuals .editorial-gallery.works-track').length,1);assert.equal($('#videos[data-carousel] .carousel-controls').length,1);
  assert.equal($('#visuals .gallery-hint').length,0);
  assert.equal(site.values.aboutLead,'Saya suka ikut mikir dari awal.');
@@ -87,7 +87,7 @@ test('legacy five-capability layouts receive four exact title-only cards without
 test('homepage and stored layouts place Works before About and preserve editable quote and single body',async()=>{
  const db=runtime({'./cms':{}})('lib/db/site.ts'),{load}=require('cheerio');
  const site=await db.initialSite(),old=load(fs.readFileSync('public/index.html','utf8'));
- assert.equal(site.values.aboutBody1,'I take part in planning campaigns, designing the visuals, and building the tools the team needs.');
+ assert.equal(site.values.aboutBody1,'Plan campaigns. Design visuals. Build useful tools.');
  assert.equal(site.values.aboutBody2,'');
  old('#work').insertAfter(old('#home'));
  old('.about-quote').replaceWith(old('.about-statement').clone());

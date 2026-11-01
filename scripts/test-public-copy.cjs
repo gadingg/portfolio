@@ -51,3 +51,13 @@ test('all category headings separate count from action and repeated rendering do
  $('.works-heading > a').each((_,el)=>{assert.equal($(el).text(),'View all');assert.ok($(el).hasClass('button-outline'));assert.match($(el).find('use').attr('href'),/#arrow-right$/);});
  assert.equal($('[data-work-kind="design"] .works-heading > a').attr('href'),'/design');
 });
+test('Improve migrates the old process label independently without resetting saved About edits',async()=>{
+ const site=await runtime({'./cms':{}})('lib/db/site.ts').initialSite();
+ site.values.publicCopyEdition=edition.edition;site.values.aboutEditorialVersion='1';
+ site.values.aboutBody1='I take part in planning campaigns, designing the visuals, and building the tools the team needs.';
+ for(const previous of ['Ownership','Take ownership','Take Ownership']){
+  const next=copy.refineSiteCopy({...site,values:{...site.values,processTitle4:previous},layout:{html:`<ol><li><h3>${previous}</h3></li></ol>`,css:''}});
+  assert.equal(next.values.processTitle4,'Improve');assert.equal(next.values.aboutBody1,site.values.aboutBody1);assert.equal(load(next.layout.html)('li>h3').text(),'Improve');
+  next.values.processTitle4='Custom step';assert.equal(copy.refineSiteCopy(next).values.processTitle4,'Custom step');
+ }
+});

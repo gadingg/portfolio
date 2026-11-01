@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const [site,works]=await Promise.all([getPublicSite(),getPublicWorks()]);
-    const html=await renderHomepage(site,works.items.filter(item=>item.caseStudy).flatMap(item=>[item.caseStudy!.slug,...(item.aliases||[])]));
+    const html=await renderHomepage(site,works.items.filter(item=>item.caseStudy).flatMap(item=>[item.caseStudy!.slug,...(item.aliases||[])]),works.items);
     return new NextResponse(withInitialWorks(html,works.items), {
       status: 200,
       headers: {

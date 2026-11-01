@@ -21,7 +21,7 @@ export async function GET(request:NextRequest){
     const target=targetSchema.parse(request.nextUrl.searchParams.get('target'));
     if(target==='home'){
       const [doc,works]=await Promise.all([getSiteDocument(),getWorksDocument()]);
-      const rendered=await renderHomepage(doc.draft,works.draft.items.filter(item=>item.published&&item.caseStudy).flatMap(item=>[item.caseStudy!.slug,...(item.aliases||[])]));
+      const rendered=await renderHomepage(doc.draft,works.draft.items.filter(item=>item.published&&item.caseStudy).flatMap(item=>[item.caseStudy!.slug,...(item.aliases||[])]),works.draft.items);
       const layout=doc.draft.layout?cleanVisualLayout({html:load(rendered)('body').html()||'',css:doc.draft.layout.css}):undefined;
       return NextResponse.json({publishSummary:summarizeSite(doc.draft,doc.published),publicationSections:sitePublicationSummary(doc.draft,doc.published),unpublished:JSON.stringify(doc.draft)!==JSON.stringify(doc.published),revision:doc.revision,layout,seedHtml:layout?undefined:rendered,title:'Homepage',seedUrl:'/api/admin/preview/site',previewUrl:'/api/admin/preview/site'}, {headers:{'Cache-Control':'no-store'}});
     }

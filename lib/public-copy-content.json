@@ -16,9 +16,10 @@
     },
     "aboutBody1": {
       "from": [
-        "Good visuals catch eyes. Great ideas make an impact."
+        "Good visuals catch eyes. Great ideas make an impact.",
+        "I take part in planning campaigns, designing the visuals, and building the tools the team needs."
       ],
-      "to": "I take part in planning campaigns, designing the visuals, and building the tools the team needs."
+      "to": "Plan campaigns. Design visuals. Build useful tools."
     },
     "aboutBody2": {
       "from": [
@@ -46,9 +47,11 @@
     },
     "processTitle4": {
       "from": [
-        "Ownership"
+        "Ownership",
+        "Take ownership",
+        "Take Ownership"
       ],
-      "to": "Take ownership"
+      "to": "Improve"
     },
     "toolkitTitle": {
       "from": [

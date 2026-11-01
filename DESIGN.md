@@ -294,4 +294,9 @@ All admin editors share saved/unsaved/unpublished publication rules. Draft autos
 Public Works render usable initial cards from published content on the server. The same snapshot bootstraps gallery/player interactions without a second initial collection fetch. Runtime failures retain existing cards; retries and reduced-motion skeletons cover genuinely missing data. Demo flags remain internal so engagement continues excluding temporary entries.
 
 
-Public copy refinement (2026-11-01): preserve the public visual system. Use concise English hero and action labels, factual Indonesian case narratives, and dynamic collection totals. How I Work retains title-only steps, with Design & Build using pen-tool and code icons. Remove default promotional footer copy; preserve owner-customized text and all project evidence. See docs/briefs/2026-11-01-public-copy.md.
+Public copy refinement (2026-11-01): preserve the public visual system. Use concise English hero and action labels, factual Indonesian case narratives, and dynamic collection totals. How I Work retains title-only steps, with Design & Build using one combined palette and code icon. Remove default promotional footer copy; preserve owner-customized text and all project evidence. See docs/briefs/2026-11-01-public-copy.md.
+
+
+About editorial refinement (2026-11-01): pair the introduction with overlapping fragments of ready published visual-design and app work. On mobile, place the collage between the headline and three short action lines. Retain the existing palette, Manrope type ramp endpoints, and artwork radius. Capability scenes use distinct finite GSAP sequences on viewport entry, replay on desktop hover, and remain static under reduced motion. See docs/briefs/2026-11-01-about-editorial-motion.md.
+
+How I Work update: Observe → Brainstorm → Design & Build → Collaborate → Improve. Design & Build uses one combined palette/code glyph from the existing Lucide vocabulary.

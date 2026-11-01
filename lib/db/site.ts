@@ -7,6 +7,9 @@ import { readCMS, readPublishedCMS } from './cms';
 import { cleanVisualLayout } from '../visual-layout';
 import { siteURL } from '../site-url';
 import { refineSiteCopy } from '../public-copy';
+import { isReadyWork } from '../work-readiness';
+import { workThumbnail } from '../work-images';
+import type { WorkItem } from '../works';
 export const homepageTemplate = () =>
   fs.readFile(path.join(process.cwd(), 'public/index.html'), 'utf8');
 export async function initialSite(): Promise<SiteContent> {
@@ -61,7 +64,7 @@ export const getSiteDocument = async () => {
   return { ...document, draft: withSiteDefaults(document.draft), published: withSiteDefaults(document.published) };
 };
 export const getPublicSite = async () => withSiteDefaults(await readPublishedCMS('site', initialSite, {cached:true}));
-export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
+export async function renderHomepage(site: SiteContent,caseSlugs?:string[],aboutWorks:WorkItem[]=[]) {
   const $ = load(await homepageTemplate());
   const values = withSiteDefaults(site).values;
   const baseURL=siteURL();
@@ -169,8 +172,33 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
   $('.about-copy p,.contact-layout p,.contact-bottom > span').filter((_index, element) => !$(element).text().trim()).remove();
   $('.about-quote').each((_index, element) => {
     const quote = $(element), statement = quote.find('.about-statement');
-    if (statement.text() === 'I take part in planning campaigns, designing the visuals, and building the tools the team needs.') quote.replaceWith(statement);
+    if (statement.text() === 'Plan campaigns. Design visuals. Build useful tools.') quote.replaceWith(statement);
   });
+  const aboutLayout=$('#about .about-layout').first();
+  if(aboutLayout.length&&!aboutLayout.attr('data-cms-about-version')){
+    const intro=$('<div class="about-introduction"></div>');
+    intro.append(aboutLayout.children().not('.about-workboard'));
+    aboutLayout.prepend(intro).addClass('about-editorial').attr('data-cms-about-version','1');
+    const heading=intro.find('#about-title');
+    if(heading.parent().is(intro))heading.wrap('<div class="about-heading"></div>');else heading.parent().addClass('about-heading');
+    const visible=aboutWorks.filter(item=>item.published&&isReadyWork(item)&&item.image);
+    const poster=visible.find(item=>item.kind==='design'),app=visible.find(item=>item.kind==='webapp');
+    if(!aboutLayout.find('.about-workboard').length&&poster&&app){
+      const board=$('<figure class="about-workboard" aria-label="Visual design and web app work by Gading Utama"></figure>');
+      for(const [item,kind] of [[poster,'poster'],[app,'app']] as const){
+        const media=workThumbnail(item.image),piece=$('<div></div>').attr('class',`about-work-${kind}`);
+        const image=$('<img loading="lazy" decoding="async">').attr({src:media.src,alt:item.imageAlt||item.title,width:kind==='poster'?'480':'720',height:kind==='poster'?'600':'540'});
+        if(media.srcSet)image.attr({srcset:media.srcSet,sizes:kind==='poster'?'(max-width:767px) 52vw, 320px':'(max-width:767px) 64vw, 460px'});
+        piece.append(image);board.append(piece);
+      }
+      aboutLayout.append(board);
+    }
+  }
+  const aboutStatement=$('#about .about-statement').first();
+  if(aboutStatement.text()==='Plan campaigns. Design visuals. Build useful tools.'){
+    aboutStatement.empty();
+    ['Plan campaigns.','Design visuals.','Build useful tools.'].forEach((line,index)=>{if(index)aboutStatement.append(' ');aboutStatement.append($('<span class="about-action-line"></span>').text(line));});
+  }
   $('#menu-title').text('Menu');
   $('#mobile-menu > p').remove();
   const hero=$('main > #home, main > .hero').first(), about=$('main > #about').first(), works=$('main > #work').first();
@@ -192,6 +220,8 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
       $(card).find('p,summary,.sample-label').remove();
     });
   });
+  $('.capability-web .browser-front').each((_index,element)=>{if(!$(element).find('.browser-progress').length)$(element).append('<span class="browser-progress"></span>');});
+  $('.capability-ai .ai-scene').each((_index,element)=>{if(!$(element).find('.ai-packet').length)$(element).append('<span class="ai-packet"></span>');});
   $('.process-section').each((_i, section) => {
     const process = $(section), list = process.find('.principles').first();
     process.find('.section-heading p, .principles li p').remove();
@@ -205,7 +235,7 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
         const step = $(element);
         step.children('.pipeline-step-icon,.pipeline-step-icons').remove();
         step.prepend(index === 2
-          ? '<span class="pipeline-step-icons" aria-hidden="true"><svg class="icon pipeline-step-icon"><use href="/assets/icons/lucide.svg#pen-tool"></use></svg><svg class="icon pipeline-step-icon"><use href="/assets/icons/lucide.svg#code-2"></use></svg></span>'
+          ? '<svg class="icon pipeline-step-icon pipeline-design-build" aria-hidden="true"><use href="/assets/icons/lucide.svg#design-build"></use></svg>'
           : `<svg class="icon pipeline-step-icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#${icons[index] || 'check-check'}"></use></svg>`);
       });
     }

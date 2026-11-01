@@ -25,6 +25,10 @@ const symbols = Object.entries(icons).map(([id, component]) => {
   const paths = svg.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
   return `<symbol id="${id}" viewBox="0 0 24 24">${paths}</symbol>`;
 });
+// Combine the existing Lucide palette and code paths into one shared silhouette.
+const inner = component => renderToStaticMarkup(React.createElement(component)).replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
+const code = inner(lucide.CodeXml);
+symbols.push(`<symbol id="design-build" viewBox="0 0 28 28">${inner(lucide.Palette)}<g transform="translate(12 13) scale(.6)"><g stroke="var(--canvas,#060706)" stroke-width="7">${code}</g><g stroke-width="3">${code}</g></g></symbol>`);
 const destination = path.join(__dirname, '../public/assets/icons');
 fs.mkdirSync(destination, { recursive: true });
 fs.writeFileSync(path.join(destination, 'lucide.svg'),

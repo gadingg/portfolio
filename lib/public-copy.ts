@@ -38,14 +38,19 @@ export function refineCopyLayout(layout: VisualLayout, text: TextMap = {}, remov
 }
 
 export function refineSiteCopy(site: SiteContent): SiteContent {
-  if (site.values.publicCopyEdition === edition.edition) return site;
+  const sameEdition = site.values.publicCopyEdition === edition.edition;
+  const sameAbout=site.values.aboutEditorialVersion === '1',sameProcess=site.values.processCopyVersion === '2';
+  if (sameEdition && sameAbout && sameProcess) return site;
   const values = { ...site.values };
-  for (const [key, change] of Object.entries(edition.site)) {
+  const changes = sameEdition ? { ...(!sameAbout?{aboutBody1:edition.site.aboutBody1}:{}), ...(!sameProcess?{processTitle4:edition.site.processTitle4}:{}) } : edition.site;
+  for (const [key, change] of Object.entries(changes)) {
     if (change.from.some(before => normalize(before) === normalize(values[key] || ''))) values[key] = change.to;
   }
   values.publicCopyEdition = edition.edition;
-  const cv = site.cv.profile === edition.cvProfile.from ? { ...site.cv, profile: edition.cvProfile.to } : site.cv;
-  const text = Object.fromEntries(Object.values(edition.site).flatMap(change => change.from.map(before => [before, change.to])));
+  values.aboutEditorialVersion = '1';
+  values.processCopyVersion = '2';
+  const cv = !sameEdition && site.cv.profile === edition.cvProfile.from ? { ...site.cv, profile: edition.cvProfile.to } : site.cv;
+  const text = Object.fromEntries(Object.values(changes).flatMap(change => change.from.map(before => [before, change.to])));
   return { ...site, values, cv, ...(site.layout ? { layout: refineCopyLayout(site.layout, text) } : {}) };
 }
 
