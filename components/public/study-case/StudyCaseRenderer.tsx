@@ -62,6 +62,7 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
 
           case 'image': {
             const image = content as ImageBlockContent;
+            if (!image.url) return null;
             const widthMode = image.width_mode || 'standard';
             if(image.url==='/assets/work/meta-report-macbooks.webp' && ['meta-trend','meta-batch'].includes(image.focus||''))return <figure key={block.id||index} className="case-visual case-evidence my-10">
               <div className={`case-evidence-frame ${image.focus}`}><Image src={image.url} alt={image.alt} width={1448} height={1086} sizes="(max-width: 767px) 200vw, 1600px"/></div>
@@ -72,14 +73,15 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
                 key={block.id || index}
                 className={`case-visual my-10 ${widthMode !== 'standard' ? 'case-visual--wide' : ''}`}
               >
-                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[18px] bg-[#10110f] sm:rounded-[24px]">
+                <div className="case-inline-image">
                   <Image
-                    src={image.url || 'https://picsum.photos/id/1/1200/800'}
+                    src={image.url}
                     unoptimized={image.url?.startsWith('/api/media/')}
                     alt={image.alt || 'Project visual'}
-                    fill
+                    width={1200}
+                    height={800}
                     sizes="(max-width: 768px) 100vw, (max-width: 1280px) 92vw, 1280px"
-                    className="object-cover"
+                    className="case-detail-image"
                   />
                 </div>
                 {image.caption && (
@@ -197,9 +199,9 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
 
           case 'divider': {
             return (
-              <hr
+              <div aria-hidden="true"
                 key={block.id || index}
-                className="border-0 border-t border-solid border-[#f3f0e8]/10 my-10"
+                className="case-section-break"
               />
             );
           }

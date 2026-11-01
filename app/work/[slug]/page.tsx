@@ -1,4 +1,9 @@
+import { CaseAppActions } from '@/components/public/study-case/CaseAppActions';
+import {CaseMotion} from '@/components/public/study-case/CaseMotion';
+import {caseMotion} from '@/lib/case-motion';
 import React from 'react';
+import { CaseOverview } from '@/components/public/study-case/CaseOverview';
+import { editorialCaseLayout } from '@/lib/case-layout';
 import { VisualLayout } from '@/components/public/VisualLayout';
 import { notFound,permanentRedirect } from 'next/navigation';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
@@ -96,7 +101,8 @@ export default async function StudyCasePage({
 
   if(presentation?.layout)return <div className="showcase" id="case-top">
     <StudyCaseHeader projectTitle={project.title}/>
-    <VisualLayout layout={presentation.layout}/>
+    <div className="case-editorial"><VisualLayout layout={editorialCaseLayout(presentation.layout, presentation)}/></div>
+    <CaseMotion motion={caseMotion(presentation)} portal/>
     <div className="section-shell case-narrative mx-auto max-w-3xl"><NextProjectNav nextProject={nextProject}/></div>
     <AuraFooter/>
   </div>;
@@ -126,27 +132,15 @@ export default async function StudyCasePage({
               )}
             </div>
 
-            {presentation?.appUrl && <a className="button button-outline" href={presentation.appUrl} target="_blank" rel="noopener noreferrer">Open app <ExternalLink className="icon" aria-hidden="true" /></a>}
+            {presentation&&<CaseAppActions study={presentation}/>}
           </header>
 
           <figure className="case-cover-art">
             <ProjectArtwork project={project} priority />
           </figure>
 
-          <section aria-labelledby="problem-solving-title" className="mt-12 border-y border-[#f3f0e8]/12 py-10 sm:mt-16 sm:py-14">
-            <div className="grid gap-9 lg:grid-cols-12">
-              <div className="lg:col-span-3">
-                <h2 id="problem-solving-title" className="mt-4 text-2xl font-black tracking-[-0.04em] text-[#f3f0e8]">
-                  Project overview
-                </h2>
-              </div>
-              <div className="grid gap-8 md:grid-cols-3 lg:col-span-9">
-                <div className="case-summary-step"><h3>The problem</h3><p>{problem}</p></div>
-                <div className="case-summary-step"><h3>The solution</h3><p>{approach}</p></div>
-                <div className="case-summary-step"><h3>The impact</h3><p>{outcome}</p></div>
-              </div>
-            </div>
-          </section>
+          <CaseOverview problem={problem} approach={approach} outcome={outcome}/>
+          {presentation&&<CaseMotion motion={caseMotion(presentation)}/>}
 
           <div className="case-narrative mx-auto mt-12 max-w-3xl">
             {blocks.length > 0 && <StudyCaseRenderer blocks={blocks} />}

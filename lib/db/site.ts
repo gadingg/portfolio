@@ -141,6 +141,7 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
   }
   // Existing visual layouts retain their structure while public controls use the current treatment.
   $('#menu-toggle').removeClass('button button-outline').attr({ 'aria-label': 'Open menu', title: 'Open menu' }).empty().append('<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#menu"></use></svg>');
+  $('.contact-section .contact-email, .contact-section [data-contact-email], .contact-section a[data-social="email"]').remove();
   $('.contact-bottom').each((_i, element) => {
     const footer = $(element);
     let links = footer.children('.social-links').first();
@@ -153,10 +154,9 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
       link.empty().append(`<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#${key}"></use></svg>`);
       links.append(link);
     }
+    if(site.cv.email) links.append($('<a class="social-icon" data-social="email" aria-label="Email Gading" title="Email Gading"></a>').attr('href',`mailto:${site.cv.email}`).append('<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#mail"></use></svg>'));
   });
   $('.hero .work-strip, .hero .hero-signoff').remove();
-  $('.contact-layout [data-contact-email]').remove();
-  if(site.cv.email) $('.contact-layout>div').last().append($('<a class="text-link contact-email" data-contact-email>').attr('href',`mailto:${site.cv.email}`).text('Email Gading'));
   $('.hero-intro').empty().append($('<p class="hero-metadata">').text(values.heroMetadata));
   $('.about-copy').each((_i, element) => {
     const copy = $(element);

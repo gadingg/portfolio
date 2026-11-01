@@ -17,6 +17,8 @@ Thumbs.db
 # Agent metadata
 .agents/
 .impeccable/review/
+motion/**/.hyperframes/
+motion/**/.thumbnails/
 
 # Temp & Cache
 .next/

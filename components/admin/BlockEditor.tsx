@@ -40,6 +40,9 @@ export function BlockEditor({
   onBusyChange?: (busy: boolean) => void;
 }) {
   const {ask,confirmation}=useConfirm();
+  const add = (type: CMSBlock['block_type']) => onChange([...blocks, {
+    id: crypto.randomUUID(), block_type: type, block_order: blocks.length, content_json: structuredClone(defaults[type]),
+  }]);
   const patch = (id: string, content: Record<string, unknown>) =>
     onChange(
       blocks.map((block) =>
@@ -100,6 +103,10 @@ export function BlockEditor({
           ))}
         </select>
       </div>
+      <div className="cms-image-actions">
+        <button type="button" className="wm-button" disabled={disabled} onClick={() => add('image')}><Plus size={18}/>Tambah gambar</button>
+        <button type="button" className="wm-button" disabled={disabled} onClick={() => add('gallery')}><Plus size={18}/>Tambah galeri</button>
+      </div>
       <SortableList
         items={blocks}
         disabled={disabled}
@@ -113,7 +120,7 @@ export function BlockEditor({
             <div className="cms-block">
               <div className="cms-block-row">
                 {handle}
-                <details className="cms-block-disclosure">
+                <details className="cms-block-disclosure" open={['image','gallery'].includes(block.block_type)}>
                   <summary>
                     {labels[block.block_type]}
                     <span>
@@ -146,23 +153,11 @@ export function BlockEditor({
                     )}
                     {['image', 'video'].includes(block.block_type) && (
                       <>
-                        {content.url &&
-                          (block.block_type === 'image' ? (
-                            <img
-                              className="cms-image-preview"
-                              src={content.url}
-                              alt={content.alt || ''}
-                            />
-                          ) : (
-                            <video
-                              className="cms-image-preview"
-                              src={content.url}
-                              controls
-                              preload="metadata"
-                            />
-                          ))}
+                        {content.url && block.block_type === 'video' && <video className="cms-image-preview" src={content.url} controls preload="metadata"/>}
                         <FileDrop
                           folder="content"
+                          previewSrc={block.block_type === 'image' ? content.url : undefined} previewAlt={content.alt || 'Gambar studi kasus'}
+                          uploadLabel={content.url ? 'Ganti gambar / media' : 'Tambah gambar / media'}
                           disabled={disabled}
                           onBusyChange={onBusyChange}
                           accept={
@@ -178,14 +173,17 @@ export function BlockEditor({
                         {block.block_type === 'image' &&
                           field(block, 'alt', 'Deskripsi gambar')}
                         {field(block, 'caption', 'Caption')}
+                        {block.block_type==='video'&&<FileDrop folder="covers" previewSrc={content.poster} previewAlt="Thumbnail video detail" uploadLabel={content.poster?'Ganti thumbnail video':'Tambah thumbnail video'} disabled={disabled} onBusyChange={onBusyChange} onUploaded={files=>patch(block.id,{poster:files[0].url})}/>}
                         {block.block_type==='image' && content.url==='/assets/work/meta-report-macbooks.webp' && <label>Detail tampilan<select value={content.focus||'full'} onChange={event=>patch(block.id,{focus:event.target.value})}><option value="full">Gambar penuh</option><option value="meta-trend">Detail grafik antar-batch</option><option value="meta-batch">Detail ringkasan batch</option></select></label>}
                       </>
                     )}
                     {block.block_type === 'gallery' && (
                       <>
+                        <label>Susunan galeri<select value={content.layout || 'grid'} onChange={event=>patch(block.id,{layout:event.target.value})}><option value="grid">Grid</option><option value="carousel">Geser horizontal</option></select></label>
                         <FileDrop
                           multiple
                           folder="content"
+                          uploadLabel="Tambah gambar ke galeri"
                           disabled={disabled}
                           onBusyChange={onBusyChange}
                           onUploaded={(files) =>
@@ -201,12 +199,18 @@ export function BlockEditor({
                             })
                           }
                         />
-                        {(content.images || []).map((image: any, i: number) => (
+                        <SortableList items={(content.images || []).map((picture: any, index: number) => ({id: String(index), title: `Gambar ${index+1}`, picture}))} disabled={disabled}
+                          onChange={next => patch(block.id, { images: next.map((entry: any) => entry.picture) })}>
+                        {(entry: any, i: number, imageHandle) => {
+                          const image = entry.picture;
+                          return (
                           <div
                             className="cms-gallery-edit"
-                            key={`${image.url}-${i}`}
+                            key={i}
                           >
-                            <img src={image.url} alt="" />
+                            <div className="cms-gallery-heading">{imageHandle}<strong>Gambar {i+1}</strong></div>
+                            <FileDrop previewSrc={image.url} previewAlt={image.alt || `Gambar ${i+1}`} folder="content" uploadLabel={`Ganti gambar ${i + 1}`} disabled={disabled} onBusyChange={onBusyChange}
+                              onUploaded={files => patch(block.id, { images: content.images.map((picture: any, at: number) => at === i ? { ...picture, url: files[0].url } : picture) })}/>
                             <label>
                               Deskripsi gambar
                               <input
@@ -239,6 +243,7 @@ export function BlockEditor({
                                 }
                               />
                             </label>
+                            <div className="cms-image-actions">
                             <button
                               type="button"
                               className="wm-button"
@@ -253,8 +258,10 @@ export function BlockEditor({
                             >
                               <Trash2 size={18} />
                             </button>
+                            </div>
                           </div>
-                        ))}
+                        );}}
+                        </SortableList>
                       </>
                     )}
                     {block.block_type === 'quote' && (

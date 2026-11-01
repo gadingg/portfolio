@@ -10,6 +10,9 @@ export function FileDrop({
   onUploaded,
   disabled = false,
   onBusyChange,
+  uploadLabel,
+  previewSrc,
+  previewAlt = 'Preview gambar',
 }: {
   folder?: string;
   multiple?: boolean;
@@ -17,6 +20,9 @@ export function FileDrop({
   onUploaded: (files: UploadedMedia[]) => void;
   disabled?: boolean;
   onBusyChange?: (busy: boolean) => void;
+  uploadLabel?: string;
+  previewSrc?: string;
+  previewAlt?: string;
 }) {
   const titleId = useId();
   const uploadLock = useRef(false);
@@ -113,6 +119,9 @@ export function FileDrop({
     <div className="cms-upload">
       <div
         className={`cms-drop ${over ? 'is-over' : ''}`}
+        role="group"
+        aria-label={uploadLabel || 'Upload atau pilih media'}
+        aria-busy={busy}
         onDragOver={(e) => {
           e.preventDefault();
           if (!disabled && !busy) setOver(true);
@@ -120,10 +129,12 @@ export function FileDrop({
         onDragLeave={() => setOver(false)}
         onDrop={(e) => {
           e.preventDefault();
+          e.stopPropagation();
           setOver(false);
           upload(Array.from(e.dataTransfer.files));
         }}
       >
+        {previewSrc && <img className="cms-drop-preview" src={previewSrc} alt={previewAlt} draggable={false}/>}
         <button
           type="button"
           className="wm-button"
@@ -131,7 +142,7 @@ export function FileDrop({
           onClick={() => input.current?.click()}
         >
           <Upload size={18} aria-hidden="true" />
-          {busy ? progress : accept.startsWith('video/') ? 'Upload video' : multiple ? 'Upload gambar' : 'Upload file'}
+          {busy ? progress : uploadLabel || (accept.startsWith('video/') ? 'Upload video' : accept.startsWith('image/') ? previewSrc ? 'Ganti gambar' : 'Upload gambar' : 'Upload file')}
         </button>
         <span>atau lepas file di sini · maks. {accept.startsWith('video/')?40:4} MB</span>
         <button

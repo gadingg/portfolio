@@ -106,6 +106,12 @@ export const CMSBlockSchema = z
   });
 export type CMSBlock = z.infer<typeof CMSBlockSchema>;
 export const CaseStudySchema = z.object({
+  motion: z.object({
+    enabled:z.boolean().default(true), title:short.default(''), description:short.default(''),
+    video:mediaURL.refine(value=>!value||/\.mp4(?:[?#].*)?$/i.test(value),'Gunakan video MP4.').default(''),
+    mobileVideo:mediaURL.refine(value=>!value||/\.mp4(?:[?#].*)?$/i.test(value),'Gunakan video MP4.').default(''),
+    poster:mediaURL.default(''), mobilePoster:mediaURL.default(''),
+  }).optional(),
   layout: VisualLayoutSchema.optional(),
   slug: z
     .string()
@@ -118,5 +124,6 @@ export const CaseStudySchema = z.object({
   solution: text.default(''),
   impact: text.default(''),
   appUrl: contentURL.default(''),
+  appLinks: z.array(z.object({label:z.string().trim().min(1).max(80),url:contentURL})).max(4).optional(),
   blocks: z.array(CMSBlockSchema).max(150).default([]),
 });

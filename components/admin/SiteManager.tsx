@@ -5,14 +5,16 @@ import { siteFields, type SiteContent } from '@/lib/site';
 import { FileDrop } from './FileDrop';
 import { SortableList } from './SortableList';
 import { useConfirm } from './ConfirmDialog';
+import { usePublishReview } from './PublishReview';
+import { summarizeSite } from '@/lib/publish-summary';
 import './works-manager.css';
 import { PublicationBar } from './PublicationBar';
 import { draftSaveMessage } from '@/lib/draft-backup';
 import { useAutoDraft } from './useAutoDraft';
 import { DraftRecovery } from './DraftRecovery';
-import { sitePublicationSummary } from '@/lib/publication-review';
 export function SiteManager() {
   const {ask,confirmation}=useConfirm();
+  const {review,publicationReview}=usePublishReview();
   const [content, setContent] = useState<SiteContent | null>(null),
     [saved, setSaved] = useState(''),
     [published, setPublished] = useState(''),
@@ -69,8 +71,7 @@ export function SiteManager() {
     if (!automatic) setNotice('');
     try {
       if (action === 'publish' && published) {
-        const sections = sitePublicationSummary(snapshot, JSON.parse(published));
-        if (!(await ask(`Publish perubahan ${sections.join(' dan ') || 'Website & CV'}? Semua draft pada bagian tersebut ikut di-publish.`, 'Publish'))) return false;
+        if (!(await review(summarizeSite(snapshot, JSON.parse(published))))) return false;
       }
       const res = await fetch('/api/admin/site', {
         method: 'PUT', signal: AbortSignal.timeout(15000), headers: { 'Content-Type': 'application/json' },
@@ -95,6 +96,7 @@ export function SiteManager() {
   return (
     <div className="works-manager cms-manager wm-site-workspace">
       {confirmation}
+      {publicationReview}
       <div className="wm-heading">
         <div><h1>Website &amp; CV</h1>{content && !dirty && saved === published && <p className="wm-clean-status">Semua perubahan tersimpan</p>}</div>
         <a
@@ -175,12 +177,9 @@ export function SiteManager() {
                   </label>
                   {field.attribute === 'src' && (
                     <>
-                      <img
-                        className="cms-image-preview"
-                        src={content.values[field.key]}
-                        alt="Preview"
-                      />
                       <FileDrop
+                        previewSrc={content.values[field.key]} previewAlt={field.label}
+                        uploadLabel={content.values[field.key] ? `Ganti ${field.label.toLowerCase()}` : `Upload ${field.label.toLowerCase()}`}
                         disabled={busy}
                         onBusyChange={mediaBusy}
                         onUploaded={(files) => update(field.key, files[0].url)}
@@ -279,6 +278,7 @@ export function SiteManager() {
                 <p className="wm-muted">Pengunjung mengunduh PDF ini. Perubahan teks di editor tidak mengubah isi PDF.</p>
                 <FileDrop
                   folder="cv"
+                  uploadLabel={content.cv.pdf ? 'Ganti PDF CV' : 'Upload PDF CV'}
                   accept="application/pdf"
                   disabled={busy}
                   onBusyChange={mediaBusy}

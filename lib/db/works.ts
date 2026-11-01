@@ -22,6 +22,8 @@ import { isReadyWork, presentWork } from '@/lib/work-readiness';
 import { withWorkEvidence } from '@/lib/work-evidence';
 import { publishOneWork } from '@/lib/work-publication';
 import { refineWorkCopy } from '@/lib/public-copy';
+import { syncCaseIdentity } from '@/lib/case-layout';
+import {withCaseMotion} from '@/lib/case-motion';
 
 const bucket = 'portfolio-public';
 const filename = 'content/works.json';
@@ -254,7 +256,7 @@ export async function initialWorks() {
 }
 export const getWorksDocument = async () => {
   const doc=await readCMS('works',initialWorks);
-  return {...doc,draft:{...doc.draft,items:normalizeWorkSlugs(doc.draft.items).map(cleanPlaceholderCopy).map(presentWork).map(withWorkEvidence).map(refineWorkCopy)},published:{...doc.published,items:normalizeWorkSlugs(doc.published.items).map(cleanPlaceholderCopy).map(presentWork).map(withWorkEvidence).map(refineWorkCopy)}};
+  return {...doc,draft:{...doc.draft,items:normalizeWorkSlugs(doc.draft.items).map(cleanPlaceholderCopy).map(presentWork).map(withWorkEvidence).map(withCaseMotion).map(refineWorkCopy)},published:{...doc.published,items:normalizeWorkSlugs(doc.published.items).map(cleanPlaceholderCopy).map(presentWork).map(withWorkEvidence).map(withCaseMotion).map(refineWorkCopy)}};
 };
 export async function getWorks() {
   const doc = await getWorksDocument();
@@ -273,6 +275,7 @@ export async function getPublicWorks() {
       .filter((item) => item.published && isReadyWork(item))
       .map(presentWork)
       .map(withWorkEvidence)
+      .map(withCaseMotion)
       .map(refineWorkCopy)
       .map(publicWork),
   };
@@ -323,7 +326,7 @@ export async function changeWorks(body: {
       const retained=!item.caseStudy&&!item.archivedCaseStudy
         ? {...item,archivedCaseStudy:previous?.caseStudy||previous?.archivedCaseStudy}
         : item;
-      const normalized=setWorkKind(retained,item.kind);
+      const normalized=syncCaseIdentity(previous,setWorkKind(retained,item.kind));
       return withWorkEvidence(presentWork({...normalized,url:normalized.caseStudy?`/work/${normalized.caseStudy.slug}`:normalized.url}));
     }),
   };

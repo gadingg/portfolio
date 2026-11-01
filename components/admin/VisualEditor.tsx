@@ -1,5 +1,6 @@
 'use client';
 import type { workPublicationCopy } from '@/lib/admin-copy';
+import { homepageWorks } from '@/lib/homepage-works';
 import { publicationState } from '@/lib/publication-state';
 import { draftSaveMessage } from '@/lib/draft-backup';
 import { useAutoDraft } from './useAutoDraft';
@@ -8,15 +9,19 @@ import { useEffect, useRef, useState } from 'react';
 import type { Editor, Component } from 'grapesjs';
 import { ArrowLeft, Undo2, Redo2, Monitor, Smartphone, Eye, Layers, Plus, SlidersHorizontal, ArrowUp, ArrowDown, Trash2, ExternalLink, Type, Image as ImageIcon, X } from 'lucide-react';
 import { FileDrop } from './FileDrop';
+import './works-manager.css';
 import { AdminActionLabel } from './AdminActionLabel';
 import './admin-controls.css';
 import { useConfirm } from './ConfirmDialog';
+import { usePublishReview } from './PublishReview';
+import type { PublishSummary } from '@/lib/publish-summary';
 import 'grapesjs/dist/css/grapes.min.css';
 import './visual-editor.css';
 
-type PageData={publicationCopy?:ReturnType<typeof workPublicationCopy>;unpublished?:boolean;publicationSections?:string[];revision:number;layout?:{html:string;css:string};seedHtml?:string;title:string;seedUrl:string;previewUrl:string};
+type PageData={publishSummary?:PublishSummary;publicationCopy?:ReturnType<typeof workPublicationCopy>;unpublished?:boolean;publicationSections?:string[];revision:number;layout?:{html:string;css:string};seedHtml?:string;title:string;seedUrl:string;previewUrl:string};
 export function VisualEditor({target}:{target:string}){
   const {ask,confirmation}=useConfirm();
+  const {review,publicationReview}=usePublishReview();
   const canvas=useRef<HTMLDivElement>(null),editor=useRef<Editor|null>(null),meta=useRef<PageData|null>(null);
   const baseline=useRef({html:'',css:''});
   const saveLock=useRef(false),selectedRef=useRef<Component|null>(null);
@@ -85,7 +90,7 @@ export function VisualEditor({target}:{target:string}){
               model:{defaults:{name:'Koleksi Portfolio',droppable:false,editable:false,draggable:false,copyable:false,removable:false}},
               view:{onRender(){
                 const kind=this.model.parents().find(parent=>parent.getAttributes()['data-work-kind'])?.getAttributes()['data-work-kind'];
-                const items=works.filter((item:any)=>item.kind===kind).slice(0,kind==='webapp'?6:50);
+                const items=kind==='webapp'?homepageWorks(works):works.filter((item:any)=>item.kind===kind).slice(0,50);
                 this.el.replaceChildren(...items.map((item:any)=>{
                   const card=document.createElement('article');card.className=`work-card work-card-${item.kind}`;
                   const visual=document.createElement('div');visual.className='work-visual';
@@ -140,7 +145,10 @@ export function VisualEditor({target}:{target:string}){
     const layout={html:ed.getHtml(),css:ed.getCss()||''};
     saveLock.current=true;setBusy(true);setAction(action);setError('');
     try{
-      if(action==='publish' && target==='home' && !(await ask(`Publish perubahan ${data.publicationSections?.join(' dan ') || 'Website & CV'}? Perubahan halaman ini dan draft Website & CV ikut di-publish.`, 'Publish')))return false;
+      if(action==='publish'){
+        const summary=data.publishSummary||{scope:target==='home'?'Berlaku untuk halaman ini dan seluruh draft Website & CV.':'Berlaku hanya untuk studi kasus ini.',counts:[],entries:[]};
+        if(!await review({...summary,entries:dirty?[...summary.entries,{id:'current-layout',title:data.title,changes:['Perubahan halaman saat ini']}]:summary.entries}))return false;
+      }
       const res=await fetch('/api/admin/visual',{method:'PUT',signal:AbortSignal.timeout(15000),headers:{'Content-Type':'application/json'},body:JSON.stringify({target,revision:data.revision,action,layout})});
       const result=await res.json();if(!res.ok)throw Error(result.error||'Perubahan belum tersimpan.');
       setUnpublished(!!result.unpublished);
@@ -150,7 +158,7 @@ export function VisualEditor({target}:{target:string}){
       }
       baseline.current=changedDuringSave?(result.layout||layout):{html:ed.getHtml(),css:ed.getCss()||''};
       setSavedLayout(JSON.stringify(baseline.current));setLayoutValue(JSON.stringify({html:ed.getHtml(),css:ed.getCss()||''}));setVisualRevision(result.revision);
-      meta.current={...data,revision:result.revision,layout:result.layout,publicationSections:result.publicationSections,publicationCopy:result.publicationCopy};if(result.title)setTitle(result.title);setDirty(changedDuringSave);if(!changedDuringSave)ed.clearDirtyCount();setStatus(action==='publish'?(result.publicationCopy?.cleanLabel||'Sudah tayang'):'Draft tersimpan');
+      meta.current={...data,revision:result.revision,layout:result.layout,publishSummary:result.publishSummary,publicationSections:result.publicationSections,publicationCopy:result.publicationCopy};if(result.title)setTitle(result.title);setDirty(changedDuringSave);if(!changedDuringSave)ed.clearDirtyCount();setStatus(action==='publish'?(result.publicationCopy?.cleanLabel||'Sudah tayang'):'Draft tersimpan');
       return true;
     }catch(e){setError(draftSaveMessage(e));return false;}finally{saveLock.current=false;setBusy(false);}
   }
@@ -159,15 +167,14 @@ export function VisualEditor({target}:{target:string}){
   function editText(index:number,value:string){
     const component=selectedRef.current;if(!component)return;
     const doc=new DOMParser().parseFromString(component.getInnerHTML(),'text/html');
-    const nodes=textNodes(doc.body);if(!nodes[index]){if(index!==0)return;const node=doc.createTextNode('');doc.body.insertBefore(node,doc.body.firstChild);nodes.push(node);}nodes[index].textContent=value;
+    const nodes=textNodes(doc.body);if(!nodes[index]){if(index!==0)return;const node=doc.createTextNode('');doc.body.insertBefore(node,doc.body.firstChild);nodes.push(node);}nodes[index].textContent=value||'\u00a0';
     component.components(doc.body.innerHTML);if(editor.current)sync(editor.current);
   }
   function attribute(name:string,value:string){const component=selectedRef.current;if(component){component.addAttributes({[name]:value});if(editor.current)sync(editor.current);}}
-  function moveSection(component:Component,direction:number){
-    const ed=editor.current,parent=component.parent();if(!ed||!parent)return;
-    const list=pageSections(ed),index=list.indexOf(component),neighbor=list[index+direction];
-    if(!neighbor||neighbor.parent()!==parent)return;
-    component.move(parent,{at:parent.components().indexOf(neighbor)+(direction>0?1:0)});ed.select(component);sync(ed);
+  function reorderSection(from:number,to:number){
+    const ed=editor.current,component=sections[from],neighbor=sections[to],parent=component?.parent();
+    if(!ed||!parent||!neighbor||parent!==neighbor.parent())return;
+    component.move(parent,{at:parent.components().indexOf(neighbor)+(to>from?1:0)});ed.select(component);sync(ed);setTab('sections');
   }
   async function removeSection(component:Component){
     if(!await ask(`Hapus bagian “${sectionTitle(component)}”? Bisa dikembalikan lewat Urungkan.`))return;
@@ -185,6 +192,7 @@ export function VisualEditor({target}:{target:string}){
   const pendingHint=unpublished&&!dirty&&!busy&&autosave.online?(publicationCopy?.pendingSuffix||' · belum di-publish'):'';
   return <div className={`visual-editor ${preview?'visual-preview':''} ${panelOpen?'visual-panel-open':''}`}>
     {confirmation}
+    {publicationReview}
     {autosave.recovery&&<DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion}/>}
     <header className="visual-toolbar" inert={!!autosave.recovery}>
       <a href={target==='home'?'/admintgadink/dashboard/site':'/admintgadink/dashboard/works'} onClick={leave} className="visual-icon" aria-label="Kembali ke CMS"><ArrowLeft size={20}/></a>
@@ -211,7 +219,7 @@ export function VisualEditor({target}:{target:string}){
             <h3>{selection.label}</h3>
             {selection.managed?<><p className="visual-hint">Edit daftar ini melalui menu Portofolio.</p><a className="visual-text-link" href="/admintgadink/dashboard/works" onClick={leave}>Kelola Portofolio <ExternalLink size={14}/></a></>:<>
               {selection.texts.map((text,index)=><label className="visual-field" key={`${selectedRef.current?.cid}-${index}`}>{selection.texts.length===1?'Teks':`Teks ${index+1}`}<TextField value={text} onCommit={value=>editText(index,value)}/></label>)}
-              {selection.image&&<><img className="visual-image-preview" src={selection.src} alt="Gambar yang dipilih"/><label className="visual-field">Deskripsi gambar<input value={selection.alt} onChange={event=>attribute('alt',event.target.value)}/></label><FileDrop disabled={busy} onBusyChange={setUploading} onUploaded={files=>{const component=selectedRef.current;if(component?.is('image')&&files[0]){component.set('src',files[0].url);if(editor.current)sync(editor.current);}}}/></>}
+              {selection.image&&<><img className="visual-image-preview" src={selection.src} alt="Gambar yang dipilih"/><label className="visual-field">Deskripsi gambar<input value={selection.alt} onChange={event=>attribute('alt',event.target.value)}/></label><FileDrop disabled={busy} onBusyChange={setUploading} onUploaded={files=>{const component=selectedRef.current;if(component?.is('image')&&files[0]){component.removeAttributes(['srcset','sizes','width','height']);component.set('src',files[0].url);if(editor.current)sync(editor.current);}}}/></>}
               {selection.link&&<><label className="visual-field">Tujuan link<input type="text" inputMode="url" value={selection.href} placeholder="https://… atau #contact" onChange={event=>attribute('href',event.target.value)}/></label><label className="visual-check"><input type="checkbox" checked={selection.blank} onChange={event=>{attribute('target',event.target.checked?'_blank':'_self');attribute('rel',event.target.checked?'noopener noreferrer':'');}}/>Buka di tab baru</label></>}
               {!selection.texts.length&&!selection.image&&!selection.link&&<p className="visual-hint">Pilih teks atau gambar untuk diedit.</p>}
             </>}
@@ -219,7 +227,7 @@ export function VisualEditor({target}:{target:string}){
           </>}
         </div>}
         {tab==='sections'&&<div className="visual-section-panel"><h3>Susunan halaman</h3><p className="visual-hint">Pilih bagian, lalu gunakan tombol atas atau bawah.</p><ol className="visual-section-list">{sections.map(component=><li key={component.cid}><button aria-pressed={activeSection===component} onClick={()=>{editor.current?.select(component);setTab('sections');component.getEl()?.scrollIntoView({block:'center',behavior:'smooth'});}}>{sectionTitle(component)}</button></li>)}</ol>
-          {activeSection&&<div className="visual-section-controls"><strong>{sectionTitle(activeSection)}</strong><div><button aria-label="Pindah bagian ke atas" disabled={sectionIndex<=0||sections[sectionIndex-1]?.parent()!==activeSection.parent()} onClick={()=>moveSection(activeSection,-1)}><ArrowUp size={16}/></button><button aria-label="Pindah bagian ke bawah" disabled={sectionIndex<0||sectionIndex>=sections.length-1||sections[sectionIndex+1]?.parent()!==activeSection.parent()} onClick={()=>moveSection(activeSection,1)}><ArrowDown size={16}/></button><button className="visual-delete" aria-label="Hapus bagian" onClick={()=>removeSection(activeSection)}><Trash2 size={16}/>Hapus</button></div></div>}
+          {activeSection&&<div className="visual-section-controls"><strong>{sectionTitle(activeSection)}</strong><div><button aria-label="Pindah bagian ke atas" disabled={sectionIndex<=0||sections[sectionIndex-1]?.parent()!==activeSection.parent()} onClick={()=>reorderSection(sectionIndex,sectionIndex-1)}><ArrowUp size={16}/></button><button aria-label="Pindah bagian ke bawah" disabled={sectionIndex<0||sectionIndex>=sections.length-1||sections[sectionIndex+1]?.parent()!==activeSection.parent()} onClick={()=>reorderSection(sectionIndex,sectionIndex+1)}><ArrowDown size={16}/></button><button className="visual-delete" aria-label="Hapus bagian" onClick={()=>removeSection(activeSection)}><Trash2 size={16}/>Hapus</button></div></div>}
         </div>}
         {tab==='add'&&<div className="visual-templates"><h3>Tambah bagian</h3><p className="visual-hint">{activeSection?`Setelah “${sectionTitle(activeSection)}”`:'Di akhir konten halaman'}</p>{templates.map(item=><button key={item.title} onClick={()=>addSection(item.html)}><item.icon size={20}/><span>{item.title}</span><Plus size={16}/></button>)}</div>}
         <p className="visual-publish-hint">Draft tersimpan otomatis.</p>
@@ -235,7 +243,7 @@ function textNodes(root:Node):Text[]{
   const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes:Text[]=[];
   while(walker.nextNode()){
     const node=walker.currentNode as Text;
-    if(node.textContent?.trim()&&!node.parentElement?.closest('svg,script,style,[data-works-list]'))nodes.push(node);
+    if((node.textContent?.trim()||node.textContent==='\u00a0')&&!node.parentElement?.closest('svg,script,style,[data-works-list]'))nodes.push(node);
   }
   return nodes;
 }
@@ -244,7 +252,7 @@ function readSelection(component:Component):SelectionData{
   const managed=[component,...component.parents()].some(item=>item.getAttributes()['data-works-list']!==undefined);
   const isText=/^(h[1-6]|p|span|em|strong|a|button|li|figcaption|blockquote)$/.test(tag);
   const doc=new DOMParser().parseFromString(component.getInnerHTML(),'text/html');
-  return {label:component.is('image')?'Gambar':tag==='a'?'Tombol / tautan':isText?'Teks':'Bagian halaman',texts:!managed&&isText?(textNodes(doc.body).length?textNodes(doc.body).map(node=>node.textContent||''):['']):[],image:component.is('image'),src:component.get('src')||attrs.src||'',alt:attrs.alt||'',link:tag==='a',href:attrs.href||'',blank:attrs.target==='_blank',managed};
+  return {label:component.is('image')?'Gambar':tag==='a'?'Tombol / tautan':isText?'Teks':'Bagian halaman',texts:!managed&&isText?(textNodes(doc.body).length?textNodes(doc.body).map(node=>node.textContent==='\u00a0'?'':node.textContent||''):['']):[],image:component.is('image'),src:component.get('src')||attrs.src||'',alt:attrs.alt||'',link:tag==='a',href:attrs.href||'',blank:attrs.target==='_blank',managed};
 }
 function pageSections(ed:Editor):Component[]{
   const wrapper=ed.getWrapper();if(!wrapper)return [];

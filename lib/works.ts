@@ -56,6 +56,12 @@ const imageURL = (value: string) => {
 
 export const WorkDraftItemSchema = z.object({
   copyEdition: z.string().max(40).optional(),
+  aiDraft: z.object({
+    brief: z.string().max(30000), confirmations: z.array(z.string().max(500)).max(12),
+    screenshots: z.array(z.object({ afterSection:z.number().int().min(0).max(7), description:z.string().max(500), caption:z.string().max(300) })).max(8),
+    generatedAt: z.string().datetime(),
+  }).optional(),
+  homepageFeatured: z.boolean().optional(),
   evidenceEdition: z.string().max(40).optional(),
   createdAt: z.string().datetime().optional(),
   updatedAt: z.string().datetime().optional(),
@@ -93,6 +99,10 @@ export const WorkDraftItemSchema = z.object({
   aliases:z.array(z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)).max(30).optional(),
 });
 export const WorkItemSchema = WorkDraftItemSchema.superRefine((item, ctx) => {
+  if(item.published&&item.caseStudy?.motion?.enabled){
+    if(!item.caseStudy.motion.video)ctx.addIssue({code:'custom',path:['caseStudy','motion','video'],message:'Tambahkan video animasi atau matikan Tampilkan animasi alur.'});
+    if(!item.caseStudy.motion.poster)ctx.addIssue({code:'custom',path:['caseStudy','motion','poster'],message:'Tambahkan poster animasi sebelum dipublikasikan.'});
+  }
   if(item.kind==='video'&&activeVideoSource(item)==='file'&&item.videoFile&&item.published&&!item.demo&&!item.image)ctx.addIssue({code:'custom',path:['image'],message:'Tambahkan thumbnail sebelum video dipublikasikan.'});
   if (item.kind === 'video' && activeVideoSource(item)==='instagram' && item.url && !instagramURL(item.url))
     ctx.addIssue({
@@ -132,7 +142,7 @@ export function setWorkKind(item: WorkItem, kind: WorkKind): WorkItem {
 }
 
 export function publicWork(item: WorkItem): WorkItem {
-  const { archivedCaseStudy, createdAt, updatedAt, copyEdition, ...visible } = item;
+  const { archivedCaseStudy, createdAt, updatedAt, copyEdition, aiDraft, ...visible } = item;
   if (visible.kind === 'video') {
     if (activeVideoSource(visible) === 'instagram') return { ...visible, videoFile: '', url: visible.url };
     return { ...visible, url: instagramURL(visible.url) || '' };
@@ -142,6 +152,8 @@ export function publicWork(item: WorkItem): WorkItem {
 export const WorksDraftSchema = z
   .object({ items: z.array(WorkDraftItemSchema).max(150) })
   .superRefine(({ items }, ctx) => {
+    if (items.filter(item => item.kind === 'webapp' && item.homepageFeatured).length > 3)
+      ctx.addIssue({ code: 'custom', path: ['items'], message: 'Pilih maksimal 3 portfolio unggulan untuk homepage.' });
     if (new Set(items.map((item) => item.id)).size !== items.length)
       ctx.addIssue({
         code: 'custom',

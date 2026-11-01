@@ -5,8 +5,8 @@ export function MetricsBlock({ content }: { content: MetricsBlockContent }) {
   if (!content?.items || content.items.length === 0) return null;
 
   return (
-    <section aria-label="Project outcomes" className="case-outcomes my-12 border-y border-[#f3f0e8]/15 py-8 sm:py-10">
-      <div className="grid grid-cols-1 gap-7 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-[#f3f0e8]/12">
+    <section aria-label="Project outcomes" className="case-outcomes my-12">
+      <div className="grid grid-cols-1 gap-7 sm:grid-cols-3">
         {content.items.map((item, idx) => (
           <div
             key={idx}

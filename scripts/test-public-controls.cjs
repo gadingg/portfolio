@@ -34,7 +34,8 @@ test('legacy CMS layouts render icon-only menu and social links without losing c
  site.layout={html:'<header><button id="menu-toggle" class="button button-outline menu-toggle">Menu</button></header><div class="contact-bottom"><span>Existing signature</span><a href="https://instagram.com/gadingg_">Instagram old label</a></div>',css:''};
  const {load}=require('cheerio'),$=load(await db.renderHomepage(site));
  assert.equal($('#menu-toggle').text(),'');assert.equal($('#menu-toggle').hasClass('button'),false);assert.equal($('#menu-toggle use').attr('href'),'/assets/icons/lucide.svg#menu');
- assert.equal($('.social-icon').length,2);assert.equal($('.social-icon').text(),'');assert.equal($('[data-social="linkedin"]').attr('href'),schema.defaultLinkedIn);
+ assert.equal($('.social-icon').length,3);assert.equal($('.social-icon').text(),'');assert.equal($('[data-social="linkedin"]').attr('href'),schema.defaultLinkedIn);
+ assert.equal($('[data-social="email"]').attr('href'),`mailto:${site.cv.email}`);assert.equal($('.contact-email').length,0);
  assert.equal($('[data-social="instagram"]').attr('aria-label'),site.values.instagramLabel);assert.equal($('.contact-bottom > span').text(),site.values.footerSignature);
  site.values.linkedin='';const empty=load(await db.renderHomepage(site));assert.equal(empty('[data-social="linkedin"]').length,0);
 });

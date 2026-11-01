@@ -26,7 +26,7 @@ test('design naming is guarded by item and image and preserves owner edits',()=>
 test('homepage count follows ready published items and remains independent of three-card preview',()=>{
  const render=get('lib/work-card-html.ts').withInitialWorks;
  const html='<section data-work-kind="webapp"><div class="works-heading"><h3>Website / Apps</h3><a href="/webapp">View all<svg></svg></a></div><div data-works-list></div></section>';
- const visible=Array.from({length:5},(_,i)=>({...base,id:`work-${i}`}));
+ const visible=Array.from({length:5},(_,i)=>({...base,id:`work-${i}`,caseStudy:{slug:`work-${i}`}}));
  const items=[...visible,{...base,id:'hidden',published:false},{...base,id:'demo',demo:true},{...base,id:'incomplete',url:''}];
  const $=load(render(html,items));assert.equal($('.works-heading a').text(),'View all');assert.equal($('.works-count').text(),'5 case studies');assert.equal($('.works-heading svg').length,1);assert.equal($('.work-card').length,3);assert.match($('.works-heading a').attr('aria-label'),/View all web apps and case studies/);
  assert.equal(load(render(html,visible.slice(0,2)))('.works-count').text(),'2 case studies');
@@ -46,7 +46,7 @@ test('all category headings separate count from action and repeated rendering do
  const html=['webapp','design','video'].map(kind=>`<section data-work-kind="${kind}"><div class="works-heading"><h3>${kind}</h3><a href="/${kind}">View all 9</a></div><div data-works-list></div></section>`).join('');
  const items=[base,{...base,id:'design',kind:'design'}];
  const $=load(render(render(html,items),items));
- assert.deepEqual($('.works-count').map((_,el)=>$(el).text()).get(),['1 case study','1 design project','0 videos']);
+ assert.deepEqual($('.works-count').map((_,el)=>$(el).text()).get(),['1 project','1 design project','0 videos']);
  assert.equal($('.works-heading-copy').length,3);
  $('.works-heading > a').each((_,el)=>{assert.equal($(el).text(),'View all');assert.ok($(el).hasClass('button-outline'));assert.match($(el).find('use').attr('href'),/#arrow-right$/);});
  assert.equal($('[data-work-kind="design"] .works-heading > a').attr('href'),'/design');

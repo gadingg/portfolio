@@ -73,7 +73,9 @@ export function AdminSidebar() {
     { label: 'Overview', href: '/admintgadink/dashboard' },
     { label: 'Portofolio', href: '/admintgadink/dashboard/works' },
     { label: 'Editor halaman', href: '/admintgadink/dashboard/editor/home' },
+    { label: 'AI Study Case', href: '/admintgadink/dashboard/ai' },
     { label: 'Website & CV', href: '/admintgadink/dashboard/site' },
+    { label: 'Pengaturan AI', href: '/admintgadink/dashboard/settings' },
   ];
 
   return (
