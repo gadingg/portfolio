@@ -58,7 +58,7 @@ export async function generateMetadata({
     alternates:{canonical:`/work/${project.slug}`},
     openGraph: {
       title: `${project.title} · Case Study`,
-      description: projectPresentations[project.slug]?.intro || project.description,
+      description: project.description,
       images: !project.cover_image_url||useBriefArtwork(project) ? (project.slug === 'listinghub' ? [{ url: '/assets/work/listing-hub.jpg', alt: project.title }] : []) : [
         {
           url: project.cover_image_url,
@@ -91,7 +91,7 @@ export default async function StudyCasePage({
   const problem = presentation?.problem || paragraphAfterHeading(blocks, /challenge|problem|brief/i) || project.description;
   const approach = presentation?.solution || paragraphAfterHeading(blocks, /solution|approach|system|execution|architecture/i)
     || project.subtitle
-    || 'A practical response shaped around the team, workflow, and business constraint.';
+    || '';
   const outcome = presentation?.impact || projectOutcome(blocks) || '';
 
   if(presentation?.layout)return <div className="showcase" id="case-top">
@@ -111,7 +111,7 @@ export default async function StudyCasePage({
             href="/#work"
             className="text-link case-back"
           >
-            <ArrowLeft className="icon" aria-hidden="true" /> Back to selected works
+            <ArrowLeft className="icon" aria-hidden="true" /> Back to portfolio
           </a>
 
           <header className="case-intro">
@@ -137,7 +137,7 @@ export default async function StudyCasePage({
             <div className="grid gap-9 lg:grid-cols-12">
               <div className="lg:col-span-3">
                 <h2 id="problem-solving-title" className="mt-4 text-2xl font-black tracking-[-0.04em] text-[#f3f0e8]">
-                  The thinking behind the output
+                  Project overview
                 </h2>
               </div>
               <div className="grid gap-8 md:grid-cols-3 lg:col-span-9">

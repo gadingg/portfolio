@@ -1,0 +1,229 @@
+{
+  "edition": "2026-11-01-public-copy",
+  "site": {
+    "heroMetadata": {
+      "from": [
+        "Creative Marketing & Digital Solutions",
+        "© 2026 SUB-IDN. Creative Marketing"
+      ],
+      "to": "2+ years in creative marketing & product development"
+    },
+    "intro": {
+      "from": [
+        "Saya suka mengubah ide jadi sesuatu yang benar-benar kepakai, dari visual sampai solusi digital."
+      ],
+      "to": "Creative marketing, visual design, and web apps for everyday work."
+    },
+    "aboutBody1": {
+      "from": [
+        "Good visuals catch eyes. Great ideas make an impact."
+      ],
+      "to": "I take part in planning campaigns, designing the visuals, and building the tools the team needs."
+    },
+    "aboutBody2": {
+      "from": [
+        "Buat saya, bukan cuma soal visual yang menarik, tapi juga bagaimana pesan bisa tersampaikan dengan baik dan pekerjaan jadi lebih simpel."
+      ],
+      "to": ""
+    },
+    "heroPrimary": {
+      "from": [
+        "View selected works"
+      ],
+      "to": "View portfolio"
+    },
+    "heroSecondary": {
+      "from": [
+        "Get in touch"
+      ],
+      "to": "Let's talk"
+    },
+    "processTitle2": {
+      "from": [
+        "Build"
+      ],
+      "to": "Design & Build"
+    },
+    "processTitle4": {
+      "from": [
+        "Ownership"
+      ],
+      "to": "Take ownership"
+    },
+    "toolkitTitle": {
+      "from": [
+        "Tools behind the work."
+      ],
+      "to": "Tools & workflow"
+    },
+    "contactBody": {
+      "from": [
+        "Punya campaign yang mau dikembangkan, visual yang perlu dieksekusi, atau workflow yang terasa terlalu ribet? Let's talk."
+      ],
+      "to": ""
+    },
+    "footerSignature": {
+      "from": [
+        "Think. Create. Build. Improve."
+      ],
+      "to": ""
+    },
+    "seoDescription": {
+      "from": [
+        "Gading Utama Portfolio",
+        "Campaign, visual, dan web-app oleh R. Gading Utama. Lihat karya dan cara saya menyelesaikan masalah melalui creative marketing, design, dan digital solutions."
+      ],
+      "to": "Creative marketing, visual design, and web apps by Gading Utama. View selected projects, case studies, and experience."
+    }
+  },
+  "cvProfile": {
+    "from": "Creative Marketer & Problem Solver with 2+ years of professional experience across creative marketing, digital design, and technology. Combines creative thinking, technology, and AI to develop campaigns, solve workflow problems, and build internal web-apps that improve business operations.",
+    "to": "Creative marketer with 2+ years of experience in campaigns, visual design, and internal web-app development. Work includes social content, Meta Ads, and tools for property teams."
+  },
+  "shared": {
+    "The thinking behind the output": "Project overview",
+    "Explore the work.": "Menu",
+    "Get in touch": "Let's talk",
+    "View selected works": "View portfolio",
+    "Back to selected works": "Back to portfolio",
+    "Explore PROGRAM MBG": "Open app"
+  },
+  "cases": {
+    "listinghub": {
+      "text": {
+        "Find faster. Manage better.": "Shared and personal listings",
+        "Cari seluruh database properti dan kelola listing personal dalam dua aplikasi yang saling melengkapi.": "Pencarian database properti dan pengelolaan listing personal untuk agent."
+      },
+      "removeSections": [
+        {
+          "heading": "Built around the way agents work.",
+          "paragraph": "Kedua aplikasi menangani bagian berbeda dari pekerjaan agent. Database bersama menjadi tempat mencari dan membandingkan properti. Listing personal menjadi tempat merapikan informasi yang dikelola sendiri. Fokus saya adalah membuat informasi lebih mudah ditemukan, diperbarui, dan digunakan kembali."
+        }
+      ]
+    },
+    "metaads": {
+      "text": {
+        "Marketing impact, with context.": "Campaign results",
+        "The data was already there.": "Manual reporting in Figma",
+        "Report once. Use it again.": "Campaign records",
+        "Make evaluation more objective.": "Campaign and agent performance",
+        "Turn the recap into a next action.": "AI-assisted campaign review",
+        "Performa iklan, respons WhatsApp, dan evaluasi campaign dalam satu dashboard.": "Dashboard untuk laporan Meta Ads dan evaluasi respons WhatsApp.",
+        "Report dibuat manual di Figma, history campaign tersebar, dan pemilihan PIC belum punya indikator kinerja yang jelas.": "Laporan iklan dibuat manual di Figma. Riwayat campaign dan data penanganan leads belum terkumpul untuk evaluasi PIC.",
+        "Saya menyatukan reporting, tracking leads, history campaign, kinerja agent, subsidi ads, dan rekomendasi AI dalam satu dashboard.": "Saya membuat dashboard untuk laporan Meta Ads, riwayat campaign, penanganan leads, subsidi iklan, dan rekomendasi AI.",
+        "Reporting lebih terstruktur, history mudah ditelusuri, dan evaluasi PIC punya dasar yang lebih objektif.": "Data campaign dan respons WhatsApp dapat ditinjau kembali untuk mengevaluasi iklan dan penanganan leads.",
+        "Campaign, hasil performance, dan preview iklan dicatat dalam satu sistem. History menyimpan listing, periode, PIC, dan respon audiens sehingga campaign lebih mudah ditelusuri.": "Setiap campaign menyimpan hasil iklan, preview, listing, periode, PIC, dan respons audiens.",
+        "Tren antar-batch untuk membandingkan hasil Meta Ads dengan respons WhatsApp. Detail dari mockup proyek.": "Perbandingan hasil Meta Ads dan respons WhatsApp antar-batch.",
+        "Distribusi leads dan kinerja agent memberi gambaran jumlah campaign, respon WhatsApp yang ditangani, serta bulan aktif. Program subsidi ads personal juga punya rekap budget dan hasil leads yang lebih jelas.": "Rekap menampilkan distribusi leads, campaign yang ditangani, respons WhatsApp, serta anggaran dan hasil program subsidi iklan.",
+        "Pilih batch untuk membaca anggaran, impresi, respons WhatsApp, dan biaya per pesan. Detail dari mockup proyek.": "Ringkasan anggaran, impresi, respons WhatsApp, dan biaya per pesan per batch.",
+        "Konsultan AI membaca data yang telah direkap untuk membantu mencari campaign bermasalah, melihat iklan terbaik, mengevaluasi PIC, dan menyusun rekomendasi berikutnya.": "Rekomendasi AI membantu meninjau rekap campaign, mengenali iklan yang perlu diperiksa, dan menyusun tindak lanjut."
+      },
+      "removeSections": []
+    },
+    "mbg": {
+      "text": {
+        "Small actions. Visible progress.": "Agent activity and rewards",
+        "Make the rules easy to follow.": "Points and program rules",
+        "Give every point a story.": "Point history",
+        "Keep the admin work practical.": "Activity entry for admins",
+        "A reward loop people can follow.": "Reward redemption",
+        "Aktivitas agent jadi poin, ranking bulanan, dan reward yang bisa dipantau dalam satu tempat.": "Leaderboard aktivitas agent dengan riwayat poin dan penukaran reward.",
+        "Agent dapat melihat posisi dan asal poinnya. Admin punya alur yang lebih terstruktur untuk mencatat aktivitas, memperbarui ranking, dan memproses redeem sesuai aturan program.": "Agent dapat menelusuri asal poin dan posisi leaderboard. Admin mencatat aktivitas serta penukaran reward melalui dashboard."
+      },
+      "removeSections": [
+        {
+          "heading": "Motivation, with a clear record.",
+          "paragraph": "Pendekatannya menggabungkan dorongan visual untuk berpartisipasi dengan catatan yang bisa ditelusuri. Peserta melihat progress dan posisi, sementara admin mengelola aktivitas dan reward di baliknya."
+        }
+      ]
+    },
+    "dailyapp": {
+      "text": {
+        "Daily marketing, in one place.": "Daily marketing tools",
+        "Make repeat work easier.": "Repeated tasks",
+        "Tools for the daily workflow.": "Tools and features",
+        "Task, prompt, watermark, dan library untuk merapikan workflow marketing harian.": "Tools internal untuk task, prompt, caption, watermark, dan referensi marketing.",
+        "Kebutuhan marketing harian tersebar di beberapa tempat dan sebagian masih dikerjakan manual. Waktu habis untuk mencari, merapikan, menghitung, dan mengulang proses yang sama.": "Task, prompt, caption, dan referensi kerja tersebar di beberapa tempat. Sebagian pekerjaan masih dilakukan secara manual.",
+        "Satu workspace berisi tools sederhana yang dipakai setiap hari: task management, prompt, watermark, caption, library, rekap closing, dan reminder.": "Saya mengumpulkan task, prompt, watermark, caption, dan referensi kerja dalam satu aplikasi internal.",
+        "Workflow marketing harian menjadi lebih rapi, cepat, dan konsisten. Lebih sedikit waktu habis untuk pekerjaan teknis kecil dan lebih banyak waktu bisa dialihkan ke creative thinking, campaign, dan marketing.": "Tim dapat membuka task, template caption, prompt, dan link kerja dari aplikasi yang sama.",
+        "Web-app internal yang saya buat untuk menyederhanakan workflow Marketing Communication sehari-hari. Fokusnya adalah mengurangi pekerjaan repetitif dan menyatukan banyak kebutuhan kecil ke dalam satu workspace.": "Aplikasi internal untuk kebutuhan Marketing Communication sehari-hari.",
+        "Kalau prosesnya sering diulang, berarti ada peluang untuk dibuat lebih praktis. Saya ingin membuat satu hub yang merangkum workflow marketing harian dalam satu tempat, lewat kumpulan tools sederhana yang memang dipakai setiap hari.": "Saya mengelompokkan pekerjaan yang sering berulang, lalu menyiapkan tools untuk masing-masing kebutuhan.",
+        "Prompt Generator: paste spesifikasi listing, pilih style, lalu susun prompt dari template yang sudah disiapkan.": "Prompt Generator: susun prompt dari spesifikasi listing dan template yang dipilih.",
+        "Caption Hot Listing: rapikan spek mentah, bersihkan kontak agent, dan siapkan caption yang lebih general.": "Caption Hot Listing: rapikan spesifikasi listing dan hapus kontak agent dari caption.",
+        "Link Library: kategorikan PPT, social media, banner, open house, merchandise, dan template cetak.": "Link Library: simpan PPT, materi media sosial, banner, dan template cetak per kategori.",
+        "Prompt Library: simpan dan gunakan kembali prompt tanpa membuka history chat.": "Prompt Library: simpan prompt agar dapat digunakan lagi.",
+        "Top Contributor Recap: ekstrak nama agent dari rekap closing bulanan dan susun leaderboard.": "Top Contributor Recap: susun leaderboard dari nama agent pada rekap closing bulanan.",
+        "Birthday Reminder: rekap ulang tahun agent dan kirim reminder melalui Telegram Bot.": "Birthday Reminder: rekap ulang tahun agent dan kirim pengingat melalui Telegram Bot."
+      },
+      "removeSections": [
+        {
+          "heading": "More room for creative thinking.",
+          "paragraph": "Daily App Gading membuat workflow marketing harian lebih rapi, cepat, dan konsisten. Lebih sedikit waktu habis untuk pekerjaan teknis kecil dan lebih banyak waktu bisa dialihkan ke creative thinking, campaign, dan marketing."
+        }
+      ]
+    },
+    "mydaily": {
+      "text": {
+        "Daily life, in one place.": "A personal daily app",
+        "Too many apps for one daily routine.": "Scattered daily records",
+        "Less switching. More doing.": "One app for daily tasks",
+        "Know where the money goes.": "Expense tracking",
+        "Make small habits visible.": "Habit check-ins",
+        "Keep the little things together.": "Tasks and saved links",
+        "Keuangan, tugas, dan kebiasaan harian dalam satu aplikasi pribadi. Berangkat dari kebutuhan sendiri, dibuat untuk dipakai setiap hari.": "Aplikasi pribadi untuk mencatat keuangan, tugas, dan kebiasaan harian.",
+        "Kebutuhan harian terkumpul dalam satu tempat. Aplikasi terus saya sesuaikan dari pengalaman pemakaian pribadi.": "Catatan keuangan, tugas, link, dan kebiasaan dapat dilihat kembali dari satu aplikasi pribadi."
+      },
+      "removeSections": [
+        {
+          "heading": "Built around my everyday.",
+          "paragraph": "Dari kebutuhan pribadi, menjadi aplikasi yang terus saya sesuaikan sambil dipakai. Keuangan, tugas, dan rutinitas sekarang punya satu tempat untuk dilihat kembali."
+        }
+      ]
+    },
+    "reqvideo": {
+      "text": {
+        "From waiting to requesting.": "Video requests",
+        "The bottleneck starts before the schedule.": "Collecting requests",
+        "Submit. Follow up. Fix time. Schedule.": "Request and scheduling flow",
+        "Request listing, follow-up, dan jadwal take video dalam satu alur.": "Form pengajuan listing dan dashboard penjadwalan video properti.",
+        "Admin harus chat agent satu per satu untuk menanyakan listing yang ingin dibuatkan video. Agent menunggu ditanya dan proses request menjadi saling tunggu.": "Admin menghubungi agent satu per satu untuk mengumpulkan listing yang ingin dibuatkan video.",
+        "Agent submit listing lewat form, data masuk ke dashboard secara real-time, lalu admin follow up untuk fiksasi waktu dan menyusun jadwal take video.": "Agent mengirim listing lewat form. Permintaan masuk ke dashboard, lalu admin menghubungi agent untuk menentukan jadwal pengambilan video.",
+        "Workflow yang bergantung pada admin untuk jemput bola menjadi lebih self-service dan terstruktur. Agent bisa lebih aktif submit listing, sementara admin fokus pada follow-up dan scheduling.": "Agent dapat mengajukan listing langsung. Admin menindaklanjuti permintaan dan menyusun jadwal pengambilan video.",
+        "Dashboard internal untuk merapikan alur request dan penjadwalan take video property antara agent dan admin/media.": "Dashboard untuk pengajuan listing dan penjadwalan video properti.",
+        "Sebelumnya admin harus chat agent satu per satu untuk menanyakan apakah ada listing yang ingin dibuatkan video. Masalah utamanya bukan hanya scheduling: agent belum punya jalur yang simpel untuk langsung submit listing ketika mereka punya property yang siap dibuat konten.": "Agent belum memiliki form untuk mengajukan listing. Admin mengumpulkan permintaan lewat chat sebelum menentukan jadwal.",
+        "Agent submit: isi form ketika punya listing yang ingin dibuatkan video.": "Pengajuan listing: agent mengisi form untuk properti yang ingin dibuatkan video.",
+        "Admin follow up: submission langsung muncul di dashboard, tanpa recap manual dari chat.": "Tindak lanjut: permintaan langsung muncul di dashboard admin.",
+        "Fix time: fiksasi waktu bersama agent.": "Penentuan waktu: admin dan agent menyepakati jadwal.",
+        "Arrange schedule: susun jadwal final take video langsung dari web.": "Penjadwalan: admin menyusun jadwal pengambilan video melalui aplikasi."
+      },
+      "removeSections": [
+        {
+          "heading": "A more self-service workflow.",
+          "paragraph": "Agent bisa lebih aktif submit listing, sementara admin bisa fokus pada follow-up dan scheduling. Alur yang sebelumnya bergantung pada admin untuk jemput bola menjadi lebih terstruktur."
+        }
+      ]
+    }
+  },
+  "designs": [
+    {
+      "id": "sample-design-2",
+      "image": "/api/media/works/1793377934977-765fb062-83ec-4168-859b-a4d0b45f35c0.png",
+      "fromTitle": "Weekly Meeting Patosser",
+      "title": "Weekly Meeting Patosser · Poster Set 1",
+      "fromAlt": [
+        "WM Patosser 01"
+      ],
+      "alt": "Empat poster Weekly Meeting Patosser bertema AI, konten properti, dan closing, dengan foto pembicara."
+    },
+    {
+      "id": "a7cd998a-a6ef-4312-9bcc-2ef5f37c84bf",
+      "image": "/api/media/works/1793379220100-9be788f0-fe30-4d75-9763-a6770ae16c9c.png",
+      "fromTitle": "Weekly Meeting Patosser",
+      "title": "Weekly Meeting Patosser · Poster Set 2",
+      "fromAlt": [
+        "Mockup Portfolio Visual Design (1)"
+      ],
+      "alt": "Empat poster Weekly Meeting Patosser bertema listing, konten AI, perencanaan, dan closing, dengan foto pembicara."
+    }
+  ]
+}

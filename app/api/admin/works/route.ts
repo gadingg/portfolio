@@ -28,6 +28,7 @@ export async function PUT(request: NextRequest) {
         action: z.enum(['save', 'publish', 'order']).default('save'),
         revision: z.number().int().min(0),
         ids: z.array(z.string()).max(150).optional(),
+        workId: z.string().regex(/^[a-zA-Z0-9_-]{1,100}$/).optional(),
       })
       .parse(body);
     const items =

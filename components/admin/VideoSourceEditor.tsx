@@ -18,7 +18,7 @@ export function VideoSourceEditor({item, disabled, onBusyChange, onChange}: {
     setCapturing(true); onBusyChange(true); setMessage('');
     try {
       const image = await uploadCover(await captureVideoCover(value, player.current.currentTime));
-      onChange({image}); setMessage('Thumbnail diperbarui di draft. Simpan untuk menyimpan perubahan.');
+      onChange({image}); setMessage('Thumbnail diganti. Draft tersimpan otomatis.');
     } catch (error) { setMessage(error instanceof Error ? error.message : 'Thumbnail belum bisa dibuat.'); }
     finally { setCapturing(false); onBusyChange(false); }
   }
@@ -26,20 +26,19 @@ export function VideoSourceEditor({item, disabled, onBusyChange, onChange}: {
     <div className="cms-settings-card cms-video-main">
       <h3><Video size={20} aria-hidden="true"/>Video &amp; Thumbnail</h3>
       <fieldset className="video-source-choice" disabled={disabled}>
-        <legend>Sumber video</legend>
+        <legend>Video yang ditampilkan</legend>
         <label><input type="radio" name={`video-source-${item.id}`} checked={source === 'file'} onChange={() => onChange({videoSource:'file'})}/> File video</label>
         <label><input type="radio" name={`video-source-${item.id}`} checked={source === 'instagram'} onChange={() => onChange({videoSource:'instagram'})}/> Instagram</label>
       </fieldset>
       {source === 'instagram' ? <label>Link Instagram<input type="url" value={item.url} placeholder="https://www.instagram.com/reel/…" disabled={disabled} onChange={event => onChange({url:event.target.value})}/><small>Gunakan link Reel, posting, atau video Instagram.</small></label> : <>
         <FileDrop accept="video/mp4,video/webm" disabled={disabled} onBusyChange={onBusyChange} onUploaded={files => onChange({videoSource:'file',videoFile:files[0].url,...(!cover && files[0].cover ? {image:files[0].cover} : {})})}/>
         {value && <><video key={value} ref={player} className="cms-video-preview" src={value} poster={cover} controls playsInline preload="metadata"/>
-          <div className="wm-toolbar"><button type="button" className="wm-button" disabled={disabled||capturing} onClick={useFrame}><ImageIcon size={18} aria-hidden="true"/>{capturing?'Membuat thumbnail…':'Gunakan frame ini'}</button><button type="button" className="wm-button" disabled={disabled} onClick={()=>onChange({videoFile:''})}>Lepas video</button></div></>}
+          <div className="wm-toolbar"><button type="button" className="wm-button" disabled={disabled||capturing} onClick={useFrame}><ImageIcon size={18} aria-hidden="true"/>{capturing?'Membuat thumbnail…':'Pakai gambar ini sebagai thumbnail'}</button><button type="button" className="wm-button" disabled={disabled} onClick={()=>onChange({videoFile:''})}>Hapus video dari portofolio</button></div></>}
         <SettingsDisclosure title="Link file MP4 / WebM" icon={<Video size={20}/>}>
           <label>Link file<input value={value} inputMode="url" disabled={disabled} onChange={event=>onChange({videoFile:event.target.value})}/></label>
         </SettingsDisclosure>
-        {item.url && <p className="wm-muted">Link Instagram tersimpan sebagai tautan ke posting asli.</p>}
       </>}
-      <p className="wm-muted">{source === 'file' ? 'File video akan diputar di portfolio.' : 'Posting Instagram akan dibuka di player portfolio.'} Sumber lain tetap tersimpan saat Anda berpindah pilihan.</p>
+      <p className="wm-muted">{source === 'file' ? 'File ini diputar di website. Link Instagram tetap tersimpan.' : 'Video ditampilkan dari Instagram. File upload tetap tersimpan.'}</p>
       {message && <p role="status">{message}</p>}
       <div className="cms-video-cover"><h4>Thumbnail</h4>{cover && <img className="cms-image-preview" src={cover} alt="Thumbnail video"/>}<FileDrop folder="covers" disabled={disabled} onBusyChange={onBusyChange} onUploaded={files=>onChange({image:files[0].url})}/></div>
     </div>

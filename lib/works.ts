@@ -55,6 +55,7 @@ const imageURL = (value: string) => {
 };
 
 export const WorkDraftItemSchema = z.object({
+  copyEdition: z.string().max(40).optional(),
   evidenceEdition: z.string().max(40).optional(),
   createdAt: z.string().datetime().optional(),
   updatedAt: z.string().datetime().optional(),
@@ -131,7 +132,7 @@ export function setWorkKind(item: WorkItem, kind: WorkKind): WorkItem {
 }
 
 export function publicWork(item: WorkItem): WorkItem {
-  const { archivedCaseStudy, createdAt, updatedAt, ...visible } = item;
+  const { archivedCaseStudy, createdAt, updatedAt, copyEdition, ...visible } = item;
   if (visible.kind === 'video') {
     if (activeVideoSource(visible) === 'instagram') return { ...visible, videoFile: '', url: visible.url };
     return { ...visible, url: instagramURL(visible.url) || '' };

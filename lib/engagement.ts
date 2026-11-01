@@ -1,15 +1,15 @@
 import { z } from 'zod';
 export const engagementKinds = ['work_open','design_open','video_open','contact_click','app_click'] as const;
 export const engagementLabels: Record<typeof engagementKinds[number],string> = {
-  work_open:'Buka portfolio', design_open:'Perbesar desain', video_open:'Buka video',
+  work_open:'Buka portofolio', design_open:'Perbesar desain', video_open:'Buka video',
   contact_click:'Klik kontak', app_click:'Buka aplikasi',
 };
 export const EngagementEventSchema=z.object({
   eventId:z.string().uuid(), type:z.enum(engagementKinds),
   workId:z.string().regex(/^[a-zA-Z0-9_-]{1,100}$/).optional(),
 }).strict().superRefine((event,ctx)=>{
-  if(event.type!=='contact_click'&&!event.workId)ctx.addIssue({code:'custom',message:'Portfolio wajib dipilih.'});
-  if(event.type==='contact_click'&&event.workId)ctx.addIssue({code:'custom',message:'Kontak tidak terkait portfolio.'});
+  if(event.type!=='contact_click'&&!event.workId)ctx.addIssue({code:'custom',message:'Portofolio wajib dipilih.'});
+  if(event.type==='contact_click'&&event.workId)ctx.addIssue({code:'custom',message:'Kontak tidak terkait portofolio.'});
 });
 export const EngagementSummarySchema=z.object({
   total:z.number().int().nonnegative(),

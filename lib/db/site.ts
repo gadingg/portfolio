@@ -6,6 +6,7 @@ import { siteFields, defaultCV, defaultLinkedIn, defaultHeroMetadata, capability
 import { readCMS, readPublishedCMS } from './cms';
 import { cleanVisualLayout } from '../visual-layout';
 import { siteURL } from '../site-url';
+import { refineSiteCopy } from '../public-copy';
 export const homepageTemplate = () =>
   fs.readFile(path.join(process.cwd(), 'public/index.html'), 'utf8');
 export async function initialSite(): Promise<SiteContent> {
@@ -53,7 +54,7 @@ const withSiteDefaults = (site: SiteContent): SiteContent => {
   for (const [key, [previous, next]] of Object.entries(editorialDefaults)) if (previous.includes(values[key]?.replace(/\u00a0/g, ' ').trim())) values[key] = next;
   // Replace the previous CV edition on read, then retain edits saved against this edition.
   const cv = site.cv.sourceVersion === defaultCV.sourceVersion ? site.cv : structuredClone(defaultCV);
-  return { ...site, values, cv };
+  return refineSiteCopy({ ...site, values, cv });
 };
 export const getSiteDocument = async () => {
   const document = await readCMS('site', initialSite);
@@ -84,6 +85,9 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
     copy.children('p').not(statement).slice(0, -1).remove();
     if (statement.length && !statement.parent().is('blockquote')) statement.wrap('<blockquote class="about-quote"></blockquote>');
   });
+  if (values.aboutBody2 && !$('.about-copy > p:not(.about-statement)').length) $('.about-copy a').first().before('<p></p>');
+  if (values.contactBody && !$('.contact-layout > div p').length) $('.contact-layout > div').last().prepend('<p></p>');
+  if (values.footerSignature && !$('.contact-bottom > span').length) $('.contact-bottom').prepend('<span></span>');
   const targets = new Map(
     siteFields.map((field) => [field.key, $(field.selector).first()]),
   );
@@ -162,6 +166,13 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
       else statement.parent().addClass('about-quote');
     }
   });
+  $('.about-copy p,.contact-layout p,.contact-bottom > span').filter((_index, element) => !$(element).text().trim()).remove();
+  $('.about-quote').each((_index, element) => {
+    const quote = $(element), statement = quote.find('.about-statement');
+    if (statement.text() === 'I take part in planning campaigns, designing the visuals, and building the tools the team needs.') quote.replaceWith(statement);
+  });
+  $('#menu-title').text('Menu');
+  $('#mobile-menu > p').remove();
   const hero=$('main > #home, main > .hero').first(), about=$('main > #about').first(), works=$('main > #work').first();
   if(hero.length&&works.length){hero.after(works);if(about.length)works.after(about);}
   $('.works-section > .section-heading > p').remove();
@@ -192,8 +203,10 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[]) {
       const icons = ['search', 'lightbulb', 'code-2', 'users', 'check-check'];
       list.children('li').each((index, element) => {
         const step = $(element);
-        step.children('.pipeline-step-icon').remove();
-        step.prepend(`<svg class="icon pipeline-step-icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#${icons[index] || 'check-check'}"></use></svg>`);
+        step.children('.pipeline-step-icon,.pipeline-step-icons').remove();
+        step.prepend(index === 2
+          ? '<span class="pipeline-step-icons" aria-hidden="true"><svg class="icon pipeline-step-icon"><use href="/assets/icons/lucide.svg#pen-tool"></use></svg><svg class="icon pipeline-step-icon"><use href="/assets/icons/lucide.svg#code-2"></use></svg></span>'
+          : `<svg class="icon pipeline-step-icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#${icons[index] || 'check-check'}"></use></svg>`);
       });
     }
   });

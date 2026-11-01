@@ -152,7 +152,7 @@ export function FileDrop({
           type="file"
           accept={accept}
           multiple={multiple}
-          aria-label="Pilih file buat diupload"
+          aria-label="Pilih file untuk upload"
           hidden
           onChange={(e) => upload(Array.from(e.target.files || []))}
         />
@@ -235,7 +235,7 @@ export function FileDrop({
         {listing ? (
           <p role="status">Memuat media…</p>
         ) : !media.length && !libraryError ? (
-          <p>Belum ada file. Upload yang pertama, yuk.</p>
+          <p>Belum ada file.</p>
         ) : null}
         <div className="wm-toolbar">
           {hasMore && (
@@ -266,7 +266,7 @@ export function FileDrop({
               dialog.current?.close();
             }}
           >
-            Gunakan {selected.length || ''}
+            {selected.length ? `Pakai ${selected.length} file` : 'Pakai file'}
           </button>
         </div>
       </dialog>

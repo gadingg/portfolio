@@ -1,0 +1,80 @@
+import 'server-only';
+import { load } from 'cheerio';
+import edition from './public-copy-content.json';
+import type { SiteContent } from './site';
+import type { WorkItem } from './works';
+import type { VisualLayout } from './visual-layout';
+import type { CMSBlock } from './content-blocks';
+
+const normalize = (value: string) => value.replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
+type TextMap = Record<string, string>;
+type RemovedSection = { heading: string; paragraph: string };
+const shared: TextMap = edition.shared;
+const cases: Record<string, { text: TextMap; removeSections: RemovedSection[] }> = edition.cases;
+
+function replacements(map: TextMap) {
+  const entries = new Map(Object.entries(map).map(([before, after]) => [normalize(before), after]));
+  return (value: string) => entries.get(normalize(value)) ?? value;
+}
+
+export function refineCopyLayout(layout: VisualLayout, text: TextMap = {}, remove: RemovedSection[] = []): VisualLayout {
+  const $ = load(layout.html), replace = replacements({ ...shared, ...text });
+  for (const section of remove) {
+    $('h2,h3').each((_index, element) => {
+      const heading = $(element), paragraph = heading.next();
+      if (normalize(heading.text()) === normalize(section.heading) && paragraph.is('p') && normalize(paragraph.text()) === normalize(section.paragraph)) {
+        heading.remove(); paragraph.remove();
+      }
+    });
+  }
+  $('h1,h2,h3,h4,p,figcaption,li,a,button').each((_index, element) => {
+    const node = $(element), before = node.text(), after = replace(before);
+    if (after === before || node.find('a,button,img,video,iframe,h1,h2,h3,h4,p,li').length) return;
+    if (!after) { node.empty(); return; }
+    const icons = node.find('svg').clone();
+    node.empty().text(after).append(icons);
+  });
+  return { ...layout, html: $('body').html() || '' };
+}
+
+export function refineSiteCopy(site: SiteContent): SiteContent {
+  if (site.values.publicCopyEdition === edition.edition) return site;
+  const values = { ...site.values };
+  for (const [key, change] of Object.entries(edition.site)) {
+    if (change.from.some(before => normalize(before) === normalize(values[key] || ''))) values[key] = change.to;
+  }
+  values.publicCopyEdition = edition.edition;
+  const cv = site.cv.profile === edition.cvProfile.from ? { ...site.cv, profile: edition.cvProfile.to } : site.cv;
+  const text = Object.fromEntries(Object.values(edition.site).flatMap(change => change.from.map(before => [before, change.to])));
+  return { ...site, values, cv, ...(site.layout ? { layout: refineCopyLayout(site.layout, text) } : {}) };
+}
+
+export function refineWorkCopy(item: WorkItem): WorkItem {
+  if (item.copyEdition === edition.edition) return item;
+  const profile = item.caseStudy && cases[item.caseStudy.slug];
+  const replace = replacements({ ...shared, ...profile?.text });
+  const next = { ...item, description: replace(item.description) };
+  const design = edition.designs.find(design => design.id === item.id && design.image === item.image);
+  if (design) {
+    if (item.title === design.fromTitle) next.title = design.title;
+    if (design.fromAlt.includes(item.imageAlt)) next.imageAlt = design.alt;
+  }
+  if (item.caseStudy) {
+    const blocks: CMSBlock[] = [];
+    for (let index = 0; index < item.caseStudy.blocks.length; index++) {
+      const block = item.caseStudy.blocks[index], following = item.caseStudy.blocks[index + 1];
+      if (block.block_type === 'heading' && following?.block_type === 'paragraph' && profile?.removeSections.some(section => normalize(String(block.content_json.text)) === normalize(section.heading) && normalize(String(following.content_json.text)) === normalize(section.paragraph))) {
+        index++; continue;
+      }
+      const content = { ...block.content_json };
+      for (const key of ['text', 'caption', 'label', 'description']) if (typeof content[key] === 'string') content[key] = replace(content[key]);
+      if (Array.isArray(content.items)) content.items = content.items.map(value => typeof value === 'string' ? replace(value) : value);
+      blocks.push({ ...block, block_order: blocks.length, content_json: content });
+    }
+    next.caseStudy = {
+      ...item.caseStudy, problem: replace(item.caseStudy.problem), solution: replace(item.caseStudy.solution), impact: replace(item.caseStudy.impact), blocks,
+      ...(item.caseStudy.layout ? { layout: refineCopyLayout(item.caseStudy.layout, profile?.text, profile?.removeSections) } : {}),
+    };
+  }
+  return JSON.stringify(next) === JSON.stringify(item) ? item : { ...next, copyEdition: edition.edition };
+}

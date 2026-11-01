@@ -77,14 +77,14 @@ test('next project follows the supplied order and the last wraps to the first',(
 
 test('loading renders a named busy region, visible status and decorative skeleton while keeping navigation',()=>{
  const $=html(renderToStaticMarkup(React.createElement(Loading)));
- assert.equal($('main[aria-busy="true"]').length,1);assert.ok($('[role="status"]').text().includes('Memuat'));
+ assert.equal($('main[aria-busy="true"]').length,1);assert.ok($('[role="status"]').text().includes('Loading'));
  assert.equal($('.case-skeleton-cover').length,1);assert.equal($('.case-skeleton-columns .case-skeleton').length,3);
  assert.ok($('.wordmark').attr('href'));assert.equal($('.case-skeleton').closest('[aria-hidden="true"]').length,1);
 });
 
 test('failed loads offer retry and a working return link rather than a perpetual skeleton',()=>{
  const $=html(renderToStaticMarkup(React.createElement(LoadError,{reset(){},error:new Error('private backend detail')})));
- assert.equal($('.case-load-error button').text(),'Coba lagi');assert.equal($('.case-load-error a').attr('href'),'/#work');
+ assert.equal($('.case-load-error button').text(),'Try again');assert.equal($('.case-load-error a').attr('href'),'/#work');
  assert.equal($('[role="alert"]').length,1);assert.equal($('.case-skeleton').length,0);
  assert.ok(!$.html().includes('private backend detail'));
 });

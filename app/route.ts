@@ -18,6 +18,6 @@ export async function GET() {
     });
   } catch (error: any) {
     console.error('Failed to load main portfolio index.html:', error);
-    return new NextResponse('Portfolio belum bisa dimuat. Coba lagi.', { status: 503 });
+    return new NextResponse("Couldn't load the portfolio. Try again.", { status: 503 });
   }
 }

@@ -92,7 +92,7 @@ export function BlockEditor({
             ]);
           }}
         >
-          <option value="">Tambah blok</option>
+          <option value="">Tambah bagian</option>
           {Object.entries(labels).map(([type, label]) => (
             <option key={type} value={type}>
               {label}
@@ -359,13 +359,13 @@ export function BlockEditor({
                       type="button"
                       className="wm-button cms-delete"
                       onClick={async () =>
-                        await ask('Hapus blok ini? Perubahan diterapkan saat draft disimpan.') && onChange(
+                        await ask('Hapus bagian ini dari draft?') && onChange(
                           blocks.filter((value) => value.id !== block.id),
                         )
                       }
                     >
                       <Trash2 size={18} />
-                      Hapus blok
+                      Hapus bagian
                     </button>
                   </fieldset>
                 </details>
@@ -374,7 +374,7 @@ export function BlockEditor({
           );
         }}
       </SortableList>
-      {!blocks.length && <p>Masih kosong. Tambahkan blok pertama, yuk.</p>}
+      {!blocks.length && <p>Belum ada isi studi kasus.</p>}
     </section>
   );
 }

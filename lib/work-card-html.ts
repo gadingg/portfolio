@@ -2,6 +2,7 @@ import { load } from 'cheerio';
 import { publicWork, type WorkItem } from './works';
 import { cleanPlaceholderCopy } from './placeholder-copy';
 import { workThumbnail } from './work-images';
+import { isReadyWork } from './work-readiness';
 
 const escape = (text: string) => text.replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]!));
 const safeURL = (value: string) => {
@@ -35,10 +36,23 @@ export function withInitialWorks(html: string, items: WorkItem[]): string {
     const group = $(element), list = group.find('[data-works-list]').first();
     if (!list.length) return;
     group.find('.works-recovery').attr('hidden','');
-    let selected = items.filter(item => item.published && item.kind === group.attr('data-work-kind'));
+    let selected = items.filter(item => item.published && isReadyWork(item) && item.kind === group.attr('data-work-kind'));
+    const total = selected.length, link = group.find('.works-heading > a').first();
+    if (link.length) {
+      const kind = group.attr('data-work-kind'), heading = link.parent().find('h2,h3').first();
+      if (heading.length) {
+        if (!heading.parent().hasClass('works-heading-copy')) heading.wrap('<div class="works-heading-copy"></div>');
+        heading.parent().find('.works-count').remove();
+        const noun = kind === 'webapp' ? 'case study' : kind === 'design' ? 'design project' : 'video';
+        heading.after($('<p class="works-count">').text(`${total} ${total === 1 ? noun : noun === 'case study' ? 'case studies' : `${noun}s`}`));
+      }
+      const icon = '<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#arrow-right"></use></svg>';
+      link.addClass('button button-outline works-view-all').empty().text('View all').append(icon);
+      link.attr('aria-label', `View all ${kind === 'webapp' ? 'web apps and case studies' : kind === 'design' ? 'design projects' : 'videos'}`);
+    }
     const collection = group.attr('data-collection') === 'true';
     if (!collection && group.attr('data-work-kind') === 'webapp') selected = selected.slice(0, 3);
-    list.html(workCardsHTML(selected, collection, !!group.find('.editorial-gallery').length) || '<p class="works-message">Belum ada portfolio di koleksi ini.</p>').attr('aria-busy', 'false');
+    list.html(workCardsHTML(selected, collection, !!group.find('.editorial-gallery').length) || '<p class="works-message">No portfolio items yet.</p>').attr('aria-busy', 'false');
   });
   $('#initial-works').remove();
   $('body').append(`<script id="initial-works" type="application/json">${worksJSON(items)}</script>`);

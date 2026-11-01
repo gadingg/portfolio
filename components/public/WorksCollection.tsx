@@ -9,17 +9,16 @@ import { workKinds, workLabels, type WorkKind } from '@/lib/works';
 export async function WorksCollection({kind}:{kind:WorkKind}) {
   const {items} = await getPublicWorks();
   const selected = items.filter(item => item.kind === kind);
-  const descriptions = {webapp:'Website dan aplikasi untuk menyederhanakan pekerjaan. Buka karya untuk melihat studi kasus atau mencoba aplikasinya.',design:'Koleksi visual, dari komposisi sampai detail. Pilih gambar untuk melihatnya lebih dekat.',video:'Cerita brand dan campaign dalam gerak. Pilih video untuk menonton.'};
   return <div className="showcase" id="case-top">
     <StudyCaseHeader />
     <main className="section-shell collection-page">
-      <a className="text-link" href="/#work"><ArrowLeft className="icon" aria-hidden="true" /> Back to selected works</a>
-      <div className="collection-intro"><h1>{workLabels[kind]}</h1><p>{descriptions[kind]}</p></div>
+      <a className="text-link" href="/#work"><ArrowLeft className="icon" aria-hidden="true" /> Back to portfolio</a>
+      <div className="collection-intro"><h1>{workLabels[kind]}</h1></div>
       <nav className="collection-nav" aria-label="Work collections">{workKinds.map(value=><a className="button button-outline" key={value} href={`/${value}`} aria-current={value===kind?'page':undefined}>{workLabels[value]}</a>)}</nav>
       <section data-work-kind={kind} data-collection="true" aria-label={workLabels[kind]}>
-        <div className="works-grid" data-works-list aria-busy="false" dangerouslySetInnerHTML={{__html: workCardsHTML(selected,true) || '<p class="works-message">Belum ada portfolio di koleksi ini.</p>'}}/>
-        <div className="works-recovery" hidden><p role="status">Karya belum bisa dimuat.</p><button type="button" className="button button-outline" data-retry-works>Try again</button></div>
-        <noscript><p>Buka gambar atau tautan portfolio untuk melihat detailnya.</p></noscript>
+        <div className="works-grid" data-works-list aria-busy="false" dangerouslySetInnerHTML={{__html: workCardsHTML(selected,true) || '<p class="works-message">No portfolio items yet.</p>'}}/>
+        <div className="works-recovery" hidden><p role="status">Couldn't load the portfolio.</p><button type="button" className="button button-outline" data-retry-works>Try again</button></div>
+        <noscript><p>Open a portfolio image or link to see the details.</p></noscript>
       </section>
     </main>
     <AuraFooter />

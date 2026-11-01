@@ -8,11 +8,18 @@ test('publication review includes changes across categories, removal and reorder
  const result=summarizePortfolioChanges(draft,published);
  assert.deepEqual(result.changed,['Edited video','removed','new']);assert.equal(result.orderChanged,true);
  const message=portfolioPublicationMessage(draft,published);
- assert.match(message,/3 portfolio/);assert.match(message,/Edited video/);assert.match(message,/urutan portfolio/);
+ assert.match(message,/3 portofolio/);assert.match(message,/Edited video/);assert.match(message,/urutan portofolio/);
  assert.deepEqual(summarizePortfolioChanges([published[1],published[0],published[2]],published),{changed:[],orderChanged:true});
 });
 test('website and CV changes are reviewed separately before publishing either editor',()=>{
  const original={values:{title:'Original'},layout:{html:'Old',css:''},cv:{name:'Original'}};
  assert.deepEqual(sitePublicationSummary({...original,cv:{name:'Edited'}},original),['CV']);
  assert.deepEqual(sitePublicationSummary({...original,values:{title:'Edited'},cv:{name:'Edited'}},original),['Website','CV']);
+});
+
+
+test('publication review ignores JSON property order and server timestamps',()=>{
+ const original=item('one');
+ const reordered=Object.fromEntries(Object.entries(original).reverse());
+ assert.deepEqual(summarizePortfolioChanges([{...reordered,updatedAt:'2026-11-01T00:00:00Z'}],[original]),{changed:[],orderChanged:false});
 });

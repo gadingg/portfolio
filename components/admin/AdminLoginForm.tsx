@@ -26,11 +26,11 @@ export function AdminLoginForm() {
         body: JSON.stringify({ email, password }),
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Belum bisa masuk. Coba lagi, ya.');
+      if (!response.ok) throw new Error(data.error || 'Belum bisa login. Coba lagi.');
       router.replace('/admintgadink/dashboard');
       router.refresh();
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'Belum bisa masuk. Coba lagi, ya.');
+      setError(caught instanceof Error ? caught.message : 'Belum bisa login. Coba lagi.');
     } finally {
       setLoading(false);
     }
@@ -39,8 +39,7 @@ export function AdminLoginForm() {
   return (
     <section className="admin-login-card" aria-labelledby="admin-login-title">
       <p className="admin-kicker">Gading Admin</p>
-      <h1 id="admin-login-title">Masuk CMS</h1>
-      <p className="admin-login-intro">Login dulu, lalu lanjut rapikan portfolio kamu.</p>
+      <h1 id="admin-login-title">Login admin</h1>
 
       <form onSubmit={handleSubmit} className="admin-login-form">
         <label htmlFor="admin-email">Email</label>

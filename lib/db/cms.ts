@@ -4,7 +4,7 @@ import { unstable_noStore as noStore, unstable_cache, revalidateTag } from 'next
 
 export class CMSConflict extends Error {
   constructor() {
-    super('Data berubah di sesi lain. Muat ulang sebelum menyimpan.');
+    super('Ada versi yang lebih baru. Muat ulang untuk melanjutkan.');
   }
 }
 export type CMSDocument<T> = {
@@ -24,10 +24,10 @@ export async function readCMS<T>(
     .select('draft,published,revision,published_at,updated_at')
     .eq('id', id)
     .maybeSingle();
-  if (error)
-    throw new Error(
-      'Penyimpanan CMS belum tersedia. Periksa migrasi database dan koneksi server.',
-    );
+  if (error) {
+    console.error('CMS storage read failed:', { code: error.code, message: error.message });
+    throw new Error('Penyimpanan sedang bermasalah. Coba lagi nanti.');
+  }
   if (data) return data as CMSDocument<T>;
   const content = await initial();
   return {

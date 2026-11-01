@@ -170,6 +170,7 @@ body.showcase{margin:0}
 .showcase .principles li:nth-child(4){left:71.875%;top:70.77%}
 .showcase .principles li:nth-child(5){top:90.77%}
 .showcase .principles li::before{content:counter(principle,decimal-leading-zero);position:absolute;right:14px;top:14px;font-size:12px;line-height:1;font-variant-numeric:tabular-nums;color:var(--secondary)}
+.showcase .pipeline-step-icons{display:flex;gap:8px}
 .showcase .principles .pipeline-step-icon{width:24px;height:24px;color:var(--accent)}
 .showcase .principles h3{font-size:16px;line-height:1.5;margin:0}
 .showcase .principles li.is-reached{border-color:var(--accent)}
@@ -431,8 +432,11 @@ html:has(.showcase dialog[open]){overflow:hidden}
 .showcase #visuals .work-category{margin:0;font-size:12px}
 .showcase #visuals .design-title-link{min-height:44px}
 .showcase .works-heading{flex-direction:row;align-items:center;gap:16px;margin-bottom:24px}
-.showcase .works-heading>a.button{padding:8px 0;min-height:44px;border:0;background:transparent;color:var(--ink)}
-.showcase .works-heading>a.button:hover{color:var(--accent)}
+.showcase .works-heading-copy{min-width:0;display:grid;gap:8px}
+.showcase .works-heading .works-count{font-size:13px;line-height:1.5;font-weight:400;color:var(--secondary)}
+.showcase .works-heading>a.button{padding:10px 14px;min-height:44px;gap:8px;border:1px solid var(--control-line);border-radius:8px;background:transparent;color:var(--ink);white-space:nowrap}
+.showcase .works-heading>a.button .icon{width:16px;height:16px}
+.showcase .works-heading>a.button:hover{border-color:var(--ink);background:var(--ink);color:var(--canvas)}
 .showcase .design-showcase-caption{pointer-events:none;border-radius:0 0 12px 12px;gap:8px}
 .showcase .design-showcase-caption a{pointer-events:auto}
 .showcase #visuals .editorial-gallery.is-dragging{scroll-snap-type:none;scroll-behavior:auto;user-select:none;cursor:grabbing}

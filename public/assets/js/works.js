@@ -55,7 +55,7 @@
     const focusedControl = bottom.contains(document.activeElement) ? document.activeElement.getAttribute('aria-label') : '';
     imageIndex=(index+imageItems.length)%imageItems.length; const item=imageItems[imageIndex];
     title.textContent=item.title;
-    const artwork=image(item.image,item.imageAlt||item.title),status=node('p','work-image-status','Memuat gambar…');status.setAttribute('role','status');
+    const artwork=image(item.image,item.imageAlt||item.title),status=node('p','work-image-status','Loading image…');status.setAttribute('role','status');
     artwork.addEventListener('load',()=>status.remove(),{once:true});artwork.addEventListener('error',()=>status.remove(),{once:true});
     body.replaceChildren(status,artwork);bottom.replaceChildren();
     const caption=node('p','',`${imageIndex+1} / ${imageItems.length}`);caption.setAttribute('aria-live','polite');
@@ -71,7 +71,7 @@
     if(file&&/\.(mp4|webm)(?:[?#].*)?$/i.test(file)){
       const video=node('video','portfolio-video-player');video.src=file;video.poster=safeURL(item.image);video.controls=true;video.autoplay=true;video.muted=true;video.playsInline=true;video.preload='metadata';body.append(video);
       const status=node('p','','');status.setAttribute('role','status');bottom.append(status);
-      video.addEventListener('error',()=>{status.textContent='Video belum bisa diputar. Tutup lalu buka kembali untuk mencoba lagi.';});
+      video.addEventListener('error',()=>{status.textContent='The video could not be played. Close it and try again.';});
       video.play().catch(()=>{status.textContent='Tekan Play untuk memutar video.';});
       const original=instagram(item.url);if(original){const link=node('a','text-link','Open on Instagram');link.href=original;link.target='_blank';link.rel='noopener noreferrer';bottom.append(link);}return;
     }
@@ -82,7 +82,7 @@
     }
     const frame=node('iframe','instagram-player');frame.title=`Instagram video: ${item.title}`;frame.allow='autoplay; encrypted-media; fullscreen; picture-in-picture';frame.allowFullscreen=true;frame.referrerPolicy='strict-origin-when-cross-origin';frame.src=`${url}embed/`;
     body.append(frame);
-    const hint=node('p','','Jika video belum berputar, tekan Play pada player Instagram.');
+    const hint=node('p','','Press Play in the Instagram player to watch.');
     const fallback=node('a','text-link','Open on Instagram');fallback.href=url;fallback.target='_blank';fallback.rel='noopener noreferrer';fallback.append(icon('external-link'));bottom.append(hint,fallback);
   }
   const artworkText={listing:['Find your','next shortlist.'],meta:['Report once.','Learn more.'],mbg:['Make progress','visible.'],hub:['One hub.','Less busywork.'],schedule:['Request.','Schedule. Take.'],sample:['Your next','website.']};
@@ -209,9 +209,23 @@
   groups.filter(g=>g.dataset.carousel).forEach(setupCarousel);
   let loading=false;
   function renderItems(data) {
-      groups.forEach(group=>{group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=true);const list=group.querySelector('[data-works-list]');let items=data.items.filter(item=>item.kind===group.dataset.workKind&&item.published);if(group.dataset.workKind==='webapp'&&!group.dataset.collection)items=items.slice(0,3);
+      groups.forEach(group=>{group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=true);const list=group.querySelector('[data-works-list]');let items=data.items.filter(item=>item.kind===group.dataset.workKind&&item.published&&!(item.kind==='webapp'&&item.demo));const viewAll=group.querySelector('.works-heading > a');
+        if(viewAll){
+          const heading=viewAll.parentElement.querySelector('h2,h3');
+          if(heading){
+            let copy=heading.parentElement;
+            if(!copy.classList.contains('works-heading-copy')){copy=node('div','works-heading-copy');heading.before(copy);copy.append(heading);}
+            let count=copy.querySelector('.works-count');if(!count){count=node('p','works-count');copy.append(count);}
+            const noun=group.dataset.workKind==='webapp'?'case study':group.dataset.workKind==='design'?'design project':'video';
+            count.textContent=`${items.length} ${items.length===1?noun:noun==='case study'?'case studies':`${noun}s`}`;
+          }
+          viewAll.classList.add('button','button-outline','works-view-all');
+          viewAll.replaceChildren(document.createTextNode('View all'),icon('arrow-right'));
+          viewAll.setAttribute('aria-label',`View all ${group.dataset.workKind==='webapp'?'web apps and case studies':group.dataset.workKind==='design'?'design projects':'videos'}`);
+        }
+        if(group.dataset.workKind==='webapp'&&!group.dataset.collection)items=items.slice(0,3);
         list.querySelectorAll('.work-video-preview').forEach(video=>{video.pause();videoObserver.unobserve(video);videoPreviews.delete(video);});
-        list.replaceChildren(...items.map(item=>card(item,items,group.dataset.collection?'h2':'h4',!!group.querySelector('.editorial-gallery'))));if(!items.length)list.append(node('p','works-message','Belum ada portfolio di koleksi ini.'));list.scrollLeft=0;list.setAttribute('aria-busy','false');group._updateCarousel?.();
+        list.replaceChildren(...items.map(item=>card(item,items,group.dataset.collection?'h2':'h4',!!group.querySelector('.editorial-gallery'))));if(!items.length)list.append(node('p','works-message','No portfolio items yet.'));list.scrollLeft=0;list.setAttribute('aria-busy','false');group._updateCarousel?.();
       });
       document.dispatchEvent(new Event('portfolio:works-ready'));
   }

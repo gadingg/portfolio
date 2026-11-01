@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { contentURL, mediaURL } from './content-blocks';
 import { VisualLayoutSchema } from './visual-layout';
 export const defaultLinkedIn = 'https://www.linkedin.com/in/gadingutama/';
-export const defaultHeroMetadata = 'Creative Marketing & Digital Solutions';
+export const defaultHeroMetadata = '2+ years in creative marketing & product development';
 export const capabilityTitles = ['Creative Strategy & Digital Marketing','Visual Design & Branding','Web Apps & Digital Solutions','Generative AI & Automation'] as const;
 export type SiteField = {
   key: string;
@@ -29,13 +29,13 @@ export const siteFields: SiteField[] = [
   },
   {
     key: 'heroMetadata',
-    label: 'Metadata hero',
+    label: 'Label pembuka',
     group: 'Hero',
     selector: '.hero-metadata',
   },
   {
     key: 'headline',
-    label: 'Headline',
+    label: 'Judul utama',
     group: 'Hero',
     selector: '#hero-title',
     lines: true,
@@ -48,7 +48,7 @@ export const siteFields: SiteField[] = [
   },
   {
     key: 'heroPrimary',
-    label: 'Tombol portfolio',
+    label: 'Tombol portofolio',
     group: 'Hero',
     selector: '.hero-bottom .button',
   },
@@ -60,8 +60,8 @@ export const siteFields: SiteField[] = [
   },
   {
     key: 'worksTitle',
-    label: 'Judul bagian portfolio',
-    group: 'Portfolio',
+    label: 'Judul bagian portofolio',
+    group: 'Portofolio',
     selector: '#work-title',
   },
   {
@@ -80,7 +80,7 @@ export const siteFields: SiteField[] = [
   },
   {
     key: 'aboutBody1',
-    label: 'Quote About',
+    label: 'Pernyataan singkat',
     group: 'About',
     selector: '.about-copy .about-statement',
   },
@@ -187,13 +187,13 @@ export const siteFields: SiteField[] = [
   },
   {
     key: 'footerSignature',
-    label: 'Signature footer',
+    label: 'Teks footer',
     group: 'Kontak',
     selector: '.contact-bottom > span',
   },
   {
     key: 'footerName',
-    label: 'Nama pemilik copyright',
+    label: 'Nama copyright',
     group: 'Kontak',
     selector: '.site-footer p',
   },

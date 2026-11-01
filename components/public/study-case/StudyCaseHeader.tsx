@@ -33,9 +33,8 @@ export function StudyCaseHeader({ projectTitle }: { projectTitle?: string }) {
       const rect = event.currentTarget.getBoundingClientRect();
       if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) close();
     }}>
-      <div className="dialog-top"><h2 id="case-menu-title">Explore the work.</h2><button className="button button-outline" type="button" onClick={close}>Close <X className="icon" aria-hidden="true" /></button></div>
+      <div className="dialog-top"><h2 id="case-menu-title">Menu</h2><button className="button button-outline" type="button" onClick={close}>Close <X className="icon" aria-hidden="true" /></button></div>
       <nav aria-label="Mobile navigation"><a href="/webapp">Website / Apps</a><a href="/design">Visual Design</a><a href="/video">Branding &amp; Video</a><a href="/#about">About Gading</a><a href="/#contact">Let's talk</a></nav>
-      <p>Creative Marketing · Design · Digital Solutions</p>
     </dialog>
   </>;
 }

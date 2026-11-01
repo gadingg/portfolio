@@ -20,6 +20,8 @@ import { normalizeWorkSlugs } from '@/lib/work-slugs';
 import { cleanPlaceholderCopy } from '@/lib/placeholder-copy';
 import { isReadyWork, presentWork } from '@/lib/work-readiness';
 import { withWorkEvidence } from '@/lib/work-evidence';
+import { publishOneWork } from '@/lib/work-publication';
+import { refineWorkCopy } from '@/lib/public-copy';
 
 const bucket = 'portfolio-public';
 const filename = 'content/works.json';
@@ -252,7 +254,7 @@ export async function initialWorks() {
 }
 export const getWorksDocument = async () => {
   const doc=await readCMS('works',initialWorks);
-  return {...doc,draft:{...doc.draft,items:normalizeWorkSlugs(doc.draft.items).map(cleanPlaceholderCopy).map(presentWork).map(withWorkEvidence)},published:{...doc.published,items:normalizeWorkSlugs(doc.published.items).map(cleanPlaceholderCopy).map(presentWork).map(withWorkEvidence)}};
+  return {...doc,draft:{...doc.draft,items:normalizeWorkSlugs(doc.draft.items).map(cleanPlaceholderCopy).map(presentWork).map(withWorkEvidence).map(refineWorkCopy)},published:{...doc.published,items:normalizeWorkSlugs(doc.published.items).map(cleanPlaceholderCopy).map(presentWork).map(withWorkEvidence).map(refineWorkCopy)}};
 };
 export async function getWorks() {
   const doc = await getWorksDocument();
@@ -271,6 +273,7 @@ export async function getPublicWorks() {
       .filter((item) => item.published && isReadyWork(item))
       .map(presentWork)
       .map(withWorkEvidence)
+      .map(refineWorkCopy)
       .map(publicWork),
   };
 }
@@ -287,9 +290,11 @@ export async function changeWorks(body: {
   revision: number;
   action: 'save' | 'publish' | 'order';
   ids?: string[];
+  workId?: string;
 }) {
   const current = await getWorksDocument();
   if (body.revision !== current.revision) throw new CMSConflict();
+  if (body.workId && body.action !== 'publish') throw new Error('Pilih publikasi portfolio untuk menggunakan target karya.');
   if (body.action === 'order') {
     const ids = body.ids || [];
     if (
@@ -307,8 +312,13 @@ export async function changeWorks(body: {
       current.published,
     );
   }
+  const selected = body.workId ? body.items?.find(item => item.id === body.workId) : undefined;
+  if (body.workId && (body.action !== 'publish' || !selected)) throw new Error('Portfolio yang akan dipublikasikan tidak valid.');
+  const inputItems = selected ? current.draft.items.some(item => item.id === selected.id)
+    ? current.draft.items.map(item => item.id === selected.id ? selected : item)
+    : [...current.draft.items, selected] : body.items || current.draft.items;
   const draft = {
-    items: (body.items || current.draft.items).map((item) => {
+    items: inputItems.map((item) => {
       const previous=current.draft.items.find(value=>value.id===item.id);
       const retained=!item.caseStudy&&!item.archivedCaseStudy
         ? {...item,archivedCaseStudy:previous?.caseStudy||previous?.archivedCaseStudy}
@@ -318,6 +328,7 @@ export async function changeWorks(body: {
     }),
   };
   if(body.action==='publish')for(const item of draft.items){
+    if(body.workId && item.id !== body.workId) continue;
     const previous=current.published.items.find(value=>value.id===item.id);
     if(item.caseStudy&&previous?.caseStudy&&item.caseStudy.slug!==previous.caseStudy.slug){
       item.aliases=[...new Set([...(previous.aliases||[]),...(item.aliases||[]),previous.caseStudy.slug])].filter(slug=>slug!==item.caseStudy!.slug);
@@ -328,7 +339,7 @@ export async function changeWorks(body: {
     'works',
     current,
     stamped,
-    body.action === 'publish' ? WorksSchema.parse(stamped) : current.published,
+    body.action === 'publish' ? body.workId ? publishOneWork(stamped.items, current.published.items, body.workId) : WorksSchema.parse(stamped) : current.published,
   );
 }
 export function workAsProject(item: WorkItem): Project {

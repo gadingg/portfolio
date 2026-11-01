@@ -1,19 +1,17 @@
 'use client';
-import { Save } from 'lucide-react';
 import { publicationState } from '@/lib/publication-state';
 import { AdminActionLabel } from './AdminActionLabel';
 
-export function PublicationBar({dirty, unpublished, busy, operation, scope, publishLabel = 'Publikasikan perubahan', onCancel, onSave, onPublish}: {
+export function PublicationBar({dirty, unpublished, busy, operation, scope, publishLabel = 'Publish', busyLabel = 'Publishing…', showPublish = true, pendingSuffix = ' · belum di-publish', status, offline = false, failed = false, onSave, onPublish}: {
   dirty: boolean; unpublished: boolean; busy: boolean; operation: 'save' | 'publish' | null;
-  scope: string; publishLabel?: string; onCancel: () => void; onSave: () => void; onPublish: () => void;
+  scope: string; publishLabel?: string; onSave: () => void; onPublish: () => void;
+  status?: string; offline?: boolean; failed?: boolean; busyLabel?: string; showPublish?: boolean; pendingSuffix?: string;
 }) {
   const state = publicationState(dirty, unpublished, busy);
-  if (!state.visible) return null;
   return <div className="cms-sticky-toolbar wm-savebar" aria-label="Perubahan tersimpan dan publikasi">
-    <span role="status">{state.label}</span>
-    {dirty && <button type="button" className="wm-button" disabled={busy} onClick={onCancel}>Batalkan perubahan</button>}
-    {dirty && <button type="button" className="wm-button" disabled={!state.canSave} onClick={onSave} aria-busy={operation === 'save'}><AdminActionLabel pending={operation === 'save'} idle="Simpan draft" busy="Menyimpan…" icon={<Save size={18}/>}/></button>}
-    <button type="button" className="wm-button wm-primary" disabled={!state.canPublish} onClick={onPublish} aria-busy={operation === 'publish'}><AdminActionLabel pending={operation === 'publish'} idle={publishLabel} busy="Memublikasikan…"/></button>
-    <small className="wm-save-scope">{scope}{dirty ? ' Simpan draft sebelum publikasi.' : ''}</small>
+    <span role="status">{operation === 'publish' ? busyLabel : status || state.label}{!dirty && unpublished && !busy && !offline ? pendingSuffix : ''}</span>
+    {failed && <button type="button" className="wm-button" disabled={busy || offline} onClick={onSave}>Coba lagi</button>}
+    {showPublish && <button type="button" className="wm-button wm-primary" disabled={!state.canPublish || offline} onClick={onPublish} aria-busy={operation === 'publish'}><AdminActionLabel pending={operation === 'publish'} idle={publishLabel} busy={busyLabel}/></button>}
+    {scope && <small className="wm-save-scope">{scope}</small>}
   </div>;
 }

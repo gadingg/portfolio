@@ -34,9 +34,9 @@ test('stored CMS layouts receive editorial hero, exact bio, and matching design/
  site.values.aboutBody2='Buat saya, hasil yang bagus bukan cuma terlihat menarik. Campaign harus punya tujuan, tools harus benar-benar kepakai, dan solusi harus membuat pekerjaan jadi lebih mudah.';
  old('.hero-intro').html('<p>Old name</p><p>Old location</p>');old('#visuals').attr('data-carousel','true').append('<div class="carousel-controls"><button>Pause</button></div>');old('#visuals [data-works-list]').attr('class','works-track');
  site.layout={html:old('body').html(),css:''};const $=load(await db.renderHomepage(site));
- assert.equal($('.hero-metadata').text(),'Creative Marketing & Digital Solutions');assert.equal($('#hero-title').text(),'I Think. I Create.I Solve.');
+ assert.equal($('.hero-metadata').text(),'2+ years in creative marketing & product development');assert.equal($('#hero-title').text(),'I Think. I Create.I Solve.');
  assert.equal($('.about-copy>p').length,1);
- assert.equal($('.about-statement').text(),'Good visuals catch eyes. Great ideas make an impact.');assert.equal($('.about-copy>p').text(),'Buat saya, bukan cuma soal visual yang menarik, tapi juga bagaimana pesan bisa tersampaikan dengan baik dan pekerjaan jadi lebih simpel.');
+ assert.equal($('.about-statement').text(),'I take part in planning campaigns, designing the visuals, and building the tools the team needs.');assert.equal($('.about-copy>p').text(),'I take part in planning campaigns, designing the visuals, and building the tools the team needs.');
  assert.equal($('#visuals').attr('data-carousel'),'true');assert.equal($('#visuals .carousel-controls').length,1);assert.equal($('#visuals .editorial-gallery.works-track').length,1);assert.equal($('#videos[data-carousel] .carousel-controls').length,1);
  assert.equal($('#visuals .gallery-hint').length,0);
  assert.equal(site.values.aboutLead,'Saya suka ikut mikir dari awal.');
@@ -87,11 +87,11 @@ test('legacy five-capability layouts receive four exact title-only cards without
 test('homepage and stored layouts place Works before About and preserve editable quote and single body',async()=>{
  const db=runtime({'./cms':{}})('lib/db/site.ts'),{load}=require('cheerio');
  const site=await db.initialSite(),old=load(fs.readFileSync('public/index.html','utf8'));
- assert.equal(site.values.aboutBody1,'Good visuals catch eyes. Great ideas make an impact.');
- assert.ok(site.values.aboutBody2.startsWith('Buat saya,'));
+ assert.equal(site.values.aboutBody1,'I take part in planning campaigns, designing the visuals, and building the tools the team needs.');
+ assert.equal(site.values.aboutBody2,'');
  old('#work').insertAfter(old('#home'));
  old('.about-quote').replaceWith(old('.about-statement').clone());
- site.values.aboutBody1='An editable statement from the CMS.';
+ site.values.aboutBody1='An editable statement from the CMS.';site.values.aboutBody2='Custom body retained.';
  site.layout={html:old('body').html(),css:''};
  const $=load(await db.renderHomepage(site));
  assert.deepEqual($('main>section').slice(0,3).map((_,el)=>$(el).attr('id')).get(),['home','work','about']);
@@ -112,15 +112,15 @@ test('previous published copy receives new defaults without overwriting custom C
  legacy('.about-copy').prepend('<p>Dari brainstorm, membuat visual, sampai membuat workflow lewat web-app dan AI.</p>');
  site.layout={html:legacy('body').html(),css:''};
  const $=load(await db.renderHomepage(site));
- assert.equal($('.hero-bottom>p').text(),'Saya suka mengubah ide jadi sesuatu yang benar-benar kepakai, dari visual sampai solusi digital.');
- assert.equal($('.hero-metadata').text(),'Creative Marketing & Digital Solutions');
+ assert.equal($('.hero-bottom>p').text(),'Creative marketing, visual design, and web apps for everyday work.');
+ assert.equal($('.hero-metadata').text(),'2+ years in creative marketing & product development');
  assert.equal($('.about-copy>p').length,1);assert.doesNotMatch($('.about-copy').text(),/Dari brainstorm/);
  assert.equal($('script[src="/assets/js/capabilities-motion.js"]').length,1);
  assert.match($('.site-footer').text(),/©/);assert.doesNotMatch($('#home').text(),/©/);
  assert.equal(site.values.heroMetadata,'© 2026 SUB-IDN. Creative Marketing');
  site.values.intro='Saya suka mengembangkan ide jadi sesuatu yang benar-benar kepakai. Mulai dari campaign, visual, sampai web-app yang bikin workflow\u00a0lebih simpel.';
- assert.equal(load(await db.renderHomepage(site))('.hero-bottom>p').text(),'Saya suka mengubah ide jadi sesuatu yang benar-benar kepakai, dari visual sampai solusi digital.');
+ assert.equal(load(await db.renderHomepage(site))('.hero-bottom>p').text(),'Creative marketing, visual design, and web apps for everyday work.');
  site.values.intro='Custom introduction';site.values.heroMetadata='Custom metadata';site.values.aboutBody2='Custom explanation';
  const custom=load(await db.renderHomepage(site));
- assert.equal(custom('.hero-bottom>p').text(),'Custom introduction');assert.equal(custom('.hero-metadata').text(),'Custom metadata');assert.equal(custom('.about-copy>p').text(),'Custom explanation');
+ assert.equal(custom('.hero-bottom>p').text(),'Custom introduction');assert.equal(custom('.hero-metadata').text(),'Custom metadata');assert.equal(custom('.about-copy>p:not(.about-statement)').text(),'Custom explanation');
 });

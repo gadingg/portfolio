@@ -6,9 +6,11 @@ import { getWorksDocument } from '@/lib/db/works';
 import { writeCMS, CMSConflict } from '@/lib/db/cms';
 import { cleanVisualLayout } from '@/lib/visual-layout';
 import { SiteSchema, siteFields } from '@/lib/site';
-import { WorksDraftSchema, WorksSchema } from '@/lib/works';
+import { WorksDraftSchema } from '@/lib/works';
 import { sitePublicationSummary } from '@/lib/publication-review';
 import { z } from 'zod';
+import { publishOneWork } from '@/lib/work-publication';
+import { workPublicationCopy } from '@/lib/admin-copy';
 export const dynamic='force-dynamic';
 const targetSchema=z.string().regex(/^(home|[a-zA-Z0-9_-]{1,100})$/);
 export async function GET(request:NextRequest){
@@ -23,7 +25,7 @@ export async function GET(request:NextRequest){
     }
     const doc=await getWorksDocument(),item=doc.draft.items.find(item=>item.id===target);
     if(!item?.caseStudy)return NextResponse.json({error:'Studi kasus tidak ditemukan.'},{status:404});
-    return NextResponse.json({unpublished:JSON.stringify(item)!==JSON.stringify(doc.published.items.find(value=>value.id===target)),revision:doc.revision,layout:item.caseStudy.layout?cleanVisualLayout(item.caseStudy.layout):undefined,title:item.title,seedUrl:`/admintgadink/preview/${target}`,previewUrl:`/admintgadink/preview/${target}`},{headers:{'Cache-Control':'no-store'}});
+    return NextResponse.json({publicationCopy:workPublicationCopy(item,doc.published.items.find(value=>value.id===target)),unpublished:JSON.stringify(item)!==JSON.stringify(doc.published.items.find(value=>value.id===target)),revision:doc.revision,layout:item.caseStudy.layout?cleanVisualLayout(item.caseStudy.layout):undefined,title:item.title,seedUrl:`/admintgadink/preview/${target}`,previewUrl:`/admintgadink/preview/${target}`},{headers:{'Cache-Control':'no-store'}});
   }catch(error){return cmsError(error);}
 }
 export async function PUT(request:NextRequest){
@@ -55,10 +57,10 @@ export async function PUT(request:NextRequest){
       const item=draft.items.find(item=>item.id===target)!;
       const previous=doc.published.items.find(value=>value.id===target);
       if(previous?.caseStudy&&previous.caseStudy.slug!==item.caseStudy!.slug)item.aliases=[...new Set([...(item.aliases||[]),previous.caseStudy.slug])];
-      published=WorksSchema.parse({items:previous?doc.published.items.map(value=>value.id===target?item:value):[...doc.published.items,item]});
+      published=publishOneWork(draft.items,doc.published.items,target);
     }
     const saved=await writeCMS('works',doc,draft,published);
     const updated=saved.draft.items.find(item=>item.id===target)!;
-    return NextResponse.json({unpublished:JSON.stringify(updated)!==JSON.stringify(saved.published.items.find(value=>value.id===target)),revision:saved.revision,layout:updated.caseStudy!.layout,title:updated.title});
+    return NextResponse.json({publicationCopy:workPublicationCopy(updated,saved.published.items.find(value=>value.id===target)),unpublished:JSON.stringify(updated)!==JSON.stringify(saved.published.items.find(value=>value.id===target)),revision:saved.revision,layout:updated.caseStudy!.layout,title:updated.title});
   }catch(error){return cmsError(error);}
 }

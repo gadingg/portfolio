@@ -6,10 +6,10 @@ const {workCardsHTML,withInitialWorks,worksJSON}=runtime('lib/work-card-html.ts'
 const {cleanPlaceholderCopy}=runtime('lib/placeholder-copy.ts');
 const item=(patch={})=>({id:'one',title:'Project',description:'A useful project',image:'/assets/cover.webp',imageAlt:'Cover',kind:'webapp',url:'/work/one',published:true,demo:false,artwork:'hub',...patch});
 
-test('all editor publication states require a saved unpublished draft, including busy and clean states',()=>{
+test('one-click publication accepts unsaved changes while busy and clean states remain guarded',()=>{
   for(const dirty of [false,true])for(const pending of [false,true])for(const busy of [false,true]){
     const state=publicationState(dirty,pending,busy);
-    assert.equal(state.canPublish,!dirty&&pending&&!busy);
+    assert.equal(state.canPublish,(dirty||pending)&&!busy);
     assert.equal(state.canSave,dirty&&!busy);
   }
   assert.equal(publicationState(false,false).visible,false);

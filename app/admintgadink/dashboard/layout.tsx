@@ -7,7 +7,7 @@ import { verifyAdminSession } from '@/lib/auth/session';
 import '@/components/admin/admin-controls.css';
 
 export const metadata: Metadata = {
-  title: 'Admin Dashboard | Gading Portfolio CMS',
+  title: 'Admin Dashboard | Gading Portofolio CMS',
   robots: {
     index: false,
     follow: false,

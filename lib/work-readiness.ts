@@ -4,13 +4,13 @@ export function workReadiness(item: WorkItem): string | null {
   const sampleImage = !item.image || /\/sample-design-\d+\.svg(?:[?#]|$)/.test(item.image);
   if (item.kind === 'video') {
     const source = activeVideoSource(item);
-    if (source === 'instagram' && (!instagramURL(item.url) || /DEMO_VIDEO_/.test(item.url))) return 'Tambahkan link Instagram dulu';
-    if (source === 'file' && !item.videoFile) return 'Tambahkan file video dulu';
+    if (source === 'instagram' && (!instagramURL(item.url) || /DEMO_VIDEO_/.test(item.url))) return 'Tambahkan link Instagram.';
+    if (source === 'file' && !item.videoFile) return 'Upload video atau tambahkan link file.';
     const validation = WorkItemSchema.safeParse({ ...item, published: true, demo: false });
-    return validation.success ? null : validation.error.issues[0]?.message || 'Lengkapi video dulu';
+    return validation.success ? null : validation.error.issues[0]?.message || 'Lengkapi video.';
   }
-  if (item.kind === 'design') return sampleImage ? 'Tambahkan artwork asli dulu' : null;
-  return item.demo || (!item.caseStudy && !item.url) ? 'Lengkapi tujuan portfolio dulu' : null;
+  if (item.kind === 'design') return sampleImage ? 'Upload gambar portofolio.' : null;
+  return item.demo || (!item.caseStudy && !item.url) ? 'Tambahkan link aplikasi atau isi studi kasus.' : null;
 }
 
 export const isReadyWork = (item: WorkItem) => !workReadiness(item);

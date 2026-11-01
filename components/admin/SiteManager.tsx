@@ -1,13 +1,15 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { Eye, Save, Plus, Trash2 } from 'lucide-react';
+import { Eye, Plus, Trash2 } from 'lucide-react';
 import { siteFields, type SiteContent } from '@/lib/site';
 import { FileDrop } from './FileDrop';
 import { SortableList } from './SortableList';
 import { useConfirm } from './ConfirmDialog';
 import './works-manager.css';
 import { PublicationBar } from './PublicationBar';
-import { useRegisterAdminDirty } from './AdminChanges';
+import { draftSaveMessage } from '@/lib/draft-backup';
+import { useAutoDraft } from './useAutoDraft';
+import { DraftRecovery } from './DraftRecovery';
 import { sitePublicationSummary } from '@/lib/publication-review';
 export function SiteManager() {
   const {ask,confirmation}=useConfirm();
@@ -21,15 +23,25 @@ export function SiteManager() {
     [notice, setNotice] = useState('');
   const [operation, setOperation] = useState<'save' | 'publish' | null>(null);
   const dirty = !!content && JSON.stringify(content) !== saved;
-  const dirtyRef = useRef(dirty);
   const mutationLock = useRef(false);
-  dirtyRef.current = dirty;
-  useRegisterAdminDirty(dirtyRef);
-  function adopt(data: any) {
-    setContent(data.draft);
+  const pendingMutation = useRef<Promise<void> | null>(null);
+  const finishMutation = useRef<(() => void) | null>(null);
+  const uploadBusy = useRef(false);
+  const savedRef = useRef(saved);
+  function mediaBusy(value: boolean) { uploadBusy.current = value; setBusy(value); }
+  const revisionRef = useRef(revision);
+  const contentRef = useRef(content);
+  revisionRef.current = revision; contentRef.current = content;
+  const autosave = useAutoDraft({ storageKey: 'portfolio:draft:site:v1', value: JSON.stringify(content), baseline: saved, revision,
+    enabled: content !== null, blocked: busy, saving: operation === 'save', save: () => save('save', true),
+    restore: value => { const content = JSON.parse(value); if (!content?.values || !content?.cv || !Array.isArray(content.cv.experience) || !Array.isArray(content.cv.education)) throw Error('Cadangan tidak valid.'); setContent(content); }, ask });
+  function adopt(data: any, snapshot?: string) {
+    setContent(current => snapshot && JSON.stringify(current) !== snapshot ? current : data.draft);
     setSaved(JSON.stringify(data.draft));
+    savedRef.current = JSON.stringify(data.draft);
     setPublished(JSON.stringify(data.published));
     setRevision(data.revision);
+    revisionRef.current = data.revision;
   }
   async function load() {
     setBusy(true);
@@ -49,63 +61,28 @@ export function SiteManager() {
     load();
   }, []);
   useEffect(()=>{window.scrollTo({top:0,behavior:'instant'});document.querySelector('.admin-main')?.scrollTo({top:0,behavior:'instant'});},[group]);
-  useEffect(() => {
-    const unload = (e: BeforeUnloadEvent) => {
-      if (dirtyRef.current) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    };
-    const leave = (e: MouseEvent) => {
-      const a = (e.target as HTMLElement).closest('a');
-      if (
-        dirtyRef.current &&
-        a &&
-        a.target !== '_blank'
-      ) {
-        e.preventDefault();
-        e.stopPropagation();
-        void ask('Masih ada perubahan yang belum disimpan. Tetap keluar?', 'Tinggalkan').then(yes=>{if(yes){dirtyRef.current=false;window.location.assign(a.href);}});
-      }
-    };
-    window.addEventListener('beforeunload', unload);
-    document.addEventListener('click', leave, true);
-    return () => {
-      window.removeEventListener('beforeunload', unload);
-      document.removeEventListener('click', leave, true);
-    };
-  }, []);
-  async function save(action: 'save' | 'publish') {
-    if (busy || mutationLock.current) return;
-    if (action === 'publish' && content && published) {
-      const sections = sitePublicationSummary(content, JSON.parse(published));
-      if (!(await ask(`Publikasikan perubahan ${sections.join(' dan ') || 'Website & CV'}? Semua draft tersimpan di bagian tersebut akan tayang.`, 'Publikasikan'))) return;
-      if (mutationLock.current) return;
-    }
-    mutationLock.current = true;
-    setOperation(action);
-    setBusy(true);
-    setError('');
-    setNotice('');
+  async function save(action: 'save' | 'publish', automatic = false) {
+    if (uploadBusy.current || mutationLock.current || !contentRef.current) return false;
+    const snapshot = contentRef.current;
+    mutationLock.current = true; setOperation(action); setBusy(true); setError('');
+    pendingMutation.current = new Promise(resolve => { finishMutation.current = resolve; });
+    if (!automatic) setNotice('');
     try {
+      if (action === 'publish' && published) {
+        const sections = sitePublicationSummary(snapshot, JSON.parse(published));
+        if (!(await ask(`Publish perubahan ${sections.join(' dan ') || 'Website & CV'}? Semua draft pada bagian tersebut ikut di-publish.`, 'Publish'))) return false;
+      }
       const res = await fetch('/api/admin/site', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content, revision, action }),
+        method: 'PUT', signal: AbortSignal.timeout(15000), headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: snapshot, revision: revisionRef.current, action }),
       });
       const data = await res.json();
       if (!res.ok) throw Error(data.error);
-      adopt(data);
-      setNotice(
-        action === 'publish' ? 'Perubahan website sudah tayang.' : 'Draft tersimpan.',
-      );
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Belum tersimpan.');
-    } finally {
-      mutationLock.current = false;
-      setOperation(null);
-      setBusy(false);
-    }
+      adopt(data, JSON.stringify(snapshot));
+      if (!automatic) setNotice(action === 'publish' ? 'Perubahan website sudah tayang.' : 'Draft tersimpan.');
+      return true;
+    } catch (e) { setError(draftSaveMessage(e)); return false; }
+    finally { mutationLock.current = false; setOperation(null); setBusy(false); finishMutation.current?.(); pendingMutation.current = null; }
   }
   const update = (key: string, value: string) =>
     setContent((old) =>
@@ -114,6 +91,7 @@ export function SiteManager() {
   const cv = (patch: Partial<SiteContent['cv']>) =>
     setContent((old) => (old ? { ...old, cv: { ...old.cv, ...patch } } : old));
   const groups = [...new Set(siteFields.map((field) => field.group)), 'CV'];
+  if (autosave.recovery) return <DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} />;
   return (
     <div className="works-manager cms-manager wm-site-workspace">
       {confirmation}
@@ -122,14 +100,20 @@ export function SiteManager() {
         <a
           href="/admintgadink/dashboard/editor/home"
           className="wm-button"
+          onClick={async event => {
+            event.preventDefault();
+            if (uploadBusy.current) return;
+            if (pendingMutation.current) await pendingMutation.current;
+            if (JSON.stringify(contentRef.current) !== savedRef.current && !(await save('save'))) return;
+            window.location.assign('/admintgadink/dashboard/editor/home');
+          }}
         >
           <Eye size={18} />
-          Buka editor visual
+          Edit halaman
         </a>
       </div>
-      {content && <PublicationBar dirty={!!dirty} unpublished={saved !== published} busy={busy} operation={operation} scope="Berlaku untuk perubahan Website & CV."
-        onCancel={() => { setContent(JSON.parse(saved)); setError(''); }}
-        onSave={() => { void save('save'); }} onPublish={() => { void save('publish'); }}/>}
+      {content && <PublicationBar dirty={!!dirty} unpublished={saved !== published} busy={busy} operation={operation} scope="Perubahan Website & CV ikut di-publish." status={!dirty && saved === published && autosave.online ? 'Sudah tayang' : autosave.status} offline={!autosave.online} failed={autosave.failed}
+        onSave={autosave.retry} onPublish={() => { void save('publish'); }}/>}
       {error && (
         <div className="wm-message wm-error" role="alert">
           {error}
@@ -167,7 +151,7 @@ export function SiteManager() {
               </button>
             ))}
           </nav>
-          <fieldset disabled={busy} className="cms-editor-fields">
+          <fieldset disabled={busy && operation !== 'save'} className="cms-editor-fields">
             <h2>{group}</h2>
             {siteFields
               .filter((field) => field.group === group)
@@ -198,7 +182,7 @@ export function SiteManager() {
                       />
                       <FileDrop
                         disabled={busy}
-                        onBusyChange={setBusy}
+                        onBusyChange={mediaBusy}
                         onUploaded={(files) => update(field.key, files[0].url)}
                       />
                     </>
@@ -221,7 +205,7 @@ export function SiteManager() {
                 )}
                 {(['experience','education'] as const).map(section => <div key={section}>
                 <h3>{section==='experience'?'Pengalaman':'Pendidikan'}</h3>
-                <p className="wm-muted">Satu poin per baris di deskripsi agar enak dibaca di halaman CV.</p>
+                <p className="wm-muted">Tulis satu poin per baris.</p>
                 <SortableList
                   items={(content.cv[section]||[]).map((item, i) => ({
                     ...item,
@@ -292,12 +276,12 @@ export function SiteManager() {
                 </button>
                 </div>)}
                 <h3>PDF CV</h3>
-                <p className="wm-muted">Download di halaman publik memakai file PDF ini. Mengedit teks CV tidak mengubah isi PDF. Upload PDF baru kalau dokumennya ikut diperbarui.</p>
+                <p className="wm-muted">Pengunjung mengunduh PDF ini. Perubahan teks di editor tidak mengubah isi PDF.</p>
                 <FileDrop
                   folder="cv"
                   accept="application/pdf"
                   disabled={busy}
-                  onBusyChange={setBusy}
+                  onBusyChange={mediaBusy}
                   onUploaded={(files) => cv({ pdf: files[0].url })}
                 />
                 {content.cv.pdf && (
@@ -315,7 +299,7 @@ export function SiteManager() {
                       type="button"
                       onClick={() => cv({ pdf: '' })}
                     >
-                      Gunakan PDF dari isi CV
+                      Gunakan isi editor untuk PDF
                     </button>
                   </div>
                 )}

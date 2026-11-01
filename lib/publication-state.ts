@@ -2,7 +2,7 @@ export function publicationState(dirty: boolean, unpublished: boolean, busy = fa
   return {
     visible: dirty || unpublished || busy,
     canSave: dirty && !busy,
-    canPublish: !dirty && unpublished && !busy,
-    label: busy ? 'Memproses…' : dirty ? 'Ada perubahan belum disimpan' : unpublished ? 'Draft tersimpan, belum tayang' : 'Semua perubahan tersimpan',
+    canPublish: (dirty || unpublished) && !busy,
+    label: busy ? 'Memproses…' : dirty ? 'Menunggu simpan otomatis…' : unpublished ? 'Draft tersimpan · belum di-publish' : 'Semua perubahan tersimpan',
   };
 }

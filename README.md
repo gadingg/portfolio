@@ -4,9 +4,9 @@ Next.js portfolio with a private Supabase-backed CMS. Public presentation emphas
 
 ## Visual editor
 
-Open **Editor visual** for the homepage, or **Buka editor visual** from a case study. Double-click text in the GrapesJS canvas to edit copy, drag section/column blocks, or use the structure tree and element controls to move, duplicate, and delete content. Device controls preview desktop/mobile layouts; Style edits spacing, typography, color, and flex/grid arrangements. Double-click an image to use the existing private upload/media library.
+Open **Editor visual** for the homepage, or **Edit halaman studi kasus** from a work detail. Select text, an image, or a link in the canvas and edit it in the compact content panel. Sections can be added from templates, moved up/down or removed with confirmation. Device controls preview desktop/mobile layouts; technical style controls remain hidden. Images use the existing private upload/media library.
 
-**Simpan draft** persists the layout privately. **Publikasikan** makes it public. Case-study publishing updates the selected work while retaining other unpublished Works drafts. Existing pages retain their original rendering until a visual layout is published. Visual HTML/CSS is sanitized on the server; arbitrary scripts, forms, and external embeds cannot be inserted. Dynamic Works collections remain connected to the existing CMS.
+Drafts autosave privately after a two-second editing pause, with device recovery while offline. **Publish** saves the latest changes and publishes in one action. Case-study publishing updates the selected work while retaining other unpublished Works drafts. Existing pages retain their original rendering until a visual layout is published. Visual HTML/CSS is sanitized on the server; arbitrary scripts, forms, and external embeds cannot be inserted. Dynamic Works collections remain connected to the existing CMS.
 
 Layout data uses the existing document JSON; no additional SQL migration is needed. Run `npm run test:visual` for the security and persistence regression tests, alongside `npm run test:works` and `npm run build`.
 
@@ -22,12 +22,12 @@ The existing production project is `portfolio-gading`, connected to `gadingg/por
 
 ## Editing
 
-- **Works:** Website / Apps, Visual Design, and Branding & Video. Drop multiple images to create hidden draft works, select an existing media asset, or edit an individual work. Add a case study to a web/app item to edit its problem, solution, outcome, and content blocks.
+- **Works:** Website / Apps, Visual Design, and Branding & Video. Drop multiple images to create private draft works, select an existing media asset, or edit an individual work. Add a case study to a web/app item to edit its problem, solution, outcome, and content blocks.
 - **Website & CV:** hero, About, capabilities, process, tools, contact, search metadata, and CV content/PDF.
-- **Simpan draft** changes private content. **Publikasikan semua** publishes the entire Works collection; review shows changed works and order before confirmation. Website & CV publication reviews which of those areas changed. A case-study visual editor publishes only that study.
-- Drag handles support pointer, touch, and keyboard (Space, arrows, Space; Escape cancels). Works ordering stays in the local draft until saved, then becomes public only on publication. Case-study block order is part of the draft and is published with that work.
+- Drafts autosave privately. **Publish** in a work detail publishes only that work, preserving other drafts and public order. **Publish semua** on the collection reviews all changed works and order before confirmation. Website & CV publication reviews which areas changed; the visual case editor publishes only that study. Offline drafts stay on the device and sync after reconnection. A different server revision offers backup download and never silently overwrites newer content.
+- Drag handles support pointer, touch, and keyboard (Space, arrows, Space; Escape cancels). Works ordering autosaves to the private draft and becomes public only through collection publication. Case-study block order is part of the draft and is published with that work.
 - Case-study slugs redirect from previous published slugs after a rename. Collection URLs remain `/webapp`, `/design`, and `/video`.
-- Draft preview requires an authorized session. Save first, then open preview.
+- Draft preview requires an authorized session and uses the latest server-saved draft. Wait for the automatic save status before opening the saved-page preview.
 
 ## Data and media
 

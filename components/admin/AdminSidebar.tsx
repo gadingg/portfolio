@@ -56,7 +56,7 @@ export function AdminSidebar() {
 
   const handleLogout = async () => {
     if(loggingOut)return;
-    if(changes?.isDirty() && !(await ask('Ada perubahan yang belum disimpan. Keluar akan membuang perubahan tersebut.', 'Keluar tanpa menyimpan'))) return;
+    if(changes?.isDirty() && !(await ask('Perubahan terakhir belum tersimpan. Tetap keluar?', 'Keluar tanpa menyimpan'))) return;
     setLoggingOut(true);setLogoutError('');
     try {
       const response=await fetch('/api/admin/logout', { method: 'POST' });
@@ -71,8 +71,8 @@ export function AdminSidebar() {
   if(pathname.startsWith('/admintgadink/dashboard/editor/'))return null;
   const navItems = [
     { label: 'Overview', href: '/admintgadink/dashboard' },
-    { label: 'Portfolio', href: '/admintgadink/dashboard/works' },
-    { label: 'Editor visual', href: '/admintgadink/dashboard/editor/home' },
+    { label: 'Portofolio', href: '/admintgadink/dashboard/works' },
+    { label: 'Editor halaman', href: '/admintgadink/dashboard/editor/home' },
     { label: 'Website & CV', href: '/admintgadink/dashboard/site' },
   ];
 
@@ -80,14 +80,14 @@ export function AdminSidebar() {
     <>
       {confirmation}
       <header className="admin-mobile-header">
-        <div><strong>Gading Admin</strong><span>Portfolio CMS</span></div>
+        <div><strong>Gading Admin</strong><span>Portofolio CMS</span></div>
         <button ref={menuButton} type="button" onClick={() => setIsOpen(value => !value)} aria-expanded={isOpen} aria-controls="admin-navigation">{isOpen ? 'Tutup' : 'Menu'}</button>
       </header>
-      {isOpen && <button type="button" className="admin-nav-backdrop" onClick={() => setIsOpen(false)} aria-label="Close admin navigation" />}
+      {isOpen && <button type="button" className="admin-nav-backdrop" onClick={() => setIsOpen(false)} aria-label="Tutup navigasi admin" />}
       <aside
         id="admin-navigation"
         className={`admin-sidebar ${isOpen ? 'is-open' : ''}`}
-        aria-label="CMS navigation"
+        aria-label="Navigasi admin"
         aria-hidden={isMobile && !isOpen}
         inert={isMobile && !isOpen}
       >
@@ -97,7 +97,7 @@ export function AdminSidebar() {
           <span style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.2em', color: 'var(--amber)' }}>
             GADING ADMIN
           </span>
-          <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--muted)' }}>Portfolio CMS</p>
+          <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--muted)' }}>Portofolio CMS</p>
         </div>
 
         {/* Navigation */}
