@@ -56,3 +56,10 @@ node scripts/verify-cms-live.cjs
 The older `audit:supabase` command creates temporary rows/users and probes legacy role restrictions. Read its implementation before running it against production. It is not a read-only health check.
 
 See `docs/cms-audit-2026-10-16.md` for the original audit and `docs/qa-2026-10-16-cms.md` for current validation and limits.
+
+
+### Image previews
+
+Gallery previews use viewport-sized image variants inside a stable frame and reveal the image after decode. Errors and a 20-second timeout offer retry without shifting the controls. The media gateway caches image bytes/transformations in a bounded warm-process cache (32 MiB, 64 entries, five-minute TTL), after checking the current admin or published reference on every request. Image responses use private, no-cache with ETags; conditional 304 responses still require authorization. Video redirects and PDF downloads retain their existing no-store behavior. The cache does not make hidden media publicly accessible.
+
+Image previews support local pinch zoom (1×–4×), bounded panning, zoom/reset controls, double-click, and trackpad pinch. Focused previews accept + / - / 0 and arrow-key panning. Each image opens at 100%; leaving a preview releases pointer capture and listeners.

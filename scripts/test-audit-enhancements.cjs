@@ -30,9 +30,9 @@ test('responsive derivatives still require published access; originals remain by
   let allowed=true,downloads=0;
   const route=runtime({'@/lib/auth/session':{verifyAdminSession:async()=>false},'@/lib/cms-media':{cmsMediaBucket:'private',publishedMedia:async()=>allowed},'@/lib/supabase/admin':{createAdminClient:()=>({storage:{from:()=>({download:async()=>{downloads++;return {data:new Blob([original],{type:'image/png'})};}})}})}})('app/api/media/[...path]/route.ts');
   const params={params:Promise.resolve({path:['works','1792212542785-50bd4dd1-2833-486d-ac27-bae92c807fd5.png']})};
-  const request=w=>({nextUrl:new URL(`https://portfolio.test/api/media/works/image.png${w?'?w='+w:''}`)});
+  const request=w=>({headers:new Headers(),nextUrl:new URL(`https://portfolio.test/api/media/works/image.png${w?'?w='+w:''}`)});
   const response=await route.GET(request(640),params),bytes=Buffer.from(await response.arrayBuffer()),metadata=await sharp(bytes).metadata();
-  assert.equal(metadata.width,640);assert.equal(response.headers.get('Content-Type'),'image/webp');assert.equal(response.headers.get('Cache-Control'),'no-store');
+  assert.equal(metadata.width,640);assert.equal(response.headers.get('Content-Type'),'image/webp');assert.equal(response.headers.get('Cache-Control'),'private, no-cache');
   assert.deepEqual(Buffer.from(await (await route.GET(request(),params)).arrayBuffer()),original);
   allowed=false;assert.equal((await route.GET(request(640),params)).status,404);assert.equal(downloads,2);
 });

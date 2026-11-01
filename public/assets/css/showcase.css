@@ -564,7 +564,21 @@ html:has(.showcase dialog[open]){overflow:hidden}
 .showcase #visuals .editorial-gallery>.work-card:only-child .work-media{height:auto;aspect-ratio:auto}
 .showcase #visuals .editorial-gallery>.work-card:only-child .work-media>img{position:static;width:100%;height:auto;object-fit:contain}
 .showcase #visuals .editorial-gallery>.work-card:only-child .design-showcase-caption{position:static;padding:14px 0 0;background:none}
-.showcase .work-image-status{min-height:160px;display:grid;place-items:center;color:var(--secondary)}
+.showcase .work-image-frame{--preview-ratio:.8;--preview-max-height:max(120px,calc(100dvh - 240px));position:relative;flex:none;width:min(100%,calc(var(--preview-max-height) * var(--preview-ratio)));height:auto;aspect-ratio:var(--preview-ratio);overflow:hidden;border-radius:8px;background:var(--canvas)}
+.showcase .work-image-frame>.work-preview-image{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;visibility:hidden}
+.showcase .work-image-frame.is-ready>.work-preview-image{visibility:visible}
+.showcase .work-image-frame.is-ready{touch-action:none;user-select:none;-webkit-user-select:none;cursor:zoom-in}
+.showcase .work-image-frame.is-zoomed{cursor:grab}
+.showcase .work-image-frame.is-dragging{cursor:grabbing}
+.showcase .work-image-frame>.work-preview-image{transform-origin:center;pointer-events:none}
+.showcase :is(.work-image-zoom,.work-image-navigation){gap:4px}
+.showcase :is(.work-image-zoom,.work-image-navigation)>.button{min-width:44px;min-height:44px;padding:10px}
+.showcase .work-image-zoom>.work-zoom-reset{min-width:62px;font-variant-numeric:tabular-nums}
+.showcase .work-image-feedback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:var(--secondary)}
+.showcase .work-image-status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.showcase .work-image-spinner{animation:work-image-turn .9s linear infinite}
+@keyframes work-image-turn{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.showcase .work-image-spinner{animation:none}}
 .showcase #home .hero-bottom>p{max-width:52ch}
 .showcase .work-media>.work-video-preview{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:var(--canvas);opacity:0;pointer-events:none}
 .showcase .work-media>.work-video-preview.is-playing{opacity:1}

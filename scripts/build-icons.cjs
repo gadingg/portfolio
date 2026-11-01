@@ -8,7 +8,7 @@ const icons = {
   'arrow-left': 'ArrowLeft', 'arrow-up': 'ArrowUp', 'arrow-down': 'ArrowDown',
   'external-link': 'ExternalLink', menu: 'Menu', x: 'X', instagram: 'Instagram', linkedin: 'Linkedin', lightbulb: 'Lightbulb', 'pen-tool': 'PenTool', 'code-2': 'CodeXml', users: 'Users',
   'message-circle': 'MessageCircle', 'file-text': 'FileText', mail: 'Mail',
-  'maximize-2': 'Maximize2', 'chevron-left': 'ChevronLeft',
+  'maximize-2': 'Maximize2', 'zoom-in': 'ZoomIn', 'zoom-out': 'ZoomOut', 'chevron-left': 'ChevronLeft',
   'chevron-right': 'ChevronRight', 'refresh-cw': 'RefreshCw',
   'image-off': 'ImageOff', search: 'Search', 'bar-chart-3': 'ChartNoAxesCombined',
   trophy: 'Trophy', 'check-check': 'CheckCheck', 'calendar-days': 'CalendarDays',
