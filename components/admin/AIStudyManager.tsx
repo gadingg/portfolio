@@ -1,6 +1,9 @@
 'use client';
 import { useEffect,useRef,useState } from 'react';
 import { FileDrop } from './FileDrop';
+import { AdminSkeleton } from './AdminSkeleton';
+import { RotateCw } from 'lucide-react';
+import {useToastMessage} from './AdminToasts';
 import { useConfirm } from './ConfirmDialog';
 import { AIStudySchema,mergeAIRevision,type AIStudy,type AITarget } from '@/lib/ai-study';
 import type { WorkItem } from '@/lib/works';
@@ -93,41 +96,43 @@ export function AIStudyManager(){
     const fields=[['title','Judul portfolio'],['description','Deskripsi singkat'],['problem','Problem'],['approach','Approach'],['outcome','Outcome']] as const;
     return <>
       {fields.filter(([key])=>!preview||pending?.target==='all'||pending?.target===key).map(([key,label])=><div className="ai-result-field" key={key}>
-        <div className="ai-field-heading"><label htmlFor={`ai-${preview?'next':'edit'}-${key}`}>{label}</label>{!preview&&<button type="button" className="wm-button" aria-label={`Generate ulang ${label}`} disabled={disabled||!configured} onClick={()=>generate(key)}>Generate ulang</button>}</div>
+        <div className="ai-field-heading"><label htmlFor={`ai-${preview?'next':'edit'}-${key}`}>{label}</label>{!preview&&<button type="button" className="wm-button admin-icon-action" title={`Generate ulang ${label}`} aria-label={`Generate ulang ${label}`} disabled={disabled||!configured} onClick={()=>generate(key)}><RotateCw size={18} aria-hidden="true"/></button>}</div>
         <textarea id={`ai-${preview?'next':'edit'}-${key}`} readOnly={preview} disabled={!preview&&disabled} rows={key==='title'?2:4} maxLength={key==='title'?140:key==='description'?500:1500} value={study[key]} onChange={event=>changeResult({[key]:event.target.value})}/>
       </div>)}
       {!selected&&(!preview||pending?.target==='all')&&<label>Slug pendek<input maxLength={32} readOnly={preview} disabled={!preview&&disabled} value={study.slug} onChange={event=>changeResult({slug:event.target.value})}/></label>}
       {study.sections.map((section,index)=>(!preview||pending?.target==='all'||pending?.target===`section:${index}`)&&<section className="ai-story-section" key={index}>
-        <div className="ai-field-heading"><h3>Bagian {index+1}</h3>{!preview&&<button type="button" className="wm-button" aria-label={`Generate ulang bagian ${index+1}`} disabled={disabled||!configured} onClick={()=>generate(`section:${index}`)}>Generate ulang bagian</button>}</div>
+        <div className="ai-field-heading"><h3>Bagian {index+1}</h3>{!preview&&<button type="button" className="wm-button admin-icon-action" title={`Generate ulang bagian ${index+1}`} aria-label={`Generate ulang bagian ${index+1}`} disabled={disabled||!configured} onClick={()=>generate(`section:${index}`)}><RotateCw size={18} aria-hidden="true"/></button>}</div>
         <label>Headline / selling point<input maxLength={160} readOnly={preview} disabled={!preview&&disabled} value={section.heading} onChange={event=>changeResult({sections:study.sections.map((value,at)=>at===index?{...value,heading:event.target.value}:value)})}/></label>
         <label>Penjelasan<textarea maxLength={3000} readOnly={preview} disabled={!preview&&disabled} rows={5} value={section.body} onChange={event=>changeResult({sections:study.sections.map((value,at)=>at===index?{...value,body:event.target.value}:value)})}/></label>
       </section>)}
     </>;
   }
+  useToastMessage(!busy ? message : '');
+  if (loading) return <AdminSkeleton />;
   return <div className="works-manager cms-manager ai-workspace">
     {confirmation}
-    <header className="wm-heading"><div><h1>AI Study Case</h1><p>Dari catatan bebas ke cerita project yang siap Anda review.</p></div><a href="/admintgadink/dashboard/settings" className="wm-button">Pengaturan AI</a></header>
+    <header className="wm-heading"><div><h1>AI Study Case</h1></div><a href="/admintgadink/dashboard/settings" className="wm-button">Pengaturan AI</a></header>
     {error&&<p className="cms-error" role="alert">{error}{revision!==null&&<button className="wm-button" disabled={disabled} type="button" onClick={async()=>{if(!dirty.current||await ask('Muat ulang daftar dan lepaskan perubahan workspace yang belum disimpan?','Muat ulang'))void load();}}>Muat ulang daftar</button>}</p>}
-    {message&&<p role="status" className="ai-notice">{busy&&<span className="admin-spinner" aria-hidden="true"/>}{message}</p>}
-    {loading?<p role="status">Memuat workspace…</p>:revision===null?<button type="button" className="wm-button" onClick={load}>Coba lagi</button>:<>
-      {!configured&&<div className="ai-notice"><p>Hubungkan Gemini API key sebelum generate. Catatan tetap bisa Anda siapkan.</p><a className="ai-inline-link" href="/admintgadink/dashboard/settings">Buka Pengaturan AI</a></div>}
+    {message&&busy&&<p role="status" className="ai-notice"><span className="admin-spinner" aria-hidden="true"/>{message}</p>}
+    {loading?<AdminSkeleton />:revision===null?<button type="button" className="wm-button" onClick={load}>Coba lagi</button>:<>
+      {!configured&&<div className="ai-notice"><p>Tambahkan API key di Pengaturan AI untuk membuat draft.</p></div>}
       <div className="ai-authoring-layout">
         <section className="ai-input-panel" aria-labelledby="ai-brief-title"><h2 id="ai-brief-title">Brief project</h2>
           <fieldset disabled={disabled} className="ai-fields">
             <label>Tujuan draft<select value={selected} onChange={async event=>{const id=event.target.value;if(!dirty.current||await ask('Ganti project dan lepaskan perubahan workspace yang belum disimpan?','Ganti project'))selectWork(id);}}><option value="">Buat studi kasus baru</option>{items.filter(item=>item.kind==='webapp'&&item.caseStudy).map(item=><option key={item.id} value={item.id}>Revisi: {item.title}</option>)}</select></label>
             <label>Ceritakan project-nya<textarea rows={10} maxLength={30000} value={brief} onChange={event=>{setBrief(event.target.value);dirty.current=true;setApplied('');}} placeholder="Boleh catatan bebas, daftar fitur, masalah yang ingin diselesaikan, proses, atau hasil yang sudah Anda lihat."/></label>
-            <p className="wm-editor-note">{brief.length.toLocaleString('id-ID')}/30.000 karakter. Sebutkan peran dan hasil jika tersedia; AI tidak akan diminta mengarang fakta.</p>
+            <p className="wm-editor-note">{brief.length.toLocaleString('id-ID')}/30.000 karakter</p>
             <label>Link aplikasi (opsional)<input inputMode="url" maxLength={2000} value={appUrl} onChange={event=>{setAppUrl(event.target.value);dirty.current=true;setApplied('');}}/></label>
-            <h3>Thumbnail portfolio</h3>
+            <h3>Thumbnail portofolio</h3>
             <FileDrop previewSrc={image} previewAlt={alt||'Thumbnail portfolio'} disabled={disabled} onBusyChange={setUploading} uploadLabel={image?'Ganti thumbnail':'Upload thumbnail'} onUploaded={files=>{setImage(files[0].url);dirty.current=true;setApplied('');}}/>
             <label>Deskripsi thumbnail<input maxLength={250} value={alt} onChange={event=>{setAlt(event.target.value);dirty.current=true;setApplied('');}}/></label>
           </fieldset>
           <button type="button" className="wm-button wm-primary" disabled={disabled||!configured||brief.trim().length<20} onClick={()=>generate()} aria-busy={busy}>{busy?'Memproses…':result?'Generate versi baru':'Generate Study Case'}</button>
-          <p className="wm-editor-note">Catatan dikirim ke Gemini saat generate. Thumbnail tidak dianalisis AI. Hasil belum disimpan sampai Anda klik Gunakan hasil.</p>
+          <p className="wm-editor-note">Catatan dikirim ke Gemini. Hasil baru disimpan saat Anda memilih Gunakan hasil.</p>
         </section>
         <div className="ai-review-panel" ref={resultRef} tabIndex={-1} aria-labelledby="ai-review-title">
           <h2 id="ai-review-title">Review draft</h2>
-          {!result?<div className="ai-empty"><p>Hasil generate akan muncul di sini.</p><p>Anda bisa mengedit tiap bagian sebelum menyimpannya ke portfolio.</p></div>:<>
+          {!result?<div className="ai-empty"><p>Draft akan muncul di sini untuk Anda periksa.</p></div>:<>
             {pending&&<section className="ai-pending" ref={reviewRef} tabIndex={-1} aria-label="Usulan revisi AI"><h3>Usulan revisi</h3><p className="wm-editor-note">Tulisan Anda di bawah belum berubah. Bandingkan sebelum memakai revisi ini.</p>{renderStudy(pending.result,true)}<div className="ai-actions"><button type="button" className="wm-button wm-primary" disabled={disabled} onClick={async()=>{if(await ask('Gunakan usulan ini untuk mengganti bagian yang dipilih? Bagian lain tetap dipertahankan.','Gunakan revisi')){setResult(mergeAIRevision(result,pending.result,pending.target));setPending(null);dirty.current=true;setApplied('');}}}>Gunakan revisi ini</button><button type="button" className="wm-button" disabled={disabled} onClick={()=>setPending(null)}>Pertahankan tulisan saya</button></div></section>}
             <p className="wm-editor-note">The thinking behind the output: Problem, Approach, Outcome, lalu cerita detail. Semua field bisa Anda edit.</p>
             {renderStudy(result)}

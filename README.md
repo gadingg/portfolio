@@ -58,6 +58,16 @@ The older `audit:supabase` command creates temporary rows/users and probes legac
 See `docs/cms-audit-2026-10-16.md` for the original audit and `docs/qa-2026-10-16-cms.md` for current validation and limits.
 
 
+### Trash and scheduled cleanup
+
+Moving a portfolio item to Sampah immediately removes it from both working and public collections. Draft/public snapshots and their original positions are retained for 72 hours. Restore uses those snapshots; it does not publish other pending drafts. Expired entries cannot be restored.
+
+`vercel.json` schedules `GET /api/cron/trash` daily at 02:00 UTC (09:00 WIB). In the Vercel project, add a random server-only `CRON_SECRET` environment variable for Production, then deploy/redeploy. Do not use a NEXT_PUBLIC prefix or put the secret into source control. Vercel supplies the secret as the Authorization bearer. Without the correct configured secret the endpoint returns 401 and performs no cleanup.
+
+The restore cutoff is exactly 72 hours; physical cleanup occurs at the next successful daily run. Only media referenced by purged entries becomes a cleanup candidate. Current CMS drafts/publications, other retained trash, archived content and legacy project/gallery/media references are checked before removal. Failed reference reads prevent file deletion. Failed storage removal remains queued, and concurrent CMS revisions defer the batch. The job processes at most 40 candidate files per invocation; overlapping writes use revision checks.
+
+Cron configuration becomes active after deployment. A local dev server does not execute Vercel cron schedules. Tests mock storage and time; do not invoke the live cleanup endpoint as a smoke test because successful authorized requests permanently purge expired content.
+
 ### Image previews
 
 Gallery previews use viewport-sized image variants inside a stable frame and reveal the image after decode. Errors and a 20-second timeout offer retry without shifting the controls. The media gateway caches image bytes/transformations in a bounded warm-process cache (32 MiB, 64 entries, five-minute TTL), after checking the current admin or published reference on every request. Image responses use private, no-cache with ETags; conditional 304 responses still require authorization. Video redirects and PDF downloads retain their existing no-store behavior. The cache does not make hidden media publicly accessible.

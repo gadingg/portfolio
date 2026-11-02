@@ -1,0 +1,9 @@
+.admin-notifications{position:fixed;top:24px;right:24px;z-index:2000;width:min(390px,calc(100vw - 32px));display:grid;gap:12px;pointer-events:none;color:var(--ink)}
+.admin-toast{display:flex;align-items:flex-start;gap:12px;padding:16px 12px 16px 16px;border:1px solid var(--border-strong);border-radius:12px;background:var(--admin-bg);pointer-events:auto;font:500 14px/1.6 Manrope,sans-serif}
+.admin-toast>svg{flex-shrink:0;margin-top:3px;color:var(--amber)}
+.admin-toast>div{flex:1;min-width:0}.admin-toast p{margin:0;overflow-wrap:anywhere}
+.admin-toast button{min-height:44px;border:0;background:none;color:var(--ink);font:inherit;cursor:pointer;padding:8px 0;text-decoration:underline;text-underline-offset:4px}
+.admin-toast .admin-toast-close{display:grid;place-items:center;flex:0 0 44px;width:44px;min-height:44px;padding:10px;margin-top:-8px;text-decoration:none}
+.admin-toast button:disabled{opacity:.6;cursor:wait}.admin-toast button:focus-visible{outline:2px solid var(--amber);outline-offset:2px;border-radius:6px}
+@media(prefers-reduced-motion:no-preference){.admin-toast{animation:admin-toast-enter .18s ease-out both}@keyframes admin-toast-enter{from{transform:translateX(16px);opacity:0}to{transform:none;opacity:1}}}
+@media(max-width:600px){.admin-notifications{top:76px;right:16px;left:16px;width:auto}}

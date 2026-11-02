@@ -40,6 +40,7 @@ export async function PUT(request: NextRequest) {
       revision: doc.revision,
       initialized: true,
       published_at: doc.published_at,
+      trash: doc.draft.trash || [],
     });
   } catch (error) {
     return cmsError(error);

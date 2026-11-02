@@ -156,9 +156,34 @@
 .wm-site-workspace .wm-clean-status{font-size:12px;margin-top:8px}
 @media(max-width:760px){.wm-site-layout{grid-template-columns:minmax(0,1fr);gap:24px}.wm-site-layout .cms-section-tabs{display:none}.wm-section-select{display:flex!important;gap:8px!important}.wm-savebar>span{flex-basis:100%}.wm-savebar .wm-button{font-size:12px;min-width:0!important;flex:1 1 auto}.wm-site-workspace .wm-heading{margin-bottom:24px}.wm-site-workspace .wm-heading h1{font-size:28px}}
 .wm-form-loading{display:grid;gap:16px;padding-block:24px;color:var(--muted);font-size:13px}.wm-form-loading>div{height:64px;border-radius:8px;background:var(--surface)}
+/* Keep routine controls quiet; amber marks the next publication action. */
+.cms-manager .wm-heading h1 { font-size:clamp(28px,3vw,36px); margin-top:0; }
+.works-manager .cms-settings-card { background:var(--surface); backdrop-filter:none; -webkit-backdrop-filter:none; }
+.cms-drop .cms-drop-hint { flex:1; font-size:12px; text-align:left; }
+.cms-drop .admin-icon-action { position:relative; }
+.cms-manager .cms-sticky-toolbar { border-color:var(--border); padding:10px 14px; }
+.cms-manager .wm-save-scope { margin:0; }
+.cms-manager .wm-savebar:not(:has(button)) { background:transparent; border-color:transparent; padding-inline:0; }
+.wm-workspace .wm-toolbar { display:grid; grid-template-columns:auto minmax(140px,1fr) auto; }
+.wm-workspace .wm-search { max-width:none; }
+.wm-workspace .wm-toolbar>.wm-button:not(.wm-primary) { background:transparent; border-color:var(--border); }
+.wm-workspace .wm-savebar:has(.wm-button:disabled):not(:has(.wm-save-scope)) { background:transparent; border-color:transparent; }
+@media(max-width:760px) {
+  .wm-workspace .wm-toolbar { grid-template-columns:44px minmax(0,1fr) auto; gap:8px; }
+  .wm-workspace .wm-search { grid-column:1 / -1; grid-row:1; }
+  .wm-workspace .wm-add-menu { grid-column:3; }
+  .wm-workspace .wm-toolbar>.wm-button { width:44px; min-width:44px; padding:10px; font-size:0; gap:0; }
+  .wm-workspace .wm-search { width:100%; }
+  .wm-workspace .wm-add-menu { align-self:stretch; }
+  .wm-workspace .wm-add-menu>summary { height:100%; }
+  .cms-drop .cms-drop-hint { flex-basis:100%; order:3; text-align:center; }
+}
 .works-manager .video-source-choice{display:flex;flex-wrap:wrap;gap:12px 24px;border:0;padding:0;margin:0 0 20px}
 .works-manager .video-source-choice legend{font-weight:600;margin-bottom:10px}
 .works-manager .video-source-choice label{display:flex;flex-direction:row;align-items:center;gap:8px;min-height:44px}
 .works-manager .video-source-choice input{width:20px;height:20px;accent-color:var(--amber)}
 .wm-save-status{display:flex;align-items:center;gap:8px}.wm-save-status>svg{color:var(--amber);flex-shrink:0}
+.wm-trash-list{padding-top:24px}.wm-trash-list>.wm-editor-note{margin-bottom:20px}.wm-trash-list .wm-summary{flex:1}.wm-trash-list .cms-work-row{gap:16px}.wm-trash-list .wm-empty{display:grid;justify-items:center;gap:12px;text-align:center}
+.wm-workspace .wm-trash-tab{margin-left:auto}
+@media(max-width:760px){.wm-workspace .wm-tabs{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.wm-workspace .wm-trash-tab{margin-left:0}.wm-workspace .wm-trash-tab>svg{display:none}.wm-trash-list .cms-work-row{flex-wrap:wrap}.wm-trash-list .wm-summary{min-width:140px}.wm-trash-list .wm-button{margin-left:auto}}
 .cms-recovery{display:flex;align-items:center;flex-wrap:wrap;gap:16px;padding:16px;margin-block:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px}.cms-recovery>svg{color:var(--amber);flex-shrink:0}.cms-recovery>div:first-of-type{flex:1;min-width:180px}.cms-recovery small,.cms-recovery-history small{display:block;color:var(--muted);font-size:12px;margin-top:4px}.cms-recovery-history{margin-block:16px}.cms-recovery-history>summary{display:flex;align-items:center;gap:8px;cursor:pointer;min-height:44px;font-size:13px;list-style:none}.cms-recovery-history>summary::-webkit-details-marker{display:none}.cms-recovery-history>ul{list-style:none;margin:0;padding:0}.cms-recovery-history li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;border-top:1px solid var(--border);font-size:13px}.cms-recovery-history .wm-button{flex-shrink:0}@media(max-width:600px){.cms-recovery-history li{flex-wrap:wrap}.cms-recovery .cms-image-actions{width:100%}}

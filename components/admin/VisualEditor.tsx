@@ -5,6 +5,8 @@ import { publicationState } from '@/lib/publication-state';
 import { draftSaveMessage } from '@/lib/draft-backup';
 import { useAutoDraft } from './useAutoDraft';
 import { DraftRecovery } from './DraftRecovery';
+import { AdminSkeleton } from './AdminSkeleton';
+import {useAdminToast} from './AdminToasts';
 import { useEffect, useRef, useState } from 'react';
 import type { Editor, Component } from 'grapesjs';
 import { ArrowLeft, Undo2, Redo2, Monitor, Smartphone, Eye, Layers, Plus, SlidersHorizontal, ArrowUp, ArrowDown, Trash2, ExternalLink, Type, Image as ImageIcon, X } from 'lucide-react';
@@ -20,6 +22,7 @@ import './visual-editor.css';
 
 type PageData={publishSummary?:PublishSummary;publicationCopy?:ReturnType<typeof workPublicationCopy>;unpublished?:boolean;publicationSections?:string[];revision:number;layout?:{html:string;css:string};seedHtml?:string;title:string;seedUrl:string;previewUrl:string};
 export function VisualEditor({target}:{target:string}){
+  const notify = useAdminToast();
   const {ask,confirmation}=useConfirm();
   const {review,publicationReview}=usePublishReview();
   const canvas=useRef<HTMLDivElement>(null),editor=useRef<Editor|null>(null),meta=useRef<PageData|null>(null);
@@ -159,6 +162,7 @@ export function VisualEditor({target}:{target:string}){
       baseline.current=changedDuringSave?(result.layout||layout):{html:ed.getHtml(),css:ed.getCss()||''};
       setSavedLayout(JSON.stringify(baseline.current));setLayoutValue(JSON.stringify({html:ed.getHtml(),css:ed.getCss()||''}));setVisualRevision(result.revision);
       meta.current={...data,revision:result.revision,layout:result.layout,publishSummary:result.publishSummary,publicationSections:result.publicationSections,publicationCopy:result.publicationCopy};if(result.title)setTitle(result.title);setDirty(changedDuringSave);if(!changedDuringSave)ed.clearDirtyCount();setStatus(action==='publish'?(result.publicationCopy?.cleanLabel||'Sudah tayang'):'Draft tersimpan');
+      notify(action === 'publish' ? 'Perubahan sudah tayang.' : 'Draft tersimpan.', {id:action === 'save' ? 'autosave' : undefined, duration:action === 'save' ? 2500 : 5000});
       return true;
     }catch(e){setError(draftSaveMessage(e));return false;}finally{saveLock.current=false;setBusy(false);}
   }
@@ -196,23 +200,23 @@ export function VisualEditor({target}:{target:string}){
     {autosave.recovery&&<DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion}/>}
     <header className="visual-toolbar" inert={!!autosave.recovery}>
       <a href={target==='home'?'/admintgadink/dashboard/site':'/admintgadink/dashboard/works'} onClick={leave} className="visual-icon" aria-label="Kembali ke CMS"><ArrowLeft size={20}/></a>
-      <div className="visual-title"><h1>{title}</h1><span role="status">{!ready?status:busy&&action==='publish'?(publicationCopy?.busyLabel||'Publishing…'):!dirty&&!unpublished&&autosave.online?(publicationCopy?.cleanLabel||'Sudah tayang'):autosave.status}{pendingHint}{uploading?' · Mengunggah…':''}</span></div>
+      <div className="visual-title"><h1>{title}</h1>{ready&&<span role="status">{busy&&action==='publish'?(publicationCopy?.busyLabel||'Publishing…'):!dirty&&!unpublished&&autosave.online?(publicationCopy?.cleanLabel||'Sudah tayang'):autosave.status}{pendingHint}{uploading?' · Mengunggah…':''}</span>}</div>
       <button className="visual-tools-toggle" aria-label="Alat editor" aria-expanded={toolsOpen} onClick={()=>setToolsOpen(!toolsOpen)}>Alat</button>
       <div className={`visual-tools-content ${toolsOpen?'is-open':''}`}>
       <div className="visual-history"><button aria-label="Urungkan" disabled={!ready||busy||uploading||!canUndo} onClick={()=>editor.current?.UndoManager.undo()}><Undo2 size={18}/></button><button aria-label="Ulangi" disabled={!ready||busy||uploading||!canRedo} onClick={()=>editor.current?.UndoManager.redo()}><Redo2 size={18}/></button></div>
       <div className="visual-devices" aria-label="Ukuran kanvas"><button aria-label="Desktop" aria-pressed={device==='Desktop'} disabled={!ready} onClick={()=>setViewport('Desktop')}><Monitor size={18}/></button><button aria-label="Mobile" aria-pressed={device==='Mobile'} disabled={!ready} onClick={()=>setViewport('Mobile')}><Smartphone size={18}/></button></div>
 </div>
       <button className="visual-panel-toggle" aria-label="Panel editor" aria-expanded={panelOpen} onClick={()=>setPanelOpen(!panelOpen)} disabled={preview}><SlidersHorizontal size={18}/><span>Panel</span></button>
-      <button aria-label="Preview halaman" aria-pressed={preview} onClick={()=>{const ed=editor.current;if(preview)ed?.stopCommand('preview');else ed?.runCommand('preview');setPreview(!preview);}} disabled={!ready||busy}><Eye size={18}/><span>{preview?'Kembali edit':'Preview'}</span></button>
+      <button aria-label={preview?'Kembali edit':'Preview halaman'} title={preview?'Kembali edit':'Preview halaman'} aria-pressed={preview} onClick={()=>{const ed=editor.current;if(preview)ed?.stopCommand('preview');else ed?.runCommand('preview');setPreview(!preview);}} disabled={!ready||busy}><Eye size={18}/></button>
       {autosave.failed&&<button disabled={busy||!autosave.online} onClick={autosave.retry}>Coba lagi</button>}
-      {publicationCopy?.showPublish!==false&&<button className="visual-publish" aria-label={publicationCopy?.publishLabel||'Publish'} aria-busy={busy&&action==='publish'} disabled={!ready||!autosave.online||!publicationState(dirty,unpublished,busy||uploading).canPublish} onClick={()=>save('publish')}><AdminActionLabel pending={busy&&action==='publish'} idle={publicationCopy?.publishLabel||'Publish'} busy={publicationCopy?.busyLabel||'Publishing…'}/></button>}
+      {publicationCopy?.showPublish!==false&&(dirty||unpublished||(busy&&action==='publish'))&&<button className="visual-publish" aria-label={publicationCopy?.publishLabel||'Publish'} aria-busy={busy&&action==='publish'} disabled={!ready||!autosave.online||!publicationState(dirty,unpublished,busy||uploading).canPublish} onClick={()=>save('publish')}><AdminActionLabel pending={busy&&action==='publish'} idle={publicationCopy?.publishLabel||'Publish'} busy={publicationCopy?.busyLabel||'Publishing…'}/></button>}
     </header>
     {error&&<div role="alert" className="visual-error">{error}{!ready?<button onClick={()=>window.location.reload()}>Coba lagi</button>:<button onClick={()=>setError('')} aria-label="Tutup pesan">Tutup</button>}</div>}
     {preview&&<p className="visual-preview-note"><a href={dirty?undefined:meta.current?.previewUrl} aria-disabled={dirty} target="_blank" rel="noopener noreferrer">Buka draft di tab baru <ExternalLink size={14}/></a>{dirty&&' Menunggu draft tersimpan…'}</p>}
     <div className="visual-workspace" aria-busy={busy} inert={!!autosave.recovery}>
       {panelOpen&&<button className="visual-panel-backdrop" aria-label="Tutup panel" onClick={()=>setPanelOpen(false)}/>}
       <aside className="visual-sidebar" aria-label="Panel konten" inert={(busy&&action!=='save')||uploading||!ready}>
-        <div className="visual-panel-heading"><h2>Edit halaman</h2><button className="visual-panel-close" aria-label="Tutup panel konten" onClick={()=>setPanelOpen(false)}><X size={18}/></button></div>
+        <div className="visual-panel-heading"><h2>{target === 'home' ? 'Live Editor Landing Page' : 'Edit studi kasus'}</h2><button className="visual-panel-close" aria-label="Tutup panel konten" onClick={()=>setPanelOpen(false)}><X size={18}/></button></div>
         <nav aria-label="Panel editor">{[['content','Konten',Type],['sections','Bagian',Layers],['add','Tambah',Plus]].map(([value,label,Icon])=><button key={value as string} aria-pressed={tab===value} onClick={()=>setTab(value as string)}><Icon size={16}/>{label as string}</button>)}</nav>
         {tab==='content'&&<div className="visual-content-panel">
           {!selection?<div className="visual-empty"><Type size={24}/><h3>Pilih bagian untuk diedit</h3><p>Klik teks, gambar, atau tombol di preview.</p></div>:<>
@@ -230,10 +234,9 @@ export function VisualEditor({target}:{target:string}){
           {activeSection&&<div className="visual-section-controls"><strong>{sectionTitle(activeSection)}</strong><div><button aria-label="Pindah bagian ke atas" disabled={sectionIndex<=0||sections[sectionIndex-1]?.parent()!==activeSection.parent()} onClick={()=>reorderSection(sectionIndex,sectionIndex-1)}><ArrowUp size={16}/></button><button aria-label="Pindah bagian ke bawah" disabled={sectionIndex<0||sectionIndex>=sections.length-1||sections[sectionIndex+1]?.parent()!==activeSection.parent()} onClick={()=>reorderSection(sectionIndex,sectionIndex+1)}><ArrowDown size={16}/></button><button className="visual-delete" aria-label="Hapus bagian" onClick={()=>removeSection(activeSection)}><Trash2 size={16}/>Hapus</button></div></div>}
         </div>}
         {tab==='add'&&<div className="visual-templates"><h3>Tambah bagian</h3><p className="visual-hint">{activeSection?`Setelah “${sectionTitle(activeSection)}”`:'Di akhir konten halaman'}</p>{templates.map(item=><button key={item.title} onClick={()=>addSection(item.html)}><item.icon size={20}/><span>{item.title}</span><Plus size={16}/></button>)}</div>}
-        <p className="visual-publish-hint">Draft tersimpan otomatis.</p>
       </aside>
       <div className="visual-canvas" ref={canvas} inert={(busy&&action!=='save')||uploading}/>
-      {!ready&&!error&&<div className="visual-loading" role="status"><span className="admin-spinner"/>Menyiapkan halaman…</div>}
+      {!ready&&!error&&<div className="visual-loading"><AdminSkeleton /></div>}
     </div>
   </div>;
 }

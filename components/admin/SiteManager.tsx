@@ -12,18 +12,23 @@ import { PublicationBar } from './PublicationBar';
 import { draftSaveMessage } from '@/lib/draft-backup';
 import { useAutoDraft } from './useAutoDraft';
 import { DraftRecovery } from './DraftRecovery';
-export function SiteManager() {
+import { AdminSkeleton } from './AdminSkeleton';
+import {useAdminToast, useToastMessage} from './AdminToasts';
+type InitialSite = {draft: SiteContent; published: SiteContent; revision: number};
+export function SiteManager({initial}: {initial?: InitialSite} = {}) {
+  const notify = useAdminToast();
   const {ask,confirmation}=useConfirm();
   const {review,publicationReview}=usePublishReview();
-  const [content, setContent] = useState<SiteContent | null>(null),
-    [saved, setSaved] = useState(''),
-    [published, setPublished] = useState(''),
-    [revision, setRevision] = useState(0),
+  const [content, setContent] = useState<SiteContent | null>(initial?.draft || null),
+    [saved, setSaved] = useState(initial ? JSON.stringify(initial.draft) : ''),
+    [published, setPublished] = useState(initial ? JSON.stringify(initial.published) : ''),
+    [revision, setRevision] = useState(initial?.revision || 0),
     [group, setGroup] = useState('Hero'),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
     [notice, setNotice] = useState('');
   const [operation, setOperation] = useState<'save' | 'publish' | null>(null);
+  useToastMessage(notice);
   const dirty = !!content && JSON.stringify(content) !== saved;
   const mutationLock = useRef(false);
   const pendingMutation = useRef<Promise<void> | null>(null);
@@ -60,7 +65,7 @@ export function SiteManager() {
     }
   }
   useEffect(() => {
-    load();
+    if (!initial) load();
   }, []);
   useEffect(()=>{window.scrollTo({top:0,behavior:'instant'});document.querySelector('.admin-main')?.scrollTo({top:0,behavior:'instant'});},[group]);
   async function save(action: 'save' | 'publish', automatic = false) {
@@ -81,6 +86,7 @@ export function SiteManager() {
       if (!res.ok) throw Error(data.error);
       adopt(data, JSON.stringify(snapshot));
       if (!automatic) setNotice(action === 'publish' ? 'Perubahan website sudah tayang.' : 'Draft tersimpan.');
+      else notify('Draft tersimpan.', {id:'autosave', duration:2500});
       return true;
     } catch (e) { setError(draftSaveMessage(e)); return false; }
     finally { mutationLock.current = false; setOperation(null); setBusy(false); finishMutation.current?.(); pendingMutation.current = null; }
@@ -98,7 +104,7 @@ export function SiteManager() {
       {confirmation}
       {publicationReview}
       <div className="wm-heading">
-        <div><h1>Website &amp; CV</h1>{content && !dirty && saved === published && <p className="wm-clean-status">Semua perubahan tersimpan</p>}</div>
+        <div><h1>Website &amp; CV</h1></div>
         <a
           href="/admintgadink/dashboard/editor/home"
           className="wm-button"
@@ -111,7 +117,7 @@ export function SiteManager() {
           }}
         >
           <Eye size={18} />
-          Edit halaman
+          Live Editor Landing Page
         </a>
       </div>
       {content && <PublicationBar dirty={!!dirty} unpublished={saved !== published} busy={busy} operation={operation} scope="Perubahan Website & CV ikut di-publish." status={!dirty && saved === published && autosave.online ? 'Sudah tayang' : autosave.status} offline={!autosave.online} failed={autosave.failed}
@@ -132,12 +138,7 @@ export function SiteManager() {
           </button>
         </div>
       )}
-      {notice && (
-        <p className="wm-message" role="status">
-          {notice}
-        </p>
-      )}
-      {!content && !error && <div className="wm-form-loading" role="status"><span>Memuat konten website…</span><div aria-hidden="true"/><div aria-hidden="true"/></div>}
+      {!content && !error && <AdminSkeleton />}
       {content && (
         <>
           <div className="wm-site-layout"><label className="wm-section-select">Bagian website<select value={group} onChange={event => setGroup(event.target.value)}>{groups.map(value => <option key={value} value={value}>{value}</option>)}</select></label><nav className="cms-section-tabs" aria-label="Bagian website">

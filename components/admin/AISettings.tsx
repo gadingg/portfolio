@@ -1,6 +1,8 @@
 'use client';
 import { useEffect,useState } from 'react';
 import { useConfirm } from './ConfirmDialog';
+import { AdminSkeleton } from './AdminSkeleton';
+import {useToastMessage} from './AdminToasts';
 import './works-manager.css';
 import './ai-study.css';
 
@@ -22,20 +24,22 @@ export function AISettings(){
       else{setStatus(data);setKey('');setMessage(action==='delete'?'API key sudah dihapus.':'Pengaturan AI tersimpan.');}
     }catch(e){setError(e instanceof Error&&e.name!=='TimeoutError'?e.message:'Permintaan belum selesai. Coba lagi.');}finally{setBusy(false);}
   }
+  useToastMessage(message);
+  if (loading) return <AdminSkeleton />;
   return <div className="works-manager cms-manager ai-workspace">
     {confirmation}
-    <header className="wm-heading"><div><h1>Pengaturan AI</h1><p>Hubungkan Gemini untuk menulis draft studi kasus.</p></div><a className="wm-button" href="/admintgadink/dashboard/ai">Buka AI Study Case</a></header>
-    {error&&<p className="cms-error" role="alert">{error}</p>}{message&&<p className="ai-notice" role="status">{message}</p>}
-    {loading?<p role="status">Memuat pengaturan…</p>:!status?<button type="button" className="wm-button" onClick={load}>Coba lagi</button>:<section className="ai-settings-panel" aria-labelledby="gemini-settings-title">
+    <header className="wm-heading"><div><h1>Pengaturan AI</h1></div><a className="wm-button" href="/admintgadink/dashboard/ai">AI Study Case</a></header>
+    {error&&<p className="cms-error" role="alert">{error}</p>}
+    {loading?<AdminSkeleton />:!status?<button type="button" className="wm-button" onClick={load}>Coba lagi</button>:<section className="ai-settings-panel" aria-labelledby="gemini-settings-title">
       <h2 id="gemini-settings-title">Gemini API</h2><p className="ai-connection" role="status">{status.configured?'API key tersimpan':'Belum terhubung'}</p>
       <fieldset disabled={busy} className="ai-fields">
         <label>{status.configured?'Ganti API key':'Gemini API key'}<input type="password" autoComplete="new-password" spellCheck={false} value={key} onChange={event=>setKey(event.target.value)} placeholder={status.configured?'Kosongkan untuk memakai key tersimpan':'Paste API key di sini'}/></label>
-        <p className="wm-editor-note">Key disimpan terenkripsi di server dan tidak ditampilkan kembali. Key ini dipakai khusus fitur AI portfolio.</p>
+        <p className="wm-editor-note">Key tersimpan terenkripsi dan tidak ditampilkan kembali.</p>
         <label>ID model<input value={model} maxLength={80} spellCheck={false} onChange={event=>setModel(event.target.value)} placeholder="gemini-3.8-flash"/></label>
-        <p className="wm-editor-note">Gunakan ID model teks yang tersedia di akun Gemini Anda. Tes koneksi mengirim satu permintaan singkat.</p>
+        <p className="wm-editor-note">Gunakan model teks yang tersedia di akun Gemini Anda.</p>
         <div className="ai-actions"><button type="button" className="wm-button wm-primary" disabled={!model||(!key&&!status.configured)} onClick={()=>act('save')}>{busy?'Memproses…':'Simpan pengaturan'}</button><button type="button" className="wm-button" disabled={!model||(!key&&!status.configured)} onClick={()=>act('test')}>Tes koneksi</button>{status.configured&&<button type="button" className="wm-button" onClick={()=>act('delete')}>Hapus key</button>}</div>
       </fieldset>
-      <p className="wm-editor-note">Catatan project dikirim ke Gemini saat Anda klik generate. Penggunaan mengikuti kuota API Anda.</p>
+      <p className="wm-editor-note">Generate dan tes koneksi memakai kuota Gemini Anda.</p>
       <a className="ai-inline-link" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Kelola key di Google AI Studio</a>
     </section>}
   </div>;

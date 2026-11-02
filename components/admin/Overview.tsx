@@ -1,5 +1,6 @@
 import { List, Layers3, Eye, FilePenLine, EyeOff, PanelsTopLeft, Palette, Clapperboard, ChartNoAxesCombined, MousePointer2, Image, MessageCircle, ExternalLink, CircleAlert } from 'lucide-react';
 import { OverviewThumbnail } from './OverviewThumbnail';
+import { ArrowRight, Pencil, Info } from 'lucide-react';
 import { SettingsDisclosure } from './SettingsDisclosure';
 import { workLabels, type WorkItem } from '@/lib/works';
 import { summarizeWorks } from '@/lib/admin-overview';
@@ -25,16 +26,16 @@ export function Overview({ draft, published, data, days }: {
     <header className="wm-heading overview-heading">
       <div><h1>Overview</h1></div>
       <div className="overview-actions">
-        <AdminLink className="wm-button" href="/admintgadink/dashboard/editor/home">Edit homepage</AdminLink>
+        <AdminLink className="wm-button" href="/admintgadink/dashboard/editor/home">Live Editor Landing Page</AdminLink>
         <AdminLink className="wm-button wm-primary" href="/admintgadink/dashboard/works">Kelola portofolio</AdminLink>
       </div>
     </header>
 
     <section className="overview-stats" aria-label="Ringkasan portofolio">
       <div className="overview-stat overview-stat-total"><div className="overview-stat-heading"><h2>Total Portofolio</h2><Layers3 aria-hidden="true" /></div><strong>{number(summary.total)}</strong></div>
-      <div className="overview-stat"><div className="overview-stat-heading"><h2>Tayang</h2><Eye aria-hidden="true" /></div><strong>{number(summary.live)}</strong><p>Terlihat di website</p></div>
-      <div className="overview-stat"><div className="overview-stat-heading"><h2>Draft baru</h2><FilePenLine aria-hidden="true" /></div><strong>{number(summary.drafts)}</strong><p>Belum pernah tayang</p></div>
-      <div className="overview-stat"><div className="overview-stat-heading"><h2>Disembunyikan</h2><EyeOff aria-hidden="true" /></div><strong>{number(summary.hidden)}</strong><p>Tidak tampil di website</p></div>
+      <div className="overview-stat"><div className="overview-stat-heading"><h2>Tayang</h2><Eye aria-hidden="true" /></div><strong>{number(summary.live)}</strong></div>
+      <div className="overview-stat"><div className="overview-stat-heading"><h2>Draft baru</h2><FilePenLine aria-hidden="true" /></div><strong>{number(summary.drafts)}</strong></div>
+      <div className="overview-stat"><div className="overview-stat-heading"><h2>Disembunyikan</h2><EyeOff aria-hidden="true" /></div><strong>{number(summary.hidden)}</strong></div>
     </section>
 
     {summary.incomplete>0 && <div className="overview-publication-note"><CircleAlert size={20} aria-hidden="true" /><span>{number(summary.incomplete)} portofolio belum lengkap dan belum tampil di website.</span><AdminLink href="/admintgadink/dashboard/works">Lengkapi portofolio</AdminLink></div>}
@@ -46,7 +47,7 @@ export function Overview({ draft, published, data, days }: {
         <ul className="overview-categories">
           {summary.categories.map(item => { const Icon = categoryIcons[item.kind]; return <li key={item.kind}>
             <div className="overview-category-main"><Icon size={22} aria-hidden="true" /><div><h3>{workLabels[item.kind]}</h3><p>{number(item.total)} portofolio</p></div>
-              <AdminLink className="wm-button" href={`/admintgadink/dashboard/works?kind=${item.kind}`} aria-label={`Lihat portofolio ${workLabels[item.kind]}`}>Lihat</AdminLink></div>
+              <AdminLink className="wm-button admin-icon-action" title={`Buka ${workLabels[item.kind]}`} href={`/admintgadink/dashboard/works?kind=${item.kind}`} aria-label={`Lihat portofolio ${workLabels[item.kind]}`}><ArrowRight size={18} aria-hidden="true"/></AdminLink></div>
             <div className="overview-category-track" aria-hidden="true"><span style={{ width: `${summary.total ? item.total / summary.total * 100 : 0}%` }} /></div>
           </li>; })}
         </ul>
@@ -56,11 +57,10 @@ export function Overview({ draft, published, data, days }: {
         {summary.recent.length ? <ul className="overview-recent">
           {summary.recent.map(item => <li key={item.id}>
             <OverviewThumbnail src={item.image} kind={item.kind} />
-            <div className="overview-work-info"><h3>{item.title}</h3><p>{workLabels[item.kind]}<span aria-hidden="true"> · </span>{item.updatedAt ? <time dateTime={item.updatedAt}>{date(item.updatedAt)}</time> : 'Tanggal belum tersedia'}</p><span className={`overview-status ${item.isLive ? 'is-live' : ''}`}>{item.status}</span></div>
-            <AdminLink className="wm-button" aria-label={`Edit ${item.title}`} href={`/admintgadink/dashboard/works?kind=${item.kind}&work=${encodeURIComponent(item.id)}`}>Edit</AdminLink>
+            <div className="overview-work-info"><h3>{item.title}</h3><p>{workLabels[item.kind]}{item.updatedAt && <><span aria-hidden="true"> · </span><time dateTime={item.updatedAt}>{date(item.updatedAt)}</time></>}</p><span className={`overview-status ${item.isLive ? 'is-live' : ''}`}>{item.status}</span></div>
+            <AdminLink className="wm-button admin-icon-action" title={`Edit ${item.title}`} aria-label={`Edit ${item.title}`} href={`/admintgadink/dashboard/works?kind=${item.kind}&work=${encodeURIComponent(item.id)}`}><Pencil size={18} aria-hidden="true"/></AdminLink>
           </li>)}
         </ul> : <div className="overview-empty"><h3>Belum ada portofolio</h3><p>Tambahkan portofolio pertama.</p></div>}
-        {summary.recent.some(item => !item.updatedAt) && <p className="overview-note">Portofolio tanpa tanggal mengikuti urutan koleksi.</p>}
       </section>
     </div>
 
@@ -77,13 +77,12 @@ export function Overview({ draft, published, data, days }: {
           <div className="chart-axis"><span>{date(data.daily[0].date)}</span><span>{date(data.daily.at(-1)!.date)}</span></div>
         </> : null}
         <dl className="engagement-types">{engagementKinds.map(kind => { const Icon = engagementIcons[kind]; return <div key={kind}><dt><Icon size={18} aria-hidden="true" />{engagementLabels[kind]}</dt><dd>{number(data.types[kind] || 0)}</dd></div>; })}</dl>
-        <p className="overview-note">Menghitung klik di portofolio, termasuk membuka player. Bukan views Instagram. Portofolio contoh dan preview admin tidak dihitung.</p>
+        <SettingsDisclosure title="Tentang statistik" icon={<Info size={18}/>}><p className="overview-note">Klik di website, termasuk membuka player. Views Instagram, portofolio contoh, dan preview admin tidak dihitung.</p></SettingsDisclosure>
         <div className="overview-detail-grid">
           <div><h3>Portofolio paling sering dibuka</h3>{data.popular.length ? <ul className="overview-popular">{data.popular.slice(0, 5).map(item => <li key={item.id}><span>{names.get(item.id) || 'Portofolio diarsipkan'}</span><strong>{number(item.clicks)} <span>klik</span></strong></li>)}</ul> : <p className="overview-note">Belum ada portofolio yang dibuka di periode ini.</p>}</div>
           <SettingsDisclosure title="Klik per hari" icon={<List size={20}/>}><div className="overview-daily"><table className="overview-table"><caption className="admin-sr-only">Klik harian selama {days} hari</caption><thead><tr><th scope="col">Tanggal</th><th scope="col">Klik</th></tr></thead><tbody>{data.daily.map(item => <tr key={item.date}><td>{date(item.date)}</td><td>{number(item.clicks)}</td></tr>)}</tbody></table></div></SettingsDisclosure>
         </div>
       </>}
     </section>
-    <footer className="overview-footer"><AdminLink href="/admintgadink/dashboard/site">Website &amp; CV</AdminLink></footer>
   </div>;
 }

@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { AdminLink } from './AdminLink';
 import { useAdminChanges } from './AdminChanges';
 import { useConfirm } from './ConfirmDialog';
+import { LayoutDashboard, Images, PanelTop, FilePenLine, Contact, Settings2, Menu, X, LogOut, ExternalLink } from 'lucide-react';
 
 export function AdminSidebar() {
   const pathname = usePathname();
@@ -70,12 +71,12 @@ export function AdminSidebar() {
 
   if(pathname.startsWith('/admintgadink/dashboard/editor/'))return null;
   const navItems = [
-    { label: 'Overview', href: '/admintgadink/dashboard' },
-    { label: 'Portofolio', href: '/admintgadink/dashboard/works' },
-    { label: 'Editor halaman', href: '/admintgadink/dashboard/editor/home' },
-    { label: 'AI Study Case', href: '/admintgadink/dashboard/ai' },
-    { label: 'Website & CV', href: '/admintgadink/dashboard/site' },
-    { label: 'Pengaturan AI', href: '/admintgadink/dashboard/settings' },
+    { label: 'Overview', href: '/admintgadink/dashboard', icon: LayoutDashboard },
+    { label: 'Portofolio', href: '/admintgadink/dashboard/works', icon: Images },
+    { label: 'Live Editor Landing Page', href: '/admintgadink/dashboard/editor/home', icon: PanelTop },
+    { label: 'AI Study Case', href: '/admintgadink/dashboard/ai', icon: FilePenLine },
+    { label: 'Website & CV', href: '/admintgadink/dashboard/site', icon: Contact },
+    { label: 'Pengaturan AI', href: '/admintgadink/dashboard/settings', icon: Settings2 },
   ];
 
   return (
@@ -83,7 +84,7 @@ export function AdminSidebar() {
       {confirmation}
       <header className="admin-mobile-header">
         <div><strong>Gading Admin</strong><span>Portofolio CMS</span></div>
-        <button ref={menuButton} type="button" onClick={() => setIsOpen(value => !value)} aria-expanded={isOpen} aria-controls="admin-navigation">{isOpen ? 'Tutup' : 'Menu'}</button>
+        <button ref={menuButton} type="button" onClick={() => setIsOpen(value => !value)} aria-label={isOpen ? 'Tutup navigasi' : 'Buka navigasi'} aria-expanded={isOpen} aria-controls="admin-navigation">{isOpen ? <X size={20}/> : <Menu size={20}/>}</button>
       </header>
       {isOpen && <button type="button" className="admin-nav-backdrop" onClick={() => setIsOpen(false)} aria-label="Tutup navigasi admin" />}
       <aside
@@ -106,6 +107,7 @@ export function AdminSidebar() {
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           {navItems.map((item) => {
             const isActive = pathname === item.href;
+            const Icon = item.icon;
             return (
               <AdminLink
                 key={item.href}
@@ -113,7 +115,7 @@ export function AdminSidebar() {
                 className="admin-sidebar-link"
                 aria-current={isActive ? 'page' : undefined}
               >
-                {item.label}
+                <Icon size={19} aria-hidden="true"/><span>{item.label}</span>
               </AdminLink>
             );
           })}
@@ -128,7 +130,7 @@ export function AdminSidebar() {
           rel="noopener noreferrer"
           className="admin-public-link"
         >
-          Lihat website
+          <ExternalLink size={18} aria-hidden="true"/>Lihat website
         </AdminLink>
         <button
           type="button"
@@ -137,7 +139,7 @@ export function AdminSidebar() {
           aria-busy={loggingOut}
           className="admin-logout"
         >
-          {loggingOut && <span className="admin-spinner" aria-hidden="true" />}
+          {loggingOut ? <span className="admin-spinner" aria-hidden="true" /> : <LogOut size={18} aria-hidden="true"/>}
           {loggingOut?'Menutup sesi…':'Keluar'}
         </button>
         {logoutError&&<p role="alert" style={{fontSize:'14px',color:'var(--ink)',margin:0}}>{logoutError}</p>}

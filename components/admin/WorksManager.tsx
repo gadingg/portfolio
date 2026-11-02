@@ -1,10 +1,6 @@
 'use client';
 import { workReadiness } from '@/lib/work-readiness';
 import { homepageWorks, setHomepageFeatured } from '@/lib/homepage-works';
-import { CaseAppLinksEditor } from './CaseAppLinksEditor';
-import {CaseMotionEditor} from './CaseMotionEditor';
-import { CaseLayoutImages } from './CaseLayoutImages';
-import { CaseLayoutText } from './CaseLayoutText';
 import { useEffect, useRef, useState } from 'react';
 import {
   ArrowLeft,
@@ -35,26 +31,40 @@ import {
 } from '@/lib/works';
 import { SortableList } from './SortableList';
 import { FileDrop, type UploadedMedia } from './FileDrop';
-import { BlockEditor } from './BlockEditor';
 import { useConfirm } from './ConfirmDialog';
 import { usePublishReview } from './PublishReview';
 import { summarizeWorks } from '@/lib/publish-summary';
 import './works-manager.css';
 import { PublicationBar } from './PublicationBar';
-import { VideoSourceEditor } from './VideoSourceEditor';
 import { SettingsDisclosure } from './SettingsDisclosure';
 import { draftSaveMessage, sameDraftContent } from '@/lib/draft-backup';
 import { useAutoDraft } from './useAutoDraft';
 import { DraftRecovery } from './DraftRecovery';
 import { workPublicationCopy } from '@/lib/admin-copy';
-export function WorksManager() {
+import { workThumbnail } from '@/lib/work-images';
+import { AdminSkeleton } from './AdminSkeleton';
+import {useAdminToast, useToastMessage} from './AdminToasts';
+import {trashExpired, trashTimeLeft, type TrashedWork} from '@/lib/work-trash';
+import {WorkEditor} from './WorkEditor';
+import {workEditorErrors, focusWorkError, openStudyPreview, type WorkEditorErrors} from '@/lib/work-editor';
+type InitialWorks = {items: WorkItem[]; published: WorkItem[]; revision: number; trash?: TrashedWork[]};
+export function WorksManager({initial, selection}: {initial?: InitialWorks; selection?: {kind?: string; work?: string}} = {}) {
+  const notify = useAdminToast();
+  const workspace = useRef<HTMLDivElement>(null), previewDialog = useRef<HTMLDialogElement>(null);
+  const freshItems = useRef(new Set<string>());
+  const [fieldErrors, setFieldErrors] = useState<WorkEditorErrors>({});
+  const [trash, setTrash] = useState<TrashedWork[]>(initial?.trash || []);
+  const [showTrash, setShowTrash] = useState(false);
+  const [trashBusyId, setTrashBusyId] = useState<string | null>(null);
+  const [, tickTrashClock] = useState(0);
+  useEffect(() => {const timer = setInterval(() => tickTrashClock(value => value + 1), 60000); return () => clearInterval(timer);}, []);
   const {ask,confirmation}=useConfirm();
   const {review,publicationReview}=usePublishReview();
-  const [items, setItems] = useState<WorkItem[]>([]),
-    [saved, setSaved] = useState<WorkItem[]>([]),
-    [published, setPublished] = useState<WorkItem[]>([]),
-    [revision, setRevision] = useState<number | null>(null);
-  const revisionRef = useRef<number | null>(null);
+  const [items, setItems] = useState<WorkItem[]>(initial?.items || []),
+    [saved, setSaved] = useState<WorkItem[]>(initial?.items || []),
+    [published, setPublished] = useState<WorkItem[]>(initial?.published || []),
+    [revision, setRevision] = useState<number | null>(initial?.revision ?? null);
+  const revisionRef = useRef<number | null>(initial?.revision ?? null);
   const mutationLock = useRef(false);
   const pendingMutation = useRef<Promise<void> | null>(null);
   const finishMutation = useRef<(() => void) | null>(null);
@@ -64,16 +74,14 @@ export function WorksManager() {
   const [query, setQuery] = useState('');
   const [showImport, setShowImport] = useState(false);
   const [reorderMode,setReorderMode]=useState(false);
-  const [kind, setKind] = useState<WorkKind>('webapp'),
-    [editing, setEditing] = useState<string | null>(null),
+  const initialWork = initial?.items.find(item => item.id === selection?.work);
+  const [kind, setKind] = useState<WorkKind>(initialWork?.kind || (workKinds.includes(selection?.kind as WorkKind) ? selection?.kind as WorkKind : 'webapp')),
+    [editing, setEditing] = useState<string | null>(initialWork?.id || null),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
     [notice, setNotice] = useState('');
   const [operation, setOperation] = useState<'save' | 'publish' | null>(null);
-  const [removed, setRemoved] = useState<{
-    item: WorkItem;
-    index: number;
-  } | null>(null);
+  useToastMessage(notice);
   const dirty = !sameDraftContent(JSON.stringify(items), JSON.stringify(saved)),
     unpublished = !sameDraftContent(JSON.stringify(items), JSON.stringify(published));
   const itemsRef = useRef(items);
@@ -92,6 +100,7 @@ export function WorksManager() {
     setSaved(data.items);
     savedRef.current = data.items;
     setPublished(data.published || []);
+    setTrash(data.trash || []);
     setRevision(data.revision);
     revisionRef.current = data.revision;
   }
@@ -113,6 +122,7 @@ export function WorksManager() {
     }
   }
   useEffect(() => {
+    if (initial) return;
     const selectedKind=new URLSearchParams(window.location.search).get('kind');
     if(workKinds.includes(selectedKind as WorkKind))setKind(selectedKind as WorkKind);
     load();
@@ -167,6 +177,15 @@ export function WorksManager() {
     const snapshot = itemsRef.current;
     const workId = action === 'publish' ? editing || undefined : undefined;
     const selected = snapshot.find(value => value.id === workId);
+    if (action === 'publish' && selected) {
+      const errors = workEditorErrors(selected);
+      setFieldErrors(errors);
+      if (Object.keys(errors).length) {
+        setError('Lengkapi kolom yang ditandai.');
+        requestAnimationFrame(() => focusWorkError(errors, workspace.current));
+        return false;
+      }
+    }
     const validation = action === 'publish'
       ? WorksSchema.safeParse({ items: workId ? selected ? [selected] : [] : snapshot })
       : WorksDraftSchema.safeParse({ items: snapshot });
@@ -178,11 +197,42 @@ export function WorksManager() {
     try {
       if (action === 'publish' && !workId && !(await review(summarizeWorks(snapshot, published)))) return false;
       adopt(await send(action, selected ? [selected] : snapshot, undefined, workId), JSON.stringify(snapshot), workId);
-      setRemoved(null);
       if (!automatic) setNotice(action === 'publish' ? selected ? selected.published ? `${selected.title} sudah di-publish.` : `${selected.title} disembunyikan dari website.` : 'Semua perubahan sudah di-publish.' : 'Draft tersimpan.');
+      else notify('Draft tersimpan.', {id:'autosave', duration:2500});
       return true;
     } catch (e) { setError(draftSaveMessage(e)); return false; }
     finally { mutationLock.current = false; setOperation(null); setBusy(false); finishMutation.current?.(); pendingMutation.current = null; }
+  }
+  async function changeTrash(action: 'move' | 'restore', id: string) {
+    if (uploadBusy.current) return;
+    if (pendingMutation.current) await pendingMutation.current;
+    if (mutationLock.current || revisionRef.current === null) return;
+    mutationLock.current = true; setBusy(true); setTrashBusyId(id);
+    pendingMutation.current = new Promise(resolve => {finishMutation.current = resolve;});
+    const snapshot = itemsRef.current;
+    try {
+      const response = await fetch('/api/admin/works/trash', {method:'POST', signal:AbortSignal.timeout(15000),
+        headers:{'Content-Type':'application/json'}, body:JSON.stringify({action,id,revision:revisionRef.current,
+          ...(action === 'move' ? {item:snapshot.find(work => work.id === id)} : {})})});
+      const data = await response.json();
+      if (!response.ok) throw Error(data.error || 'Perubahan belum tersimpan.');
+      setItems(current => {
+        const next = current.filter(work => work.id !== id);
+        if (action === 'restore') {
+          const restored = data.items.find((work: WorkItem) => work.id === id);
+          if (restored) next.splice(Math.min(data.items.findIndex((work: WorkItem) => work.id === id), next.length), 0, restored);
+        }
+        return next;
+      });
+      setSaved(data.items); savedRef.current = data.items; setPublished(data.published);
+      setTrash(data.trash); setRevision(data.revision); revisionRef.current = data.revision;
+      if (editing === id) setEditing(null);
+      setError(''); setNotice('');
+      notify(action === 'move' ? 'Portofolio dipindahkan ke Sampah.' : 'Portofolio dipulihkan.', {
+        ...(action === 'move' ? {action:{label:'Urungkan',run:() => changeTrash('restore', id)}} : {}),
+      });
+    } catch (error) {notify(error instanceof Error ? error.message : 'Coba lagi.', {tone:'error'});}
+    finally {mutationLock.current = false; setBusy(false); setTrashBusyId(null); finishMutation.current?.(); pendingMutation.current = null;}
   }
   function order(next: WorkItem[]) {
     if (busy || mutationLock.current || query) return;
@@ -196,16 +246,17 @@ export function WorksManager() {
     setNotice('Urutan tersimpan otomatis. Pilih Publish semua untuk mengubah urutan di website.');
   }
   function update(id: string, patch: Partial<WorkItem>) {
+    setFieldErrors(current => Object.keys(current).length ? workEditorErrors({...itemsRef.current.find(work => work.id === id)!,...patch}) : {}); setError('');
     setItems((current) =>
       current.map((item) => (item.id === id ? { ...item, ...patch } : item)),
     );
     setNotice('');
   }
   function add() {
-    const item: WorkItem = {
+    const base: WorkItem = {
       id: crypto.randomUUID(),
       kind,
-      title: 'Portofolio baru',
+      title: {webapp:'Studi kasus baru',design:'Desain baru',video:'Video baru'}[kind],
       description: '',
       image: '',
       imageAlt: '',
@@ -213,7 +264,10 @@ export function WorksManager() {
       published: true,
       demo: false,
       artwork: 'sample',
+      ...(kind === 'video' ? {videoSource:'file' as const} : {}),
     };
+    const item = kind === 'webapp' ? setCaseStudyEnabled(base,true) : base;
+    freshItems.current.add(item.id);
     setItems((current) => [...current, item]);
     setEditing(item.id);
   }
@@ -236,7 +290,7 @@ export function WorksManager() {
     ]);
     setNotice(`${files.length} portofolio ditambahkan ke draft.`);
   }
-  const addLabel = kind === 'video' ? 'Tambah video' : kind === 'design' ? 'Tambah desain' : 'Tambah website / app';
+  const addLabel = kind === 'video' ? 'Tambah video' : kind === 'design' ? 'Tambah desain' : 'Tambah app';
   function closeMenu(target: HTMLElement) {
     const menu = target.closest('details');
     if (menu) { menu.open = false; menu.querySelector<HTMLElement>('summary')?.focus(); }
@@ -250,13 +304,25 @@ export function WorksManager() {
     if (JSON.stringify(itemsRef.current) !== JSON.stringify(savedRef.current) && !(await save('save'))) return;
     window.location.assign(`/admintgadink/dashboard/editor/${item.id}`);
   }
+  async function openPreview() {
+    if (!item || uploadBusy.current) return;
+    if (item.caseStudy) {
+      try {await openStudyPreview(item.id, async () => {
+        if (pendingMutation.current) await pendingMutation.current;
+        if (JSON.stringify(itemsRef.current) !== JSON.stringify(savedRef.current) && !await save('save',true)) return null;
+        return revisionRef.current;
+      });} catch (error) {setError(draftSaveMessage(error));}
+      return;
+    }
+    previewDialog.current?.showModal();
+  }
   if (autosave.recovery) return <DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} />;
   const selectedUnpublished = item ? !sameDraftContent(JSON.stringify(item), JSON.stringify(published.find(value => value.id === item.id) || null)) : unpublished;
   const selectedDirty = item ? !sameDraftContent(JSON.stringify(item), JSON.stringify(saved.find(value => value.id === item.id) || null)) : dirty;
   const editingLocked = busy && operation !== 'save';
   const publicationCopy = workPublicationCopy(item, published.find(value => value.id === item?.id));
   return (
-    <div className="works-manager cms-manager wm-workspace" onDragEnter={event => {
+    <div ref={workspace} className="works-manager cms-manager wm-workspace" onDragEnter={event => {
       if (!editing && !busy && event.dataTransfer.types.includes('Files')) setShowImport(true);
     }}>
       {confirmation}
@@ -273,10 +339,9 @@ export function WorksManager() {
               Semua portofolio
             </button>
           )}
-          <h1>{item ? 'Edit portofolio' : 'Portofolio'}</h1>
-          {revision !== null && !dirty && !unpublished && <p className="wm-clean-status" role="status">Semua perubahan tersimpan</p>}
+          <h1>{item ? freshItems.current.has(item.id) ? {webapp:'Tambah studi kasus',design:'Tambah desain',video:'Tambah video'}[item.kind] : item.title : 'Portofolio'}</h1>
         </div>
-        <a
+        {item ? <button type="button" className="wm-button" disabled={busy} onClick={openPreview}><Eye size={18}/>Pratinjau</button> : <a
           className="wm-public-link"
           href={publicItem?.caseStudy ? `/work/${publicItem.caseStudy.slug}` : `/${kind}`}
           target="_blank"
@@ -284,10 +349,10 @@ export function WorksManager() {
         >
           Lihat website
           <ExternalLink size={18} />
-        </a>
+        </a>}
       </div>
-      {revision !== null && <PublicationBar dirty={selectedDirty} unpublished={selectedUnpublished} busy={busy} operation={operation} scope={publicationCopy.scope} publishLabel={item ? publicationCopy.publishLabel : 'Publish semua'}
-        busyLabel={publicationCopy.busyLabel} showPublish={publicationCopy.showPublish} pendingSuffix={publicationCopy.pendingSuffix}
+      {revision !== null && !showTrash && <PublicationBar dirty={selectedDirty} unpublished={selectedUnpublished} busy={busy} operation={operation} scope={item ? '' : publicationCopy.scope} publishLabel={item ? publicationCopy.publishLabel === 'Publish' ? publicItem ? 'Perbarui' : 'Terbitkan' : publicationCopy.publishLabel : 'Terbitkan perubahan'}
+        busyLabel={publicationCopy.busyLabel === 'Publishing…' ? 'Menerbitkan…' : publicationCopy.busyLabel} showPublish={publicationCopy.showPublish} pendingSuffix={publicationCopy.pendingSuffix.replace('di-publish','diterbitkan')}
         status={!dirty && !selectedUnpublished && autosave.online ? publicationCopy.cleanLabel : autosave.status} offline={!autosave.online} failed={autosave.failed}
         onSave={autosave.retry} onPublish={() => { void save('publish'); }}/>}
       {error && (
@@ -306,12 +371,7 @@ export function WorksManager() {
           </button>
         </div>
       )}
-      {notice && (
-        <p className="wm-message" role="status">
-          {notice}
-        </p>
-      )}
-      {revision === null && !error && <p role="status">Memuat portofolio…</p>}
+      {revision === null && !error && <AdminSkeleton variant="list" />}
       {revision !== null && !item && (
         <>
           <div className="wm-tabs" role="group" aria-label="Kategori portofolio">
@@ -320,10 +380,10 @@ export function WorksManager() {
                 key={value}
                 type="button"
                 className="wm-button"
-                aria-pressed={kind === value}
+                aria-pressed={!showTrash && kind === value}
                 aria-label={`${workLabels[value]} ${items.filter(work => work.kind === value).length}`}
                 disabled={busy}
-                onClick={() => { setKind(value); setQuery(''); setShowImport(false); setReorderMode(false); }}
+                onClick={() => { setShowTrash(false); setKind(value); setQuery(''); setShowImport(false); setReorderMode(false); }}
               >
                 <span className="wm-tab-label">{workLabels[value]}</span>
                 <span className="wm-tab-short" aria-hidden="true">{{webapp:'Web / Apps',design:'Desain',video:'Video'}[value]}</span>
@@ -332,8 +392,23 @@ export function WorksManager() {
                 </span>
               </button>
             ))}
+            <button type="button" className="wm-button wm-trash-tab" aria-pressed={showTrash} disabled={busy}
+              onClick={() => {setShowTrash(true); setShowImport(false); setReorderMode(false);}}>
+              <Trash2 size={17} aria-hidden="true"/><span>Sampah</span><span>{trash.length}</span>
+            </button>
           </div>
-          {kind === 'webapp' && <SettingsDisclosure title="Pilihan homepage" status={`${homepageWorks(items).length} dari 3 portfolio`} icon={<Eye size={20}/>}>
+          {showTrash ? <section className="wm-trash-list" aria-label="Sampah portofolio">
+            <p className="wm-editor-note">Bisa dipulihkan selama 72 jam. Setelah itu, item dibersihkan otomatis.</p>
+            {trash.length ? trash.map(entry => {
+              const work = entry.draft || entry.published!;
+              return <div className="cms-work-row" key={entry.id}>
+                <span className="wm-thumb">{work.image ? <img {...workThumbnail(work.image)} sizes="100px" width={100} height={75} alt="" loading="lazy"/> : <Trash2 size={22}/>}</span>
+                <div className="wm-summary"><strong>{work.title}</strong><span>{trashTimeLeft(entry)}</span><span>Kembali sebagai {entry.published?.published ? 'tayang' : entry.published ? 'disembunyikan' : 'draft'}</span></div>
+                <button type="button" className="wm-button" aria-busy={trashBusyId === entry.id} disabled={busy || trashExpired(entry)} onClick={() => changeTrash('restore', entry.id)}>{trashBusyId === entry.id ? <span className="admin-spinner" aria-hidden="true"/> : <Undo2 size={18}/>}Pulihkan</button>
+              </div>;
+            }) : <div className="wm-empty"><Trash2 size={28} aria-hidden="true"/><h2>Sampah kosong</h2><p>Portofolio yang dihapus akan muncul di sini.</p></div>}
+          </section> : <>
+          {kind === 'webapp' && <SettingsDisclosure title="Pilihan homepage" status={`${homepageWorks(items).length} dari 3 portofolio`} icon={<Eye size={20}/>}>
             <p className="wm-editor-note">Pilih sampai 3 project unggulan. Urutannya mengikuti koleksi lengkap.</p>
             <div className="wm-featured-options">
               {items.filter(work => work.kind === 'webapp' && work.published && !workReadiness(work)).map(work => {
@@ -347,18 +422,20 @@ export function WorksManager() {
             </div>
           </SettingsDisclosure>}
           <div className="wm-toolbar">
-            <button type="button" className="wm-button" aria-pressed={reorderMode} disabled={busy||!!query} onClick={()=>setReorderMode(!reorderMode)}>{reorderMode?<Check size={18}/>:<ListOrdered size={18}/>} {reorderMode?'Selesai mengurutkan':'Atur urutan'}</button>
-            <label className="wm-search"><span className="wm-sr-only">Cari portofolio</span><Search size={18} aria-hidden="true"/><input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder="Cari judul portofolio…" /></label>
-            {!busy ? <details className="wm-action-menu wm-add-menu">
-              <summary className="wm-button wm-primary"><Plus size={18} aria-hidden="true"/>{addLabel}<ChevronDown size={16} aria-hidden="true"/></summary>
+            <button type="button" className="wm-button" title={reorderMode?'Selesai mengurutkan':'Atur urutan'} aria-label={reorderMode?'Selesai mengurutkan':'Atur urutan'} aria-pressed={reorderMode} disabled={busy||!!query} onClick={()=>setReorderMode(!reorderMode)}>{reorderMode?<Check size={18}/>:<ListOrdered size={18}/>} {reorderMode?'Selesai mengurutkan':'Atur urutan'}</button>
+            <label className="wm-search"><span className="wm-sr-only">Cari portofolio</span><Search size={18} aria-hidden="true"/><input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder="Cari judul…" /></label>
+            <div className="wm-create-actions">
+              <button type="button" className="wm-button wm-primary" disabled={busy} onClick={() => {setShowImport(false);add();}}><Plus size={18} aria-hidden="true"/>{addLabel}</button>
+              <details className="wm-action-menu">
+              <summary className="wm-button" aria-label="Opsi koleksi" title="Opsi koleksi"><MoreHorizontal size={20} aria-hidden="true"/></summary>
               <div className="wm-menu-panel">
-                <button type="button" onClick={event => { closeMenu(event.currentTarget); setShowImport(false); add(); }}><Plus size={18}/>Buat satu portofolio</button>
-                <button type="button" onClick={event => { closeMenu(event.currentTarget); setShowImport(true); }}><Upload size={18}/>{kind === 'video' ? 'Upload / pilih video' : 'Upload / pilih gambar'}</button>
+                <button type="button" disabled={busy} onClick={event => { closeMenu(event.currentTarget); setShowImport(true); }}><Upload size={18}/>Import banyak file</button>
               </div>
-            </details> : <button type="button" className="wm-button wm-primary" disabled>{addLabel}</button>}
+            </details></div>
           </div>
           {showImport && <section className="wm-import-panel" aria-label="Tambah dari media">
             <div className="cms-panel-heading"><h2>{kind === 'video' ? 'Tambahkan video' : 'Tambahkan gambar'}</h2><button type="button" className="wm-button" aria-label="Tutup upload" disabled={busy} onClick={() => setShowImport(false)}><X size={18}/></button></div>
+            <p className="wm-editor-note">Setiap file menjadi satu portofolio.</p>
             <FileDrop
             key={kind}
             multiple
@@ -367,27 +444,6 @@ export function WorksManager() {
             onBusyChange={mediaBusy}
             onUploaded={importImages}
           /></section>}
-          {removed && (
-            <div className="wm-message" role="status">
-              {removed.item.title} dihapus dari draft.
-              <button
-                type="button"
-                className="wm-button"
-                disabled={busy}
-                onClick={() => {
-                  setItems((current) => {
-                    const next = [...current];
-                    next.splice(removed.index, 0, removed.item);
-                    return next;
-                  });
-                  setRemoved(null);
-                }}
-              >
-                <Undo2 size={18} />
-                Urungkan
-              </button>
-            </div>
-          )}
           <SortableList items={visible} reorderable={reorderMode} disabled={busy || !!query} onChange={order}>
             {(work, index, handle) => (
               <div className="cms-work-row">
@@ -400,7 +456,7 @@ export function WorksManager() {
                 >
                   <span className="wm-thumb">
                     {work.image ? (
-                      <img src={work.image} alt="" />
+                      <img {...workThumbnail(work.image)} sizes="100px" width={100} height={75} loading="lazy" decoding="async" alt="" />
                     ) : (
                       <span>{workLabels[work.kind]}</span>
                     )}
@@ -413,7 +469,7 @@ export function WorksManager() {
 
                     </span>
                   </span>
-                  <span className="wm-edit">Edit</span>
+                  <span className="wm-edit" aria-hidden="true"><FileText size={18}/></span>
                 </button>
                 <details className="wm-action-menu wm-row-menu" hidden={reorderMode}>
                 <summary className="wm-button" aria-label={`Tindakan ${work.title}`}><MoreHorizontal size={20} aria-hidden="true"/></summary>
@@ -426,209 +482,32 @@ export function WorksManager() {
                   aria-label={`Hapus ${work.title}`}
                   onClick={async (event) => {
                     closeMenu(event.currentTarget);
-                    if (!(await ask(`Hapus “${work.title}” dari draft?`))) return;
-                    setRemoved({ item: work, index: items.indexOf(work) });
-                    setItems(items.filter((item) => item.id !== work.id));
+                    await changeTrash('move', work.id);
                   }}
                 >
                   <Trash2 size={18} />
-                  Hapus dari draft
+                  Pindahkan ke Sampah
                 </button>
                 </div></details>
               </div>
             )}
           </SortableList>
           {!visible.length && <p className="wm-empty">{query?'Tidak ada judul yang cocok.':'Belum ada portofolio.'}</p>}
+          </>}
         </>
       )}
-      {item && (
-        <div className="wm-editor-layout">
-        <fieldset className="cms-editor-fields" disabled={editingLocked}>
-          <div className="cms-edit-heading"><h2>Detail portofolio</h2>{item.caseStudy&&<a className="wm-button" href={`/admintgadink/dashboard/ai?work=${item.id}`}>Revisi dengan AI</a>}{item.caseStudy&&<button type="button" className="wm-button wm-primary" onClick={openVisual}>Edit halaman studi kasus</button>}</div>
-          <div className="cms-inline-fields">
-            <label>
-              Judul
-              <input
-                value={item.title}
-                maxLength={140}
-                onChange={(e) => update(item.id, { title: e.target.value })}
-              />
-            </label>
-            <label>
-              Kategori
-              <select
-                value={item.kind}
-                onChange={(e) => {
-                  update(item.id, setWorkKind(item, e.target.value as WorkKind));
-                  setKind(e.target.value as WorkKind);
-                }}
-              >
-                {workKinds.map((value) => (
-                  <option value={value} key={value}>
-                    {workLabels[value]}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <label>
-            Deskripsi
-            <textarea
-              rows={3}
-              value={item.description}
-              maxLength={500}
-              onChange={(e) => update(item.id, { description: e.target.value })}
-            />
-          </label>
-          {item.kind!=='video'&&<FileDrop
-            previewSrc={item.image} previewAlt={item.imageAlt || item.title}
-            uploadLabel={item.image ? 'Ganti cover portfolio' : 'Tambah cover portfolio'}
-            disabled={busy}
-            onBusyChange={mediaBusy}
-            onUploaded={(files) => update(item.id, { image: files[0].url })}
-          />}
-          {item.kind === 'webapp' && <label className="wm-check cms-visibility">
-            <input type="checkbox" disabled={busy || !item.published || !!workReadiness(item) || (!homepageWorks(items).some(work => work.id === item.id) && homepageWorks(items).length >= 3)}
-              checked={homepageWorks(items).some(work => work.id === item.id)}
-              onChange={event => setItems(current => setHomepageFeatured(current, item.id, event.target.checked))}/>
-            <span><strong>Unggulan di homepage</strong><small>{!item.published || workReadiness(item) ? 'Lengkapi portfolio dan aktifkan tampilannya untuk memilihnya.' : `${homepageWorks(items).length}/3 dipilih. Lepas satu pilihan untuk menggantinya. Koleksi lengkap tetap mengikuti urutan portfolio.`}</small></span>
-          </label>}
-          <div className="cms-inline-fields">
-            <label className="wm-check cms-visibility">
-              <input
-                type="checkbox"
-                checked={item.published}
-                onChange={(e) =>
-                  update(item.id, { published: e.target.checked })
-                }
-              />
-              <span><strong>Tampilkan di portofolio</strong><small>{item.published?'Tayang setelah Anda memilih Publish.':'Tidak tampil di website setelah Anda memilih Sembunyikan.'}</small></span>
-            </label>
-            {item.kind === 'webapp' && (
-              <label className="wm-check">
-                <input
-                  type="checkbox"
-                  checked={!!item.caseStudy}
-                  onChange={(e) =>
-                    update(item.id, setCaseStudyEnabled(item, e.target.checked))
-                  }
-                />
-                Pakai studi kasus
-              </label>
-            )}
-          </div>
-          {!item.caseStudy&&item.archivedCaseStudy&&<p className="wm-message" role="status">{item.kind==='webapp'?'Isi studi kasus masih tersimpan. Aktifkan untuk mengeditnya.':'Isi studi kasus masih tersimpan. Pilih Website / Apps untuk mengeditnya.'}</p>}
-          {!item.caseStudy && item.kind === 'webapp' && (
-            <label>
-              Link aplikasi
-              <input
-                value={item.url}
-                inputMode="url"
-                onChange={(e) => update(item.id, { url: e.target.value })}
-              />
-            </label>
-          )}
-          {item.kind==='video'&&<VideoSourceEditor key={item.id} item={item} disabled={busy} onBusyChange={mediaBusy} onChange={patch=>update(item.id,patch)}/>}
-          {item.caseStudy && (
-            <SettingsDisclosure title="Isi studi kasus" icon={<FileText size={20}/>}>
-              <div className="cms-block-fields">
-              {item.aiDraft&&<div className="wm-ai-notes"><h3>Catatan AI khusus admin</h3><label>Brief awal<textarea rows={5} maxLength={30000} value={item.aiDraft.brief} onChange={event=>update(item.id,{aiDraft:{...item.aiDraft!,brief:event.target.value}})}/></label>{!!item.aiDraft.confirmations.length&&<><h4>Perlu dikonfirmasi</h4><ul>{item.aiDraft.confirmations.map((text,index)=><li key={index}>{text}</li>)}</ul></>}{!!item.aiDraft.screenshots.length&&<><h4>Saran screenshot</h4><ul>{item.aiDraft.screenshots.map((shot,index)=><li key={index}>Setelah bagian {shot.afterSection+1}: {shot.description}{shot.caption&&<p>Caption: {shot.caption}</p>}</li>)}</ul></>}<p className="wm-editor-note">Brief dan catatan AI tidak ikut ditampilkan di portfolio publik.</p></div>}
-              <div className="cms-inline-fields">
-                <label>
-                  Alamat halaman
-                  <input placeholder="nama-portofolio"
-                    value={item.caseStudy.slug}
-                    onChange={(e) =>
-                      update(item.id, {
-                        caseStudy: { ...item.caseStudy!, slug: e.target.value },
-                      })
-                    }
-                  />
-                  <small>/work/{item.caseStudy.slug || 'nama-portofolio'}</small>
-                </label>
-              </div>
-              <CaseAppLinksEditor study={item.caseStudy} onChange={appLinks=>update(item.id,{caseStudy:{...item.caseStudy!,appUrl:appLinks[0]?.url||'',appLinks}})}/>
-              <CaseMotionEditor study={item.caseStudy} disabled={busy} onBusyChange={mediaBusy} onChange={motion=>update(item.id,{caseStudy:{...item.caseStudy!,motion}})}/>
-              {(['problem', 'solution', 'impact'] as const).map((key, i) => (
-                <label key={key}>
-                  {['Masalah', 'Solusi', 'Hasil'][i]}
-                  <textarea
-                    rows={3}
-                    value={item.caseStudy![key]}
-                    onChange={(e) =>
-                      update(item.id, {
-                        caseStudy: {
-                          ...item.caseStudy!,
-                          [key]: e.target.value,
-                        },
-                      })
-                    }
-                  />
-                </label>
-              ))}
-              {item.caseStudy.layout && <><CaseLayoutText layout={item.caseStudy.layout} disabled={busy}
-                onChange={layout => update(item.id, { caseStudy: { ...item.caseStudy!, layout } })}/><CaseLayoutImages layout={item.caseStudy.layout} disabled={busy} onBusyChange={mediaBusy}
-                onChange={layout => update(item.id, { caseStudy: { ...item.caseStudy!, layout } })}/></>}
-              {!item.caseStudy.layout&&<BlockEditor
-                blocks={item.caseStudy.blocks}
-                disabled={busy}
-                onBusyChange={mediaBusy}
-                onChange={(blocks) =>
-                  update(item.id, { caseStudy: { ...item.caseStudy!, blocks } })
-                }
-              />}
-              <div className="wm-visual-advanced"><h3>Editor visual lanjutan</h3><p className="wm-editor-note">Untuk mengatur susunan halaman langsung di canvas.</p><button type="button" className="wm-button" disabled={busy} onClick={openVisual}>{dirty ? 'Simpan & buka editor visual' : 'Buka editor visual'}</button></div>
-              <a
-                className="wm-button"
-                target="_blank"
-                rel="noopener noreferrer"
-                href={`/admintgadink/preview/${item.id}`}
-              >
-                <Eye size={18} />
-                Preview draft
-              </a>
-              </div>
-            </SettingsDisclosure>
-          )}
-          <SettingsDisclosure title="Pengaturan Tambahan" icon={<Settings2 size={20}/>}>
-            <div className="cms-block-fields">
-              <label>
-                Deskripsi gambar
-                <input
-                  value={item.imageAlt}
-                  onChange={(e) =>
-                    update(item.id, { imageAlt: e.target.value })
-                  }
-                />
-              </label>
-              <label>
-                URL gambar
-                <input
-                  value={item.image}
-                  onChange={(e) => update(item.id, { image: e.target.value })}
-                />
-              </label>
-              <label className="wm-check">
-                <input
-                  type="checkbox"
-                  checked={item.demo}
-                  onChange={(e) => update(item.id, { demo: e.target.checked })}
-                />
-                Portofolio contoh
-                <small>Tidak masuk statistik klik.</small>
-              </label>
-            </div>
-          </SettingsDisclosure>
-        </fieldset>
-        <aside className="wm-card-preview" aria-label="Preview kartu portofolio">
-          <h2>Preview kartu</h2>
-          {item.image ? <img src={item.image} alt={item.imageAlt || item.title}/> : <div className="wm-preview-empty">{item.kind === 'video' ? 'Pilih thumbnail video' : 'Tambahkan gambar portofolio'}</div>}
-          <h3>{item.title}</h3>
-          {item.description && <p>{item.description}</p>}
-          <span>{!item.published ? 'Disembunyikan' : workReadiness(item) || 'Siap ditampilkan'}</span>
-        </aside>
-        </div>
-      )}
+      {item && <WorkEditor item={item} items={items} disabled={editingLocked} errors={fieldErrors}
+        onChange={patch => update(item.id,patch)} onBusyChange={mediaBusy} onOpenVisual={openVisual}
+        onKindChange={async value => {
+          if (value === item.kind) return;
+          if (!await ask('Ganti jenis portofolio? Cerita studi kasus tetap tersimpan jika jenisnya berubah.', 'Ganti jenis')) return;
+          update(item.id,setWorkKind(item,value)); setKind(value);
+        }}/>}
+      {item && <dialog ref={previewDialog} className="wm-editor-preview-dialog" aria-labelledby="work-preview-title" onClick={event => {if(event.target===previewDialog.current)previewDialog.current.close();}}>
+        <div className="cms-panel-heading"><h2 id="work-preview-title">{item.caseStudy ? 'Pratinjau studi kasus' : 'Pratinjau kartu'}</h2><button type="button" className="wm-button" aria-label="Tutup pratinjau" onClick={() => previewDialog.current?.close()}><X size={18}/></button></div>
+        {item.image && <img {...workThumbnail(item.image)} sizes="500px" alt={item.imageAlt || item.title}/>}
+        <h3>{item.title}</h3>{item.description && <p>{item.description}</p>}
+      </dialog>}
     </div>
   );
 }

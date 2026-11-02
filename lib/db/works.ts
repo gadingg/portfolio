@@ -23,6 +23,7 @@ import { withWorkEvidence } from '@/lib/work-evidence';
 import { publishOneWork } from '@/lib/work-publication';
 import { refineWorkCopy } from '@/lib/public-copy';
 import { syncCaseIdentity } from '@/lib/case-layout';
+import { moveWorkToTrash, restoreTrashedWork, type WorksCollection } from '@/lib/work-trash';
 import {withCaseMotion} from '@/lib/case-motion';
 
 const bucket = 'portfolio-public';
@@ -255,7 +256,7 @@ export async function initialWorks() {
   return { items:applyRequestedWorks(items) };
 }
 export const getWorksDocument = async () => {
-  const doc=await readCMS('works',initialWorks);
+  const doc=await readCMS<WorksCollection>('works',initialWorks);
   return {...doc,draft:{...doc.draft,items:normalizeWorkSlugs(doc.draft.items).map(cleanPlaceholderCopy).map(presentWork).map(withWorkEvidence).map(withCaseMotion).map(refineWorkCopy)},published:{...doc.published,items:normalizeWorkSlugs(doc.published.items).map(cleanPlaceholderCopy).map(presentWork).map(withWorkEvidence).map(withCaseMotion).map(refineWorkCopy)}};
 };
 export async function getWorks() {
@@ -266,6 +267,7 @@ export async function getWorks() {
     initialized: doc.revision > 0,
     published_at: doc.published_at,
     published: doc.published.items,
+    trash: doc.draft.trash || [],
   };
 }
 export async function getPublicWorks() {
@@ -297,6 +299,7 @@ export async function changeWorks(body: {
 }) {
   const current = await getWorksDocument();
   if (body.revision !== current.revision) throw new CMSConflict();
+  if (body.items?.some(item => current.draft.trash?.some(entry => entry.id === item.id))) throw new CMSConflict();
   if (body.workId && body.action !== 'publish') throw new Error('Pilih publikasi portfolio untuk menggunakan target karya.');
   if (body.action === 'order') {
     const ids = body.ids || [];
@@ -308,7 +311,7 @@ export async function changeWorks(body: {
       throw new Error(
         'Urutan tidak valid. Simpan draft baru sebelum mengurutkan.',
       );
-    return writeCMS(
+    return writeCMS<WorksCollection>(
       'works',
       current,
       { items: orderedItems(current.draft.items, ids) },
@@ -338,12 +341,20 @@ export async function changeWorks(body: {
     }
   }
   const stamped = { items: stampWorkUpdates(current.draft.items, draft.items, new Date().toISOString()) };
-  return writeCMS(
+  return writeCMS<WorksCollection>(
     'works',
     current,
     stamped,
     body.action === 'publish' ? body.workId ? publishOneWork(stamped.items, current.published.items, body.workId) : WorksSchema.parse(stamped) : current.published,
   );
+}
+export async function changeWorkTrash(input: {action: 'move' | 'restore'; id: string; revision: number; item?: WorkItem}) {
+  const current = await getWorksDocument();
+  if (input.revision !== current.revision) throw new CMSConflict();
+  const next = input.action === 'move'
+    ? moveWorkToTrash(current.draft, current.published, input.id, input.item)
+    : restoreTrashedWork(current.draft, current.published, input.id);
+  return writeCMS('works', current, next.draft, next.published);
 }
 export function workAsProject(item: WorkItem): Project {
   return {

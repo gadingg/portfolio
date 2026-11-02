@@ -96,16 +96,13 @@ export function BlockEditor({
           }}
         >
           <option value="">Tambah bagian</option>
-          {Object.entries(labels).map(([type, label]) => (
+          <optgroup label="Sering dipakai">{(['paragraph','image','heading'] as const).map(type => <option key={type} value={type}>{labels[type]}</option>)}</optgroup>
+          <optgroup label="Lainnya">{Object.entries(labels).filter(([type]) => !['paragraph','image','heading'].includes(type)).map(([type, label]) => (
             <option key={type} value={type}>
               {label}
             </option>
-          ))}
+          ))}</optgroup>
         </select>
-      </div>
-      <div className="cms-image-actions">
-        <button type="button" className="wm-button" disabled={disabled} onClick={() => add('image')}><Plus size={18}/>Tambah gambar</button>
-        <button type="button" className="wm-button" disabled={disabled} onClick={() => add('gallery')}><Plus size={18}/>Tambah galeri</button>
       </div>
       <SortableList
         items={blocks}

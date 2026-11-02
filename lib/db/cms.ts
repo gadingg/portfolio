@@ -45,6 +45,8 @@ export async function writeCMS<T>(
   published: T = current.published,
 ): Promise<CMSDocument<T>> {
   const client = createAdminClient();
+  // Work metadata is server-owned; regular content saves must retain the trash.
+  if (id === 'works') draft = {...current.draft, ...draft};
   const now = new Date().toISOString();
   const row = {
     draft,
