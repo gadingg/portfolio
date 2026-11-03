@@ -95,7 +95,12 @@
     "listinghub": {
       "text": {
         "Find faster. Manage better.": "Shared and personal listings",
-        "Cari seluruh database properti dan kelola listing personal dalam dua aplikasi yang saling melengkapi.": "Pencarian database properti dan pengelolaan listing personal untuk agent."
+        "Cari seluruh database properti dan kelola listing personal dalam dua aplikasi yang saling melengkapi.": "Agent bisa mencari properti di database bersama dan mengelola listing mereka sendiri di halaman personal.",
+        "Pencarian database properti dan pengelolaan listing personal untuk agent.": "Agent bisa mencari properti di database bersama dan mengelola listing mereka sendiri di halaman personal.",
+        "Database bersama dan catatan listing personal punya kebutuhan berbeda. Agent perlu mencari properti lintas tim, sekaligus merapikan foto, spesifikasi, dan status listing miliknya sendiri.": "Agent perlu mencari properti dari database bersama. Untuk listing sendiri, mereka juga perlu tempat menyimpan foto, spesifikasi, dan status.",
+        "Saya membuat dua aplikasi: All Database untuk pencarian dan perbandingan properti, serta Personal Listing sebagai pengganti Google Keep untuk pengelolaan listing per agent.": "Saya membuat All Database untuk mencari dan membandingkan properti, serta Personal Listing untuk membantu Agent mengurus listing yang sebelumnya dicatat di Google Keep.",
+        "Pencarian database dan pengelolaan listing personal punya tempat masing-masing. Agent dapat menemukan properti, meninjau informasi, dan menyiapkan spesifikasi untuk dibagikan ke klien.": "Agent bisa mencari properti yang cocok, cek detailnya, lalu menyiapkan spesifikasi untuk dikirim ke klien. Foto dan status listing sendiri tetap tersimpan di halaman personal.",
+        "Satu kebutuhan kerja, dua aplikasi. All Database membantu agent mencari properti dari database bersama. Personal Listing membantu setiap agent mengelola listing miliknya melalui alamat seperti /gading.": "Agent bisa membuka All Database untuk mencari properti, lalu masuk ke halaman personal seperti /gading untuk mengurus listing sendiri."
       },
       "removeSections": [
         {
@@ -112,14 +117,19 @@
         "Make evaluation more objective.": "Campaign and agent performance",
         "Turn the recap into a next action.": "AI-assisted campaign review",
         "Performa iklan, respons WhatsApp, dan evaluasi campaign dalam satu dashboard.": "Dashboard untuk laporan Meta Ads dan evaluasi respons WhatsApp.",
-        "Report dibuat manual di Figma, history campaign tersebar, dan pemilihan PIC belum punya indikator kinerja yang jelas.": "Laporan iklan dibuat manual di Figma. Riwayat campaign dan data penanganan leads belum terkumpul untuk evaluasi PIC.",
-        "Saya menyatukan reporting, tracking leads, history campaign, kinerja agent, subsidi ads, dan rekomendasi AI dalam satu dashboard.": "Saya membuat dashboard untuk laporan Meta Ads, riwayat campaign, penanganan leads, subsidi iklan, dan rekomendasi AI.",
-        "Reporting lebih terstruktur, history mudah ditelusuri, dan evaluasi PIC punya dasar yang lebih objektif.": "Data campaign dan respons WhatsApp dapat ditinjau kembali untuk mengevaluasi iklan dan penanganan leads.",
+        "Report dibuat manual di Figma, history campaign tersebar, dan pemilihan PIC belum punya indikator kinerja yang jelas.": "Saya masih membuat laporan iklan satu per satu di Figma. Saat perlu mengevaluasi PIC, riwayat campaign dan data leads juga belum tersedia di satu tempat.",
+        "Saya menyatukan reporting, tracking leads, history campaign, kinerja agent, subsidi ads, dan rekomendasi AI dalam satu dashboard.": "Saya membuat dashboard yang menyimpan laporan Meta Ads, riwayat campaign, data leads, dan rekap subsidi iklan. Ada juga rekomendasi AI untuk membantu membaca laporan.",
+        "Reporting lebih terstruktur, history mudah ditelusuri, dan evaluasi PIC punya dasar yang lebih objektif.": "Hasil iklan dan respons WhatsApp bisa dibandingkan saat mengecek performa campaign dan cara leads ditangani.",
         "Campaign, hasil performance, dan preview iklan dicatat dalam satu sistem. History menyimpan listing, periode, PIC, dan respon audiens sehingga campaign lebih mudah ditelusuri.": "Setiap campaign menyimpan hasil iklan, preview, listing, periode, PIC, dan respons audiens.",
         "Tren antar-batch untuk membandingkan hasil Meta Ads dengan respons WhatsApp. Detail dari mockup proyek.": "Perbandingan hasil Meta Ads dan respons WhatsApp antar-batch.",
         "Distribusi leads dan kinerja agent memberi gambaran jumlah campaign, respon WhatsApp yang ditangani, serta bulan aktif. Program subsidi ads personal juga punya rekap budget dan hasil leads yang lebih jelas.": "Rekap menampilkan distribusi leads, campaign yang ditangani, respons WhatsApp, serta anggaran dan hasil program subsidi iklan.",
         "Pilih batch untuk membaca anggaran, impresi, respons WhatsApp, dan biaya per pesan. Detail dari mockup proyek.": "Ringkasan anggaran, impresi, respons WhatsApp, dan biaya per pesan per batch.",
-        "Konsultan AI membaca data yang telah direkap untuk membantu mencari campaign bermasalah, melihat iklan terbaik, mengevaluasi PIC, dan menyusun rekomendasi berikutnya.": "Rekomendasi AI membantu meninjau rekap campaign, mengenali iklan yang perlu diperiksa, dan menyusun tindak lanjut."
+        "Konsultan AI membaca data yang telah direkap untuk membantu mencari campaign bermasalah, melihat iklan terbaik, mengevaluasi PIC, dan menyusun rekomendasi berikutnya.": "Saya pakai rekomendasi AI sebagai titik awal untuk melihat iklan mana yang perlu dicek dan apa yang bisa dilakukan berikutnya.",
+        "Saya sebelumnya membuka Ads Manager, mengambil preview iklan, lalu menyusun report satu per satu di Figma. Data campaign ada, tetapi belum terkumpul untuk evaluasi berikutnya.": "Dulu saya menyusun laporan iklan satu per satu di Figma. Sekarang saya bisa membandingkan hasil Meta Ads dan respons WhatsApp dari satu dashboard.",
+        "Laporan iklan dibuat manual di Figma. Riwayat campaign dan data penanganan leads belum terkumpul untuk evaluasi PIC.": "Saya masih membuat laporan iklan satu per satu di Figma. Saat perlu mengevaluasi PIC, riwayat campaign dan data leads juga belum tersedia di satu tempat.",
+        "Saya membuat dashboard untuk laporan Meta Ads, riwayat campaign, penanganan leads, subsidi iklan, dan rekomendasi AI.": "Saya membuat dashboard yang menyimpan laporan Meta Ads, riwayat campaign, data leads, dan rekap subsidi iklan. Ada juga rekomendasi AI untuk membantu membaca laporan.",
+        "Data campaign dan respons WhatsApp dapat ditinjau kembali untuk mengevaluasi iklan dan penanganan leads.": "Hasil iklan dan respons WhatsApp bisa dibandingkan saat mengecek performa campaign dan cara leads ditangani.",
+        "Rekomendasi AI membantu meninjau rekap campaign, mengenali iklan yang perlu diperiksa, dan menyusun tindak lanjut.": "Saya pakai rekomendasi AI sebagai titik awal untuk melihat iklan mana yang perlu dicek dan apa yang bisa dilakukan berikutnya."
       },
       "removeSections": []
     },
@@ -131,7 +141,11 @@
         "Keep the admin work practical.": "Activity entry for admins",
         "A reward loop people can follow.": "Reward redemption",
         "Aktivitas agent jadi poin, ranking bulanan, dan reward yang bisa dipantau dalam satu tempat.": "Leaderboard aktivitas agent dengan riwayat poin dan penukaran reward.",
-        "Agent dapat melihat posisi dan asal poinnya. Admin punya alur yang lebih terstruktur untuk mencatat aktivitas, memperbarui ranking, dan memproses redeem sesuai aturan program.": "Agent dapat menelusuri asal poin dan posisi leaderboard. Admin mencatat aktivitas serta penukaran reward melalui dashboard."
+        "Agent dapat melihat posisi dan asal poinnya. Admin punya alur yang lebih terstruktur untuk mencatat aktivitas, memperbarui ranking, dan memproses redeem sesuai aturan program.": "Agent bisa melihat peringkat dan mengecek aktivitas yang menghasilkan poin. Admin bisa mencatat aktivitas dan mengelola penukaran reward dari dashboard yang sama.",
+        "Agent dapat menelusuri asal poin dan posisi leaderboard. Admin mencatat aktivitas serta penukaran reward melalui dashboard.": "Agent bisa melihat peringkat dan mengecek aktivitas yang menghasilkan poin. Admin bisa mencatat aktivitas dan mengelola penukaran reward dari dashboard yang sama.",
+        "Program aktivitas agent membutuhkan aturan poin, progress, dan target reward yang mudah dipahami. Admin juga perlu mencatat aktivitas banyak agent tanpa menghitung seluruh rekap satu per satu.": "Agent perlu tahu aktivitas apa yang dapat poin dan kapan poinnya bisa ditukar. Admin juga perlu mencatat aktivitas banyak Agent tanpa menghitung rekap satu per satu.",
+        "Saya membuat sistem gamifikasi dengan mekanisme poin, leaderboard bulanan, detail riwayat agent, input cepat dan bulk untuk admin, serta pencatatan redeem.": "Saya membuat leaderboard bulanan, riwayat poin, dan fitur penukaran reward. Admin bisa mencatat aktivitas untuk satu atau beberapa Agent sekaligus.",
+        "Alur ini menyatukan input, rekap, dan pemrosesan redeem dalam satu ruang kerja.": "Dari dashboard yang sama, admin bisa mencatat aktivitas, cek rekap poin, dan memproses penukaran reward."
       },
       "removeSections": [
         {
@@ -146,17 +160,22 @@
         "Make repeat work easier.": "Repeated tasks",
         "Tools for the daily workflow.": "Tools and features",
         "Task, prompt, watermark, dan library untuk merapikan workflow marketing harian.": "Tools internal untuk task, prompt, caption, watermark, dan referensi marketing.",
-        "Kebutuhan marketing harian tersebar di beberapa tempat dan sebagian masih dikerjakan manual. Waktu habis untuk mencari, merapikan, menghitung, dan mengulang proses yang sama.": "Task, prompt, caption, dan referensi kerja tersebar di beberapa tempat. Sebagian pekerjaan masih dilakukan secara manual.",
-        "Satu workspace berisi tools sederhana yang dipakai setiap hari: task management, prompt, watermark, caption, library, rekap closing, dan reminder.": "Saya mengumpulkan task, prompt, watermark, caption, dan referensi kerja dalam satu aplikasi internal.",
-        "Workflow marketing harian menjadi lebih rapi, cepat, dan konsisten. Lebih sedikit waktu habis untuk pekerjaan teknis kecil dan lebih banyak waktu bisa dialihkan ke creative thinking, campaign, dan marketing.": "Tim dapat membuka task, template caption, prompt, dan link kerja dari aplikasi yang sama.",
-        "Web-app internal yang saya buat untuk menyederhanakan workflow Marketing Communication sehari-hari. Fokusnya adalah mengurangi pekerjaan repetitif dan menyatukan banyak kebutuhan kecil ke dalam satu workspace.": "Aplikasi internal untuk kebutuhan Marketing Communication sehari-hari.",
-        "Kalau prosesnya sering diulang, berarti ada peluang untuk dibuat lebih praktis. Saya ingin membuat satu hub yang merangkum workflow marketing harian dalam satu tempat, lewat kumpulan tools sederhana yang memang dipakai setiap hari.": "Saya mengelompokkan pekerjaan yang sering berulang, lalu menyiapkan tools untuk masing-masing kebutuhan.",
+        "Kebutuhan marketing harian tersebar di beberapa tempat dan sebagian masih dikerjakan manual. Waktu habis untuk mencari, merapikan, menghitung, dan mengulang proses yang sama.": "Saat mengerjakan konten, saya sering berpindah tempat untuk cek tugas, mencari prompt, atau membuka referensi. Beberapa langkah juga masih perlu saya ulang secara manual.",
+        "Satu workspace berisi tools sederhana yang dipakai setiap hari: task management, prompt, watermark, caption, library, rekap closing, dan reminder.": "Saya membuat satu aplikasi internal untuk mengatur tugas, menyusun prompt dan caption, memasang watermark, dan menyimpan referensi.",
+        "Workflow marketing harian menjadi lebih rapi, cepat, dan konsisten. Lebih sedikit waktu habis untuk pekerjaan teknis kecil dan lebih banyak waktu bisa dialihkan ke creative thinking, campaign, dan marketing.": "Saya bisa membuka daftar tugas, template caption, prompt, dan link kerja dari aplikasi yang sama.",
+        "Web-app internal yang saya buat untuk menyederhanakan workflow Marketing Communication sehari-hari. Fokusnya adalah mengurangi pekerjaan repetitif dan menyatukan banyak kebutuhan kecil ke dalam satu workspace.": "Saya membuat aplikasi ini untuk pekerjaan marketing yang sering saya ulang, mulai dari mengatur tugas dan menyusun prompt hingga menambahkan watermark.",
+        "Kalau prosesnya sering diulang, berarti ada peluang untuk dibuat lebih praktis. Saya ingin membuat satu hub yang merangkum workflow marketing harian dalam satu tempat, lewat kumpulan tools sederhana yang memang dipakai setiap hari.": "Saya mulai dari pekerjaan yang sering saya ulang, seperti menyiapkan caption dan memasang watermark, lalu membuat tool untuk tiap kebutuhan.",
         "Prompt Generator: paste spesifikasi listing, pilih style, lalu susun prompt dari template yang sudah disiapkan.": "Prompt Generator: susun prompt dari spesifikasi listing dan template yang dipilih.",
         "Caption Hot Listing: rapikan spek mentah, bersihkan kontak agent, dan siapkan caption yang lebih general.": "Caption Hot Listing: rapikan spesifikasi listing dan hapus kontak agent dari caption.",
         "Link Library: kategorikan PPT, social media, banner, open house, merchandise, dan template cetak.": "Link Library: simpan PPT, materi media sosial, banner, dan template cetak per kategori.",
         "Prompt Library: simpan dan gunakan kembali prompt tanpa membuka history chat.": "Prompt Library: simpan prompt agar dapat digunakan lagi.",
         "Top Contributor Recap: ekstrak nama agent dari rekap closing bulanan dan susun leaderboard.": "Top Contributor Recap: susun leaderboard dari nama agent pada rekap closing bulanan.",
-        "Birthday Reminder: rekap ulang tahun agent dan kirim reminder melalui Telegram Bot.": "Birthday Reminder: rekap ulang tahun agent dan kirim pengingat melalui Telegram Bot."
+        "Birthday Reminder: rekap ulang tahun agent dan kirim reminder melalui Telegram Bot.": "Birthday Reminder: rekap ulang tahun agent dan kirim pengingat melalui Telegram Bot.",
+        "Aplikasi internal untuk kebutuhan Marketing Communication sehari-hari.": "Saya membuat aplikasi ini untuk pekerjaan marketing yang sering saya ulang, mulai dari mengatur tugas dan menyusun prompt hingga menambahkan watermark.",
+        "Task, prompt, caption, dan referensi kerja tersebar di beberapa tempat. Sebagian pekerjaan masih dilakukan secara manual.": "Saat mengerjakan konten, saya sering berpindah tempat untuk cek tugas, mencari prompt, atau membuka referensi. Beberapa langkah juga masih perlu saya ulang secara manual.",
+        "Saya mengumpulkan task, prompt, watermark, caption, dan referensi kerja dalam satu aplikasi internal.": "Saya membuat satu aplikasi internal untuk mengatur tugas, menyusun prompt dan caption, memasang watermark, dan menyimpan referensi.",
+        "Tim dapat membuka task, template caption, prompt, dan link kerja dari aplikasi yang sama.": "Saya bisa membuka daftar tugas, template caption, prompt, dan link kerja dari aplikasi yang sama.",
+        "Saya mengelompokkan pekerjaan yang sering berulang, lalu menyiapkan tools untuk masing-masing kebutuhan.": "Saya mulai dari pekerjaan yang sering saya ulang, seperti menyiapkan caption dan memasang watermark, lalu membuat tool untuk tiap kebutuhan."
       },
       "removeSections": [
         {
@@ -174,7 +193,12 @@
         "Make small habits visible.": "Habit check-ins",
         "Keep the little things together.": "Tasks and saved links",
         "Keuangan, tugas, dan kebiasaan harian dalam satu aplikasi pribadi. Berangkat dari kebutuhan sendiri, dibuat untuk dipakai setiap hari.": "Aplikasi pribadi untuk mencatat keuangan, tugas, dan kebiasaan harian.",
-        "Kebutuhan harian terkumpul dalam satu tempat. Aplikasi terus saya sesuaikan dari pengalaman pemakaian pribadi.": "Catatan keuangan, tugas, link, dan kebiasaan dapat dilihat kembali dari satu aplikasi pribadi."
+        "Kebutuhan harian terkumpul dalam satu tempat. Aplikasi terus saya sesuaikan dari pengalaman pemakaian pribadi.": "Saya bisa cek lagi pengeluaran, tugas, link, dan kebiasaan tanpa berpindah aplikasi.",
+        "Setelah membuat daily app untuk kantor, saya bikin versi yang lebih personal. Tempat untuk mencatat pengeluaran, menyimpan tugas dan link, serta mengikuti rutinitas di luar aktivitas kantor.": "Di luar kantor, saya sering berpindah aplikasi untuk mencatat pengeluaran, mengatur tugas, dan memantau kebiasaan. Dari situ, saya membuat satu aplikasi pribadi untuk ketiganya.",
+        "Catatan terpencar dan harus memasang beberapa aplikasi untuk mengurus keuangan, tugas, serta kebiasaan harian.": "Saya perlu memasang beberapa aplikasi untuk mencatat pengeluaran, mengatur tugas, dan memantau kebiasaan. Catatannya jadi tersebar.",
+        "Satu aplikasi pribadi yang menggabungkan ringkasan harian, Finance, Progress, To-Do, dan Link Library.": "Saya membuat satu aplikasi pribadi dengan ringkasan harian dan akses ke Finance, Progress, To-Do, serta Link Library.",
+        "Catatan keuangan, tugas, link, dan kebiasaan dapat dilihat kembali dari satu aplikasi pribadi.": "Saya bisa cek lagi pengeluaran, tugas, link, dan kebiasaan tanpa berpindah aplikasi.",
+        "Check-in, kalender, dan streak membuat rutinitas ibadah serta belajar bisa diikuti dari hari ke hari. Fokusnya melihat konsistensi, termasuk saat harus mulai lagi.": "Saya pakai check-in, kalender, dan streak untuk melihat kapan saya konsisten beribadah dan belajar, termasuk saat perlu mulai lagi."
       },
       "removeSections": [
         {
@@ -189,15 +213,23 @@
         "The bottleneck starts before the schedule.": "Collecting requests",
         "Submit. Follow up. Fix time. Schedule.": "Request and scheduling flow",
         "Request listing, follow-up, dan jadwal take video dalam satu alur.": "Form pengajuan listing dan dashboard penjadwalan video properti.",
-        "Admin harus chat agent satu per satu untuk menanyakan listing yang ingin dibuatkan video. Agent menunggu ditanya dan proses request menjadi saling tunggu.": "Admin menghubungi agent satu per satu untuk mengumpulkan listing yang ingin dibuatkan video.",
-        "Agent submit listing lewat form, data masuk ke dashboard secara real-time, lalu admin follow up untuk fiksasi waktu dan menyusun jadwal take video.": "Agent mengirim listing lewat form. Permintaan masuk ke dashboard, lalu admin menghubungi agent untuk menentukan jadwal pengambilan video.",
-        "Workflow yang bergantung pada admin untuk jemput bola menjadi lebih self-service dan terstruktur. Agent bisa lebih aktif submit listing, sementara admin fokus pada follow-up dan scheduling.": "Agent dapat mengajukan listing langsung. Admin menindaklanjuti permintaan dan menyusun jadwal pengambilan video.",
+        "Admin harus chat agent satu per satu untuk menanyakan listing yang ingin dibuatkan video. Agent menunggu ditanya dan proses request menjadi saling tunggu.": "Sebelumnya, admin perlu chat Agent satu per satu untuk mencari listing yang siap dibuat video.",
+        "Agent submit listing lewat form, data masuk ke dashboard secara real-time, lalu admin follow up untuk fiksasi waktu dan menyusun jadwal take video.": "Saya membuat form yang langsung memasukkan listing ke antrean. Dari dashboard, admin bisa mengecek permintaan dan menghubungi Agent untuk konfirmasi jadwal.",
+        "Workflow yang bergantung pada admin untuk jemput bola menjadi lebih self-service dan terstruktur. Agent bisa lebih aktif submit listing, sementara admin fokus pada follow-up dan scheduling.": "Agent bisa mengirim listing begitu propertinya siap. Admin bisa langsung cek antrean dan menyusun jadwal pengambilan video.",
         "Dashboard internal untuk merapikan alur request dan penjadwalan take video property antara agent dan admin/media.": "Dashboard untuk pengajuan listing dan penjadwalan video properti.",
-        "Sebelumnya admin harus chat agent satu per satu untuk menanyakan apakah ada listing yang ingin dibuatkan video. Masalah utamanya bukan hanya scheduling: agent belum punya jalur yang simpel untuk langsung submit listing ketika mereka punya property yang siap dibuat konten.": "Agent belum memiliki form untuk mengajukan listing. Admin mengumpulkan permintaan lewat chat sebelum menentukan jadwal.",
-        "Agent submit: isi form ketika punya listing yang ingin dibuatkan video.": "Pengajuan listing: agent mengisi form untuk properti yang ingin dibuatkan video.",
-        "Admin follow up: submission langsung muncul di dashboard, tanpa recap manual dari chat.": "Tindak lanjut: permintaan langsung muncul di dashboard admin.",
-        "Fix time: fiksasi waktu bersama agent.": "Penentuan waktu: admin dan agent menyepakati jadwal.",
-        "Arrange schedule: susun jadwal final take video langsung dari web.": "Penjadwalan: admin menyusun jadwal pengambilan video melalui aplikasi."
+        "Sebelumnya admin harus chat agent satu per satu untuk menanyakan apakah ada listing yang ingin dibuatkan video. Masalah utamanya bukan hanya scheduling: agent belum punya jalur yang simpel untuk langsung submit listing ketika mereka punya property yang siap dibuat konten.": "Dulu admin perlu menghubungi Agent satu per satu untuk mencari listing yang siap dibuat video. Sekarang Agent bisa mengajukan listing lewat form, lalu admin mengecek antrean dan mengonfirmasi jadwal pengambilan video.",
+        "Agent submit: isi form ketika punya listing yang ingin dibuatkan video.": "Agent mengisi form untuk properti yang siap dibuat video.",
+        "Admin follow up: submission langsung muncul di dashboard, tanpa recap manual dari chat.": "Permintaan masuk ke antrean di dashboard admin.",
+        "Fix time: fiksasi waktu bersama agent.": "Admin dan Agent mengonfirmasi waktu pengambilan video.",
+        "Arrange schedule: susun jadwal final take video langsung dari web.": "Admin menyusun jadwal final dari dashboard.",
+        "Agent belum memiliki form untuk mengajukan listing. Admin mengumpulkan permintaan lewat chat sebelum menentukan jadwal.": "Dulu admin perlu menghubungi Agent satu per satu untuk mencari listing yang siap dibuat video. Sekarang Agent bisa mengajukan listing lewat form, lalu admin mengecek antrean dan mengonfirmasi jadwal pengambilan video.",
+        "Admin menghubungi agent satu per satu untuk mengumpulkan listing yang ingin dibuatkan video.": "Sebelumnya, admin perlu chat Agent satu per satu untuk mencari listing yang siap dibuat video.",
+        "Agent mengirim listing lewat form. Permintaan masuk ke dashboard, lalu admin menghubungi agent untuk menentukan jadwal pengambilan video.": "Saya membuat form yang langsung memasukkan listing ke antrean. Dari dashboard, admin bisa mengecek permintaan dan menghubungi Agent untuk konfirmasi jadwal.",
+        "Agent dapat mengajukan listing langsung. Admin menindaklanjuti permintaan dan menyusun jadwal pengambilan video.": "Agent bisa mengirim listing begitu propertinya siap. Admin bisa langsung cek antrean dan menyusun jadwal pengambilan video.",
+        "Pengajuan listing: agent mengisi form untuk properti yang ingin dibuatkan video.": "Agent mengisi form untuk properti yang siap dibuat video.",
+        "Tindak lanjut: permintaan langsung muncul di dashboard admin.": "Permintaan masuk ke antrean di dashboard admin.",
+        "Penentuan waktu: admin dan agent menyepakati jadwal.": "Admin dan Agent mengonfirmasi waktu pengambilan video.",
+        "Penjadwalan: admin menyusun jadwal pengambilan video melalui aplikasi.": "Admin menyusun jadwal final dari dashboard."
       },
       "removeSections": [
         {

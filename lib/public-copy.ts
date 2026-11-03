@@ -55,7 +55,8 @@ export function refineSiteCopy(site: SiteContent): SiteContent {
 }
 
 export function refineWorkCopy(item: WorkItem): WorkItem {
-  if (item.copyEdition === edition.edition) return item;
+  const workEdition = item.caseStudy && cases[item.caseStudy.slug] ? '2026-11-03-webapp-story-copy' : edition.edition;
+  if (item.copyEdition === workEdition) return item;
   const profile = item.caseStudy && cases[item.caseStudy.slug];
   const replace = replacements({ ...shared, ...profile?.text });
   const next = { ...item, description: replace(item.description) };
@@ -81,5 +82,5 @@ export function refineWorkCopy(item: WorkItem): WorkItem {
       ...(item.caseStudy.layout ? { layout: refineCopyLayout(item.caseStudy.layout, profile?.text, profile?.removeSections) } : {}),
     };
   }
-  return JSON.stringify(next) === JSON.stringify(item) ? item : { ...next, copyEdition: edition.edition };
+  return JSON.stringify(next) === JSON.stringify(item) ? item : { ...next, copyEdition: workEdition };
 }
