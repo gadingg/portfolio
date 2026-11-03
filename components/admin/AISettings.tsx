@@ -1,46 +1,90 @@
 'use client';
-import { useEffect,useState } from 'react';
-import { useConfirm } from './ConfirmDialog';
-import { AdminSkeleton } from './AdminSkeleton';
-import {useToastMessage} from './AdminToasts';
+
+import { useRef, useState } from 'react';
+import { AdminLink } from './AdminLink';
+import { useToastMessage } from './AdminToasts';
 import './works-manager.css';
 import './ai-study.css';
 
-type Status={configured:boolean;model:string;updatedAt:string};
-export function AISettings(){
-  const [status,setStatus]=useState<Status|null>(null),[key,setKey]=useState(''),[model,setModel]=useState('');
-  const [busy,setBusy]=useState(false),[loading,setLoading]=useState(true),[error,setError]=useState(''),[message,setMessage]=useState('');
-  const {ask,confirmation}=useConfirm();
-  async function load(){setLoading(true);setError('');try{const res=await fetch('/api/admin/ai/settings',{cache:'no-store'}),data=await res.json();if(!res.ok)throw Error(data.error);setStatus(data);setModel(data.model);}catch(e){setError(e instanceof Error?e.message:'Pengaturan belum bisa dimuat.');}finally{setLoading(false);}}
-  useEffect(()=>{void load();},[]);
-  async function act(action:'save'|'test'|'delete'){
-    if(busy)return;
-    if(action==='delete'&&!await ask('Hapus Gemini API key yang tersimpan? Fitur generate berhenti sampai key baru ditambahkan.','Hapus key'))return;
-    setBusy(true);setError('');setMessage('');
-    try{
-      const res=await fetch('/api/admin/ai/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,model,...(key.trim()&&action!=='delete'?{apiKey:key.trim()}:{})}),signal:AbortSignal.timeout(28000)}),data=await res.json();
-      if(!res.ok)throw Error(data.error);
-      if(action==='test')setMessage(`${data.message}${key?' Key baru belum disimpan.':''}`);
-      else{setStatus(data);setKey('');setMessage(action==='delete'?'API key sudah dihapus.':'Pengaturan AI tersimpan.');}
-    }catch(e){setError(e instanceof Error&&e.name!=='TimeoutError'?e.message:'Permintaan belum selesai. Coba lagi.');}finally{setBusy(false);}
+type Status = { configured: boolean; model: string; updatedAt: string };
+
+export function AISettings({ initialStatus }: { initialStatus: Status | null }) {
+  const [status, setStatus] = useState(initialStatus);
+  const [key, setKey] = useState('');
+  const [model, setModel] = useState(initialStatus?.model ?? '');
+  const [replacing, setReplacing] = useState(false);
+  const [busy, setBusy] = useState<'save' | 'test' | 'load' | null>(null);
+  const [error, setError] = useState(initialStatus ? '' : 'Pengaturan AI gagal dimuat.');
+  const [message, setMessage] = useState('');
+  const keyInput = useRef<HTMLInputElement>(null);
+  const hasKey = Boolean(key.trim());
+  const canSubmit = Boolean(model.trim() && (status?.configured && !replacing || hasKey));
+  const dirty = hasKey || model.trim() !== status?.model;
+
+  async function request(action: 'save' | 'test' | 'load') {
+    if (busy || (action !== 'load' && (!canSubmit || (action === 'save' && !dirty)))) return;
+    setBusy(action);
+    setError('');
+    setMessage('');
+    try {
+      const response = await fetch('/api/admin/ai/settings', {
+        cache: 'no-store',
+        signal: AbortSignal.timeout(28000),
+        ...(action === 'load' ? {} : {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action, model: model.trim(), ...(hasKey ? { apiKey: key.trim() } : {}) }),
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw Error(data.error);
+      if (action === 'test') {
+        setMessage(dirty ? 'Koneksi berhasil. Perubahan belum disimpan.' : 'Koneksi berhasil.');
+      } else {
+        setStatus(data);
+        setModel(data.model);
+        setKey('');
+        setReplacing(false);
+        if (action === 'save') setMessage('Pengaturan tersimpan.');
+      }
+    } catch (cause) {
+      setError(cause instanceof Error && !['TimeoutError', 'SyntaxError', 'TypeError'].includes(cause.name) ? cause.message : 'Pengaturan AI belum bisa diproses. Coba lagi.');
+    } finally {
+      setBusy(null);
+    }
   }
+
   useToastMessage(message);
-  if (loading) return <AdminSkeleton />;
+  const locked = Boolean(status?.configured && !replacing);
+
   return <div className="works-manager cms-manager ai-workspace">
-    {confirmation}
-    <header className="wm-heading"><div><h1>Pengaturan AI</h1></div><a className="wm-button" href="/admintgadink/dashboard/ai">AI Study Case</a></header>
-    {error&&<p className="cms-error" role="alert">{error}</p>}
-    {loading?<AdminSkeleton />:!status?<button type="button" className="wm-button" onClick={load}>Coba lagi</button>:<section className="ai-settings-panel" aria-labelledby="gemini-settings-title">
-      <h2 id="gemini-settings-title">Gemini API</h2><p className="ai-connection" role="status">{status.configured?'API key tersimpan':'Belum terhubung'}</p>
-      <fieldset disabled={busy} className="ai-fields">
-        <label>{status.configured?'Ganti API key':'Gemini API key'}<input type="password" autoComplete="new-password" spellCheck={false} value={key} onChange={event=>setKey(event.target.value)} placeholder={status.configured?'Kosongkan untuk memakai key tersimpan':'Paste API key di sini'}/></label>
-        <p className="wm-editor-note">Key tersimpan terenkripsi dan tidak ditampilkan kembali.</p>
-        <label>ID model<input value={model} maxLength={80} spellCheck={false} onChange={event=>setModel(event.target.value)} placeholder="gemini-3.8-flash"/></label>
-        <p className="wm-editor-note">Gunakan model teks yang tersedia di akun Gemini Anda.</p>
-        <div className="ai-actions"><button type="button" className="wm-button wm-primary" disabled={!model||(!key&&!status.configured)} onClick={()=>act('save')}>{busy?'Memproses…':'Simpan pengaturan'}</button><button type="button" className="wm-button" disabled={!model||(!key&&!status.configured)} onClick={()=>act('test')}>Tes koneksi</button>{status.configured&&<button type="button" className="wm-button" onClick={()=>act('delete')}>Hapus key</button>}</div>
-      </fieldset>
-      <p className="wm-editor-note">Generate dan tes koneksi memakai kuota Gemini Anda.</p>
-      <a className="ai-inline-link" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Kelola key di Google AI Studio</a>
-    </section>}
+    <header className="wm-heading">
+      <h1>Pengaturan AI</h1>
+      <AdminLink className="wm-button" href="/admintgadink/dashboard/ai">AI Study Case</AdminLink>
+    </header>
+    {error && <p className="cms-error" role="alert">{error}</p>}
+    {!status ? <button type="button" className="wm-button" disabled={Boolean(busy)} onClick={() => request('load')}>{busy ? 'Memuat…' : 'Coba lagi'}</button> :
+      <section className="ai-settings-panel" aria-label="Gemini API">
+        <fieldset disabled={Boolean(busy)} className="ai-fields">
+          <div className="ai-key-field">
+            <label htmlFor="gemini-key">Gemini API key</label>
+            <div className="ai-key-row">
+              <input id="gemini-key" ref={keyInput} type="password" autoComplete="new-password" spellCheck={false}
+                disabled={locked} value={locked ? '************' : key} onChange={event => setKey(event.target.value)} />
+              {status.configured && <button type="button" className="wm-button" onClick={() => {
+                setReplacing(!replacing);
+                setKey('');
+                if (!replacing) requestAnimationFrame(() => keyInput.current?.focus());
+              }}>{replacing ? 'Batal ganti' : 'Ganti key'}</button>}
+            </div>
+          </div>
+          <label>ID model<input value={model} maxLength={80} spellCheck={false} onChange={event => setModel(event.target.value)} placeholder="gemini-flash-latest" /></label>
+          <div className="ai-actions">
+            <button type="button" className="wm-button wm-primary" disabled={!canSubmit || !dirty} onClick={() => request('save')}>{busy === 'save' ? 'Menyimpan…' : 'Simpan'}</button>
+            <button type="button" className="wm-button" disabled={!canSubmit} onClick={() => request('test')}>{busy === 'test' ? 'Menguji…' : 'Tes koneksi'}</button>
+          </div>
+        </fieldset>
+        {!status.configured && <a className="ai-inline-link" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Buat key di Google AI Studio</a>}
+      </section>}
   </div>;
 }

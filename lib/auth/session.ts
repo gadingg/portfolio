@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 function configuredAdminEmail(): string | null {
@@ -10,7 +11,7 @@ export function isAdminEmail(email: string | null | undefined): boolean {
   return Boolean(allowedEmail && email && email.toLowerCase() === allowedEmail);
 }
 
-export async function verifyAdminSession(): Promise<boolean> {
+export const verifyAdminSession = cache(async (): Promise<boolean> => {
   const allowedEmail = configuredAdminEmail();
   if (!allowedEmail) return false;
 
@@ -21,7 +22,7 @@ export async function verifyAdminSession(): Promise<boolean> {
   } catch {
     return false;
   }
-}
+});
 
 export async function destroyAdminSession(): Promise<void> {
   const supabase = await createServerSupabaseClient();

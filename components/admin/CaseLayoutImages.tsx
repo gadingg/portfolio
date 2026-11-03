@@ -43,7 +43,7 @@ export function CaseLayoutImages({ layout, onChange, disabled, onBusyChange }: {
   }
   return <section className="cms-blocks" aria-label="Gambar isi studi kasus">
     <h3>Gambar isi studi kasus</h3>
-    <p className="wm-editor-note">Screenshot untuk halaman detail.</p>
+
     {pictures.map((picture, index) => <fieldset className="cms-layout-picture" key={index} disabled={disabled}>
       <legend>Gambar {index + 1}</legend>
       <FileDrop previewSrc={picture.src} previewAlt={picture.alt || `Gambar ${index+1}`} folder="content" uploadLabel={`Ganti gambar ${index + 1}`} disabled={disabled} onBusyChange={onBusyChange} onUploaded={files => change(index, { src: files[0].url })}/>

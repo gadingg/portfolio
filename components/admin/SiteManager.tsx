@@ -276,7 +276,7 @@ export function SiteManager({initial}: {initial?: InitialSite} = {}) {
                 </button>
                 </div>)}
                 <h3>PDF CV</h3>
-                <p className="wm-muted">Pengunjung mengunduh PDF ini. Perubahan teks di editor tidak mengubah isi PDF.</p>
+                <p className="wm-muted">File ini yang diunduh pengunjung.</p>
                 <FileDrop
                   folder="cv"
                   uploadLabel={content.cv.pdf ? 'Ganti PDF CV' : 'Upload PDF CV'}

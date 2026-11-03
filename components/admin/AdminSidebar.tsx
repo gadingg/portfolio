@@ -73,7 +73,7 @@ export function AdminSidebar() {
   const navItems = [
     { label: 'Overview', href: '/admintgadink/dashboard', icon: LayoutDashboard },
     { label: 'Portofolio', href: '/admintgadink/dashboard/works', icon: Images },
-    { label: 'Live Editor Landing Page', href: '/admintgadink/dashboard/editor/home', icon: PanelTop },
+    { label: 'Edit homepage', href: '/admintgadink/dashboard/editor/home', icon: PanelTop },
     { label: 'AI Study Case', href: '/admintgadink/dashboard/ai', icon: FilePenLine },
     { label: 'Website & CV', href: '/admintgadink/dashboard/site', icon: Contact },
     { label: 'Pengaturan AI', href: '/admintgadink/dashboard/settings', icon: Settings2 },
@@ -83,7 +83,7 @@ export function AdminSidebar() {
     <>
       {confirmation}
       <header className="admin-mobile-header">
-        <div><strong>Gading Admin</strong><span>Portofolio CMS</span></div>
+        <div><strong>Gading Admin</strong></div>
         <button ref={menuButton} type="button" onClick={() => setIsOpen(value => !value)} aria-label={isOpen ? 'Tutup navigasi' : 'Buka navigasi'} aria-expanded={isOpen} aria-controls="admin-navigation">{isOpen ? <X size={20}/> : <Menu size={20}/>}</button>
       </header>
       {isOpen && <button type="button" className="admin-nav-backdrop" onClick={() => setIsOpen(false)} aria-label="Tutup navigasi admin" />}
@@ -100,7 +100,7 @@ export function AdminSidebar() {
           <span style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.2em', color: 'var(--amber)' }}>
             GADING ADMIN
           </span>
-          <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--muted)' }}>Portofolio CMS</p>
+
         </div>
 
         {/* Navigation */}
@@ -140,7 +140,7 @@ export function AdminSidebar() {
           className="admin-logout"
         >
           {loggingOut ? <span className="admin-spinner" aria-hidden="true" /> : <LogOut size={18} aria-hidden="true"/>}
-          {loggingOut?'Menutup sesi…':'Keluar'}
+          {loggingOut?'Keluar…':'Keluar'}
         </button>
         {logoutError&&<p role="alert" style={{fontSize:'14px',color:'var(--ink)',margin:0}}>{logoutError}</p>}
       </div>

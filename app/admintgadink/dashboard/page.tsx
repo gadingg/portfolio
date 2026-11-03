@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation';
+import { verifyAdminSession } from '@/lib/auth/session';
 import { getWorksDocument } from '@/lib/db/works';
 import { getEngagementSummary } from '@/lib/db/engagement';
 import { Overview } from '@/components/admin/Overview';
@@ -10,6 +12,8 @@ export default async function Page({searchParams}:{searchParams:Promise<{days?:s
   return <Suspense key={days} fallback={<OverviewSkeleton />}><OverviewData days={days} /></Suspense>;
 }
 async function OverviewData({ days }: { days: number }) {
-  const [doc,engagement]=await Promise.all([getWorksDocument(),getEngagementSummary(days)]);
-  return <Overview draft={doc.draft.items} published={doc.published.items} data={engagement.data} days={days}/>;
+  if (!(await verifyAdminSession())) redirect('/admintgadink');
+  const engagement = getEngagementSummary(days);
+  const doc = await getWorksDocument();
+  return <Overview draft={doc.draft.items} published={doc.published.items} engagement={engagement} days={days}/>;
 }

@@ -22,7 +22,7 @@ export function CaseMotionVideoEditor({value,cover,disabled,onBusyChange,onChang
     <FileDrop accept="video/mp4" uploadLabel={value?'Ganti video MP4':'Upload video MP4'} disabled={disabled} onBusyChange={onBusyChange} onUploaded={files=>onChange({videoFile:files[0].url,...(files[0].cover?{image:files[0].cover}:{})})}/>
     {value&&<><video key={value} ref={player} className="cms-video-preview" src={value} poster={cover} controls playsInline preload="metadata"/>
     <div className="wm-toolbar"><button type="button" className="wm-button" disabled={disabled||capturing} onClick={useFrame}><ImageIcon size={18} aria-hidden="true"/>{capturing?'Membuat cover…':'Gunakan frame ini'}</button><button type="button" className="wm-button" disabled={disabled} onClick={()=>onChange({videoFile:''})}>Lepas video</button></div></>}
-    <div className="cms-video-cover"><h4>Thumbnail</h4><p className="wm-editor-note">Pilih frame video atau upload gambar.</p><FileDrop folder="covers" previewSrc={cover} previewAlt="Thumbnail video" uploadLabel={cover?'Ganti thumbnail':'Upload thumbnail'} disabled={disabled} onBusyChange={onBusyChange} onUploaded={files=>onChange({videoFile:value,image:files[0].url})}/></div>
+    <div className="cms-video-cover"><h4>Thumbnail</h4><FileDrop folder="covers" previewSrc={cover} previewAlt="Thumbnail video" uploadLabel={cover?'Ganti thumbnail':'Upload thumbnail'} disabled={disabled} onBusyChange={onBusyChange} onUploaded={files=>onChange({videoFile:value,image:files[0].url})}/></div>
     </div>
   </section>;
 }

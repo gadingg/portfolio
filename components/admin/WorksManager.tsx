@@ -398,7 +398,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
             </button>
           </div>
           {showTrash ? <section className="wm-trash-list" aria-label="Sampah portofolio">
-            <p className="wm-editor-note">Bisa dipulihkan selama 72 jam. Setelah itu, item dibersihkan otomatis.</p>
+            <p className="wm-editor-note">Pulihkan dalam 72 jam.</p>
             {trash.length ? trash.map(entry => {
               const work = entry.draft || entry.published!;
               return <div className="cms-work-row" key={entry.id}>
@@ -409,7 +409,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
             }) : <div className="wm-empty"><Trash2 size={28} aria-hidden="true"/><h2>Sampah kosong</h2><p>Portofolio yang dihapus akan muncul di sini.</p></div>}
           </section> : <>
           {kind === 'webapp' && <SettingsDisclosure title="Pilihan homepage" status={`${homepageWorks(items).length} dari 3 portofolio`} icon={<Eye size={20}/>}>
-            <p className="wm-editor-note">Pilih sampai 3 project unggulan. Urutannya mengikuti koleksi lengkap.</p>
+            <p className="wm-editor-note">Maks. 3 unggulan, sesuai urutan portofolio.</p>
             <div className="wm-featured-options">
               {items.filter(work => work.kind === 'webapp' && work.published && !workReadiness(work)).map(work => {
                 const selected = homepageWorks(items).some(value => value.id === work.id);

@@ -25,7 +25,7 @@ export function CaseLayoutText({layout,onChange,disabled}: {layout:VisualLayout;
   const entries = useMemo(()=>typeof DOMParser==='undefined'?[]:textEntries(layout.html).entries,[layout.html]);
   return <SettingsDisclosure title="Teks cerita" icon={<Type size={20}/>} status={`${entries.length} bagian teks`}>
     <div className="cms-block-fields">
-      <p className="wm-editor-note">Edit teks tanpa mengubah layout.</p>
+
       <label>Cari teks cerita<input type="search" value={query} disabled={disabled} onChange={event=>setQuery(event.target.value)}/></label>
       {entries.filter(entry=>`${entry.label} ${entry.value}`.toLocaleLowerCase().includes(query.toLocaleLowerCase())).map(entry=><TextEntry key={entry.index} label={entry.label} value={entry.value} disabled={disabled} onCommit={value=>{
         const {doc,nodes}=textEntries(layout.html),node=nodes[entry.index];
