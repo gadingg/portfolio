@@ -113,3 +113,15 @@ test('settings API never reads a key back to browser and returns sanitized provi
   assert.equal(accepted.status, 503); // The request reached the mocked provider, which throws.
   const tested=await handler.POST(request('/api/admin/ai/settings',{action:'test'}));assert.doesNotMatch(await tested.text(),/test-secret-key-never-returned/);
 });
+
+test('Copy Prompt JSON imports without Gemini credentials and rejects invalid drafts', async () => {
+  const { aiStudyBasePrompt } = runtime()('lib/ai-study.ts');
+  const gemini = runtime({ './ai-settings': {
+    getAISettings: async () => { throw Error('Import must not load Gemini settings'); },
+  } })('lib/gemini-study.ts');
+  assert.match(aiStudyBasePrompt, /portfolio-study-case-v1/);
+  const brief = JSON.stringify({ format: 'portfolio-study-case-v1', draft: study() });
+  assert.deepEqual(await gemini.generateAIStudy(brief, 'all'), { result: study(), model: 'import' });
+  const bad = JSON.stringify({ format: 'portfolio-study-case-v1', draft: { ...study(), slug: 'invalid slug' } });
+  await assert.rejects(() => gemini.generateAIStudy(bad, 'all'), error => error.status === 400);
+});

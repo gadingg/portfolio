@@ -3,10 +3,10 @@ import { useEffect,useRef,useState } from 'react';
 import { useRegisterAdminDirty } from './AdminChanges';
 import { FileDrop } from './FileDrop';
 import { AdminSkeleton } from './AdminSkeleton';
-import { RotateCw } from 'lucide-react';
+import { Copy, RotateCw } from 'lucide-react';
 import {useToastMessage} from './AdminToasts';
 import { useConfirm } from './ConfirmDialog';
-import { AIStudySchema,mergeAIRevision,type AIStudy,type AITarget } from '@/lib/ai-study';
+import { aiStudyBasePrompt,looksLikePreparedStudy,AIStudySchema,mergeAIRevision,type AIStudy,type AITarget } from '@/lib/ai-study';
 import type { WorkItem } from '@/lib/works';
 import './works-manager.css';
 import './ai-study.css';
@@ -34,6 +34,16 @@ export function AIStudyManager({ initial }: { initial: { items: WorkItem[]; revi
   const {ask,confirmation}=useConfirm();
   useRegisterAdminDirty(dirty);
   const disabled=busy||uploading;
+  const prepared = looksLikePreparedStudy(brief);
+  async function copyPrompt() {
+    try {
+      await navigator.clipboard.writeText(aiStudyBasePrompt);
+      setError('');
+      setMessage('Prompt disalin.');
+    } catch {
+      setError('Prompt belum bisa disalin. Periksa izin clipboard, lalu coba lagi.');
+    }
+  }
   function selectWork(id:string,works=items){
     const work=works.find(value=>value.id===id);setSelected(id);setResult(work?studyFromWork(work):null);setPending(null);setApplied('');setError('');setMessage('');
     setBrief(work?.aiDraft?.brief||(work?.caseStudy?[work.title,work.description,work.caseStudy.problem,work.caseStudy.solution,work.caseStudy.impact,...work.caseStudy.blocks.filter(block=>['heading','paragraph'].includes(block.block_type)).map(block=>String(block.content_json.text||''))].filter(Boolean).join('\n\n').slice(0,30000):''));setImage(work?.image||'');setAlt(work?.imageAlt||'');setAppUrl(work?.caseStudy?.appUrl||'');dirty.current=false;
@@ -65,7 +75,7 @@ export function AIStudyManager({ initial }: { initial: { items: WorkItem[]; revi
     if(brief.trim().length<20){setError('Ceritakan project-nya minimal 20 karakter.');return;}
     if(target!=='all'&&!result)return;
     if(target==='all'&&result&&!await ask('Generate versi baru? Hasilnya ditampilkan terpisah untuk dibandingkan. Tulisan Anda tetap aman sampai Anda memilih hasil baru.','Generate versi baru'))return;
-    lock.current=true;setBusy(true);setError('');setMessage('Gemini sedang menyusun draft…');setPending(null);
+    lock.current=true;setBusy(true);setError('');setMessage(prepared && target==='all' ? 'Memeriksa format ringkasan…' : 'Gemini sedang menyusun draft…');setPending(null);
     try{
       const current=AIStudySchema.safeParse(result);
       const response=await fetch('/api/admin/ai/study-case',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'generate',brief,target,...(current.success?{current:current.data}:{})}),signal:AbortSignal.timeout(55000)}),data=await response.json();
@@ -115,9 +125,9 @@ export function AIStudyManager({ initial }: { initial: { items: WorkItem[]; revi
     {error&&<p className="cms-error" role="alert">{error}{revision!==null&&<button className="wm-button" disabled={disabled} type="button" onClick={async()=>{if(!dirty.current||await ask('Muat ulang daftar dan lepaskan perubahan workspace yang belum disimpan?','Muat ulang'))void load();}}>Muat ulang daftar</button>}</p>}
     {message&&busy&&<p role="status" className="ai-notice"><span className="admin-spinner" aria-hidden="true"/>{message}</p>}
     {loading?<AdminSkeleton />:revision===null?<button type="button" className="wm-button" onClick={load}>Coba lagi</button>:<>
-      {!configured&&<div className="ai-notice"><p>Tambahkan API key di Pengaturan AI untuk membuat draft.</p></div>}
+      {!configured&&<div className="ai-notice"><p>Catatan bebas butuh API key. Hasil dari Copy Prompt bisa diimpor langsung.</p></div>}
       <div className="ai-authoring-layout">
-        <section className="ai-input-panel" aria-labelledby="ai-brief-title"><h2 id="ai-brief-title">Brief project</h2>
+        <section className="ai-input-panel" aria-labelledby="ai-brief-title"><div className="ai-field-heading"><h2 id="ai-brief-title">Brief project</h2><button type="button" className="wm-button" onClick={copyPrompt} disabled={busy}><Copy size={16} aria-hidden="true" />Copy Prompt</button></div>
           <fieldset disabled={disabled} className="ai-fields">
             <label>Tujuan draft<select value={selected} onChange={async event=>{const id=event.target.value;if(!dirty.current||await ask('Ganti project dan lepaskan perubahan workspace yang belum disimpan?','Ganti project'))selectWork(id);}}><option value="">Buat studi kasus baru</option>{items.filter(item=>item.kind==='webapp'&&item.caseStudy).map(item=><option key={item.id} value={item.id}>Revisi: {item.title}</option>)}</select></label>
             <label>Ceritakan project-nya<textarea rows={10} maxLength={30000} value={brief} onChange={event=>{setBrief(event.target.value);dirty.current=true;setApplied('');}} placeholder="Boleh catatan bebas, daftar fitur, masalah yang ingin diselesaikan, proses, atau hasil yang sudah Anda lihat."/></label>
@@ -127,8 +137,8 @@ export function AIStudyManager({ initial }: { initial: { items: WorkItem[]; revi
             <FileDrop previewSrc={image} previewAlt={alt||'Thumbnail portfolio'} disabled={disabled} onBusyChange={setUploading} uploadLabel={image?'Ganti thumbnail':'Upload thumbnail'} onUploaded={files=>{setImage(files[0].url);dirty.current=true;setApplied('');}}/>
             <label>Deskripsi thumbnail<input maxLength={250} value={alt} onChange={event=>{setAlt(event.target.value);dirty.current=true;setApplied('');}}/></label>
           </fieldset>
-          <button type="button" className="wm-button wm-primary" disabled={disabled||!configured||brief.trim().length<20} onClick={()=>generate()} aria-busy={busy}>{busy?'Memproses…':result?'Generate versi baru':'Generate Study Case'}</button>
-          <p className="wm-editor-note">Catatan dikirim ke Gemini.</p>
+          <button type="button" className="wm-button wm-primary" disabled={disabled||(!configured&&!prepared)||brief.trim().length<20} onClick={()=>generate()} aria-busy={busy}>{busy?'Memproses…':prepared?'Impor ringkasan':result?'Generate versi baru':'Generate Study Case'}</button>
+          <p className="wm-editor-note">{prepared ? "Ringkasan diisi langsung ke draft." : "Pakai catatan bebas, atau tempel JSON dari Copy Prompt."}</p>
         </section>
         <div className="ai-review-panel" ref={resultRef} tabIndex={-1} aria-labelledby="ai-review-title">
           <h2 id="ai-review-title">Review draft</h2>

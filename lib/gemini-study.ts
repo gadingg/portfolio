@@ -1,5 +1,5 @@
 import 'server-only';
-import { AIStudySchema, aiStudyInstruction, aiStudyJSONSchema, normalizeAIStudy, type AIStudy, type AITarget } from './ai-study';
+import { AIStudySchema, aiStudyInstruction, aiStudyJSONSchema, normalizeAIStudy, looksLikePreparedStudy, parsePreparedStudy, type AIStudy, type AITarget } from './ai-study';
 import { getAISettings, type AISettings } from './ai-settings';
 
 export class AIProviderError extends Error {
@@ -35,11 +35,15 @@ export async function testGemini(settings: Pick<AISettings,'model'|'apiKey'>) {
 export async function generateAIStudy(brief: string, target: AITarget, current?: AIStudy) {
   if (target !== 'all' && !current) throw new AIProviderError('Generate draft lengkap sebelum merevisi satu bagian.', 400);
   if (target.startsWith('section:') && !current?.sections[Number(target.split(':')[1])]) throw new AIProviderError('Bagian yang dipilih tidak ditemukan.',400);
+  if (target === 'all' && looksLikePreparedStudy(brief)) {
+    try { return { result: parsePreparedStudy(brief), model: 'import' }; }
+    catch { throw new AIProviderError('Ringkasan belum sesuai format. Salin ulang JSON lengkap dari Copy Prompt.', 400); }
+  }
   const settings = await getAISettings();
   const text = await callGemini(settings, {
     systemInstruction: { parts: [{ text: aiStudyInstruction }] },
     contents: [{ role:'user', parts:[{ text: JSON.stringify({ sourceNotes:brief, target, current: current && AIStudySchema.parse(current) }) }] }],
-    generationConfig: { temperature:0.35, maxOutputTokens:10000, responseFormat:{text:{mimeType:'APPLICATION_JSON',schema:aiStudyJSONSchema}} },
+    generationConfig: { temperature:0.15, maxOutputTokens:10000, responseFormat:{text:{mimeType:'APPLICATION_JSON',schema:aiStudyJSONSchema}} },
   });
   try { return { result: normalizeAIStudy(JSON.parse(text)), model:settings.model }; }
   catch { throw new AIProviderError('Susunan hasil AI belum sesuai template. Hasil sebelumnya tetap aman; coba generate ulang.'); }
