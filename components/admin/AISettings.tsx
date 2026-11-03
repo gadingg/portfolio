@@ -17,6 +17,7 @@ export function AISettings({ initialStatus }: { initialStatus: Status | null }) 
   const [replacing, setReplacing] = useState(false);
   const [busy, setBusy] = useState<'save' | 'test' | 'load' | 'delete' | null>(null);
   const [error, setError] = useState(initialStatus ? '' : 'Pengaturan AI gagal dimuat.');
+  const [connection, setConnection] = useState(false);
   const [message, setMessage] = useState('');
   const keyInput = useRef<HTMLInputElement>(null);
   const hasKey = Boolean(key.trim());
@@ -46,8 +47,10 @@ export function AISettings({ initialStatus }: { initialStatus: Status | null }) 
       const data = await response.json();
       if (!response.ok) throw Error(data.error);
       if (action === 'test') {
+        setConnection(true);
         setMessage(dirty ? 'Koneksi berhasil. Perubahan belum disimpan.' : 'Koneksi berhasil.');
       } else {
+        setConnection(false);
         setStatus(data);
         setModel(data.model);
         setKey('');
@@ -56,6 +59,7 @@ export function AISettings({ initialStatus }: { initialStatus: Status | null }) 
         if (action === 'delete') setMessage('API key dihapus.');
       }
     } catch (cause) {
+      if (action === 'test') setConnection(false);
       setError(cause instanceof Error && !['TimeoutError', 'SyntaxError', 'TypeError'].includes(cause.name) ? cause.message : 'Pengaturan AI belum bisa diproses. Coba lagi.');
     } finally {
       setBusy(null);
@@ -71,23 +75,26 @@ export function AISettings({ initialStatus }: { initialStatus: Status | null }) 
       <h1>Pengaturan AI</h1>
       <AdminLink className="wm-button" href="/admintgadink/dashboard/ai">AI Study Case</AdminLink>
     </header>
-    {error && <p className="cms-error" role="alert">{error}</p>}
+    {!status && error && <p className="cms-error" role="alert">{error}</p>}
     {!status ? <button type="button" className="wm-button" disabled={Boolean(busy)} onClick={() => request('load')}>{busy ? 'Memuat…' : 'Coba lagi'}</button> :
       <section className="ai-settings-panel" aria-label="Gemini API">
         <fieldset disabled={Boolean(busy)} className="ai-fields">
           <div className="ai-key-field">
-            <label htmlFor="gemini-key">Gemini API key</label>
+            <label htmlFor="gemini-key">Gemini API key{locked && <small>Key tersimpan</small>}</label>
             <div className="ai-key-row">
               <input id="gemini-key" ref={keyInput} type="password" autoComplete="new-password" spellCheck={false}
-                disabled={locked} value={locked ? '************' : key} onChange={event => setKey(event.target.value)} />
+                disabled={locked} value={locked ? '************' : key} onChange={event => { setConnection(false); setKey(event.target.value); }} />
               {status.configured && <button type="button" className="wm-button" onClick={() => {
+                setConnection(false);
                 setReplacing(!replacing);
                 setKey('');
                 if (!replacing) requestAnimationFrame(() => keyInput.current?.focus());
               }}>{replacing ? 'Batal ganti' : 'Ganti key'}</button>}
             </div>
           </div>
-          <label>ID model<input value={model} maxLength={80} spellCheck={false} onChange={event => setModel(event.target.value)} placeholder="gemini-flash-latest" /></label>
+          <label>ID model<input value={model} maxLength={80} spellCheck={false} onChange={event => { setConnection(false); setModel(event.target.value); }} placeholder="gemini-flash-latest" /></label>
+          {error && <p className="cms-error" role="alert">{error}</p>}
+          {connection && <p role="status">Koneksi berhasil{dirty ? ' · Belum disimpan' : ''}</p>}
           <div className="ai-actions">
             <button type="button" className="wm-button wm-primary" disabled={!canSubmit || !dirty} onClick={() => request('save')}>{busy === 'save' ? 'Menyimpan…' : 'Simpan'}</button>
             <button type="button" className="wm-button" disabled={!canSubmit} onClick={() => request('test')}>{busy === 'test' ? 'Menguji…' : 'Tes koneksi'}</button>

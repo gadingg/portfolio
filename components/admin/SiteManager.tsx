@@ -23,7 +23,7 @@ export function SiteManager({initial}: {initial?: InitialSite} = {}) {
     [saved, setSaved] = useState(initial ? JSON.stringify(initial.draft) : ''),
     [published, setPublished] = useState(initial ? JSON.stringify(initial.published) : ''),
     [revision, setRevision] = useState(initial?.revision || 0),
-    [group, setGroup] = useState('Hero'),
+    [group, setGroup] = useState('Identitas'),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
     [notice, setNotice] = useState('');
@@ -97,7 +97,7 @@ export function SiteManager({initial}: {initial?: InitialSite} = {}) {
     );
   const cv = (patch: Partial<SiteContent['cv']>) =>
     setContent((old) => (old ? { ...old, cv: { ...old.cv, ...patch } } : old));
-  const groups = [...new Set(siteFields.map((field) => field.group)), 'CV'];
+  const groups = [...new Set(siteFields.map((field) => field.group)), 'CV', 'File unduhan'];
   if (autosave.recovery && !autosave.canRestore) return <DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} onRestore={autosave.canRestore ? autosave.restoreRecovery : undefined} />;
   return (
     <div className="works-manager cms-manager wm-site-workspace">
@@ -105,7 +105,7 @@ export function SiteManager({initial}: {initial?: InitialSite} = {}) {
       {publicationReview}
       {autosave.recovery && autosave.canRestore && <DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} onRestore={autosave.canRestore ? autosave.restoreRecovery : undefined} />}
       <div className="wm-heading">
-        <div><h1>Website &amp; CV</h1></div>
+        <div><h1>Profil &amp; CV</h1></div>
         <a
           href="/admintgadink/dashboard/editor/home"
           className="wm-button"
@@ -118,10 +118,10 @@ export function SiteManager({initial}: {initial?: InitialSite} = {}) {
           }}
         >
           <Eye size={18} />
-          Live Editor Landing Page
+          Edit homepage
         </a>
       </div>
-      {content && <PublicationBar dirty={!!dirty} unpublished={saved !== published} busy={busy} operation={operation} scope="Perubahan Website & CV ikut di-publish." status={!dirty && saved === published && autosave.online ? 'Sudah tayang' : autosave.status} offline={!autosave.online} failed={autosave.failed}
+      {content && <PublicationBar dirty={!!dirty} unpublished={saved !== published} busy={busy} operation={operation} scope="Profil dan CV diterbitkan bersamaan." status={!dirty && saved === published && autosave.online ? 'Sudah tayang' : autosave.status} offline={!autosave.online} failed={autosave.failed}
         onSave={autosave.retry} onPublish={() => { void save('publish'); }}/>}
       {error && (
         <div className="wm-message wm-error" role="alert">
@@ -142,7 +142,7 @@ export function SiteManager({initial}: {initial?: InitialSite} = {}) {
       {!content && !error && <AdminSkeleton />}
       {content && (
         <>
-          <div className="wm-site-layout"><label className="wm-section-select">Bagian website<select value={group} onChange={event => setGroup(event.target.value)}>{groups.map(value => <option key={value} value={value}>{value}</option>)}</select></label><nav className="cms-section-tabs" aria-label="Bagian website">
+          <div className="wm-site-layout"><label className="wm-section-select">Bagian yang diedit<select value={group} onChange={event => setGroup(event.target.value)}>{groups.map(value => <option key={value} value={value}>{value === 'CV' ? 'Isi CV' : value === 'Kontak' ? 'Profil & kontak' : value}</option>)}</select></label><nav className="cms-section-tabs" aria-label="Bagian profil dan CV">
             {groups.map((value) => (
               <button
                 type="button"
@@ -151,12 +151,12 @@ export function SiteManager({initial}: {initial?: InitialSite} = {}) {
                 aria-pressed={group === value}
                 onClick={() => setGroup(value)}
               >
-                {value}
+                {value === 'CV' ? 'Isi CV' : value === 'Kontak' ? 'Profil & kontak' : value}
               </button>
             ))}
           </nav>
           <fieldset disabled={busy && operation !== 'save'} className="cms-editor-fields">
-            <h2>{group}</h2>
+            <h2>{group === 'CV' ? 'Isi CV' : group === 'Kontak' ? 'Profil & kontak' : group}</h2>
             {siteFields
               .filter((field) => field.group === group)
               .map((field) => (
@@ -276,11 +276,14 @@ export function SiteManager({initial}: {initial?: InitialSite} = {}) {
                   Tambah {section==='experience'?'pengalaman':'pendidikan'}
                 </button>
                 </div>)}
-                <h3>PDF CV</h3>
-                <p className="wm-muted">File ini yang diunduh pengunjung.</p>
+              </>
+            )}
+            {group === 'File unduhan' && (
+              <>
+                <p className="wm-muted">{content.cv.pdf ? (content.cv.pdf.split('/').at(-1)?.split('?')[0] || 'CV.pdf').replace(/^\d+-[a-f0-9-]{36}-/, '') : 'PDF dibuat dari isi CV.'}</p>
                 <FileDrop
                   folder="cv"
-                  uploadLabel={content.cv.pdf ? 'Ganti PDF CV' : 'Upload PDF CV'}
+                  uploadLabel={content.cv.pdf ? 'Ganti PDF' : 'Unggah PDF'}
                   accept="application/pdf"
                   disabled={busy}
                   onBusyChange={mediaBusy}

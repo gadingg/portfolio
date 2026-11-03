@@ -31,7 +31,7 @@ export function VisualEditor({target}:{target:string}){
   const [unpublished,setUnpublished]=useState(false);
   const [toolsOpen,setToolsOpen]=useState(false);
   const [canUndo,setCanUndo]=useState(false),[canRedo,setCanRedo]=useState(false);
-  const [tab,setTab]=useState('content'),[title,setTitle]=useState('Editor konten'),[status,setStatus]=useState('Memuat halaman…'),[error,setError]=useState(''),[ready,setReady]=useState(false),[dirty,setDirty]=useState(false),[busy,setBusy]=useState(false),[uploading,setUploading]=useState(false),[device,setDevice]=useState('Desktop'),[preview,setPreview]=useState(false),[panelOpen,setPanelOpen]=useState(false);
+  const [tab,setTab]=useState('sections'),[title,setTitle]=useState('Editor konten'),[status,setStatus]=useState('Memuat halaman…'),[error,setError]=useState(''),[ready,setReady]=useState(false),[dirty,setDirty]=useState(false),[busy,setBusy]=useState(false),[uploading,setUploading]=useState(false),[device,setDevice]=useState('Desktop'),[preview,setPreview]=useState(false),[panelOpen,setPanelOpen]=useState(false);
   const [selection,setSelection]=useState<SelectionData|null>(null),[sections,setSections]=useState<Component[]>([]),[activeSection,setActiveSection]=useState<Component|null>(null),[action,setAction]=useState('');
   const [layoutValue,setLayoutValue]=useState(''),[savedLayout,setSavedLayout]=useState(''),[visualRevision,setVisualRevision]=useState<number|null>(null);
   const autosave=useAutoDraft({storageKey:`portfolio:draft:visual:${target}:v1`,value:layoutValue,baseline:savedLayout,revision:visualRevision,
@@ -199,7 +199,7 @@ export function VisualEditor({target}:{target:string}){
     {publicationReview}
     {autosave.recovery&&<DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} onRestore={autosave.canRestore ? autosave.restoreRecovery : undefined}/>}
     <header className="visual-toolbar" inert={!!autosave.recovery && !autosave.canRestore}>
-      <a href={target==='home'?'/admintgadink/dashboard/site':'/admintgadink/dashboard/works'} onClick={leave} className="visual-icon" aria-label="Kembali ke CMS"><ArrowLeft size={20}/></a>
+      <a href={target==='home'?'/admintgadink/dashboard/site':'/admintgadink/dashboard/works'} onClick={leave} className="visual-icon visual-back" aria-label="Kembali ke admin"><ArrowLeft size={20}/><span>Admin</span></a>
       <div className="visual-title"><h1>{title}</h1>{ready&&<span role="status">{busy&&action==='publish'?(publicationCopy?.busyLabel||'Publishing…'):!dirty&&!unpublished&&autosave.online?(publicationCopy?.cleanLabel||'Sudah tayang'):autosave.status}{pendingHint}{uploading?' · Mengunggah…':''}</span>}</div>
       <button className="visual-tools-toggle" aria-label="Alat editor" aria-expanded={toolsOpen} onClick={()=>setToolsOpen(!toolsOpen)}>Alat</button>
       <div className={`visual-tools-content ${toolsOpen?'is-open':''}`}>
@@ -216,10 +216,10 @@ export function VisualEditor({target}:{target:string}){
     <div className="visual-workspace" aria-busy={busy} inert={!!autosave.recovery && !autosave.canRestore}>
       {panelOpen&&<button className="visual-panel-backdrop" aria-label="Tutup panel" onClick={()=>setPanelOpen(false)}/>}
       <aside className="visual-sidebar" aria-label="Panel konten" inert={(busy&&action!=='save')||uploading||!ready}>
-        <div className="visual-panel-heading"><h2>{target === 'home' ? 'Live Editor Landing Page' : 'Edit studi kasus'}</h2><button className="visual-panel-close" aria-label="Tutup panel konten" onClick={()=>setPanelOpen(false)}><X size={18}/></button></div>
-        <nav aria-label="Panel editor">{[['content','Konten',Type],['sections','Bagian',Layers],['add','Tambah',Plus]].map(([value,label,Icon])=><button key={value as string} aria-pressed={tab===value} onClick={()=>setTab(value as string)}><Icon size={16}/>{label as string}</button>)}</nav>
+        <div className="visual-panel-heading"><h2>{target === 'home' ? 'Homepage' : 'Studi kasus'}</h2><button className="visual-panel-close" aria-label="Tutup panel konten" onClick={()=>setPanelOpen(false)}><X size={18}/></button></div>
+        <nav aria-label="Panel editor">{[['sections','Bagian',Layers],['content','Konten',Type],['add','Tambah',Plus]].map(([value,label,Icon])=><button key={value as string} aria-pressed={tab===value} onClick={()=>setTab(value as string)}><Icon size={16}/>{label as string}</button>)}</nav>
         {tab==='content'&&<div className="visual-content-panel">
-          {!selection?<div className="visual-empty"><Type size={24}/><h3>Pilih bagian untuk diedit</h3><p>Klik teks, gambar, atau tombol di preview.</p></div>:<>
+          {!selection?<div className="visual-empty"><Type size={24}/><h3>Pilih bagian untuk diedit</h3><p>Pilih bagian dari daftar atau klik elemen di kanvas.</p></div>:<>
             <h3>{selection.label}</h3>
             {selection.managed?<><a className="visual-text-link" href="/admintgadink/dashboard/works" onClick={leave}>Kelola Portofolio <ExternalLink size={14}/></a></>:<>
               {selection.texts.map((text,index)=><label className="visual-field" key={`${selectedRef.current?.cid}-${index}`}>{selection.texts.length===1?'Teks':`Teks ${index+1}`}<TextField value={text} onCommit={value=>editText(index,value)}/></label>)}
@@ -230,8 +230,12 @@ export function VisualEditor({target}:{target:string}){
             {activeSection&&<button className="visual-section-shortcut" onClick={()=>setTab('sections')}><Layers size={16}/>Atur bagian: {sectionTitle(activeSection)}</button>}
           </>}
         </div>}
-        {tab==='sections'&&<div className="visual-section-panel"><h3>Susunan halaman</h3><ol className="visual-section-list">{sections.map(component=><li key={component.cid}><button aria-pressed={activeSection===component} onClick={()=>{editor.current?.select(component);setTab('sections');component.getEl()?.scrollIntoView({block:'center',behavior:'smooth'});}}>{sectionTitle(component)}</button></li>)}</ol>
-          {activeSection&&<div className="visual-section-controls"><strong>{sectionTitle(activeSection)}</strong><div><button aria-label="Pindah bagian ke atas" disabled={sectionIndex<=0||sections[sectionIndex-1]?.parent()!==activeSection.parent()} onClick={()=>reorderSection(sectionIndex,sectionIndex-1)}><ArrowUp size={16}/></button><button aria-label="Pindah bagian ke bawah" disabled={sectionIndex<0||sectionIndex>=sections.length-1||sections[sectionIndex+1]?.parent()!==activeSection.parent()} onClick={()=>reorderSection(sectionIndex,sectionIndex+1)}><ArrowDown size={16}/></button><button className="visual-delete" aria-label="Hapus bagian" onClick={()=>removeSection(activeSection)}><Trash2 size={16}/>Hapus</button></div></div>}
+        {tab==='sections'&&<div className="visual-section-panel"><h3>Susunan halaman</h3><ol className="visual-section-list">{sections.map(component=><li key={component.cid}><button aria-pressed={activeSection===component} onClick={()=>{editor.current?.select(component);setTab('sections');setPanelOpen(true);component.getEl()?.scrollIntoView({block:'center',behavior:'smooth'});}}>{sectionTitle(component)}</button></li>)}</ol>
+          {activeSection&&<div className="visual-section-controls"><strong>{sectionTitle(activeSection)}</strong><button type="button" onClick={() => {
+            const field = activeSection.find('h1,h2,h3,p,img,a')[0];
+            if (field) editor.current?.select(field);
+            setTab('content');
+          }}>Edit konten</button><div><button aria-label="Pindah bagian ke atas" disabled={sectionIndex<=0||sections[sectionIndex-1]?.parent()!==activeSection.parent()} onClick={()=>reorderSection(sectionIndex,sectionIndex-1)}><ArrowUp size={16}/></button><button aria-label="Pindah bagian ke bawah" disabled={sectionIndex<0||sectionIndex>=sections.length-1||sections[sectionIndex+1]?.parent()!==activeSection.parent()} onClick={()=>reorderSection(sectionIndex,sectionIndex+1)}><ArrowDown size={16}/></button><button className="visual-delete" aria-label="Hapus bagian" onClick={()=>removeSection(activeSection)}><Trash2 size={16}/>Hapus</button></div></div>}
         </div>}
         {tab==='add'&&<div className="visual-templates"><h3>Tambah bagian</h3><p className="visual-hint">{activeSection?`Setelah “${sectionTitle(activeSection)}”`:'Di akhir konten halaman'}</p>{templates.map(item=><button key={item.title} onClick={()=>addSection(item.html)}><item.icon size={20}/><span>{item.title}</span><Plus size={16}/></button>)}</div>}
       </aside>

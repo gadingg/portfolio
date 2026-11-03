@@ -26,7 +26,7 @@ export function AdminLoginForm() {
         body: JSON.stringify({ email, password }),
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Belum bisa login. Coba lagi.');
+      if (!response.ok) throw new Error(data.error || 'Belum bisa masuk. Coba lagi.');
       router.replace('/admintgadink/dashboard');
       router.refresh();
     } catch (caught) {
@@ -39,7 +39,7 @@ export function AdminLoginForm() {
   return (
     <section className="admin-login-card" aria-labelledby="admin-login-title">
       <p className="admin-kicker">Gading Admin</p>
-      <h1 id="admin-login-title">Login admin</h1>
+      <h1 id="admin-login-title">Masuk ke admin</h1>
 
       <form onSubmit={handleSubmit} className="admin-login-form">
         <label htmlFor="admin-email">Email</label>
@@ -68,7 +68,7 @@ export function AdminLoginForm() {
         {error && <p className="admin-form-error" role="alert">{error}</p>}
 
         <button type="submit" className="button button--primary" disabled={loading}>
-          {loading ? 'Masuk dulu…' : 'Masuk CMS'}
+          {loading ? 'Sedang masuk…' : 'Masuk'}
         </button>
       </form>
     </section>

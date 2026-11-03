@@ -15,7 +15,9 @@ async function callGemini(settings: Pick<AISettings,'model'|'apiKey'>, body: unk
   } catch { throw new AIProviderError('Gemini belum merespons. Catatan Anda tetap aman; coba lagi sebentar.'); }
   if (!response.ok) {
     await response.body?.cancel();
-    if ([400,401,403].includes(response.status)) throw new AIProviderError('API key atau konfigurasi Gemini belum diterima. Periksa key, izin model, dan pengaturan API.', 400);
+    if (response.status === 401) throw new AIProviderError('API key ditolak. Coba ganti key dari Google AI Studio.', 400);
+    if (response.status === 403) throw new AIProviderError('Gemini menolak akses. Periksa izin dan pembatasan API key di Google AI Studio.', 400);
+    if (response.status === 400) throw new AIProviderError('Gemini menolak permintaan. Periksa API key dan ID model teks yang dipilih.', 400);
     if (response.status === 404) throw new AIProviderError('Model tidak tersedia untuk API key ini. Ganti ID model di Pengaturan AI.', 400);
     if (response.status === 429) throw new AIProviderError('Kuota atau batas permintaan Gemini tercapai. Tunggu sebentar atau periksa kuota API Anda.', 429);
     throw new AIProviderError('Gemini sedang belum tersedia. Coba lagi sebentar.');

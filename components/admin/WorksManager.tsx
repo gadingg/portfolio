@@ -36,7 +36,6 @@ import { usePublishReview } from './PublishReview';
 import { summarizeWorks } from '@/lib/publish-summary';
 import './works-manager.css';
 import { PublicationBar } from './PublicationBar';
-import { SettingsDisclosure } from './SettingsDisclosure';
 import { draftSaveMessage, sameDraftContent } from '@/lib/draft-backup';
 import { useAutoDraft } from './useAutoDraft';
 import { DraftRecovery } from './DraftRecovery';
@@ -52,6 +51,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
   const notify = useAdminToast();
   const workspace = useRef<HTMLDivElement>(null), previewDialog = useRef<HTMLDialogElement>(null);
   const freshItems = useRef(new Set<string>());
+  const [showFeatured, setShowFeatured] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<WorkEditorErrors>({});
   const [trash, setTrash] = useState<TrashedWork[]>(initial?.trash || []);
   const [showTrash, setShowTrash] = useState(false);
@@ -353,8 +353,9 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
           <ExternalLink size={18} />
         </a>}
       </div>
-      {revision !== null && !showTrash && <PublicationBar dirty={selectedDirty} unpublished={selectedUnpublished} busy={busy} operation={operation} scope={item ? '' : publicationCopy.scope} publishLabel={item ? publicationCopy.publishLabel === 'Publish' ? publicItem ? 'Terbitkan revisi' : 'Terbitkan' : publicationCopy.publishLabel : 'Terbitkan perubahan'}
+      {revision !== null && !showTrash && <PublicationBar dirty={selectedDirty} unpublished={selectedUnpublished} busy={busy} operation={operation} scope={item ? '' : publicationCopy.scope} publishLabel={item && !item.published && publicItem ? 'Sembunyikan dari website' : item ? publicationCopy.publishLabel === 'Publish' ? publicItem ? 'Terbitkan revisi' : 'Terbitkan' : publicationCopy.publishLabel : 'Terbitkan perubahan'}
         busyLabel={publicationCopy.busyLabel === 'Publishing…' ? 'Menerbitkan…' : publicationCopy.busyLabel} showPublish={publicationCopy.showPublish} pendingSuffix={item ? publicItem ? ' · Versi lama masih tayang' : ' · Belum tayang' : ' · Ada perubahan belum tayang'}
+        visibility={item ? { checked: item.published, onChange: checked => update(item.id, { published: checked }) } : undefined}
         status={!dirty && !selectedUnpublished && autosave.online ? publicationCopy.cleanLabel : autosave.status} offline={!autosave.online} failed={autosave.failed}
         onSave={autosave.retry} onPublish={() => { void save('publish'); }}/>}
       {error && (
@@ -385,7 +386,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
                 aria-pressed={!showTrash && kind === value}
                 aria-label={`${workLabels[value]} ${items.filter(work => work.kind === value).length}`}
                 disabled={busy}
-                onClick={() => { setShowTrash(false); setKind(value); setQuery(''); setShowImport(false); setReorderMode(false); }}
+                onClick={() => { setShowTrash(false); setKind(value); setQuery(''); setShowImport(false); setShowFeatured(false); setReorderMode(false); }}
               >
                 <span className="wm-tab-label">{workLabels[value]}</span>
                 <span className="wm-tab-short" aria-hidden="true">{{webapp:'Web / Apps',design:'Desain',video:'Video'}[value]}</span>
@@ -394,13 +395,9 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
                 </span>
               </button>
             ))}
-            <button type="button" className="wm-button wm-trash-tab" aria-pressed={showTrash} disabled={busy}
-              onClick={() => {setShowTrash(true); setShowImport(false); setReorderMode(false);}}>
-              <Trash2 size={17} aria-hidden="true"/><span>Sampah</span><span>{trash.length}</span>
-            </button>
           </div>
           {showTrash ? <section className="wm-trash-list" aria-label="Sampah portofolio">
-            <p className="wm-editor-note">Pulihkan dalam 72 jam.</p>
+            <div className="wm-heading"><h2>Sampah ({trash.length})</h2><button type="button" className="wm-button" onClick={() => setShowTrash(false)}>Kembali ke koleksi</button></div><p className="wm-editor-note">Pulihkan dalam 72 jam.</p>
             {trash.length ? trash.map(entry => {
               const work = entry.draft || entry.published!;
               return <div className="cms-work-row" key={entry.id}>
@@ -410,7 +407,24 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
               </div>;
             }) : <div className="wm-empty"><Trash2 size={28} aria-hidden="true"/><h2>Sampah kosong</h2><p>Portofolio yang dihapus akan muncul di sini.</p></div>}
           </section> : <>
-          {kind === 'webapp' && <SettingsDisclosure title="Pilihan homepage" status={`${homepageWorks(items).length} dari 3 portofolio`} icon={<Eye size={20}/>}>
+
+          <div className="wm-toolbar">
+            {reorderMode && <button type="button" className="wm-button" onClick={() => setReorderMode(false)}><Check size={18}/>Selesai mengurutkan</button>}
+            <label className="wm-search"><span className="wm-sr-only">Cari portofolio</span><Search size={18} aria-hidden="true"/><input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder="Cari judul…" /></label>
+            <div className="wm-create-actions">
+              <button type="button" className="wm-button wm-primary" disabled={busy} onClick={() => {setShowImport(false);add();}}><Plus size={18} aria-hidden="true"/>{addLabel}</button>
+              <details className="wm-action-menu">
+              <summary className="wm-button" aria-label="Kelola koleksi">Kelola koleksi</summary>
+              <div className="wm-menu-panel">
+                <button type="button" disabled={busy || !!query || reorderMode} onClick={event => { closeMenu(event.currentTarget); setReorderMode(true); }}><ListOrdered size={18}/>Atur urutan</button>
+                {kind === 'webapp' && <button type="button" disabled={busy} onClick={event => { closeMenu(event.currentTarget); setShowFeatured(true); setShowImport(false); }}><Eye size={18}/>Unggulan homepage</button>}
+                <button type="button" disabled={busy} onClick={event => { closeMenu(event.currentTarget); setShowTrash(true); setShowFeatured(false); setShowImport(false); setReorderMode(false); }}><Trash2 size={18}/>Sampah ({trash.length})</button>
+                <button type="button" disabled={busy} onClick={event => { closeMenu(event.currentTarget); setShowFeatured(false); setShowImport(true); }}><Upload size={18}/>Import banyak file</button>
+              </div>
+            </details></div>
+          </div>
+          {showFeatured && kind === 'webapp' && <section className="wm-import-panel" aria-label="Unggulan homepage">
+            <div className="cms-panel-heading"><h2>Unggulan homepage</h2><button type="button" className="wm-button" onClick={() => setShowFeatured(false)}>Tutup</button></div>
             <p className="wm-editor-note">Maks. 3 unggulan, sesuai urutan portofolio.</p>
             <div className="wm-featured-options">
               {items.filter(work => work.kind === 'webapp' && work.published && !workReadiness(work)).map(work => {
@@ -422,19 +436,8 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
                 </label>;
               })}
             </div>
-          </SettingsDisclosure>}
-          <div className="wm-toolbar">
-            <button type="button" className="wm-button" title={reorderMode?'Selesai mengurutkan':'Atur urutan'} aria-label={reorderMode?'Selesai mengurutkan':'Atur urutan'} aria-pressed={reorderMode} disabled={busy||!!query} onClick={()=>setReorderMode(!reorderMode)}>{reorderMode?<Check size={18}/>:<ListOrdered size={18}/>} {reorderMode?'Selesai mengurutkan':'Atur urutan'}</button>
-            <label className="wm-search"><span className="wm-sr-only">Cari portofolio</span><Search size={18} aria-hidden="true"/><input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder="Cari judul…" /></label>
-            <div className="wm-create-actions">
-              <button type="button" className="wm-button wm-primary" disabled={busy} onClick={() => {setShowImport(false);add();}}><Plus size={18} aria-hidden="true"/>{addLabel}</button>
-              <details className="wm-action-menu">
-              <summary className="wm-button" aria-label="Opsi koleksi" title="Opsi koleksi"><MoreHorizontal size={20} aria-hidden="true"/></summary>
-              <div className="wm-menu-panel">
-                <button type="button" disabled={busy} onClick={event => { closeMenu(event.currentTarget); setShowImport(true); }}><Upload size={18}/>Import banyak file</button>
-              </div>
-            </details></div>
-          </div>
+
+          </section>}
           {showImport && <section className="wm-import-panel" aria-label="Tambah dari media">
             <div className="cms-panel-heading"><h2>{kind === 'video' ? 'Tambahkan video' : 'Tambahkan gambar'}</h2><button type="button" className="wm-button" aria-label="Tutup upload" disabled={busy} onClick={() => setShowImport(false)}><X size={18}/></button></div>
             <p className="wm-editor-note">Setiap file menjadi satu portofolio.</p>

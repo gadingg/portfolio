@@ -24,7 +24,7 @@ export function Overview({ draft, published, engagement, days }: {
   const names = new Map([...draft, ...published].map(item => [item.id, item.title]));
   return <div className="works-manager cms-manager overview">
     <header className="wm-heading overview-heading">
-      <div><h1>Overview</h1></div>
+      <div><h1>Ringkasan</h1></div>
       <div className="overview-actions">
         <AdminLink className="wm-button" href="/admintgadink/dashboard/editor/home">Edit homepage</AdminLink>
         <AdminLink className="wm-button wm-primary" href="/admintgadink/dashboard/works">Kelola portofolio</AdminLink>
@@ -34,12 +34,20 @@ export function Overview({ draft, published, engagement, days }: {
     <section className="overview-stats" aria-label="Ringkasan portofolio">
       <div className="overview-stat overview-stat-total"><div className="overview-stat-heading"><h2>Total portofolio</h2><Layers3 aria-hidden="true" /></div><strong>{number(summary.total)}</strong></div>
       <div className="overview-stat"><div className="overview-stat-heading"><h2>Tayang di website</h2><Eye aria-hidden="true" /></div><strong>{number(summary.live)}</strong></div>
-      <div className="overview-stat"><div className="overview-stat-heading"><h2>Draft baru</h2><FilePenLine aria-hidden="true" /></div><strong>{number(summary.drafts)}</strong></div>
+      <div className="overview-stat"><div className="overview-stat-heading"><h2>Perlu ditinjau</h2><FilePenLine aria-hidden="true" /></div><strong>{number(summary.review.length)}</strong></div>
       <div className="overview-stat"><div className="overview-stat-heading"><h2>Disembunyikan</h2><EyeOff aria-hidden="true" /></div><strong>{number(summary.hidden)}</strong></div>
     </section>
 
     {summary.incomplete>0 && <div className="overview-publication-note"><CircleAlert size={20} aria-hidden="true" /><span>{number(summary.incomplete)} portofolio belum lengkap dan belum tampil di website.</span><AdminLink href="/admintgadink/dashboard/works">Lengkapi portofolio</AdminLink></div>}
-    {summary.changed && <div className="overview-publication-note"><span>Ada perubahan yang belum tayang.</span><AdminLink href="/admintgadink/dashboard/works">Lihat draft</AdminLink></div>}
+    {summary.review.length > 0 && <section className="overview-panel" aria-labelledby="review-title">
+      <div className="overview-section-heading"><h2 id="review-title">Draft yang perlu ditinjau</h2></div>
+      <ul className="overview-popular">{summary.review.map(item => <li key={item.id}>
+        <AdminLink href={`/admintgadink/dashboard/works?kind=${item.kind}&work=${encodeURIComponent(item.id)}`}>{item.title || 'Tanpa judul'}</AdminLink>
+        <span>{item.status}</span>
+      </li>)}</ul>
+    </section>}
+    {summary.changed && !summary.review.length && <div className="overview-publication-note"><span>Ada perubahan koleksi yang belum tayang.</span><AdminLink href="/admintgadink/dashboard/works">Buka portofolio</AdminLink></div>}
+
 
     <div className="overview-content-grid">
       <section className="overview-panel" aria-labelledby="category-title">

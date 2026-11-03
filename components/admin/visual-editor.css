@@ -11,3 +11,7 @@
 .visual-editor button[hidden]{display:none!important}
 @media(max-width:700px){.visual-title{grid-column:2/4;grid-row:1}.visual-toolbar>a.visual-icon{grid-column:1;grid-row:1}.visual-toolbar>button[aria-label='Preview halaman']{grid-column:4;grid-row:1}.visual-toolbar>.visual-tools-toggle{grid-column:1;grid-row:2}.visual-toolbar>.visual-panel-toggle{grid-column:2;grid-row:2;justify-self:start}.visual-toolbar>button[aria-label='Simpan draft'],.visual-toolbar>button[aria-label='Publikasikan']{grid-column:3/5;grid-row:2}.visual-toolbar>button[aria-label='Publikasikan']{white-space:nowrap}}
 .visual-recovery:empty{display:none}.visual-recovery{max-height:34dvh;overflow:auto;padding-inline:16px;background:var(--bg)}.visual-recovery .cms-recovery{margin-block:12px}.visual-recovery .cms-recovery-history{margin-block:4px}
+
+.visual-section-controls > strong { display:block; margin-bottom:10px; }
+.visual-section-controls > button { width:100%; }
+@media(max-width:700px) { .visual-back > span { display:none; } }

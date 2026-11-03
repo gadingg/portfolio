@@ -15,6 +15,7 @@ export function summarizeWorks(draft: WorkItem[], published: WorkItem[]) {
   const recent = [...draft].sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')).slice(0, 5);
   return {
     total: items.length, live: live.length, drafts: drafts.length, hidden: hidden.length, incomplete:incomplete.length,
+    review: draft.filter(item => !stored.has(item.id) || JSON.stringify(item) !== JSON.stringify(stored.get(item.id))).map(item => ({ id: item.id, kind: item.kind, title: item.title, status: status(item) })),
     examples: items.filter(item => item.demo).length,
     changed: JSON.stringify(draft) !== JSON.stringify(published),
     categories: workKinds.map(kind => ({ kind, total: items.filter(item => item.kind === kind).length })),

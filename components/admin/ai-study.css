@@ -6,3 +6,8 @@
 .ai-key-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; align-items:center; }
 .ai-key-row input:only-child { grid-column:1/-1; }
 .ai-key-row input:disabled { color:var(--muted); opacity:1; }
+
+.ai-workspace .ai-actions [aria-pressed=true] { border-color:var(--amber); color:var(--amber); }
+.ai-current-copy { margin:12px 0; padding:12px 14px; background:var(--surface); border-radius:8px; }
+.ai-current-copy p { white-space:pre-wrap; overflow-wrap:anywhere; margin-top:6px; }
+.ai-key-field label small { color:var(--muted); font-weight:400; }

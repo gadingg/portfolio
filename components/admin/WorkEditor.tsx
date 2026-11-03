@@ -26,6 +26,7 @@ export function WorkEditor({item, items, disabled, errors, onChange, onKindChang
   const description = <label>{summary}<textarea {...attrs('description')} rows={3} maxLength={500} value={item.description} onChange={event => onChange({description:event.target.value})}/>{error('description')}</label>;
   return <div className={`work-editor work-editor--${item.kind}`}>
     <fieldset className="work-editor-fields" disabled={disabled}>
+      <legend>Ringkasan</legend>
       <label>Judul<input {...attrs('title')} value={item.title} maxLength={140} onChange={event => onChange({title:event.target.value})}/>{error('title')}</label>
       {item.kind === 'webapp' && description}
       {item.kind !== 'video' && <section className="work-editor-media" data-work-field="image" aria-label={item.kind === 'design' ? 'Gambar desain' : 'Cover proyek'}>
@@ -37,7 +38,7 @@ export function WorkEditor({item, items, disabled, errors, onChange, onKindChang
       </section>}
       {item.kind === 'video' && <VideoSourceEditor item={item} disabled={disabled} errors={errors} onBusyChange={onBusyChange} onChange={onChange}/>}
       {study && <section className="work-editor-story" aria-labelledby="work-story-title">
-        <h2 id="work-story-title">Cerita proyek</h2>
+        <h2 id="work-story-title">Problem, Approach &amp; Outcome</h2>
         {(['problem','solution','impact'] as const).map((key, index) => <label key={key}>{['Masalah','Solusi','Hasil'][index]}
           <textarea {...attrs(`caseStudy.${key}`)} rows={3} maxLength={12000} value={study[key]} onChange={event => onChange({caseStudy:{...study,[key]:event.target.value}})}/>
           {error(`caseStudy.${key}`)}
@@ -54,7 +55,7 @@ export function WorkEditor({item, items, disabled, errors, onChange, onKindChang
           {Object.entries(errors).filter(([key]) => key.startsWith('caseStudy.app')).map(([key,text]) => <small className="work-field-error" key={key}>{text}</small>)}
         </div>
       </SettingsDisclosure>}
-      {study && <SettingsDisclosure title="Cerita & media tambahan" icon={<ImageIcon size={20}/>}>
+      {study && <SettingsDisclosure title="Isi studi kasus" icon={<ImageIcon size={20}/>} defaultOpen>
         <div className="work-editor-fields" data-work-field="caseStudy.blocks">
           {study.layout ? <><CaseLayoutText layout={study.layout} disabled={disabled} onChange={layout => onChange({caseStudy:{...study,layout}})}/>
             <CaseLayoutImages layout={study.layout} disabled={disabled} onBusyChange={onBusyChange} onChange={layout => onChange({caseStudy:{...study,layout}})}/></>
@@ -80,7 +81,6 @@ export function WorkEditor({item, items, disabled, errors, onChange, onKindChang
           <label>Jenis portofolio<select value={item.kind} onChange={event => void onKindChange(event.target.value as WorkKind)}>
             {workKinds.map(kind => <option key={kind} value={kind}>{workLabels[kind]}</option>)}
           </select></label>
-          <label className="wm-check"><input type="checkbox" checked={item.published} onChange={event => onChange({published:event.target.checked})}/>Tampilkan setelah diterbitkan</label>
           {item.kind === 'webapp' && <><label className="wm-check"><input type="checkbox" checked={!!study} onChange={event => onChange(setCaseStudyEnabled(item,event.target.checked))}/>Halaman studi kasus</label>
             <label className="wm-check"><input type="checkbox" checked={homepageWorks(items).some(work => work.id === item.id)}
               disabled={disabled || !item.published || !!workReadiness(item) || (!homepageWorks(items).some(work=>work.id===item.id)&&homepageWorks(items).length>=3)}

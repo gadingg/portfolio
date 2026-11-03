@@ -71,11 +71,11 @@ export function AdminSidebar() {
 
   if(pathname.startsWith('/admintgadink/dashboard/editor/'))return null;
   const navItems = [
-    { label: 'Overview', href: '/admintgadink/dashboard', icon: LayoutDashboard },
+    { label: 'Ringkasan', href: '/admintgadink/dashboard', icon: LayoutDashboard },
     { label: 'Portofolio', href: '/admintgadink/dashboard/works', icon: Images },
-    { label: 'Edit homepage', href: '/admintgadink/dashboard/editor/home', icon: PanelTop },
+    { label: 'Homepage', href: '/admintgadink/dashboard/editor/home', icon: PanelTop },
     { label: 'AI Study Case', href: '/admintgadink/dashboard/ai', icon: FilePenLine },
-    { label: 'Website & CV', href: '/admintgadink/dashboard/site', icon: Contact },
+    { label: 'Profil & CV', href: '/admintgadink/dashboard/site', icon: Contact },
     { label: 'Pengaturan AI', href: '/admintgadink/dashboard/settings', icon: Settings2 },
   ];
 

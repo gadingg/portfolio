@@ -35,6 +35,8 @@ export function AIStudyManager({ initial }: { initial: { items: WorkItem[]; revi
   useRegisterAdminDirty(dirty);
   const disabled=busy||uploading;
   const prepared = looksLikePreparedStudy(brief);
+  const [inputMode, setInputMode] = useState<'brief' | 'import'>('brief');
+  const importing = inputMode === 'import';
   async function copyPrompt() {
     try {
       await navigator.clipboard.writeText(aiStudyBasePrompt);
@@ -46,7 +48,7 @@ export function AIStudyManager({ initial }: { initial: { items: WorkItem[]; revi
   }
   function selectWork(id:string,works=items){
     const work=works.find(value=>value.id===id);setSelected(id);setResult(work?studyFromWork(work):null);setPending(null);setApplied('');setError('');setMessage('');
-    setBrief(work?.aiDraft?.brief||(work?.caseStudy?[work.title,work.description,work.caseStudy.problem,work.caseStudy.solution,work.caseStudy.impact,...work.caseStudy.blocks.filter(block=>['heading','paragraph'].includes(block.block_type)).map(block=>String(block.content_json.text||''))].filter(Boolean).join('\n\n').slice(0,30000):''));setImage(work?.image||'');setAlt(work?.imageAlt||'');setAppUrl(work?.caseStudy?.appUrl||'');dirty.current=false;
+    setInputMode(looksLikePreparedStudy(work?.aiDraft?.brief || '') ? 'import' : 'brief');setBrief(work?.aiDraft?.brief||(work?.caseStudy?[work.title,work.description,work.caseStudy.problem,work.caseStudy.solution,work.caseStudy.impact,...work.caseStudy.blocks.filter(block=>['heading','paragraph'].includes(block.block_type)).map(block=>String(block.content_json.text||''))].filter(Boolean).join('\n\n').slice(0,30000):''));setImage(work?.image||'');setAlt(work?.imageAlt||'');setAppUrl(work?.caseStudy?.appUrl||'');dirty.current=false;
     const url=new URL(window.location.href);if(id)url.searchParams.set('work',id);else url.searchParams.delete('work');window.history.replaceState(null,'',url);
   }
   const initialized = useRef(false);
@@ -74,6 +76,7 @@ export function AIStudyManager({ initial }: { initial: { items: WorkItem[]; revi
     if(lock.current||disabled)return;
     if(brief.trim().length<20){setError('Ceritakan project-nya minimal 20 karakter.');return;}
     if(target!=='all'&&!result)return;
+    if (target === 'all' && importing && !prepared) { setError('Tempel JSON lengkap dari Copy Prompt.'); return; }
     if(target==='all'&&result&&!await ask('Generate versi baru? Hasilnya ditampilkan terpisah untuk dibandingkan. Tulisan Anda tetap aman sampai Anda memilih hasil baru.','Generate versi baru'))return;
     lock.current=true;setBusy(true);setError('');setMessage(prepared && target==='all' ? 'Memeriksa format ringkasan…' : 'Gemini sedang menyusun draft…');setPending(null);
     try{
@@ -106,7 +109,7 @@ export function AIStudyManager({ initial }: { initial: { items: WorkItem[]; revi
     const fields=[['title','Judul portfolio'],['description','Deskripsi singkat'],['problem','Problem'],['approach','Approach'],['outcome','Outcome']] as const;
     return <>
       {fields.filter(([key])=>!preview||pending?.target==='all'||pending?.target===key).map(([key,label])=><div className="ai-result-field" key={key}>
-        <div className="ai-field-heading"><label htmlFor={`ai-${preview?'next':'edit'}-${key}`}>{label}</label>{!preview&&<button type="button" className="wm-button admin-icon-action" title={`Generate ulang ${label}`} aria-label={`Generate ulang ${label}`} disabled={disabled||!configured} onClick={()=>generate(key)}><RotateCw size={18} aria-hidden="true"/></button>}</div>
+        <div className="ai-field-heading"><label htmlFor={`ai-${preview?'next':'edit'}-${key}`}>{label}</label>{!preview&&<button type="button" className="wm-button admin-icon-action" title={`Generate ulang ${label}`} aria-label={`Generate ulang ${label}`} disabled={disabled||!configured||prepared} onClick={()=>generate(key)}><RotateCw size={18} aria-hidden="true"/></button>}</div>
         <textarea id={`ai-${preview?'next':'edit'}-${key}`} readOnly={preview} disabled={!preview&&disabled} rows={key==='title'?2:4} maxLength={key==='title'?140:key==='description'?500:1500} value={study[key]} onChange={event=>changeResult({[key]:event.target.value})}/>
       </div>)}
       {!selected&&(!preview||pending?.target==='all')&&<label>Slug pendek<input maxLength={32} readOnly={preview} disabled={!preview&&disabled} value={study.slug} onChange={event=>changeResult({slug:event.target.value})}/></label>}
@@ -125,27 +128,31 @@ export function AIStudyManager({ initial }: { initial: { items: WorkItem[]; revi
     {error&&<p className="cms-error" role="alert">{error}{revision!==null&&<button className="wm-button" disabled={disabled} type="button" onClick={async()=>{if(!dirty.current||await ask('Muat ulang daftar dan lepaskan perubahan workspace yang belum disimpan?','Muat ulang'))void load();}}>Muat ulang daftar</button>}</p>}
     {message&&busy&&<p role="status" className="ai-notice"><span className="admin-spinner" aria-hidden="true"/>{message}</p>}
     {loading?<AdminSkeleton />:revision===null?<button type="button" className="wm-button" onClick={load}>Coba lagi</button>:<>
-      {!configured&&<div className="ai-notice"><p>Catatan bebas butuh API key. Hasil dari Copy Prompt bisa diimpor langsung.</p></div>}
+      {!configured&&!importing&&<div className="ai-notice"><p>Catatan bebas butuh API key. Hasil dari Copy Prompt bisa diimpor langsung.</p></div>}
       <div className="ai-authoring-layout">
-        <section className="ai-input-panel" aria-labelledby="ai-brief-title"><div className="ai-field-heading"><h2 id="ai-brief-title">Brief project</h2><button type="button" className="wm-button" onClick={copyPrompt} disabled={busy}><Copy size={16} aria-hidden="true" />Copy Prompt</button></div>
+        <section className="ai-input-panel" aria-labelledby="ai-brief-title"><div className="ai-field-heading"><h2 id="ai-brief-title">Bahan studi kasus</h2><button type="button" className="wm-button" onClick={copyPrompt} disabled={busy}><Copy size={16} aria-hidden="true" />Copy Prompt</button></div>
+          <div className="ai-actions" role="group" aria-label="Cara menyiapkan draft">
+            <button type="button" className="wm-button" aria-pressed={!importing} disabled={disabled} onClick={() => setInputMode('brief')}>Tulis brief</button>
+            <button type="button" className="wm-button" aria-pressed={importing} disabled={disabled} onClick={() => setInputMode('import')}>Impor hasil AI</button>
+          </div>
           <fieldset disabled={disabled} className="ai-fields">
             <label>Tujuan draft<select value={selected} onChange={async event=>{const id=event.target.value;if(!dirty.current||await ask('Ganti project dan lepaskan perubahan workspace yang belum disimpan?','Ganti project'))selectWork(id);}}><option value="">Buat studi kasus baru</option>{items.filter(item=>item.kind==='webapp'&&item.caseStudy).map(item=><option key={item.id} value={item.id}>Revisi: {item.title}</option>)}</select></label>
-            <label>Ceritakan project-nya<textarea rows={10} maxLength={30000} value={brief} onChange={event=>{setBrief(event.target.value);dirty.current=true;setApplied('');}} placeholder="Boleh catatan bebas, daftar fitur, masalah yang ingin diselesaikan, proses, atau hasil yang sudah Anda lihat."/></label>
+            <label>{importing ? "JSON hasil AI" : "Catatan proyek"}<textarea rows={10} maxLength={30000} value={brief} onChange={event=>{setBrief(event.target.value);if (looksLikePreparedStudy(event.target.value)) setInputMode('import');dirty.current=true;setApplied('');}} placeholder={importing ? "Tempel JSON dari Copy Prompt." : "Ceritakan masalah, fitur yang dibuat, dan hasil yang sudah terlihat."}/></label>
             <p className="wm-editor-note">{brief.length.toLocaleString('id-ID')}/30.000 karakter</p>
             <label>Link aplikasi (opsional)<input inputMode="url" maxLength={2000} value={appUrl} onChange={event=>{setAppUrl(event.target.value);dirty.current=true;setApplied('');}}/></label>
             <h3>Thumbnail portofolio</h3>
             <FileDrop previewSrc={image} previewAlt={alt||'Thumbnail portfolio'} disabled={disabled} onBusyChange={setUploading} uploadLabel={image?'Ganti thumbnail':'Upload thumbnail'} onUploaded={files=>{setImage(files[0].url);dirty.current=true;setApplied('');}}/>
             <label>Deskripsi thumbnail<input maxLength={250} value={alt} onChange={event=>{setAlt(event.target.value);dirty.current=true;setApplied('');}}/></label>
           </fieldset>
-          <button type="button" className="wm-button wm-primary" disabled={disabled||(!configured&&!prepared)||brief.trim().length<20} onClick={()=>generate()} aria-busy={busy}>{busy?'Memproses…':prepared?'Impor ringkasan':result?'Generate versi baru':'Generate Study Case'}</button>
-          <p className="wm-editor-note">{prepared ? "Ringkasan diisi langsung ke draft." : "Pakai catatan bebas, atau tempel JSON dari Copy Prompt."}</p>
+          <button type="button" className="wm-button wm-primary" disabled={disabled||(importing ? !prepared : !configured)||brief.trim().length<20} onClick={()=>generate()} aria-busy={busy}>{busy?'Memproses…':importing?'Impor ringkasan':result?'Generate versi baru':'Generate Study Case'}</button>
+          <p className="wm-editor-note">{importing ? "JSON yang valid langsung mengisi draft." : "Catatan diproses oleh Gemini."}</p>
         </section>
         <div className="ai-review-panel" ref={resultRef} tabIndex={-1} aria-labelledby="ai-review-title">
-          <h2 id="ai-review-title">Review draft</h2>
+          <h2 id="ai-review-title">Tinjau draft</h2>
           {!result?<div className="ai-empty"><p>Draft akan muncul di sini untuk Anda periksa.</p></div>:<>
-            {pending&&<section className="ai-pending" ref={reviewRef} tabIndex={-1} aria-label="Usulan revisi AI"><h3>Usulan revisi</h3>{renderStudy(pending.result,true)}<div className="ai-actions"><button type="button" className="wm-button wm-primary" disabled={disabled} onClick={async()=>{if(await ask('Gunakan usulan ini untuk mengganti bagian yang dipilih? Bagian lain tetap dipertahankan.','Gunakan revisi')){setResult(mergeAIRevision(result,pending.result,pending.target));setPending(null);dirty.current=true;setApplied('');}}}>Gunakan revisi ini</button><button type="button" className="wm-button" disabled={disabled} onClick={()=>setPending(null)}>Pertahankan tulisan saya</button></div></section>}
+            {pending&&<section className="ai-pending" ref={reviewRef} tabIndex={-1} aria-label="Usulan revisi AI"><h3>Usulan revisi</h3>{pending.target !== 'all' && <div className="ai-current-copy"><strong>Teks saat ini</strong><p>{pending.target.startsWith('section:') ? result.sections[Number(pending.target.split(':')[1])]?.body : result[pending.target as 'title' | 'description' | 'problem' | 'approach' | 'outcome'] || 'Belum ada teks'}</p></div>}{renderStudy(pending.result,true)}<div className="ai-actions"><button type="button" className="wm-button wm-primary" disabled={disabled} onClick={async()=>{if(await ask('Gunakan usulan ini untuk mengganti bagian yang dipilih? Bagian lain tetap dipertahankan.','Gunakan revisi')){setResult(mergeAIRevision(result,pending.result,pending.target));setPending(null);dirty.current=true;setApplied('');}}}>Gunakan revisi ini</button><button type="button" className="wm-button" disabled={disabled} onClick={()=>setPending(null)}>Pertahankan tulisan saya</button></div></section>}
 
-            {renderStudy(result)}
+            {!pending && renderStudy(result)}
             <section className="ai-private-notes"><h3>Perlu dikonfirmasi</h3>{result.confirmations.length?<ul>{result.confirmations.map((text,index)=><li key={index}>{text}</li>)}</ul>:<p>Tidak ada catatan.</p>}</section>
             {!!result.screenshots.length&&<section className="ai-private-notes"><h3>Saran screenshot</h3><ul>{result.screenshots.map((shot,index)=><li key={index}><strong>Setelah bagian {shot.afterSection+1}</strong><p>{shot.description}</p>{shot.caption&&<p>Caption: {shot.caption}</p>}</li>)}</ul></section>}
             <div className="ai-apply"><button type="button" className="wm-button wm-primary" disabled={disabled||!!pending||!!applied||!image||brief.trim().length<20} onClick={apply}>{applied?'Draft tersimpan':'Gunakan hasil & simpan draft'}</button><p>Halaman publik tetap memakai versi terakhir yang Anda publish.</p>{applied&&<a className="wm-button" href={`/admintgadink/dashboard/works?kind=webapp&work=${applied}`}>Lanjutkan ke editor portfolio</a>}</div>
