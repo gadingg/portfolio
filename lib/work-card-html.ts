@@ -23,9 +23,9 @@ export function workCardsHTML(items: WorkItem[], collection = false, showcase = 
     const arrow = '<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#arrow-right"></use></svg>';
     if (item.kind === 'webapp') {
       const content = `<span class="work-media work-art-${item.artwork}">${picture}</span><${heading} class="work-card-title">${title}</${heading}>${item.description ? `<p class="work-card-description">${escape(item.description)}</p>` : ''}<div class="work-card-meta"><span class="work-destination">${destination}${arrow}</span></div>`;
-      return `<article class="work-card work-card-webapp">${href ? `<a class="work-card-link" href="${escape(href)}" aria-label="${destination}: ${title}"${href.startsWith('/') ? '' : ' target="_blank" rel="noopener noreferrer"'}>${content}</a>` : `<div class="work-card-link">${content}</div>`}</article>`;
+      return `<article data-ssr-work-id="${escape(item.id)}" class="work-card work-card-webapp">${href ? `<a class="work-card-link" href="${escape(href)}" aria-label="${destination}: ${title}"${href.startsWith('/') ? '' : ' target="_blank" rel="noopener noreferrer"'}>${content}</a>` : `<div class="work-card-link">${content}</div>`}</article>`;
     }
-    const file=safeURL(item.videoFile||''),instagramOriginal=instagramURL(item.url);
+    const file=item.videoSource==='instagram'?'':safeURL(item.videoFile||''),instagramOriginal=instagramURL(item.url);
     const playable=!!file&&/\.(mp4|webm)(?:[?#].*)?$/i.test(file);
     const instagram=!!instagramOriginal&&!/\/DEMO_VIDEO_\d+\//.test(instagramOriginal);
     const videoLabel=playable?'Watch video':instagram?'View on Instagram':'Preview';
@@ -33,7 +33,7 @@ export function workCardsHTML(items: WorkItem[], collection = false, showcase = 
     const external=item.kind==='video'&&!playable&&instagram;
     const media = `<a class="work-media work-art-${item.artwork}" href="${escape(destinationURL)}" aria-label="${item.kind === 'design' ? 'Enlarge' : videoLabel}: ${title}"${external?' target="_blank" rel="noopener noreferrer"':''}>${picture}${item.kind === 'video' ? `<span class="video-bottom"><span class="video-play">${videoLabel}</span><strong>${title}</strong></span>` : ''}</a>`;
     const caption = item.kind === 'design' ? `<div class="${showcase ? 'video-bottom design-showcase-caption' : 'work-caption'}"><${heading} class="work-card-title">${href ? `<a class="design-title-link" href="${escape(href)}">${title}</a>` : title}</${heading}></div>` : '';
-    return `<article class="work-card work-card-${item.kind}">${media}${caption}</article>`;
+    return `<article data-ssr-work-id="${escape(item.id)}" class="work-card work-card-${item.kind}">${media}${caption}</article>`;
   }).join('');
 }
 

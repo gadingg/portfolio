@@ -4,23 +4,23 @@ import { useEffect, useRef, useState } from 'react';
 import { readDraftBackup, sameDraftContent, draftStatusCopy, type DraftBackup } from '@/lib/draft-backup';
 import { useRegisterAdminDirty } from './AdminChanges';
 
-export function useAutoDraft({ storageKey, value, baseline, revision, enabled, blocked, saving, save, restore, ask }: {
+export function useAutoDraft({ storageKey, value, baseline, revision, enabled, blocked, saving, save, restore }: {
   storageKey: string; value: string; baseline: string; revision: number | null;
   enabled: boolean; blocked: boolean; saving: boolean;
   save: () => Promise<boolean>; restore: (value: string) => void;
-  ask: (message: string, confirmLabel?: string) => Promise<boolean>;
 }) {
   const [online, setOnline] = useState(true);
   const [initialized, setInitialized] = useState(false);
   const [recovery, setRecovery] = useState<DraftBackup | null>(null);
+  const [canRestore, setCanRestore] = useState(false);
   const [failedValue, setFailedValue] = useState<string | null>(null);
   const [localValue, setLocalValue] = useState<string | null>(null);
   const [storageFailed, setStorageFailed] = useState(false);
   const unsafe = useRef(false);
   const checkedKey = useRef('');
   const backupKey = useRef(storageKey);
-  const latest = useRef({ save, restore, ask });
-  latest.current = { save, restore, ask };
+  const latest = useRef({ save, restore });
+  latest.current = { save, restore };
   const dirty = enabled && !sameDraftContent(value, baseline);
   unsafe.current = dirty && value !== localValue;
   useRegisterAdminDirty(unsafe);
@@ -49,10 +49,29 @@ export function useAutoDraft({ storageKey, value, baseline, revision, enabled, b
           try { latest.current.restore(backup.value); } catch { setRecovery(backup); }
         }
         else setRecovery(backup);
+      } else {
+        let newest: DraftBackup | null = null;
+        for (let index = 0; index < localStorage.length; index++) {
+          const key = localStorage.key(index);
+          if (!key || key === backupKey.current || (key !== storageKey && !key.startsWith(storageKey + ':'))) continue;
+          const candidate = readDraftBackup(localStorage.getItem(key));
+          if (!candidate || sameDraftContent(candidate.value, baseline)) continue;
+          const age = Date.now() - Date.parse(candidate.savedAt);
+          if (!Number.isFinite(age) || age < 0 || age > 7 * 86400000) continue;
+          if (!newest || candidate.savedAt > newest.savedAt) newest = candidate;
+        }
+        if (newest) {
+          setCanRestore(newest.revision === revision);
+          setRecovery(newest);
+        }
       }
     } catch { setStorageFailed(true); }
     setInitialized(true);
   }, [enabled, revision, storageKey, baseline]);
+
+  useEffect(() => {
+    if (dirty && recovery && canRestore) { setRecovery(null); setCanRestore(false); }
+  }, [dirty, recovery, canRestore]);
 
   useEffect(() => {
     if (!enabled || !initialized || recovery || revision === null) return;
@@ -79,26 +98,20 @@ export function useAutoDraft({ storageKey, value, baseline, revision, enabled, b
     return () => window.clearTimeout(timer);
   }, [value, dirty, online, initialized, recovery, blocked, failedValue]);
 
-  useEffect(() => {
-    const unload = (event: BeforeUnloadEvent) => { if (unsafe.current) { event.preventDefault(); event.returnValue = ''; } };
-    const leave = (event: MouseEvent) => {
-      const link = (event.target as Element).closest?.('a[href]') as HTMLAnchorElement | null;
-      if (!unsafe.current || !link || link.target === '_blank' || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
-      event.preventDefault(); event.stopPropagation();
-      void latest.current.ask('Perubahan terakhir belum tersimpan. Tetap keluar?', 'Keluar tanpa menyimpan').then(yes => {
-        if (yes) { unsafe.current = false; window.location.assign(link.href); }
-      });
-    };
-    window.addEventListener('beforeunload', unload);
-    document.addEventListener('click', leave, true);
-    return () => { window.removeEventListener('beforeunload', unload); document.removeEventListener('click', leave, true); };
-  }, []);
-
+  function restoreRecovery() {
+    if (!recovery || recovery.revision !== revision || !canRestore) return;
+    try {
+      latest.current.restore(recovery.value);
+      setRecovery(null);
+      setCanRestore(false);
+      setFailedValue(null);
+    } catch { setCanRestore(false); }
+  }
   function useServerVersion() {
     try { localStorage.removeItem(backupKey.current); } catch { return; }
-    setRecovery(null); setLocalValue(null); setFailedValue(null);
+    setRecovery(null); setCanRestore(false); setLocalValue(null); setFailedValue(null);
   }
   const failed = failedValue === value;
   const status = draftStatusCopy({ online, dirty, localCopy: value === localValue, saving, failed, storageFailed });
-  return { status, online, recovery, unsafe, failed, retry: () => setFailedValue(null), useServerVersion };
+  return { status, online, recovery, canRestore, restoreRecovery, unsafe, failed, retry: () => setFailedValue(null), useServerVersion };
 }

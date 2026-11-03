@@ -88,7 +88,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
   itemsRef.current = items;
   const autosave = useAutoDraft({ storageKey: 'portfolio:draft:works:v1', value: JSON.stringify(items), baseline: JSON.stringify(saved), revision,
     enabled: revision !== null, blocked: busy, saving: operation === 'save', save: () => save('save', true),
-    restore: value => { const items = JSON.parse(value); if (!Array.isArray(items) || items.some(item => !item || typeof item.id !== 'string' || typeof item.title !== 'string' || !workKinds.includes(item.kind))) throw Error('Cadangan tidak valid.'); setItems(items); }, ask });
+    restore: value => { const items = JSON.parse(value); if (!Array.isArray(items) || items.some(item => !item || typeof item.id !== 'string' || typeof item.title !== 'string' || !workKinds.includes(item.kind))) throw Error('Cadangan tidak valid.'); setItems(items); } });
   function adopt(data: any, snapshot?: string, workId?: string) {
     const submitted: WorkItem[] = snapshot ? JSON.parse(snapshot) : [];
     setItems(current => {
@@ -195,6 +195,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
     setOperation(action); setBusy(true); setError('');
     if (!automatic) setNotice('');
     try {
+      if (action === 'publish' && selected && !(await ask(selected.published ? `Terbitkan “${selected.title}” ke website?` : `Sembunyikan “${selected.title}” dari website?`, selected.published ? 'Terbitkan' : 'Sembunyikan'))) return false;
       if (action === 'publish' && !workId && !(await review(summarizeWorks(snapshot, published)))) return false;
       adopt(await send(action, selected ? [selected] : snapshot, undefined, workId), JSON.stringify(snapshot), workId);
       if (!automatic) setNotice(action === 'publish' ? selected ? selected.published ? `${selected.title} sudah di-publish.` : `${selected.title} disembunyikan dari website.` : 'Semua perubahan sudah di-publish.' : 'Draft tersimpan.');
@@ -316,7 +317,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
     }
     previewDialog.current?.showModal();
   }
-  if (autosave.recovery) return <DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} />;
+  if (autosave.recovery && !autosave.canRestore) return <DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} onRestore={autosave.canRestore ? autosave.restoreRecovery : undefined} />;
   const selectedUnpublished = item ? !sameDraftContent(JSON.stringify(item), JSON.stringify(published.find(value => value.id === item.id) || null)) : unpublished;
   const selectedDirty = item ? !sameDraftContent(JSON.stringify(item), JSON.stringify(saved.find(value => value.id === item.id) || null)) : dirty;
   const editingLocked = busy && operation !== 'save';
@@ -327,6 +328,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
     }}>
       {confirmation}
       {publicationReview}
+      {autosave.recovery && autosave.canRestore && <DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} onRestore={autosave.canRestore ? autosave.restoreRecovery : undefined} />}
       <div className="wm-heading">
         <div>
           {editing && (
@@ -351,8 +353,8 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
           <ExternalLink size={18} />
         </a>}
       </div>
-      {revision !== null && !showTrash && <PublicationBar dirty={selectedDirty} unpublished={selectedUnpublished} busy={busy} operation={operation} scope={item ? '' : publicationCopy.scope} publishLabel={item ? publicationCopy.publishLabel === 'Publish' ? publicItem ? 'Perbarui' : 'Terbitkan' : publicationCopy.publishLabel : 'Terbitkan perubahan'}
-        busyLabel={publicationCopy.busyLabel === 'Publishing…' ? 'Menerbitkan…' : publicationCopy.busyLabel} showPublish={publicationCopy.showPublish} pendingSuffix={publicationCopy.pendingSuffix.replace('di-publish','diterbitkan')}
+      {revision !== null && !showTrash && <PublicationBar dirty={selectedDirty} unpublished={selectedUnpublished} busy={busy} operation={operation} scope={item ? '' : publicationCopy.scope} publishLabel={item ? publicationCopy.publishLabel === 'Publish' ? publicItem ? 'Terbitkan revisi' : 'Terbitkan' : publicationCopy.publishLabel : 'Terbitkan perubahan'}
+        busyLabel={publicationCopy.busyLabel === 'Publishing…' ? 'Menerbitkan…' : publicationCopy.busyLabel} showPublish={publicationCopy.showPublish} pendingSuffix={item ? publicItem ? ' · Versi lama masih tayang' : ' · Belum tayang' : ' · Ada perubahan belum tayang'}
         status={!dirty && !selectedUnpublished && autosave.online ? publicationCopy.cleanLabel : autosave.status} offline={!autosave.online} failed={autosave.failed}
         onSave={autosave.retry} onPublish={() => { void save('publish'); }}/>}
       {error && (

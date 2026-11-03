@@ -56,6 +56,9 @@ export function refineSiteCopy(site: SiteContent): SiteContent {
 
 export function refineWorkCopy(item: WorkItem): WorkItem {
   const workEdition = item.caseStudy && cases[item.caseStudy.slug] ? '2026-11-03-webapp-story-copy' : edition.edition;
+  if (item.caseStudy?.slug === 'mydaily' && item.imageAlt === 'Mockup tiga ponsel Daily App Gading') {
+    item = { ...item, imageAlt: 'Tiga layar Literally... My Daily App: ringkasan harian, keuangan, dan kebiasaan.' };
+  }
   if (item.copyEdition === workEdition) return item;
   const profile = item.caseStudy && cases[item.caseStudy.slug];
   const replace = replacements({ ...shared, ...profile?.text });

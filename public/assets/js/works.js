@@ -295,7 +295,7 @@
     const tick=()=>{if(automatic&&!paused&&!hover&&!focus&&visible&&!document.hidden&&!document.querySelector('dialog[open]')&&list.scrollWidth>list.clientWidth+4)move(1);};
     let timer;
     const restart=()=>{clearInterval(timer);timer=setInterval(tick,3000);};
-    controls.querySelector('[data-carousel-prev]')?.addEventListener('click',()=>{move(-1);restart();});controls.querySelector('[data-carousel-next]')?.addEventListener('click',()=>{move(1);restart();});toggle.addEventListener('click',()=>{paused=!paused;if(!paused){hover=false;focus=false;}restart();update();});
+    controls.querySelector('[data-carousel-prev]')?.addEventListener('click',()=>{move(-1);restart();});controls.querySelector('[data-carousel-next]')?.addEventListener('click',()=>{move(1);restart();});toggle.addEventListener('click',()=>{paused=!paused;restart();update();});
     list.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')hover=true;});list.addEventListener('pointerleave',()=>{hover=false;restart();});
     list.addEventListener('focusin',()=>focus=true);list.addEventListener('focusout',e=>{focus=list.contains(e.relatedTarget);if(!focus)restart();});
     list.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){paused=true;update();}});
@@ -308,7 +308,7 @@
   }
   groups.filter(g=>g.dataset.carousel).forEach(setupCarousel);
   let loading=false;
-  function renderItems(data) {
+  function renderItems(data, hydrate = false) {
       groups.forEach(group=>{group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=true);const list=group.querySelector('[data-works-list]');let items=data.items.filter(item=>item.kind===group.dataset.workKind&&item.published&&!(item.kind==='webapp'&&item.demo));const viewAll=group.querySelector('.works-heading > a');
         if(viewAll){
           const heading=viewAll.parentElement.querySelector('h2,h3');
@@ -324,6 +324,32 @@
           viewAll.setAttribute('aria-label',`View all ${group.dataset.workKind==='webapp'?'web apps and case studies':group.dataset.workKind==='design'?'design projects':'videos'}`);
         }
         if(group.dataset.workKind==='webapp'&&!group.dataset.collection){const manual=items.some(item=>item.homepageFeatured!==undefined);items=items.filter(item=>!manual||item.homepageFeatured===true).slice(0,3);}
+        const existing = [...list.querySelectorAll(':scope > [data-ssr-work-id]')];
+        if (hydrate && existing.length === items.length && existing.every((element, index) => element.dataset.ssrWorkId === items[index].id)) {
+          existing.forEach((element, index) => {
+            const item = items[index];
+            const trigger = element.querySelector(item.kind === 'webapp' ? '.work-card-link' : '.work-media');
+            if (!trigger?.matches('a,button')) return;
+            trigger.dataset.workId = item.id;
+            trigger.dataset.demo = String(item.demo);
+            trigger.dataset.engagement = item.kind === 'design' ? 'design_open' : item.kind === 'video' ? 'video_open' : item.caseStudy ? 'work_open' : 'app_click';
+            const video = item.kind === 'video' ? videoAction(item) : null;
+            if (item.kind !== 'design' && (!video || video.kind === 'instagram')) return;
+            trigger.setAttribute('role', 'button');
+            function open(event) {
+              if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+              event.preventDefault();
+              if (video) openVideo(item, trigger);
+              else { imageItems = items; openDialog(trigger,item.title); modal.dataset.mode = 'design'; showDesign(index); }
+            }
+            trigger.addEventListener('click', open);
+            trigger.addEventListener('keydown', event => {
+              if (event.key === ' ') { event.preventDefault(); trigger.click(); }
+            });
+          });
+          group._updateCarousel?.();
+          return;
+        }
         list.replaceChildren(...items.map(item=>card(item,items,group.dataset.collection?'h2':'h4',!!group.querySelector('.editorial-gallery'))));if(!items.length)list.append(node('p','works-message','No portfolio items yet.'));list.scrollLeft=0;list.setAttribute('aria-busy','false');group._updateCarousel?.();
       });
       document.dispatchEvent(new Event('portfolio:works-ready'));
@@ -339,5 +365,5 @@
   }
   groups.forEach(group=>group.querySelector('[data-retry-works]')?.addEventListener('click',load));
   const initial=document.getElementById('initial-works');
-  try {const data=initial?JSON.parse(initial.textContent):null;if(!data||!Array.isArray(data.items)||document.body.dataset.cmsPreview)load();else renderItems(data);} catch {load();}
+  try {const data=initial?JSON.parse(initial.textContent):null;if(!data||!Array.isArray(data.items)||document.body.dataset.cmsPreview)load();else renderItems(data, true);} catch {load();}
 })();

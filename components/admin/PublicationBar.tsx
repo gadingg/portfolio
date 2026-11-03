@@ -3,7 +3,7 @@ import { publicationState } from '@/lib/publication-state';
 import { AdminActionLabel } from './AdminActionLabel';
 import {CircleDot,CheckCircle2,Upload} from 'lucide-react';
 
-export function PublicationBar({dirty, unpublished, busy, operation, scope, publishLabel = 'Publish', busyLabel = 'Publishing…', showPublish = true, pendingSuffix = ' · belum di-publish', status, offline = false, failed = false, onSave, onPublish}: {
+export function PublicationBar({dirty, unpublished, busy, operation, scope, publishLabel = 'Publish', busyLabel = 'Publishing…', showPublish = true, pendingSuffix = ' · Ada perubahan belum tayang', status, offline = false, failed = false, onSave, onPublish}: {
   dirty: boolean; unpublished: boolean; busy: boolean; operation: 'save' | 'publish' | null;
   scope: string; publishLabel?: string; onSave: () => void; onPublish: () => void;
   status?: string; offline?: boolean; failed?: boolean; busyLabel?: string; showPublish?: boolean; pendingSuffix?: string;

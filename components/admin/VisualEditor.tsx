@@ -35,7 +35,7 @@ export function VisualEditor({target}:{target:string}){
   const [selection,setSelection]=useState<SelectionData|null>(null),[sections,setSections]=useState<Component[]>([]),[activeSection,setActiveSection]=useState<Component|null>(null),[action,setAction]=useState('');
   const [layoutValue,setLayoutValue]=useState(''),[savedLayout,setSavedLayout]=useState(''),[visualRevision,setVisualRevision]=useState<number|null>(null);
   const autosave=useAutoDraft({storageKey:`portfolio:draft:visual:${target}:v1`,value:layoutValue,baseline:savedLayout,revision:visualRevision,
-    enabled:ready,blocked:busy||uploading,saving:busy&&action==='save',save:()=>save('save'),ask,
+    enabled:ready,blocked:busy||uploading,saving:busy&&action==='save',save:()=>save('save'),
     restore:value=>{const layout=JSON.parse(value),ed=editor.current;if(!ed||typeof layout?.html!=='string'||typeof layout?.css!=='string')throw Error('Cadangan tidak valid.');ed.setComponents(layout.html);ed.setStyle(layout.css);selectedRef.current=null;ed.select();sync(ed);setLayoutValue(JSON.stringify({html:ed.getHtml(),css:ed.getCss()||''}));setDirty(true);}
   });
   function sync(ed:Editor){
@@ -144,7 +144,7 @@ export function VisualEditor({target}:{target:string}){
     return()=>{cancelled=true;controller.abort();window.removeEventListener('keydown',escape);editor.current?.destroy();editor.current=null;};
   },[target]);
   async function save(action:'save'|'publish'){
-    const ed=editor.current,data=meta.current;if(!ed||!data||saveLock.current||uploading||autosave.recovery)return false;
+    const ed=editor.current,data=meta.current;if(!ed||!data||saveLock.current||uploading||(autosave.recovery&&!autosave.canRestore))return false;
     const layout={html:ed.getHtml(),css:ed.getCss()||''};
     saveLock.current=true;setBusy(true);setAction(action);setError('');
     try{
@@ -197,8 +197,8 @@ export function VisualEditor({target}:{target:string}){
   return <div className={`visual-editor ${preview?'visual-preview':''} ${panelOpen?'visual-panel-open':''}`}>
     {confirmation}
     {publicationReview}
-    {autosave.recovery&&<DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion}/>}
-    <header className="visual-toolbar" inert={!!autosave.recovery}>
+    {autosave.recovery&&<DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} onRestore={autosave.canRestore ? autosave.restoreRecovery : undefined}/>}
+    <header className="visual-toolbar" inert={!!autosave.recovery && !autosave.canRestore}>
       <a href={target==='home'?'/admintgadink/dashboard/site':'/admintgadink/dashboard/works'} onClick={leave} className="visual-icon" aria-label="Kembali ke CMS"><ArrowLeft size={20}/></a>
       <div className="visual-title"><h1>{title}</h1>{ready&&<span role="status">{busy&&action==='publish'?(publicationCopy?.busyLabel||'Publishing…'):!dirty&&!unpublished&&autosave.online?(publicationCopy?.cleanLabel||'Sudah tayang'):autosave.status}{pendingHint}{uploading?' · Mengunggah…':''}</span>}</div>
       <button className="visual-tools-toggle" aria-label="Alat editor" aria-expanded={toolsOpen} onClick={()=>setToolsOpen(!toolsOpen)}>Alat</button>
@@ -213,7 +213,7 @@ export function VisualEditor({target}:{target:string}){
     </header>
     {error&&<div role="alert" className="visual-error">{error}{!ready?<button onClick={()=>window.location.reload()}>Coba lagi</button>:<button onClick={()=>setError('')} aria-label="Tutup pesan">Tutup</button>}</div>}
     {preview&&<p className="visual-preview-note"><a href={dirty?undefined:meta.current?.previewUrl} aria-disabled={dirty} target="_blank" rel="noopener noreferrer">Buka draft di tab baru <ExternalLink size={14}/></a>{dirty&&' Menunggu draft tersimpan…'}</p>}
-    <div className="visual-workspace" aria-busy={busy} inert={!!autosave.recovery}>
+    <div className="visual-workspace" aria-busy={busy} inert={!!autosave.recovery && !autosave.canRestore}>
       {panelOpen&&<button className="visual-panel-backdrop" aria-label="Tutup panel" onClick={()=>setPanelOpen(false)}/>}
       <aside className="visual-sidebar" aria-label="Panel konten" inert={(busy&&action!=='save')||uploading||!ready}>
         <div className="visual-panel-heading"><h2>{target === 'home' ? 'Live Editor Landing Page' : 'Edit studi kasus'}</h2><button className="visual-panel-close" aria-label="Tutup panel konten" onClick={()=>setPanelOpen(false)}><X size={18}/></button></div>

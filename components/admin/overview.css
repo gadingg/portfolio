@@ -100,3 +100,5 @@
   .engagement-bars { gap:2px; }
   .engagement-bar > span { font-size:10px; }
 }
+
+.engagement-bar.is-partial { opacity:.72; outline:1px dashed var(--amber); outline-offset:-1px; }

@@ -21,9 +21,10 @@ for(const kind of ['design','video'])test(`${kind}: autoplay, pause, and resume 
  c.toggle.listeners.click();c.advance(2999);assert.equal(c.list.scrollLeft,316);c.advance(1);assert.equal(c.list.scrollLeft,632);assert.equal(c.toggle['aria-label'],'Pause slides');
  assert.equal(c.group.listeners,undefined); // Controls are outside the artwork's hover/focus pause region.
 });
-test('artwork focus pauses; Resume clears that pause; touch and reduced motion remain opt in',()=>{
+test('artwork focus stays paused until focus leaves; touch and reduced motion remain opt in',()=>{
  const c=carousel();c.list.listeners.focusin();c.advance(3000);assert.equal(c.list.scrollLeft,0);
- c.toggle.listeners.click();c.toggle.listeners.click();c.advance(3000);assert.equal(c.list.scrollLeft,316);
+ c.toggle.listeners.click();c.toggle.listeners.click();c.advance(3000);assert.equal(c.list.scrollLeft,0);
+ c.list.listeners.focusout({relatedTarget:c.toggle});c.advance(3000);assert.equal(c.list.scrollLeft,316);
  c.list.listeners.pointerdown({pointerType:'touch'});c.advance(3000);assert.equal(c.list.scrollLeft,316);
  const r=carousel('design',true);r.advance(3000);assert.equal(r.list.scrollLeft,0);r.toggle.listeners.click();r.advance(3000);assert.equal(r.list.scrollLeft,316);
 });

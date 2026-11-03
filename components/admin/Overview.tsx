@@ -83,7 +83,7 @@ async function EngagementDetails({ engagement, days, names }: {
   const daily = data?.daily ?? [];
   const buckets = daily.filter((_, index) => index % interval === 0).map((item, index) => {
     const group = daily.slice(index * interval, (index + 1) * interval);
-    return { start: item.date, end: group.at(-1)!.date, clicks: group.reduce((sum, day) => sum + day.clicks, 0) };
+    return { start: item.date, end: group.at(-1)!.date, partial: group.length < interval, clicks: group.reduce((sum, day) => sum + day.clicks, 0) };
   });
   const ceiling = Math.max(2, Math.ceil(Math.max(0, ...buckets.map(bucket => bucket.clicks)) / 2) * 2);
   return !data ? <div className="overview-empty" role="status"><h3>Statistik belum bisa dimuat</h3><AdminRefresh /></div> : <>
@@ -96,14 +96,15 @@ async function EngagementDetails({ engagement, days, names }: {
             <div className="engagement-scale" aria-hidden="true"><span>{number(ceiling)}</span><span>{number(ceiling / 2)}</span><span>0</span></div>
             <div className="engagement-bars" style={{ gridTemplateColumns: `repeat(${buckets.length}, minmax(0, 1fr))` }}>
               {buckets.map(bucket => <div key={bucket.start} className="engagement-column" title={bucket.end === bucket.start ? date(bucket.start) : `${date(bucket.start)} sampai ${date(bucket.end)}`}>
-                <div className="engagement-bar-space"><div className="engagement-bar" style={{ height: `${bucket.clicks / ceiling * 100}%` }}>
+                <div className="engagement-bar-space"><div className={bucket.partial ? "engagement-bar is-partial" : "engagement-bar"} style={{ height: `${bucket.clicks / ceiling * 100}%` }}>
                   <span aria-hidden="true">{number(bucket.clicks)}</span>
                 </div></div>
-                <span className="engagement-date" aria-hidden="true">{date(bucket.start)}</span>
-                <span className="admin-sr-only">{date(bucket.start)}{bucket.end !== bucket.start ? ` sampai ${date(bucket.end)}` : ''}, {number(bucket.clicks)} klik</span>
+                <span className="engagement-date" aria-hidden="true">{date(bucket.start)}{interval > 1 && <><br />{date(bucket.end)}{bucket.partial && '*'}</>}</span>
+                <span className="admin-sr-only">{date(bucket.start)}{bucket.end !== bucket.start ? ` sampai ${date(bucket.end)}` : ''}, {number(bucket.clicks)} klik{bucket.partial && ", periode parsial"}</span>
               </div>)}
             </div>
           </div>
+          {buckets.some(bucket => bucket.partial) && <p className="overview-note">* Rentang lebih pendek dari {interval} hari.</p>}
         </figure>}
         <dl className="engagement-types" aria-label="Klik menurut aksi">{engagementKinds.map(kind => { const Icon = engagementIcons[kind]; return <div key={kind}><dt><Icon size={18} aria-hidden="true" />{engagementLabels[kind]}</dt><dd>{number(data.types[kind] || 0)}</dd></div>; })}</dl>
         <div className="overview-detail-grid">

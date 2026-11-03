@@ -1,6 +1,8 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { useRegisterAdminDirty } from './AdminChanges';
+import { useConfirm } from './ConfirmDialog';
 import { AdminLink } from './AdminLink';
 import { useToastMessage } from './AdminToasts';
 import './works-manager.css';
@@ -13,7 +15,7 @@ export function AISettings({ initialStatus }: { initialStatus: Status | null }) 
   const [key, setKey] = useState('');
   const [model, setModel] = useState(initialStatus?.model ?? '');
   const [replacing, setReplacing] = useState(false);
-  const [busy, setBusy] = useState<'save' | 'test' | 'load' | null>(null);
+  const [busy, setBusy] = useState<'save' | 'test' | 'load' | 'delete' | null>(null);
   const [error, setError] = useState(initialStatus ? '' : 'Pengaturan AI gagal dimuat.');
   const [message, setMessage] = useState('');
   const keyInput = useRef<HTMLInputElement>(null);
@@ -21,8 +23,13 @@ export function AISettings({ initialStatus }: { initialStatus: Status | null }) 
   const canSubmit = Boolean(model.trim() && (status?.configured && !replacing || hasKey));
   const dirty = hasKey || model.trim() !== status?.model;
 
-  async function request(action: 'save' | 'test' | 'load') {
-    if (busy || (action !== 'load' && (!canSubmit || (action === 'save' && !dirty)))) return;
+  const unsafe = useRef(false);
+  unsafe.current = Boolean(status && dirty);
+  useRegisterAdminDirty(unsafe);
+  const { ask, confirmation } = useConfirm();
+
+  async function request(action: 'save' | 'test' | 'load' | 'delete') {
+    if (busy || ((action === 'save' || action === 'test') && (!canSubmit || (action === 'save' && !dirty)))) return;
     setBusy(action);
     setError('');
     setMessage('');
@@ -33,7 +40,7 @@ export function AISettings({ initialStatus }: { initialStatus: Status | null }) 
         ...(action === 'load' ? {} : {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action, model: model.trim(), ...(hasKey ? { apiKey: key.trim() } : {}) }),
+          body: JSON.stringify(action === 'delete' ? { action } : { action, model: model.trim(), ...(hasKey ? { apiKey: key.trim() } : {}) }),
         }),
       });
       const data = await response.json();
@@ -46,6 +53,7 @@ export function AISettings({ initialStatus }: { initialStatus: Status | null }) 
         setKey('');
         setReplacing(false);
         if (action === 'save') setMessage('Pengaturan tersimpan.');
+        if (action === 'delete') setMessage('API key dihapus.');
       }
     } catch (cause) {
       setError(cause instanceof Error && !['TimeoutError', 'SyntaxError', 'TypeError'].includes(cause.name) ? cause.message : 'Pengaturan AI belum bisa diproses. Coba lagi.');
@@ -58,6 +66,7 @@ export function AISettings({ initialStatus }: { initialStatus: Status | null }) 
   const locked = Boolean(status?.configured && !replacing);
 
   return <div className="works-manager cms-manager ai-workspace">
+    {confirmation}
     <header className="wm-heading">
       <h1>Pengaturan AI</h1>
       <AdminLink className="wm-button" href="/admintgadink/dashboard/ai">AI Study Case</AdminLink>
@@ -84,6 +93,12 @@ export function AISettings({ initialStatus }: { initialStatus: Status | null }) 
             <button type="button" className="wm-button" disabled={!canSubmit} onClick={() => request('test')}>{busy === 'test' ? 'Menguji…' : 'Tes koneksi'}</button>
           </div>
         </fieldset>
+        {status.configured && <details>
+          <summary>Pengaturan lanjutan</summary>
+          <button type="button" className="wm-button" disabled={Boolean(busy)} onClick={async () => {
+            if (await ask('Hapus API key? Generate tidak tersedia sampai key baru disimpan.', 'Hapus key')) void request('delete');
+          }}>Hapus key</button>
+        </details>}
         {!status.configured && <a className="ai-inline-link" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Buat key di Google AI Studio</a>}
       </section>}
   </div>;

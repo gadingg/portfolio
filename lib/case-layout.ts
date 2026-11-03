@@ -76,7 +76,9 @@ export function editorialCaseLayout(layout: VisualLayout, summary?: { problem: s
   $('.case-narrative hr,.study-case-blocks hr').replaceWith('<div class="case-section-break" aria-hidden="true"></div>');
   $('.case-overview').each((_index,element)=>{
     const section=$(element);
-    if(!section.children('.case-summary-heading').length)section.prepend('<h2 class="case-summary-heading">The thinking behind the output</h2>');
+    const heading = section.children('.case-summary-heading');
+    if (heading.length) heading.text('Project overview');
+    else section.prepend('<h2 class="case-summary-heading">Project overview</h2>');
   });
   if(summary?.slug)applyAppActions($,summary);
   $('[data-cms-motion-slot]').remove();

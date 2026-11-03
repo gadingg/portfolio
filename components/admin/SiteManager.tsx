@@ -41,7 +41,7 @@ export function SiteManager({initial}: {initial?: InitialSite} = {}) {
   revisionRef.current = revision; contentRef.current = content;
   const autosave = useAutoDraft({ storageKey: 'portfolio:draft:site:v1', value: JSON.stringify(content), baseline: saved, revision,
     enabled: content !== null, blocked: busy, saving: operation === 'save', save: () => save('save', true),
-    restore: value => { const content = JSON.parse(value); if (!content?.values || !content?.cv || !Array.isArray(content.cv.experience) || !Array.isArray(content.cv.education)) throw Error('Cadangan tidak valid.'); setContent(content); }, ask });
+    restore: value => { const content = JSON.parse(value); if (!content?.values || !content?.cv || !Array.isArray(content.cv.experience) || !Array.isArray(content.cv.education)) throw Error('Cadangan tidak valid.'); setContent(content); } });
   function adopt(data: any, snapshot?: string) {
     setContent(current => snapshot && JSON.stringify(current) !== snapshot ? current : data.draft);
     setSaved(JSON.stringify(data.draft));
@@ -98,11 +98,12 @@ export function SiteManager({initial}: {initial?: InitialSite} = {}) {
   const cv = (patch: Partial<SiteContent['cv']>) =>
     setContent((old) => (old ? { ...old, cv: { ...old.cv, ...patch } } : old));
   const groups = [...new Set(siteFields.map((field) => field.group)), 'CV'];
-  if (autosave.recovery) return <DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} />;
+  if (autosave.recovery && !autosave.canRestore) return <DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} onRestore={autosave.canRestore ? autosave.restoreRecovery : undefined} />;
   return (
     <div className="works-manager cms-manager wm-site-workspace">
       {confirmation}
       {publicationReview}
+      {autosave.recovery && autosave.canRestore && <DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} onRestore={autosave.canRestore ? autosave.restoreRecovery : undefined} />}
       <div className="wm-heading">
         <div><h1>Website &amp; CV</h1></div>
         <a

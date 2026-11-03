@@ -1,5 +1,6 @@
 'use client';
 import { useEffect,useRef,useState } from 'react';
+import { useRegisterAdminDirty } from './AdminChanges';
 import { FileDrop } from './FileDrop';
 import { AdminSkeleton } from './AdminSkeleton';
 import { RotateCw } from 'lucide-react';
@@ -23,23 +24,32 @@ function studyFromWork(work:WorkItem):AIStudy|null{
   return {title:work.title,description:work.description,slug:study.slug.slice(0,32),problem:study.problem,approach:study.solution,outcome:study.impact,
     sections:sections.filter(section=>section.heading&&section.body).slice(0,8),confirmations:work.aiDraft?.confirmations||[],screenshots:work.aiDraft?.screenshots||[]};
 }
-export function AIStudyManager(){
+export function AIStudyManager({ initial }: { initial: { items: WorkItem[]; revision: number; configured: boolean } | null }){
   const [items,setItems]=useState<WorkItem[]>([]),[revision,setRevision]=useState<number|null>(null),[selected,setSelected]=useState('');
   const [brief,setBrief]=useState(''),[image,setImage]=useState(''),[alt,setAlt]=useState(''),[appUrl,setAppUrl]=useState('');
   const [result,setResult]=useState<AIStudy|null>(null),[pending,setPending]=useState<Pending|null>(null);
-  const [busy,setBusy]=useState(false),[uploading,setUploading]=useState(false),[loading,setLoading]=useState(true),[configured,setConfigured]=useState(false);
-  const [error,setError]=useState(''),[message,setMessage]=useState(''),[applied,setApplied]=useState('');
+  const [busy,setBusy]=useState(false),[uploading,setUploading]=useState(false),[loading,setLoading]=useState(Boolean(initial)),[configured,setConfigured]=useState(false);
+  const [error,setError]=useState(initial ? '' : 'Data belum bisa dimuat.'),[message,setMessage]=useState(''),[applied,setApplied]=useState('');
   const dirty=useRef(false),lock=useRef(false),resultRef=useRef<HTMLDivElement>(null),reviewRef=useRef<HTMLDivElement>(null);
   const {ask,confirmation}=useConfirm();
+  useRegisterAdminDirty(dirty);
   const disabled=busy||uploading;
   function selectWork(id:string,works=items){
     const work=works.find(value=>value.id===id);setSelected(id);setResult(work?studyFromWork(work):null);setPending(null);setApplied('');setError('');setMessage('');
     setBrief(work?.aiDraft?.brief||(work?.caseStudy?[work.title,work.description,work.caseStudy.problem,work.caseStudy.solution,work.caseStudy.impact,...work.caseStudy.blocks.filter(block=>['heading','paragraph'].includes(block.block_type)).map(block=>String(block.content_json.text||''))].filter(Boolean).join('\n\n').slice(0,30000):''));setImage(work?.image||'');setAlt(work?.imageAlt||'');setAppUrl(work?.caseStudy?.appUrl||'');dirty.current=false;
     const url=new URL(window.location.href);if(id)url.searchParams.set('work',id);else url.searchParams.delete('work');window.history.replaceState(null,'',url);
   }
+  const initialized = useRef(false);
   async function load(){
     setLoading(true);setError('');
     try{
+      if (initial && !initialized.current) {
+        initialized.current = true;
+        setItems(initial.items);setRevision(initial.revision);setConfigured(initial.configured);
+        const id = new URLSearchParams(window.location.search).get('work') || '';
+        selectWork(initial.items.some(item => item.id === id) ? id : '', initial.items);
+        return;
+      }
       const [worksResponse,settingsResponse]=await Promise.all([fetch('/api/admin/works',{cache:'no-store'}),fetch('/api/admin/ai/settings',{cache:'no-store'})]);
       const works=await worksResponse.json(),settings=await settingsResponse.json();
       if(!worksResponse.ok)throw Error(works.error);if(!settingsResponse.ok)throw Error(settings.error);
@@ -48,17 +58,7 @@ export function AIStudyManager(){
       selectWork(id&&works.items.some((item:WorkItem)=>item.id===id&&item.kind==='webapp'&&item.caseStudy)?id:'',works.items);
     }catch(e){setError(e instanceof Error?e.message:'Data belum bisa dimuat.');}finally{setLoading(false);}
   }
-  useEffect(()=>{void load();},[]);
-  useEffect(()=>{
-    const unload=(event:BeforeUnloadEvent)=>{if(dirty.current){event.preventDefault();event.returnValue='';}};
-    const leave=(event:MouseEvent)=>{
-      const link=(event.target as HTMLElement).closest('a');
-      if(!dirty.current||!link||link.target==='_blank'||event.ctrlKey||event.metaKey)return;
-      event.preventDefault();event.stopPropagation();void ask('Hasil di workspace ini belum disimpan sebagai draft. Tetap keluar?','Tinggalkan').then(yes=>{if(yes){dirty.current=false;window.location.assign(link.href);}});
-    };
-    window.addEventListener('beforeunload',unload);document.addEventListener('click',leave,true);
-    return()=>{window.removeEventListener('beforeunload',unload);document.removeEventListener('click',leave,true);};
-  },[ask]);
+  useEffect(()=>{ if (initial && !initialized.current) void load(); },[]);
   function changeResult(patch:Partial<AIStudy>){if(result){setResult({...result,...patch});dirty.current=true;setApplied('');}}
   async function generate(target:AITarget='all'){
     if(lock.current||disabled)return;
