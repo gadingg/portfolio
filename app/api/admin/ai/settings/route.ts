@@ -7,7 +7,7 @@ import { AIProviderError,testGemini } from '@/lib/gemini-study';
 export const dynamic='force-dynamic';
 export const maxDuration=30;
 const headers={'Cache-Control':'no-store'};
-const inputSchema=z.object({action:z.enum(['save','test','delete']),apiKey:z.string().trim().min(20).max(500).regex(/^[A-Za-z0-9_-]+$/).optional(),model:aiModelSchema.optional()});
+const inputSchema=z.object({action:z.enum(['save','test','delete']),apiKey:z.string().trim().min(20).max(500).regex(/^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*$/).optional(),model:aiModelSchema.optional()});
 export async function GET(){
   const denied=await cmsAccess();if(denied)return denied;
   try{return NextResponse.json(await getAISettingsStatus(),{headers});}
@@ -25,7 +25,7 @@ export async function POST(request:NextRequest){
     if(input.action==='save'&&!settings.apiKey)return NextResponse.json({error:'Masukkan Gemini API key terlebih dahulu.'},{status:400,headers});
     return NextResponse.json(await saveAISettings(settings),{headers});
   }catch(error){
-    const message=error instanceof AIProviderError?error.message:error instanceof z.ZodError?'Periksa API key dan ID model Anda.':error instanceof SyntaxError?'Format permintaan tidak valid.':'Pengaturan belum tersimpan. Periksa koneksi penyimpanan server.';
+    const message=error instanceof AIProviderError?error.message:error instanceof z.ZodError?error.issues[0]?.path[0]==='apiKey'?'Format API key tidak valid. Salin langsung dari Google AI Studio.':'Isi ID model Gemini, misalnya gemini-flash-latest.':error instanceof SyntaxError?'Format permintaan tidak valid.':'Pengaturan belum tersimpan. Periksa koneksi penyimpanan server.';
     return NextResponse.json({error:message},{status:error instanceof AIProviderError?error.status:error instanceof z.ZodError||error instanceof SyntaxError?400:503,headers});
   }
 }

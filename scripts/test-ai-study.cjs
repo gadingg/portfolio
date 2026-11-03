@@ -109,5 +109,7 @@ test('settings API never reads a key back to browser and returns sanitized provi
   const settings={apiKey:'test-secret-key-never-returned',model:'gemini-3.8-flash',updatedAt:'now'};
   const handler=runtime({'@/lib/cms-http':{cmsAccess:async()=>null},'@/lib/ai-settings':{...runtime()('lib/ai-settings.ts'),getAISettings:async()=>settings,getAISettingsStatus:async()=>({configured:true,model:settings.model,updatedAt:settings.updatedAt})},'@/lib/gemini-study':{AIProviderError:class extends Error{},testGemini:async()=>{throw Error(settings.apiKey);}}})('app/api/admin/ai/settings/route.ts');
   const got=await handler.GET();assert.equal((await got.json()).apiKey,undefined);
+  const accepted = await handler.POST(request('/api/admin/ai/settings', {action:'test', apiKey:'AQ.example_authorization_key-123', model:'gemini-flash-latest'}));
+  assert.equal(accepted.status, 503); // The request reached the mocked provider, which throws.
   const tested=await handler.POST(request('/api/admin/ai/settings',{action:'test'}));assert.doesNotMatch(await tested.text(),/test-secret-key-never-returned/);
 });
