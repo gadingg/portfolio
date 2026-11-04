@@ -1,5 +1,23 @@
 import { workKinds, type WorkItem } from './works';
 import { isReadyWork, workReadiness } from './work-readiness';
+import { sameDraftContent } from './draft-backup';
+
+export function incompletePublishedIds(published: WorkItem[]) {
+  return new Set(published.filter(item => item.published && !isReadyWork(item)).map(item => item.id));
+}
+
+export function incompleteWorksForReview(draft: WorkItem[], published: WorkItem[]) {
+  const saved = new Map(draft.map(item => [item.id,item]));
+  return published.filter(item => item.published && !isReadyWork(item)).map(item => ({
+    item: saved.get(item.id) || item, pendingRemoval: !saved.has(item.id),
+  }));
+}
+
+export function previewDiffersFromPublic(draft: WorkItem[], published: WorkItem[]) {
+  const preview = draft.filter(item => item.published);
+  const live = published.filter(item => item.published && isReadyWork(item));
+  return !sameDraftContent(JSON.stringify(preview), JSON.stringify(live));
+}
 
 export function summarizeWorks(draft: WorkItem[], published: WorkItem[]) {
   const live = published.filter(item => item.published && isReadyWork(item));

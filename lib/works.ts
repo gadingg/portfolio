@@ -55,6 +55,7 @@ const imageURL = (value: string) => {
 };
 
 export const WorkDraftItemSchema = z.object({
+  designImages:z.array(z.object({url:mediaURL.refine(value=>!!value&&safeURL(value),'Pilih gambar artwork.'),alt:z.string().max(250).default('')})).max(20).optional(),
   copyEdition: z.string().max(40).optional(),
   aiDraft: z.object({
     brief: z.string().max(30000), confirmations: z.array(z.string().max(500)).max(12),

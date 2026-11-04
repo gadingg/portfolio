@@ -27,6 +27,6 @@ export function draftStatusCopy({ online, dirty, localCopy, saving, failed, stor
   if (!online) return !dirty ? 'Offline · draft terakhir tersimpan' : localCopy ? 'Offline · tersimpan di perangkat' : 'Belum tersimpan. Jangan tutup halaman ini.';
   if (saving) return 'Menyimpan…';
   if (failed) return localCopy ? 'Belum tersimpan online. Edit masih ada di perangkat.' : 'Belum tersimpan. Jangan tutup halaman ini.';
-  if (dirty) return storageFailed ? 'Menunggu simpan otomatis. Jangan tutup halaman ini.' : 'Menunggu simpan otomatis…';
+  if (dirty) return storageFailed ? 'Menunggu disimpan. Jangan tutup halaman ini.' : 'Menunggu disimpan…';
   return 'Draft tersimpan';
 }

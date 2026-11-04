@@ -94,6 +94,8 @@
   "cases": {
     "listinghub": {
       "text": {
+        "Listing yang tersebar sulit ditelusuri ulang saat ada kebutuhan klien. Saya menyusun portal pencarian dengan filter properti, harga per m², acuan tanah AREBI, dan daftar tersimpan. Agent dapat mempersempit pilihan, membandingkan informasi, lalu menyalin spesifikasi atau membagikannya ke klien melalui WhatsApp.": "Saya menyusun pencarian dengan filter properti, harga per m², acuan tanah AREBI, dan daftar tersimpan.\n\nAgent bisa mempersempit pilihan, membandingkan informasi, lalu menyalin spesifikasi atau membagikannya melalui WhatsApp.",
+        "Catatan Google Keep membantu menyimpan informasi, tetapi pengelolaan listing membutuhkan foto, spesifikasi, dan status yang lebih terstruktur. Personal Listing menyediakan ruang per agent untuk mengunggah properti, memperbarui detail, mengubah status Active, Hold, atau Sold, dan menyalin spesifikasi WhatsApp. Data catatan dan foto dari Google Keep juga dapat diimpor melalui ekspor Google Takeout.": "Personal Listing menyediakan ruang per Agent untuk mengunggah foto, memperbarui spesifikasi, dan mengubah status Active, Hold, atau Sold. Spesifikasinya bisa disalin untuk WhatsApp.\n\nCatatan dan foto dari Google Keep juga bisa diimpor melalui ekspor Google Takeout.",
         "Find faster. Manage better.": "Shared and personal listings",
         "Cari seluruh database properti dan kelola listing personal dalam dua aplikasi yang saling melengkapi.": "Agent bisa mencari properti di database bersama dan mengelola listing mereka sendiri di halaman personal.",
         "Pencarian database properti dan pengelolaan listing personal untuk agent.": "Agent bisa mencari properti di database bersama dan mengelola listing mereka sendiri di halaman personal.",
@@ -103,6 +105,7 @@
         "Satu kebutuhan kerja, dua aplikasi. All Database membantu agent mencari properti dari database bersama. Personal Listing membantu setiap agent mengelola listing miliknya melalui alamat seperti /gading.": "Agent bisa membuka All Database untuk mencari properti, lalu masuk ke halaman personal seperti /gading untuk mengurus listing sendiri."
       },
       "removeSections": [
+        {"heading":"Shared and personal listings","paragraph":"Agent bisa membuka All Database untuk mencari properti, lalu masuk ke halaman personal seperti /gading untuk mengurus listing sendiri."},
         {
           "heading": "Built around the way agents work.",
           "paragraph": "Kedua aplikasi menangani bagian berbeda dari pekerjaan agent. Database bersama menjadi tempat mencari dan membandingkan properti. Listing personal menjadi tempat merapikan informasi yang dikelola sendiri. Fokus saya adalah membuat informasi lebih mudah ditemukan, diperbarui, dan digunakan kembali."
@@ -209,6 +212,7 @@
     },
     "reqvideo": {
       "text": {
+        "Dulu admin perlu menghubungi Agent satu per satu untuk mencari listing yang siap dibuat video. Sekarang Agent bisa mengajukan listing lewat form, lalu admin mengecek antrean dan mengonfirmasi jadwal pengambilan video.": "Form menjadi pintu masuk pengajuan, sedangkan dashboard dipakai untuk meninjau antrean dan menyusun jadwal. Admin tetap menghubungi Agent untuk konfirmasi waktu.",
         "From waiting to requesting.": "Video requests",
         "The bottleneck starts before the schedule.": "Collecting requests",
         "Submit. Follow up. Fix time. Schedule.": "Request and scheduling flow",
@@ -222,7 +226,7 @@
         "Admin follow up: submission langsung muncul di dashboard, tanpa recap manual dari chat.": "Permintaan masuk ke antrean di dashboard admin.",
         "Fix time: fiksasi waktu bersama agent.": "Admin dan Agent mengonfirmasi waktu pengambilan video.",
         "Arrange schedule: susun jadwal final take video langsung dari web.": "Admin menyusun jadwal final dari dashboard.",
-        "Agent belum memiliki form untuk mengajukan listing. Admin mengumpulkan permintaan lewat chat sebelum menentukan jadwal.": "Dulu admin perlu menghubungi Agent satu per satu untuk mencari listing yang siap dibuat video. Sekarang Agent bisa mengajukan listing lewat form, lalu admin mengecek antrean dan mengonfirmasi jadwal pengambilan video.",
+        "Agent belum memiliki form untuk mengajukan listing. Admin mengumpulkan permintaan lewat chat sebelum menentukan jadwal.": "Form menjadi pintu masuk pengajuan, sedangkan dashboard dipakai untuk meninjau antrean dan menyusun jadwal. Admin tetap menghubungi Agent untuk konfirmasi waktu.",
         "Admin menghubungi agent satu per satu untuk mengumpulkan listing yang ingin dibuatkan video.": "Sebelumnya, admin perlu chat Agent satu per satu untuk mencari listing yang siap dibuat video.",
         "Agent mengirim listing lewat form. Permintaan masuk ke dashboard, lalu admin menghubungi agent untuk menentukan jadwal pengambilan video.": "Saya membuat form yang langsung memasukkan listing ke antrean. Dari dashboard, admin bisa mengecek permintaan dan menghubungi Agent untuk konfirmasi jadwal.",
         "Agent dapat mengajukan listing langsung. Admin menindaklanjuti permintaan dan menyusun jadwal pengambilan video.": "Agent bisa mengirim listing begitu propertinya siap. Admin bisa langsung cek antrean dan menyusun jadwal pengambilan video.",
@@ -232,6 +236,7 @@
         "Penjadwalan: admin menyusun jadwal pengambilan video melalui aplikasi.": "Admin menyusun jadwal final dari dashboard."
       },
       "removeSections": [
+        {"heading":"Video requests","paragraph":"Dashboard untuk pengajuan listing dan penjadwalan video properti."},
         {
           "heading": "A more self-service workflow.",
           "paragraph": "Agent bisa lebih aktif submit listing, sementara admin bisa fokus pada follow-up dan scheduling. Alur yang sebelumnya bergantung pada admin untuk jemput bola menjadi lebih terstruktur."

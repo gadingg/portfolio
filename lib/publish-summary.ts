@@ -18,6 +18,7 @@ function images(item: WorkItem) {
   const result = new Set<string>();
   const add = (value: unknown) => { if(typeof value==='string'&&value)result.add(value); };
   add(item.image);
+  item.designImages?.forEach(image=>add(image.url));
   add(item.caseStudy?.motion?.poster);add(item.caseStudy?.motion?.mobilePoster);
   for(const block of item.caseStudy?.blocks || []) {
     const content=block.content_json;
@@ -44,6 +45,7 @@ export function summarizeWorks(draft: WorkItem[],published: WorkItem[]): Publish
       for(const [key,label] of [['title','Judul'],['description','Deskripsi'],['kind','Kategori'],['image','Cover'],['imageAlt','Deskripsi gambar'],['videoFile','File video'],['url','Link'],['homepageFeatured','Pilihan homepage']] as const)if(different(old[key],item[key]))changes.push(label);
       if(old.published!==item.published)changes.push(item.published?'Ditampilkan di portfolio':'Disembunyikan dari portfolio');
       if(different(old.caseStudy,item.caseStudy))changes.push('Isi / tampilan studi kasus');
+      if(different(old.designImages,item.designImages))changes.push('Desain satuan');
       if(!changes.length)changes.push('Pengaturan portfolio');
     }else if(different(old.aiDraft,item.aiDraft)||different(old.archivedCaseStudy,item.archivedCaseStudy))changes.push('Catatan / arsip admin, tidak tampil di publik');
     if(changes.length) {

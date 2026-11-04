@@ -11,6 +11,9 @@
   const shell = document.querySelector('.showcase');
   let currentTrigger;
   let imageItems = [], imageIndex = 0;
+  function designArtwork(items) {
+    return items.flatMap(work=>work.designImages?.length?work.designImages.map((art,index)=>({...work,image:art.url,imageAlt:art.alt||work.title,title:work.designImages.length>1?`${work.title} · ${index+1}`:work.title})):[work]);
+  }
   const imageRatios = new Map();
   let cancelImage = () => {};
   function releaseVideo() {
@@ -214,7 +217,7 @@
       const overlay=node('span','video-bottom');const play=node('span','video-play',video.label);if(video.kind!=='preview')play.prepend(icon(video.kind==='file'?'play':'external-link'));overlay.append(play,node('strong','',item.title));media.append(overlay);
       if(video.kind!=='instagram')media.addEventListener('click',()=>openVideo(item,media));
     } else if(item.kind==='design'){
-      media.addEventListener('click',()=>{imageItems=siblings;openDialog(media,item.title);modal.dataset.mode='design';showDesign(siblings.indexOf(item));});
+      media.addEventListener('click',()=>{imageItems=designArtwork(siblings);openDialog(media,item.title);modal.dataset.mode='design';showDesign(imageItems.findIndex(work=>work.id===item.id));});
     }
     unit.append(media);
     if(item.kind!=='video'){
@@ -340,7 +343,7 @@
               if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
               event.preventDefault();
               if (video) openVideo(item, trigger);
-              else { imageItems = items; openDialog(trigger,item.title); modal.dataset.mode = 'design'; showDesign(index); }
+              else { imageItems = designArtwork(items); openDialog(trigger,item.title); modal.dataset.mode = 'design'; showDesign(imageItems.findIndex(work=>work.id===item.id)); }
             }
             trigger.addEventListener('click', open);
             trigger.addEventListener('keydown', event => {

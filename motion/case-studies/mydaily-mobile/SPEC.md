@@ -11,3 +11,5 @@ https://dailyappgading.vercel.app/
 9s: Focus timer
 
 Authored transitions between real captured states, not a continuous screen recording. No live writes or submitted forms. Personal finance is excluded. My Daily sample tasks are typed in an unsaved form.
+
+Feature emphasis: briefly outline the relevant existing UI control/content during each beat, without extra labels, fake interactions, or a visible loop seam.

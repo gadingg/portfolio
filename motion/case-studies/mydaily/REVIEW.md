@@ -11,3 +11,9 @@ Intentional warning: duplicate_media_discovery_risk. Repeated static images are 
 Weakest shot: The task draft has the live modal backdrop. The typed task examples were not saved. A finance view was intentionally excluded.
 
 Existing lazy loading, reduced-motion poster behavior, muted playback and responsive selection are unchanged. New asset paths match the public API configuration. No new production upload or publish was performed.
+
+## Feature focus refinement, 2026-11-04
+
+A brief outline now identifies the actual control or content used in each live UI state. It does not simulate submitted forms or add claims. Focus bounds follow the original screenshot proportions and disappear before the loop returns. No supporting copy or playback controls were added.
+
+HyperFrames runtime/layout check passed. Desktop and mobile contact sheets were visually reviewed; Req Video form and detail focus bounds were corrected after inspection. Final export: 652242 bytes, H.264, 1920 x 1080, 30 fps, 12 seconds, one silent video stream, faststart. First/last downsampled frame mean absolute difference: 0.37 on 0-255. Existing reduced-motion and offscreen behavior is retained. No production publish.

@@ -77,9 +77,9 @@ export function BlockEditor({
     <section className="cms-blocks">
       {confirmation}
       <div className="cms-panel-heading">
-        <h2>Isi studi kasus</h2>
+        <h2>Cerita & screenshot</h2>
         <select
-          aria-label="Tambah blok"
+          aria-label="Tambah bagian"
           value=""
           disabled={disabled}
           onChange={(e) => {
@@ -133,7 +133,7 @@ export function BlockEditor({
                   </summary>
                   <fieldset disabled={disabled} className="cms-block-fields">
                     {['heading', 'paragraph'].includes(block.block_type) &&
-                      field(block, 'text', 'Teks', true)}
+                      field(block, 'text', block.block_type==='heading'?'Judul':'Ceritanya', true)}
                     {block.block_type === 'heading' && (
                       <label>
                         Ukuran
@@ -143,7 +143,7 @@ export function BlockEditor({
                             patch(block.id, { level: Number(e.target.value) })
                           }
                         >
-                          <option value={2}>Judul bagian</option>
+                          <option value={2}>Judul</option>
                           <option value={3}>Subjudul</option>
                         </select>
                       </label>
@@ -166,10 +166,10 @@ export function BlockEditor({
                             patch(block.id, { url: files[0].url, focus: 'full' })
                           }
                         />
-                        {field(block, 'url', 'URL media')}
+                        {field(block, 'url', 'Link media')}
                         {block.block_type === 'image' &&
-                          field(block, 'alt', 'Deskripsi gambar')}
-                        {field(block, 'caption', 'Caption')}
+                          field(block, 'alt', 'Deskripsi gambar (aksesibilitas)')}
+                        {field(block, 'caption', 'Caption (opsional)')}
                         {block.block_type==='video'&&<FileDrop folder="covers" previewSrc={content.poster} previewAlt="Thumbnail video detail" uploadLabel={content.poster?'Ganti thumbnail video':'Tambah thumbnail video'} disabled={disabled} onBusyChange={onBusyChange} onUploaded={files=>patch(block.id,{poster:files[0].url})}/>}
                         {block.block_type==='image' && content.url==='/assets/work/meta-report-macbooks.webp' && <label>Detail tampilan<select value={content.focus||'full'} onChange={event=>patch(block.id,{focus:event.target.value})}><option value="full">Gambar penuh</option><option value="meta-trend">Detail grafik antar-batch</option><option value="meta-batch">Detail ringkasan batch</option></select></label>}
                       </>
@@ -209,7 +209,7 @@ export function BlockEditor({
                             <FileDrop previewSrc={image.url} previewAlt={image.alt || `Gambar ${i+1}`} folder="content" uploadLabel={`Ganti gambar ${i + 1}`} disabled={disabled} onBusyChange={onBusyChange}
                               onUploaded={files => patch(block.id, { images: content.images.map((picture: any, at: number) => at === i ? { ...picture, url: files[0].url } : picture) })}/>
                             <label>
-                              Deskripsi gambar
+                              Deskripsi gambar (aksesibilitas)
                               <input
                                 value={image.alt || ''}
                                 onChange={(e) =>
@@ -225,7 +225,7 @@ export function BlockEditor({
                               />
                             </label>
                             <label>
-                              Caption
+                              Caption (opsional)
                               <input
                                 value={image.caption || ''}
                                 onChange={(e) =>

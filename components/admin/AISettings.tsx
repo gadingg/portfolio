@@ -80,7 +80,7 @@ export function AISettings({ initialStatus }: { initialStatus: Status | null }) 
       <section className="ai-settings-panel" aria-label="Gemini API">
         <fieldset disabled={Boolean(busy)} className="ai-fields">
           <div className="ai-key-field">
-            <label htmlFor="gemini-key">Gemini API key{locked && <small>Key tersimpan</small>}</label>
+            <label htmlFor="gemini-key">Gemini API key</label>
             <div className="ai-key-row">
               <input id="gemini-key" ref={keyInput} type="password" autoComplete="new-password" spellCheck={false}
                 disabled={locked} value={locked ? '************' : key} onChange={event => { setConnection(false); setKey(event.target.value); }} />
@@ -92,7 +92,7 @@ export function AISettings({ initialStatus }: { initialStatus: Status | null }) 
               }}>{replacing ? 'Batal ganti' : 'Ganti key'}</button>}
             </div>
           </div>
-          <label>ID model<input value={model} maxLength={80} spellCheck={false} onChange={event => { setConnection(false); setModel(event.target.value); }} placeholder="gemini-flash-latest" /></label>
+          <label>Model Gemini<input value={model} maxLength={80} spellCheck={false} onChange={event => { setConnection(false); setModel(event.target.value); }} placeholder="gemini-flash-latest" /></label>
           {error && <p className="cms-error" role="alert">{error}</p>}
           {connection && <p role="status">Koneksi berhasil{dirty ? ' · Belum disimpan' : ''}</p>}
           <div className="ai-actions">

@@ -7,7 +7,7 @@ Six public cases have a 12-second HyperFrames walkthrough after the project over
 - Desktop: 1920 x 1080, 30 fps, H.264 MP4.
 - Mobile: separately composed at 1080 x 1350, 30 fps, H.264 MP4.
 - All 12 files contain one video stream and no audio. Faststart was verified for every file.
-- Current measured sizes: 421 to 816 KiB per file, 7651453 bytes for all videos combined. Posters add 460832 bytes in total.
+- Current measured sizes: 421 to 832 KiB per file, 7803072 bytes for all videos combined. Posters add 460832 bytes in total.
 - Only the current case and matching responsive source load when the section approaches the viewport. The page does not load all 12 videos.
 - Listing Hub, MBG, My Daily and Req Video now use four distinct live UI captures per case, with authored transitions and matching loop states. These are not continuous recordings or evidence of submitted forms. Meta Ads and office Daily App retain their earlier assets because the user deferred inaccessible live sources.
 
@@ -44,3 +44,5 @@ Built-in defaults are applied without writing production CMS documents. On subse
 - Craft PASS: 12 validated exports, 114 passing tests and successful production build. Automatic viewport playback remains; controls were removed at the user's request. Browser reduced-motion and remote-provider upload behavior were not exercised live; their implementation and validation paths were reviewed.
 
 Deployment status is separate from local build and Git verification.
+
+Feature focus refinement on 2026-11-04: the eight accessible live-capture compositions briefly emphasize actual controls or content during each beat. Runtime/layout checks and encoded loop validation passed; request-form bounds were adjusted after visual review. No sound, new player controls, production uploads, or continuous recording claims. Meta Ads and office Daily App remain deferred.

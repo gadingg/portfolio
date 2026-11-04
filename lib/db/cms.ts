@@ -23,6 +23,7 @@ export async function readCMS<T>(
     .from('portfolio_cms_documents')
     .select('draft,published,revision,published_at,updated_at')
     .eq('id', id)
+    .abortSignal(AbortSignal.timeout(12000))
     .maybeSingle();
   if (error) {
     console.error('CMS storage read failed:', { code: error.code, message: error.message });

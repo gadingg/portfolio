@@ -13,3 +13,9 @@ Weakest shot: The live request form header contains its own responsive clipping;
 Existing lazy loading, reduced-motion poster behavior, muted playback and responsive selection are unchanged. New asset paths match the public API configuration. No new production upload or publish was performed.
 
 Additional intentional warning: gsap_timeline_set_initial_hide. Only inner screen elements start transparent for crossfades; the first screen is explicitly visible at time zero. Timed clip wrappers remain visible and the 0-second rendered frame was inspected.
+
+## Feature focus refinement, 2026-11-04
+
+A brief outline now identifies the actual control or content used in each live UI state. It does not simulate submitted forms or add claims. Focus bounds follow the original screenshot proportions and disappear before the loop returns. No supporting copy or playback controls were added.
+
+HyperFrames runtime/layout check passed. Desktop and mobile contact sheets were visually reviewed; Req Video form and detail focus bounds were corrected after inspection. Final export: 606748 bytes, H.264, 1920 x 1080, 30 fps, 12 seconds, one silent video stream, faststart. First/last downsampled frame mean absolute difference: 0.207 on 0-255. Existing reduced-motion and offscreen behavior is retained. No production publish.

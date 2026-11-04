@@ -14,7 +14,7 @@ export function CaseMotionEditor({study,disabled,onBusyChange,onChange}:{study:z
     {value.enabled && <><label>Judul animasi<input value={value.title} disabled={disabled} maxLength={300} onChange={event=>patch({title:event.target.value})}/></label>
     {value.enabled&&(!value.video||!value.poster)&&<p className="wm-editor-note" role="status">Lengkapi video desktop dan poster sebelum publish.</p>}
     <CaseMotionVideoEditor heading="Video desktop" targetSize="di bawah 2 MB" value={value.video} cover={value.poster} disabled={disabled} onBusyChange={onBusyChange} onChange={next=>patch({video:next.videoFile,...(next.image!==undefined?{poster:next.image}:{})})}/>
-    <SettingsDisclosure title="Versi mobile (opsional)" icon={<Smartphone size={20}/>}><p className="wm-editor-note">Jika kosong, pakai video desktop.</p><CaseMotionVideoEditor heading="Video mobile" targetSize="di bawah 2 MB" value={value.mobileVideo} cover={value.mobilePoster} disabled={disabled} onBusyChange={onBusyChange} onChange={next=>patch({mobileVideo:next.videoFile,...(next.image!==undefined?{mobilePoster:next.image}:{})})}/></SettingsDisclosure>
+    <SettingsDisclosure title="Versi mobile (opsional)" icon={<Smartphone size={20}/>}><p className="wm-editor-note">Kosongkan untuk memakai video desktop.</p><CaseMotionVideoEditor heading="Video mobile" targetSize="di bawah 2 MB" value={value.mobileVideo} cover={value.mobilePoster} disabled={disabled} onBusyChange={onBusyChange} onChange={next=>patch({mobileVideo:next.videoFile,...(next.image!==undefined?{mobilePoster:next.image}:{})})}/></SettingsDisclosure>
     </>}
     </div>
   </SettingsDisclosure>;

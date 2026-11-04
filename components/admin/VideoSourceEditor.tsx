@@ -20,7 +20,7 @@ export function VideoSourceEditor({item, disabled, errors = {}, onBusyChange, on
     setCapturing(true); onBusyChange(true);
     try {
       const image = await uploadCover(await captureVideoCover(value, player.current.currentTime));
-      onChange({image}); notify('Thumbnail diperbarui.');
+      onChange({image}); notify('Thumbnail diganti.');
     } catch (error) {notify(error instanceof Error ? error.message : 'Thumbnail belum bisa dibuat.', {tone:'error'});}
     finally {setCapturing(false); onBusyChange(false);}
   }
@@ -53,7 +53,7 @@ export function VideoSourceEditor({item, disabled, errors = {}, onBusyChange, on
       <FileDrop picker thumbnail folder="covers" previewSrc={cover} previewAlt="Thumbnail video"
         uploadLabel={cover ? 'Ganti thumbnail' : 'Tambah thumbnail'} disabled={disabled} onBusyChange={onBusyChange} onUploaded={files => onChange({image:files[0].url})}/>
       {source === 'file' && value && <button type="button" className="wm-button work-frame-action" disabled={disabled || capturing} onClick={useFrame}>
-        <ImageIcon size={18} aria-hidden="true"/>{capturing ? 'Mengambil frame…' : 'Ambil frame sekarang'}
+        <ImageIcon size={18} aria-hidden="true"/>{capturing ? 'Membuat thumbnail…' : 'Jadikan thumbnail'}
       </button>}
       {errors.image && <small className="work-field-error">{errors.image}</small>}
     </div>

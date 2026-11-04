@@ -22,7 +22,7 @@ export function refineCopyLayout(layout: VisualLayout, text: TextMap = {}, remov
   for (const section of remove) {
     $('h2,h3').each((_index, element) => {
       const heading = $(element), paragraph = heading.next();
-      if (normalize(heading.text()) === normalize(section.heading) && paragraph.is('p') && normalize(paragraph.text()) === normalize(section.paragraph)) {
+      if (normalize(replace(heading.text())) === normalize(replace(section.heading)) && paragraph.is('p') && normalize(replace(paragraph.text())) === normalize(replace(section.paragraph))) {
         heading.remove(); paragraph.remove();
       }
     });
@@ -55,7 +55,7 @@ export function refineSiteCopy(site: SiteContent): SiteContent {
 }
 
 export function refineWorkCopy(item: WorkItem): WorkItem {
-  const workEdition = item.caseStudy && cases[item.caseStudy.slug] ? '2026-11-03-webapp-story-copy' : edition.edition;
+  const workEdition = item.caseStudy && cases[item.caseStudy.slug] ? '2026-11-04-editorial-story-copy' : edition.edition;
   if (item.caseStudy?.slug === 'mydaily' && item.imageAlt === 'Mockup tiga ponsel Daily App Gading') {
     item = { ...item, imageAlt: 'Tiga layar Literally... My Daily App: ringkasan harian, keuangan, dan kebiasaan.' };
   }
@@ -72,7 +72,7 @@ export function refineWorkCopy(item: WorkItem): WorkItem {
     const blocks: CMSBlock[] = [];
     for (let index = 0; index < item.caseStudy.blocks.length; index++) {
       const block = item.caseStudy.blocks[index], following = item.caseStudy.blocks[index + 1];
-      if (block.block_type === 'heading' && following?.block_type === 'paragraph' && profile?.removeSections.some(section => normalize(String(block.content_json.text)) === normalize(section.heading) && normalize(String(following.content_json.text)) === normalize(section.paragraph))) {
+      if (block.block_type === 'heading' && following?.block_type === 'paragraph' && profile?.removeSections.some(section => normalize(replace(String(block.content_json.text))) === normalize(replace(section.heading)) && normalize(replace(String(following.content_json.text))) === normalize(replace(section.paragraph)))) {
         index++; continue;
       }
       const content = { ...block.content_json };

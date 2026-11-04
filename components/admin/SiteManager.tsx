@@ -14,8 +14,11 @@ import { useAutoDraft } from './useAutoDraft';
 import { DraftRecovery } from './DraftRecovery';
 import { AdminSkeleton } from './AdminSkeleton';
 import {useAdminToast, useToastMessage} from './AdminToasts';
+import {AdminLink} from './AdminLink';
+import {useRouter} from 'next/navigation';
 type InitialSite = {draft: SiteContent; published: SiteContent; revision: number};
-export function SiteManager({initial}: {initial?: InitialSite} = {}) {
+export function SiteManager({initial,area='profile'}: {initial?: InitialSite;area?:'home'|'profile'} = {}) {
+  const router=useRouter();
   const notify = useAdminToast();
   const {ask,confirmation}=useConfirm();
   const {review,publicationReview}=usePublishReview();
@@ -23,7 +26,7 @@ export function SiteManager({initial}: {initial?: InitialSite} = {}) {
     [saved, setSaved] = useState(initial ? JSON.stringify(initial.draft) : ''),
     [published, setPublished] = useState(initial ? JSON.stringify(initial.published) : ''),
     [revision, setRevision] = useState(initial?.revision || 0),
-    [group, setGroup] = useState('Identitas'),
+    [group, setGroup] = useState(area==='home'?'Hero':'Identitas'),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
     [notice, setNotice] = useState('');
@@ -54,7 +57,7 @@ export function SiteManager({initial}: {initial?: InitialSite} = {}) {
     setBusy(true);
     setError('');
     try {
-      const res = await fetch('/api/admin/site', { cache: 'no-store' });
+      const res = await fetch('/api/admin/site', { cache: 'no-store', signal: AbortSignal.timeout(15000) });
       const data = await res.json();
       if (!res.ok) throw Error(data.error);
       adopt(data);
@@ -97,7 +100,8 @@ export function SiteManager({initial}: {initial?: InitialSite} = {}) {
     );
   const cv = (patch: Partial<SiteContent['cv']>) =>
     setContent((old) => (old ? { ...old, cv: { ...old.cv, ...patch } } : old));
-  const groups = [...new Set(siteFields.map((field) => field.group)), 'CV', 'File unduhan'];
+  const homepageGroups=['Hero','Portofolio','About','Kemampuan','Proses','Tools'];
+  const groups = area==='home'?homepageGroups:[...new Set(siteFields.map(field=>field.group).filter(group=>!homepageGroups.includes(group))), 'CV', 'File unduhan'];
   if (autosave.recovery && !autosave.canRestore) return <DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} onRestore={autosave.canRestore ? autosave.restoreRecovery : undefined} />;
   return (
     <div className="works-manager cms-manager wm-site-workspace">
@@ -105,23 +109,10 @@ export function SiteManager({initial}: {initial?: InitialSite} = {}) {
       {publicationReview}
       {autosave.recovery && autosave.canRestore && <DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} onRestore={autosave.canRestore ? autosave.restoreRecovery : undefined} />}
       <div className="wm-heading">
-        <div><h1>Profil &amp; CV</h1></div>
-        <a
-          href="/admintgadink/dashboard/editor/home"
-          className="wm-button"
-          onClick={async event => {
-            event.preventDefault();
-            if (uploadBusy.current) return;
-            if (pendingMutation.current) await pendingMutation.current;
-            if (JSON.stringify(contentRef.current) !== savedRef.current && !(await save('save'))) return;
-            window.location.assign('/admintgadink/dashboard/editor/home');
-          }}
-        >
-          <Eye size={18} />
-          Edit homepage
-        </a>
+        <div><h1>{area==='home'?'Konten homepage':'Profil & CV'}</h1></div>
+        {area==='home'?<a href="/admintgadink/dashboard/editor/home" className="wm-button" onClick={async event=>{event.preventDefault();if(uploadBusy.current)return;if(pendingMutation.current)await pendingMutation.current;if(JSON.stringify(contentRef.current)!==savedRef.current&&!(await save('save')))return;router.push('/admintgadink/dashboard/editor/home');}}><Eye size={18}/>Edit layout</a>:<AdminLink href="/admintgadink/dashboard/site?area=home" className="wm-button">Konten homepage</AdminLink>}
       </div>
-      {content && <PublicationBar dirty={!!dirty} unpublished={saved !== published} busy={busy} operation={operation} scope="Profil dan CV diterbitkan bersamaan." status={!dirty && saved === published && autosave.online ? 'Sudah tayang' : autosave.status} offline={!autosave.online} failed={autosave.failed}
+      {content && <PublicationBar dirty={!!dirty} unpublished={saved !== published} busy={busy} operation={operation} scope="Konten website dan CV diterbitkan bersamaan." status={!dirty && saved === published && autosave.online ? 'Sudah tayang' : autosave.status} offline={!autosave.online} failed={autosave.failed}
         onSave={autosave.retry} onPublish={() => { void save('publish'); }}/>}
       {error && (
         <div className="wm-message wm-error" role="alert">
@@ -142,7 +133,7 @@ export function SiteManager({initial}: {initial?: InitialSite} = {}) {
       {!content && !error && <AdminSkeleton />}
       {content && (
         <>
-          <div className="wm-site-layout"><label className="wm-section-select">Bagian yang diedit<select value={group} onChange={event => setGroup(event.target.value)}>{groups.map(value => <option key={value} value={value}>{value === 'CV' ? 'Isi CV' : value === 'Kontak' ? 'Profil & kontak' : value}</option>)}</select></label><nav className="cms-section-tabs" aria-label="Bagian profil dan CV">
+          <div className="wm-site-layout"><label className="wm-section-select">Mau edit bagian mana?<select value={group} onChange={event => setGroup(event.target.value)}>{groups.map(value => <option key={value} value={value}>{value === 'CV' ? 'Isi CV' : value === 'Kontak' ? 'Profil & kontak' : value}</option>)}</select></label><nav className="cms-section-tabs" aria-label={area==='home'?'Bagian homepage':'Bagian profil dan CV'}>
             {groups.map((value) => (
               <button
                 type="button"

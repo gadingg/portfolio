@@ -158,7 +158,7 @@ export function FileDrop({
             {busy ? <span className="admin-spinner" aria-hidden="true"/> : <Images size={18} aria-hidden="true"/>}
             {busy ? progress : uploadLabel || 'Tambah media'}
           </button>
-          <small>Lepas file di sini · maks. {accept.startsWith('video/')?40:4} MB</small>
+          <small>Tarik file ke sini · maks. {accept.startsWith('video/')?40:4} MB</small>
         </div> : <>
         <button
           type="button"
@@ -169,12 +169,12 @@ export function FileDrop({
           <Upload size={18} aria-hidden="true" />
           {busy ? progress : uploadLabel || (accept.startsWith('video/') ? 'Upload video' : accept.startsWith('image/') ? previewSrc ? 'Ganti gambar' : 'Upload gambar' : 'Upload file')}
         </button>
-        <span className="cms-drop-hint">Lepas file · maks. {accept.startsWith('video/')?40:4} MB</span>
+        <span className="cms-drop-hint">Tarik file ke sini · maks. {accept.startsWith('video/')?40:4} MB</span>
         <button
           type="button"
           className="wm-button admin-icon-action"
-          aria-label="Pilih dari media tersimpan"
-          title="Pilih dari media tersimpan"
+          aria-label="Pilih dari koleksi"
+          title="Pilih dari koleksi"
           disabled={busy || disabled}
           onClick={openPicker}
         >
@@ -284,17 +284,17 @@ export function FileDrop({
           <p>Belum ada file.</p>
         ) : null}
         {onFileLink && <details className="cms-picker-link">
-          <summary>Tautan file MP4 / WebM</summary>
-          <label>Tautan file<input type="text" inputMode="url" value={link} onChange={event => {setLink(event.target.value); setLinkError('');}} aria-invalid={!!linkError}/></label>
+          <summary>Link file MP4 / WebM</summary>
+          <label>Link file<input type="text" inputMode="url" value={link} onChange={event => {setLink(event.target.value); setLinkError('');}} aria-invalid={!!linkError}/></label>
           {linkError && <p role="alert">{linkError}</p>}
           <button type="button" className="wm-button" disabled={busy || disabled} onClick={() => {
             try {
               const url = new URL(link, window.location.origin);
               if (!(link.startsWith('/') && !link.startsWith('//') || url.protocol === 'https:') || url.username || url.password || !/\.(mp4|webm)$/i.test(url.pathname))
-                throw Error('Gunakan tautan file MP4 atau WebM.');
+                throw Error('Gunakan link file MP4 atau WebM.');
               onFileLink(link.trim()); dialog.current?.close();
-            } catch {setLinkError('Gunakan tautan file MP4 atau WebM yang valid.');}
-          }}>Gunakan tautan</button>
+            } catch {setLinkError('Gunakan link file MP4 atau WebM yang valid.');}
+          }}>Gunakan link</button>
         </details>}
         <div className="wm-toolbar">
           {hasMore && (
@@ -325,7 +325,7 @@ export function FileDrop({
               dialog.current?.close();
             }}
           >
-            {selected.length ? `Pakai ${selected.length} file` : 'Pakai file'}
+            {selected.length ? `Gunakan ${selected.length} file` : 'Gunakan file'}
           </button>
         </div>
       </dialog>

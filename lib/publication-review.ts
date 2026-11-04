@@ -19,7 +19,7 @@ export function portfolioPublicationMessage(draft: WorkItem[], published: WorkIt
   const names = changed.slice(0, 5).join(', ');
   const extra = changed.length > 5 ? ` dan ${changed.length - 5} lainnya` : '';
   const parts = [changed.length ? `${changed.length} portofolio: ${names}${extra}` : '', orderChanged ? 'urutan portofolio' : ''].filter(Boolean);
-  return `Publish semua perubahan? ${parts.join(' · ') || 'Perubahan portofolio'} ikut di-publish.`;
+  return `Terbitkan semua perubahan? ${parts.join(' · ') || 'Perubahan portofolio'} ikut diterbitkan.`;
 }
 export function sitePublicationSummary(draft: SiteContent, published: SiteContent) {
   const sections: string[] = [];

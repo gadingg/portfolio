@@ -13,6 +13,8 @@ import { ArrowLeft, Undo2, Redo2, Monitor, Smartphone, Eye, Layers, Plus, Slider
 import { FileDrop } from './FileDrop';
 import './works-manager.css';
 import { AdminActionLabel } from './AdminActionLabel';
+import { AdminLink } from './AdminLink';
+import {useRouter} from 'next/navigation';
 import './admin-controls.css';
 import { useConfirm } from './ConfirmDialog';
 import { usePublishReview } from './PublishReview';
@@ -22,6 +24,7 @@ import './visual-editor.css';
 
 type PageData={publishSummary?:PublishSummary;publicationCopy?:ReturnType<typeof workPublicationCopy>;unpublished?:boolean;publicationSections?:string[];revision:number;layout?:{html:string;css:string};seedHtml?:string;title:string;seedUrl:string;previewUrl:string};
 export function VisualEditor({target}:{target:string}){
+  const router=useRouter();
   const notify = useAdminToast();
   const {ask,confirmation}=useConfirm();
   const {review,publicationReview}=usePublishReview();
@@ -29,6 +32,7 @@ export function VisualEditor({target}:{target:string}){
   const baseline=useRef({html:'',css:''});
   const saveLock=useRef(false),selectedRef=useRef<Component|null>(null);
   const [unpublished,setUnpublished]=useState(false);
+  const [hasUnpublishedPortfolio,setHasUnpublishedPortfolio]=useState(false);
   const [toolsOpen,setToolsOpen]=useState(false);
   const [canUndo,setCanUndo]=useState(false),[canRedo,setCanRedo]=useState(false);
   const [tab,setTab]=useState('sections'),[title,setTitle]=useState('Editor konten'),[status,setStatus]=useState('Memuat halaman…'),[error,setError]=useState(''),[ready,setReady]=useState(false),[dirty,setDirty]=useState(false),[busy,setBusy]=useState(false),[uploading,setUploading]=useState(false),[device,setDevice]=useState('Desktop'),[preview,setPreview]=useState(false),[panelOpen,setPanelOpen]=useState(false);
@@ -78,7 +82,9 @@ export function VisualEditor({target}:{target:string}){
         }
         const worksResponse=target==='home'?await fetch('/api/admin/works-preview',{signal:controller.signal,cache:'no-store'}):null;
         if(worksResponse&&!worksResponse.ok)throw Error('Koleksi Portofolio belum bisa dimuat. Coba lagi.');
-        const works=worksResponse?(await worksResponse.json()).items:[];
+        const worksData=worksResponse?await worksResponse.json():null;
+        const works=worksData?.items||[];
+        setHasUnpublishedPortfolio(!!worksData?.hasUnpublishedPortfolio);
         const parsedLayout=new DOMParser().parseFromString(html,'text/html');
         parsedLayout.querySelectorAll('[data-works-list]').forEach(el=>{el.innerHTML='';el.setAttribute('data-gjs-type','works-feed');el.setAttribute('aria-busy','false');});
         html=parsedLayout.body.innerHTML;
@@ -130,7 +136,7 @@ export function VisualEditor({target}:{target:string}){
           const doc=ed.Canvas.getDocument();if(!doc)return;
           ed.getWrapper()?.addClass('showcase');
           ed.getWrapper()?.findType('works-feed').forEach(component=>component.getView()?.render());
-          ed.UndoManager.clear();ed.clearDirtyCount();baseline.current={html:ed.getHtml(),css:ed.getCss()||''};setSavedLayout(JSON.stringify(baseline.current));setLayoutValue(JSON.stringify(baseline.current));setDirty(false);setStatus(data.unpublished?'Draft tersimpan · belum di-publish':'Semua perubahan tersimpan');setReady(true);
+          ed.UndoManager.clear();ed.clearDirtyCount();baseline.current={html:ed.getHtml(),css:ed.getCss()||''};setSavedLayout(JSON.stringify(baseline.current));setLayoutValue(JSON.stringify(baseline.current));setDirty(false);setStatus(data.unpublished?'Draft tersimpan · belum tayang':'Semua perubahan tersimpan');setReady(true);
           doc.addEventListener('click',event=>{if((event.target as Element)?.closest('a'))event.preventDefault();});
           const style=doc.createElement('style');style.textContent='html{scroll-behavior:auto!important}body{background:#060706;color:#f3f0e8}.reveal{opacity:1!important;transform:none!important}[data-works-list]:empty{min-height:120px}';doc.head.appendChild(style);
           if(target==='home'){doc.body.dataset.cmsPreview='true';const script=doc.createElement('script');script.src='/assets/js/works.js';doc.body.appendChild(script);}
@@ -166,7 +172,7 @@ export function VisualEditor({target}:{target:string}){
       return true;
     }catch(e){setError(draftSaveMessage(e));return false;}finally{saveLock.current=false;setBusy(false);}
   }
-  function leave(event:React.MouseEvent<HTMLAnchorElement>){if(autosave.unsafe.current){event.preventDefault();const href=event.currentTarget.href;void ask('Perubahan terakhir belum tersimpan. Tetap keluar?', 'Keluar tanpa menyimpan').then(yes=>{if(yes){autosave.unsafe.current=false;window.location.assign(href);}});}}
+  function leave(event:React.MouseEvent<HTMLAnchorElement>){if(autosave.unsafe.current){event.preventDefault();const href=event.currentTarget.href;void ask('Perubahan terakhir belum tersimpan. Tetap keluar?', 'Keluar tanpa menyimpan').then(yes=>{if(yes){autosave.unsafe.current=false;router.push(href);}});}}
   function setViewport(value:string){editor.current?.setDevice(value);setDevice(value);setToolsOpen(false);if(window.matchMedia('(max-width:700px)').matches)document.querySelector<HTMLButtonElement>('.visual-tools-toggle')?.focus();}
   function editText(index:number,value:string){
     const component=selectedRef.current;if(!component)return;
@@ -193,14 +199,14 @@ export function VisualEditor({target}:{target:string}){
   }
   const sectionIndex=activeSection?sections.indexOf(activeSection):-1;
   const publicationCopy=meta.current?.publicationCopy;
-  const pendingHint=unpublished&&!dirty&&!busy&&autosave.online?(publicationCopy?.pendingSuffix||' · belum di-publish'):'';
+  const pendingHint=unpublished&&!dirty&&!busy&&autosave.online?(publicationCopy?.pendingSuffix||' · belum tayang'):'';
   return <div className={`visual-editor ${preview?'visual-preview':''} ${panelOpen?'visual-panel-open':''}`}>
     {confirmation}
     {publicationReview}
     {autosave.recovery&&<DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} onRestore={autosave.canRestore ? autosave.restoreRecovery : undefined}/>}
     <header className="visual-toolbar" inert={!!autosave.recovery && !autosave.canRestore}>
-      <a href={target==='home'?'/admintgadink/dashboard/site':'/admintgadink/dashboard/works'} onClick={leave} className="visual-icon visual-back" aria-label="Kembali ke admin"><ArrowLeft size={20}/><span>Admin</span></a>
-      <div className="visual-title"><h1>{title}</h1>{ready&&<span role="status">{busy&&action==='publish'?(publicationCopy?.busyLabel||'Publishing…'):!dirty&&!unpublished&&autosave.online?(publicationCopy?.cleanLabel||'Sudah tayang'):autosave.status}{pendingHint}{uploading?' · Mengunggah…':''}</span>}</div>
+      <AdminLink href={target==='home'?'/admintgadink/dashboard/site?area=home':'/admintgadink/dashboard/works'} onClick={leave} className="visual-icon visual-back" aria-label="Kembali ke admin"><ArrowLeft size={20}/><span>Admin</span></AdminLink>
+      <div className="visual-title"><h1>{title}</h1>{ready&&<span role="status">{target==='home'?'Konten homepage: ':''}{busy&&action==='publish'?(publicationCopy?.busyLabel||'Menerbitkan…'):!dirty&&!unpublished&&autosave.online?(publicationCopy?.cleanLabel||'Sudah tayang'):autosave.status}{pendingHint}{uploading?' · Mengunggah…':''}</span>}</div>
       <button className="visual-tools-toggle" aria-label="Alat editor" aria-expanded={toolsOpen} onClick={()=>setToolsOpen(!toolsOpen)}>Alat</button>
       <div className={`visual-tools-content ${toolsOpen?'is-open':''}`}>
       <div className="visual-history"><button aria-label="Urungkan" disabled={!ready||busy||uploading||!canUndo} onClick={()=>editor.current?.UndoManager.undo()}><Undo2 size={18}/></button><button aria-label="Ulangi" disabled={!ready||busy||uploading||!canRedo} onClick={()=>editor.current?.UndoManager.redo()}><Redo2 size={18}/></button></div>
@@ -209,8 +215,9 @@ export function VisualEditor({target}:{target:string}){
       <button className="visual-panel-toggle" aria-label="Panel editor" aria-expanded={panelOpen} onClick={()=>setPanelOpen(!panelOpen)} disabled={preview}><SlidersHorizontal size={18}/><span>Panel</span></button>
       <button aria-label={preview?'Kembali edit':'Preview halaman'} title={preview?'Kembali edit':'Preview halaman'} aria-pressed={preview} onClick={()=>{const ed=editor.current;if(preview)ed?.stopCommand('preview');else ed?.runCommand('preview');setPreview(!preview);}} disabled={!ready||busy}><Eye size={18}/></button>
       {autosave.failed&&<button disabled={busy||!autosave.online} onClick={autosave.retry}>Coba lagi</button>}
-      {publicationCopy?.showPublish!==false&&(dirty||unpublished||(busy&&action==='publish'))&&<button className="visual-publish" aria-label={publicationCopy?.publishLabel||'Publish'} aria-busy={busy&&action==='publish'} disabled={!ready||!autosave.online||!publicationState(dirty,unpublished,busy||uploading).canPublish} onClick={()=>save('publish')}><AdminActionLabel pending={busy&&action==='publish'} idle={publicationCopy?.publishLabel||'Publish'} busy={publicationCopy?.busyLabel||'Publishing…'}/></button>}
+      {publicationCopy?.showPublish!==false&&(dirty||unpublished||(busy&&action==='publish'))&&<button className="visual-publish" aria-label={publicationCopy?.publishLabel||'Terbitkan'} aria-busy={busy&&action==='publish'} disabled={!ready||!autosave.online||!publicationState(dirty,unpublished,busy||uploading).canPublish} onClick={()=>save('publish')}><AdminActionLabel pending={busy&&action==='publish'} idle={publicationCopy?.publishLabel||'Terbitkan'} busy={publicationCopy?.busyLabel||'Menerbitkan…'}/></button>}
     </header>
+    {target==='home'&&ready&&<div className="visual-draft-context"><strong>Preview draft</strong>{hasUnpublishedPortfolio&&<><span>Portofolio berbeda dari versi publik.</span><AdminLink href="/admintgadink/dashboard/works">Cek portofolio</AdminLink></>}</div>}
     {error&&<div role="alert" className="visual-error">{error}{!ready?<button onClick={()=>window.location.reload()}>Coba lagi</button>:<button onClick={()=>setError('')} aria-label="Tutup pesan">Tutup</button>}</div>}
     {preview&&<p className="visual-preview-note"><a href={dirty?undefined:meta.current?.previewUrl} aria-disabled={dirty} target="_blank" rel="noopener noreferrer">Buka draft di tab baru <ExternalLink size={14}/></a>{dirty&&' Menunggu draft tersimpan…'}</p>}
     <div className="visual-workspace" aria-busy={busy} inert={!!autosave.recovery && !autosave.canRestore}>
@@ -221,9 +228,9 @@ export function VisualEditor({target}:{target:string}){
         {tab==='content'&&<div className="visual-content-panel">
           {!selection?<div className="visual-empty"><Type size={24}/><h3>Pilih bagian untuk diedit</h3><p>Pilih bagian dari daftar atau klik elemen di kanvas.</p></div>:<>
             <h3>{selection.label}</h3>
-            {selection.managed?<><a className="visual-text-link" href="/admintgadink/dashboard/works" onClick={leave}>Kelola Portofolio <ExternalLink size={14}/></a></>:<>
+            {selection.managed?<><AdminLink className="visual-text-link" href="/admintgadink/dashboard/works" onClick={leave}>Kelola Portofolio <ExternalLink size={14}/></AdminLink></>:<>
               {selection.texts.map((text,index)=><label className="visual-field" key={`${selectedRef.current?.cid}-${index}`}>{selection.texts.length===1?'Teks':`Teks ${index+1}`}<TextField value={text} onCommit={value=>editText(index,value)}/></label>)}
-              {selection.image&&<><img className="visual-image-preview" src={selection.src} alt="Gambar yang dipilih"/><label className="visual-field">Deskripsi gambar<input value={selection.alt} onChange={event=>attribute('alt',event.target.value)}/></label><FileDrop disabled={busy} onBusyChange={setUploading} onUploaded={files=>{const component=selectedRef.current;if(component?.is('image')&&files[0]){component.removeAttributes(['srcset','sizes','width','height']);component.set('src',files[0].url);if(editor.current)sync(editor.current);}}}/></>}
+              {selection.image&&<><img className="visual-image-preview" src={selection.src} alt="Gambar yang dipilih"/><label className="visual-field">Deskripsi gambar (aksesibilitas)<input value={selection.alt} onChange={event=>attribute('alt',event.target.value)}/></label><FileDrop disabled={busy} onBusyChange={setUploading} onUploaded={files=>{const component=selectedRef.current;if(component?.is('image')&&files[0]){component.removeAttributes(['srcset','sizes','width','height']);component.set('src',files[0].url);if(editor.current)sync(editor.current);}}}/></>}
               {selection.link&&<><label className="visual-field">Tujuan link<input type="text" inputMode="url" value={selection.href} placeholder="https://… atau #contact" onChange={event=>attribute('href',event.target.value)}/></label><label className="visual-check"><input type="checkbox" checked={selection.blank} onChange={event=>{attribute('target',event.target.checked?'_blank':'_self');attribute('rel',event.target.checked?'noopener noreferrer':'');}}/>Buka di tab baru</label></>}
               {!selection.texts.length&&!selection.image&&!selection.link&&<p className="visual-hint">Pilih teks atau gambar untuk diedit.</p>}
             </>}
@@ -259,7 +266,7 @@ function readSelection(component:Component):SelectionData{
   const managed=[component,...component.parents()].some(item=>item.getAttributes()['data-works-list']!==undefined);
   const isText=/^(h[1-6]|p|span|em|strong|a|button|li|figcaption|blockquote)$/.test(tag);
   const doc=new DOMParser().parseFromString(component.getInnerHTML(),'text/html');
-  return {label:component.is('image')?'Gambar':tag==='a'?'Tombol / tautan':isText?'Teks':'Bagian halaman',texts:!managed&&isText?(textNodes(doc.body).length?textNodes(doc.body).map(node=>node.textContent==='\u00a0'?'':node.textContent||''):['']):[],image:component.is('image'),src:component.get('src')||attrs.src||'',alt:attrs.alt||'',link:tag==='a',href:attrs.href||'',blank:attrs.target==='_blank',managed};
+  return {label:component.is('image')?'Gambar':tag==='a'?'Tombol / link':isText?'Teks':'Bagian halaman',texts:!managed&&isText?(textNodes(doc.body).length?textNodes(doc.body).map(node=>node.textContent==='\u00a0'?'':node.textContent||''):['']):[],image:component.is('image'),src:component.get('src')||attrs.src||'',alt:attrs.alt||'',link:tag==='a',href:attrs.href||'',blank:attrs.target==='_blank',managed};
 }
 function pageSections(ed:Editor):Component[]{
   const wrapper=ed.getWrapper();if(!wrapper)return [];
@@ -275,7 +282,7 @@ function sectionTitle(component:Component){
   return doc.body.textContent?.trim().replace(/\s+/g,' ').slice(0,64)||component.getAttributes()['aria-label']||({'text':'Judul & teks','image':'Gambar & keterangan','columns':'Dua kolom','cta':'Ajakan & tombol'} as Record<string,string>)[component.getAttributes()['data-cms-section']]||component.find('img')[0]?.getAttributes().alt||'Bagian';
 }
 const templates=[
-  {title:'Judul & teks',icon:Type,html:'<section class="visual-section" data-cms-section="text"><h2>Judul bagian</h2><p>Tulis konten Anda di sini.</p></section>'},
+  {title:'Judul & teks',icon:Type,html:'<section class="visual-section" data-cms-section="text"><h2>Judul</h2><p>Tulis ceritanya di sini.</p></section>'},
   {title:'Gambar & keterangan',icon:ImageIcon,html:'<section class="visual-section" data-cms-section="image"><figure><img src="/assets/images/hero-dark.jpg" alt="Ganti dengan gambar Anda"/><figcaption>Keterangan gambar</figcaption></figure></section>'},
   {title:'Dua kolom',icon:Layers,html:'<section class="visual-section visual-columns" data-cms-section="columns"><div class="visual-column"><h2>Judul pertama</h2><p>Tulis konten Anda di sini.</p></div><div class="visual-column"><h2>Judul kedua</h2><p>Tulis konten Anda di sini.</p></div></section>'},
   {title:'Ajakan & tombol',icon:ExternalLink,html:'<section class="visual-section" data-cms-section="cta"><h2>Mari terhubung</h2><a class="button button-solid" href="#contact">Hubungi saya</a></section>'},

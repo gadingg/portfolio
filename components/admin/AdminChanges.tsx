@@ -26,7 +26,7 @@ export function AdminChangesProvider({children}: {children: ReactNode}) {
       const destination = location.href;
       event.stopImmediatePropagation();
       history.pushState(previous.state, '', previous.href);
-      void ask('Perubahan belum tersimpan. Tetap tinggalkan halaman?', 'Tinggalkan').then(confirmed => {
+      void ask('Editan belum tersimpan. Tetap keluar?', 'Keluar tanpa menyimpan').then(confirmed => {
         if (!confirmed) return;
         for (const ref of refs.current) ref.current = false;
         window.location.replace(destination);
@@ -42,7 +42,7 @@ export function AdminChangesProvider({children}: {children: ReactNode}) {
       if (link.pathname === location.pathname && link.search === location.search && link.hash) return;
       event.preventDefault();
       event.stopPropagation();
-      void ask('Perubahan belum tersimpan. Tetap tinggalkan halaman?', 'Tinggalkan').then(confirmed => {
+      void ask('Editan belum tersimpan. Tetap keluar?', 'Keluar tanpa menyimpan').then(confirmed => {
         if (confirmed) {
           for (const ref of refs.current) ref.current = false;
           window.location.assign(link.href);

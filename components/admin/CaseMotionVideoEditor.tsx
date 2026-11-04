@@ -11,8 +11,8 @@ export function CaseMotionVideoEditor({value,cover,disabled,onBusyChange,onChang
   async function useFrame(){
     if(!player.current||capturing||disabled)return;
     setCapturing(true);onBusyChange(true);setMessage('');
-    try{const image=await uploadCover(await captureVideoCover(value,player.current.currentTime));onChange({videoFile:value,image});setMessage('Cover diperbarui.');}
-    catch(error){setMessage(error instanceof Error?error.message:'Cover belum tersimpan.');}
+    try{const image=await uploadCover(await captureVideoCover(value,player.current.currentTime));onChange({videoFile:value,image});setMessage('Thumbnail diganti.');}
+    catch(error){setMessage(error instanceof Error?error.message:'Thumbnail belum tersimpan.');}
     finally{setCapturing(false);onBusyChange(false);}
   }
   return <section className="cms-video-source" aria-label={heading==='File video'?'Video dan thumbnail':heading}>
@@ -21,7 +21,7 @@ export function CaseMotionVideoEditor({value,cover,disabled,onBusyChange,onChang
     <p className="wm-editor-note">MP4 · Target {targetSize} · Maks. 40 MB</p>
     <FileDrop accept="video/mp4" uploadLabel={value?'Ganti video MP4':'Upload video MP4'} disabled={disabled} onBusyChange={onBusyChange} onUploaded={files=>onChange({videoFile:files[0].url,...(files[0].cover?{image:files[0].cover}:{})})}/>
     {value&&<><video key={value} ref={player} className="cms-video-preview" src={value} poster={cover} controls playsInline preload="metadata"/>
-    <div className="wm-toolbar"><button type="button" className="wm-button" disabled={disabled||capturing} onClick={useFrame}><ImageIcon size={18} aria-hidden="true"/>{capturing?'Membuat cover…':'Gunakan frame ini'}</button><button type="button" className="wm-button" disabled={disabled} onClick={()=>onChange({videoFile:''})}>Lepas video</button></div></>}
+    <div className="wm-toolbar"><button type="button" className="wm-button" disabled={disabled||capturing} onClick={useFrame}><ImageIcon size={18} aria-hidden="true"/>{capturing?'Membuat thumbnail…':'Jadikan thumbnail'}</button><button type="button" className="wm-button" disabled={disabled} onClick={()=>onChange({videoFile:''})}>Lepas video</button></div></>}
     <div className="cms-video-cover"><h4>Thumbnail</h4><FileDrop folder="covers" previewSrc={cover} previewAlt="Thumbnail video" uploadLabel={cover?'Ganti thumbnail':'Upload thumbnail'} disabled={disabled} onBusyChange={onBusyChange} onUploaded={files=>onChange({videoFile:value,image:files[0].url})}/></div>
     </div>
   </section>;

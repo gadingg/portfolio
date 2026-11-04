@@ -12,6 +12,8 @@ import {CaseLayoutText} from './CaseLayoutText';
 import {CaseLayoutImages} from './CaseLayoutImages';
 import {CaseAppLinksEditor} from './CaseAppLinksEditor';
 import {CaseMotionEditor} from './CaseMotionEditor';
+import {AdminLink} from './AdminLink';
+import {DesignImagesEditor} from './DesignImagesEditor';
 import './work-editor.css';
 
 export function WorkEditor({item, items, disabled, errors, onChange, onKindChange, onBusyChange, onOpenVisual}: {
@@ -37,25 +39,27 @@ export function WorkEditor({item, items, disabled, errors, onChange, onKindChang
         {error('image')}
       </section>}
       {item.kind === 'video' && <VideoSourceEditor item={item} disabled={disabled} errors={errors} onBusyChange={onBusyChange} onChange={onChange}/>}
+      {item.kind==='design'&&<div data-work-field="designImages"><DesignImagesEditor item={item} disabled={disabled} onBusyChange={onBusyChange} onChange={onChange}/>
+        {Object.entries(errors).filter(([key])=>key.startsWith('designImages')).map(([key,text])=><small className="work-field-error" key={key}>{text}</small>)}</div>}
       {study && <section className="work-editor-story" aria-labelledby="work-story-title">
-        <h2 id="work-story-title">Problem, Approach &amp; Outcome</h2>
-        {(['problem','solution','impact'] as const).map((key, index) => <label key={key}>{['Masalah','Solusi','Hasil'][index]}
+        <h2 id="work-story-title">Gambaran proyek</h2>
+        {(['problem','solution','impact'] as const).map((key, index) => <label key={key}>{['Masalah awal','Yang saya buat','Hasilnya'][index]}
           <textarea {...attrs(`caseStudy.${key}`)} rows={3} maxLength={12000} value={study[key]} onChange={event => onChange({caseStudy:{...study,[key]:event.target.value}})}/>
           {error(`caseStudy.${key}`)}
         </label>)}
       </section>}
-      {item.kind !== 'webapp' && <SettingsDisclosure title="Keterangan & tautan" icon={<FileText size={20}/>}>
+      {item.kind !== 'webapp' && <SettingsDisclosure title="Deskripsi & link" icon={<FileText size={20}/>}>
         <div className="work-editor-fields">{description}
-          {item.kind === 'design' && <label>Tautan proyek (opsional)<input {...attrs('url')} inputMode="url" value={item.url} onChange={event => onChange({url:event.target.value})}/>{error('url')}</label>}
+          {item.kind === 'design' && <label>Link proyek (opsional)<input {...attrs('url')} inputMode="url" value={item.url} onChange={event => onChange({url:event.target.value})}/>{error('url')}</label>}
         </div>
       </SettingsDisclosure>}
       {item.kind === 'webapp' && !study && <label>Link aplikasi<input {...attrs('url')} inputMode="url" value={item.url} onChange={event => onChange({url:event.target.value})}/>{error('url')}</label>}
-      {study && <SettingsDisclosure title="Tautan aplikasi" icon={<LinkIcon size={20}/>}>
+      {study && <SettingsDisclosure title="Link aplikasi" icon={<LinkIcon size={20}/>}>
         <div data-work-field="caseStudy.appLinks"><CaseAppLinksEditor study={study} onChange={appLinks => onChange({caseStudy:{...study,appUrl:appLinks[0]?.url || '',appLinks}})}/>
           {Object.entries(errors).filter(([key]) => key.startsWith('caseStudy.app')).map(([key,text]) => <small className="work-field-error" key={key}>{text}</small>)}
         </div>
       </SettingsDisclosure>}
-      {study && <SettingsDisclosure title="Isi studi kasus" icon={<ImageIcon size={20}/>} defaultOpen>
+      {study && <SettingsDisclosure title="Cerita & screenshot" icon={<ImageIcon size={20}/>} defaultOpen>
         <div className="work-editor-fields" data-work-field="caseStudy.blocks">
           {study.layout ? <><CaseLayoutText layout={study.layout} disabled={disabled} onChange={layout => onChange({caseStudy:{...study,layout}})}/>
             <CaseLayoutImages layout={study.layout} disabled={disabled} onBusyChange={onBusyChange} onChange={layout => onChange({caseStudy:{...study,layout}})}/></>
@@ -65,10 +69,10 @@ export function WorkEditor({item, items, disabled, errors, onChange, onKindChang
       </SettingsDisclosure>}
       {study && <div data-work-field="caseStudy.motion"><CaseMotionEditor study={study} disabled={disabled} onBusyChange={onBusyChange} onChange={motion => onChange({caseStudy:{...study,motion}})}/>
         {Object.entries(errors).filter(([key]) => key.startsWith('caseStudy.motion')).map(([key,text]) => <small className="work-field-error" key={key}>{text}</small>)}</div>}
-      {study && <SettingsDisclosure title="Editor halaman & AI" icon={<FileText size={20}/>}>
+      {study && <SettingsDisclosure title="Edit layout & bantuan AI" icon={<FileText size={20}/>}>
         <div className="work-editor-fields">
           <div className="work-editor-secondary-actions"><button type="button" className="wm-button" onClick={onOpenVisual}>Edit halaman studi kasus</button>
-            <a className="wm-button" href={`/admintgadink/dashboard/ai?work=${item.id}`}>Revisi dengan AI</a></div>
+            <AdminLink className="wm-button" href={`/admintgadink/dashboard/ai?work=${item.id}`}>Revisi dengan AI</AdminLink></div>
           {item.aiDraft && <SettingsDisclosure title="Catatan AI" icon={<FileText size={18}/>}>
             <label>Brief awal<textarea rows={4} maxLength={30000} value={item.aiDraft.brief} onChange={event => onChange({aiDraft:{...item.aiDraft!,brief:event.target.value}})}/></label>
             {!!item.aiDraft.confirmations.length && <ul>{item.aiDraft.confirmations.map((text,index)=><li key={index}>{text}</li>)}</ul>}
@@ -84,14 +88,14 @@ export function WorkEditor({item, items, disabled, errors, onChange, onKindChang
           {item.kind === 'webapp' && <><label className="wm-check"><input type="checkbox" checked={!!study} onChange={event => onChange(setCaseStudyEnabled(item,event.target.checked))}/>Halaman studi kasus</label>
             <label className="wm-check"><input type="checkbox" checked={homepageWorks(items).some(work => work.id === item.id)}
               disabled={disabled || !item.published || !!workReadiness(item) || (!homepageWorks(items).some(work=>work.id===item.id)&&homepageWorks(items).length>=3)}
-              onChange={event => onChange(setHomepageFeatured(items,item.id,event.target.checked).find(work=>work.id===item.id) || {})}/>Unggulan homepage ({homepageWorks(items).length}/3)</label>
+              onChange={event => onChange(setHomepageFeatured(items,item.id,event.target.checked).find(work=>work.id===item.id) || {})}/>Pilihan homepage ({homepageWorks(items).length}/3)</label>
           </>}
           {!study && item.archivedCaseStudy && <p className="wm-editor-note">Cerita studi kasus tetap tersimpan. Aktifkan kembali melalui jenis Web App.</p>}
           {study && <label>Alamat halaman<input {...attrs('caseStudy.slug')} value={study.slug} onChange={event => onChange({caseStudy:{...study,slug:event.target.value}})}/>
             <small>/work/{study.slug}</small>{error('caseStudy.slug')}</label>}
-          <label>Deskripsi gambar untuk aksesibilitas<input {...attrs('imageAlt')} maxLength={250} value={item.imageAlt} onChange={event => onChange({imageAlt:event.target.value})}/>{error('imageAlt')}</label>
-          <SettingsDisclosure title="Tautan gambar langsung" icon={<LinkIcon size={18}/>}>
-            <label>Tautan file<input value={item.image} inputMode="url" onChange={event => onChange({image:event.target.value})}/>{error('image')}</label>
+          <label>Deskripsi gambar (aksesibilitas)<input {...attrs('imageAlt')} maxLength={250} value={item.imageAlt} onChange={event => onChange({imageAlt:event.target.value})}/>{error('imageAlt')}</label>
+          <SettingsDisclosure title="Link gambar" icon={<LinkIcon size={18}/>}>
+            <label>Link file<input value={item.image} inputMode="url" onChange={event => onChange({image:event.target.value})}/>{error('image')}</label>
           </SettingsDisclosure>
         </div>
       </SettingsDisclosure>

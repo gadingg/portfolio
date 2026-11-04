@@ -1,5 +1,7 @@
 'use client';
 import { workReadiness } from '@/lib/work-readiness';
+import {useRouter} from 'next/navigation';
+import { incompletePublishedIds, incompleteWorksForReview } from '@/lib/admin-overview';
 import { homepageWorks, setHomepageFeatured } from '@/lib/homepage-works';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -47,7 +49,8 @@ import {trashExpired, trashTimeLeft, type TrashedWork} from '@/lib/work-trash';
 import {WorkEditor} from './WorkEditor';
 import {workEditorErrors, focusWorkError, openStudyPreview, type WorkEditorErrors} from '@/lib/work-editor';
 type InitialWorks = {items: WorkItem[]; published: WorkItem[]; revision: number; trash?: TrashedWork[]};
-export function WorksManager({initial, selection}: {initial?: InitialWorks; selection?: {kind?: string; work?: string}} = {}) {
+export function WorksManager({initial, selection}: {initial?: InitialWorks; selection?: {kind?: string; work?: string; status?: string}} = {}) {
+  const router=useRouter();
   const notify = useAdminToast();
   const workspace = useRef<HTMLDivElement>(null), previewDialog = useRef<HTMLDialogElement>(null);
   const freshItems = useRef(new Set<string>());
@@ -72,11 +75,14 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
   const savedRef = useRef(saved);
   function mediaBusy(value: boolean) { uploadBusy.current = value; setBusy(value); }
   const [query, setQuery] = useState('');
+  const [incompleteOnly, setIncompleteOnly] = useState(selection?.status === 'incomplete');
+  const incompleteIds = incompletePublishedIds(published);
+  const incompleteRecords = incompleteWorksForReview(items,published);
   const [showImport, setShowImport] = useState(false);
   const [reorderMode,setReorderMode]=useState(false);
-  const initialWork = initial?.items.find(item => item.id === selection?.work);
+  const initialWork = initial?.items.find(item => item.id === selection?.work) || (selection?.status === 'incomplete' && !selection?.kind ? incompleteRecords[0]?.item : undefined);
   const [kind, setKind] = useState<WorkKind>(initialWork?.kind || (workKinds.includes(selection?.kind as WorkKind) ? selection?.kind as WorkKind : 'webapp')),
-    [editing, setEditing] = useState<string | null>(initialWork?.id || null),
+    [editing, setEditing] = useState<string | null>(selection?.work ? initialWork?.id || null : null),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
     [notice, setNotice] = useState('');
@@ -108,7 +114,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
     setBusy(true);
     setError('');
     try {
-      const r = await fetch('/api/admin/works', { cache: 'no-store' });
+      const r = await fetch('/api/admin/works', { cache: 'no-store', signal: AbortSignal.timeout(15000) });
       const data = await r.json();
       if (!r.ok) throw Error(data.error);
       adopt(data);
@@ -134,8 +140,10 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
     url.searchParams.set('kind', kind);
     if (editing) url.searchParams.set('work', editing);
     else url.searchParams.delete('work');
+    if (incompleteOnly) url.searchParams.set('status', 'incomplete');
+    else url.searchParams.delete('status');
     window.history.replaceState(null, '', url);
-  }, [kind, editing, revision]);
+  }, [kind, editing, revision, incompleteOnly]);
   useEffect(() => {
     const close = (event: PointerEvent | KeyboardEvent) => {
       if (event instanceof KeyboardEvent && event.key !== 'Escape') return;
@@ -198,7 +206,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
       if (action === 'publish' && selected && !(await ask(selected.published ? `Terbitkan “${selected.title}” ke website?` : `Sembunyikan “${selected.title}” dari website?`, selected.published ? 'Terbitkan' : 'Sembunyikan'))) return false;
       if (action === 'publish' && !workId && !(await review(summarizeWorks(snapshot, published)))) return false;
       adopt(await send(action, selected ? [selected] : snapshot, undefined, workId), JSON.stringify(snapshot), workId);
-      if (!automatic) setNotice(action === 'publish' ? selected ? selected.published ? `${selected.title} sudah di-publish.` : `${selected.title} disembunyikan dari website.` : 'Semua perubahan sudah di-publish.' : 'Draft tersimpan.');
+      if (!automatic) setNotice(action === 'publish' ? selected ? selected.published ? `${selected.title} sudah tayang.` : `${selected.title} disembunyikan dari website.` : 'Semua perubahan sudah diterbitkan.' : 'Draft tersimpan.');
       else notify('Draft tersimpan.', {id:'autosave', duration:2500});
       return true;
     } catch (e) { setError(draftSaveMessage(e)); return false; }
@@ -244,7 +252,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
     positions.forEach((position, i) => (ordered[position] = next[i]));
     setItems(ordered);
     setError('');
-    setNotice('Urutan tersimpan otomatis. Pilih Publish semua untuk mengubah urutan di website.');
+    setNotice('Urutan tersimpan di draft. Pilih Terbitkan perubahan untuk menerapkannya di website.');
   }
   function update(id: string, patch: Partial<WorkItem>) {
     setFieldErrors(current => Object.keys(current).length ? workEditorErrors({...itemsRef.current.find(work => work.id === id)!,...patch}) : {}); setError('');
@@ -297,13 +305,14 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
     if (menu) { menu.open = false; menu.querySelector<HTMLElement>('summary')?.focus(); }
   }
   const item = items.find((value) => value.id === editing),
-    visible = items.filter((value) => value.kind === kind && value.title.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+    visible = items.filter((value) => value.kind === kind && (!incompleteOnly || incompleteIds.has(value.id)) && value.title.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+  const pendingRemovals = incompleteOnly ? incompleteRecords.filter(record => record.pendingRemoval && record.item.kind === kind && record.item.title.toLocaleLowerCase().includes(query.toLocaleLowerCase())) : [];
   const publicItem = published.find(value => value.id === editing && value.published);
   async function openVisual() {
     if (!item || uploadBusy.current) return;
     if (pendingMutation.current) await pendingMutation.current;
     if (JSON.stringify(itemsRef.current) !== JSON.stringify(savedRef.current) && !(await save('save'))) return;
-    window.location.assign(`/admintgadink/dashboard/editor/${item.id}`);
+    router.push(`/admintgadink/dashboard/editor/${item.id}`);
   }
   async function openPreview() {
     if (!item || uploadBusy.current) return;
@@ -343,7 +352,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
           )}
           <h1>{item ? freshItems.current.has(item.id) ? {webapp:'Tambah studi kasus',design:'Tambah desain',video:'Tambah video'}[item.kind] : item.title : 'Portofolio'}</h1>
         </div>
-        {item ? <button type="button" className="wm-button" disabled={busy} onClick={openPreview}><Eye size={18}/>Pratinjau</button> : <a
+        {item ? <button type="button" className="wm-button" disabled={busy} onClick={openPreview}><Eye size={18}/>Preview</button> : <a
           className="wm-public-link"
           href={publicItem?.caseStudy ? `/work/${publicItem.caseStudy.slug}` : `/${kind}`}
           target="_blank"
@@ -353,8 +362,8 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
           <ExternalLink size={18} />
         </a>}
       </div>
-      {revision !== null && !showTrash && <PublicationBar dirty={selectedDirty} unpublished={selectedUnpublished} busy={busy} operation={operation} scope={item ? '' : publicationCopy.scope} publishLabel={item && !item.published && publicItem ? 'Sembunyikan dari website' : item ? publicationCopy.publishLabel === 'Publish' ? publicItem ? 'Terbitkan revisi' : 'Terbitkan' : publicationCopy.publishLabel : 'Terbitkan perubahan'}
-        busyLabel={publicationCopy.busyLabel === 'Publishing…' ? 'Menerbitkan…' : publicationCopy.busyLabel} showPublish={publicationCopy.showPublish} pendingSuffix={item ? publicItem ? ' · Versi lama masih tayang' : ' · Belum tayang' : ' · Ada perubahan belum tayang'}
+      {revision !== null && !showTrash && <PublicationBar dirty={selectedDirty} unpublished={selectedUnpublished} busy={busy} operation={operation} scope={item ? '' : publicationCopy.scope} publishLabel={item && !item.published && publicItem ? 'Sembunyikan dari website' : item ? publicationCopy.publishLabel === 'Terbitkan' ? publicItem ? 'Terbitkan revisi' : 'Terbitkan' : publicationCopy.publishLabel : 'Terbitkan perubahan'}
+        busyLabel={publicationCopy.busyLabel} showPublish={publicationCopy.showPublish} pendingSuffix={item ? publicItem ? ' · Versi lama masih tayang' : ' · Belum tayang' : ' · Ada perubahan belum tayang'}
         visibility={item ? { checked: item.published, onChange: checked => update(item.id, { published: checked }) } : undefined}
         status={!dirty && !selectedUnpublished && autosave.online ? publicationCopy.cleanLabel : autosave.status} offline={!autosave.online} failed={autosave.failed}
         onSave={autosave.retry} onPublish={() => { void save('publish'); }}/>}
@@ -384,14 +393,14 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
                 type="button"
                 className="wm-button"
                 aria-pressed={!showTrash && kind === value}
-                aria-label={`${workLabels[value]} ${items.filter(work => work.kind === value).length}`}
+                aria-label={`${workLabels[value]} ${incompleteOnly ? incompleteRecords.filter(record => record.item.kind === value).length : items.filter(work => work.kind === value).length}`}
                 disabled={busy}
                 onClick={() => { setShowTrash(false); setKind(value); setQuery(''); setShowImport(false); setShowFeatured(false); setReorderMode(false); }}
               >
                 <span className="wm-tab-label">{workLabels[value]}</span>
                 <span className="wm-tab-short" aria-hidden="true">{{webapp:'Web / Apps',design:'Desain',video:'Video'}[value]}</span>
                 <span>
-                  {items.filter((item) => item.kind === value).length}
+                  {incompleteOnly ? incompleteRecords.filter(record => record.item.kind === value).length : items.filter(item => item.kind === value).length}
                 </span>
               </button>
             ))}
@@ -408,24 +417,25 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
             }) : <div className="wm-empty"><Trash2 size={28} aria-hidden="true"/><h2>Sampah kosong</h2><p>Portofolio yang dihapus akan muncul di sini.</p></div>}
           </section> : <>
 
+          {incompleteOnly && <div className="wm-filter-status"><span>Belum lengkap · {visible.length + pendingRemovals.length} portofolio</span><button type="button" className="wm-button" onClick={() => {setIncompleteOnly(false);setReorderMode(false);}}>Lihat semua</button></div>}
           <div className="wm-toolbar">
-            {reorderMode && <button type="button" className="wm-button" onClick={() => setReorderMode(false)}><Check size={18}/>Selesai mengurutkan</button>}
+            {reorderMode && <button type="button" className="wm-button" onClick={() => setReorderMode(false)}><Check size={18}/>Selesai</button>}
             <label className="wm-search"><span className="wm-sr-only">Cari portofolio</span><Search size={18} aria-hidden="true"/><input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder="Cari judul…" /></label>
             <div className="wm-create-actions">
               <button type="button" className="wm-button wm-primary" disabled={busy} onClick={() => {setShowImport(false);add();}}><Plus size={18} aria-hidden="true"/>{addLabel}</button>
               <details className="wm-action-menu">
-              <summary className="wm-button" aria-label="Kelola koleksi">Kelola koleksi</summary>
+              <summary className="wm-button" aria-label="Opsi koleksi">Opsi koleksi</summary>
               <div className="wm-menu-panel">
-                <button type="button" disabled={busy || !!query || reorderMode} onClick={event => { closeMenu(event.currentTarget); setReorderMode(true); }}><ListOrdered size={18}/>Atur urutan</button>
-                {kind === 'webapp' && <button type="button" disabled={busy} onClick={event => { closeMenu(event.currentTarget); setShowFeatured(true); setShowImport(false); }}><Eye size={18}/>Unggulan homepage</button>}
+                <button type="button" disabled={busy || !!query || reorderMode || incompleteOnly} onClick={event => { closeMenu(event.currentTarget); setReorderMode(true); }}><ListOrdered size={18}/>Atur urutan</button>
+                {kind === 'webapp' && <button type="button" disabled={busy} onClick={event => { closeMenu(event.currentTarget); setShowFeatured(true); setShowImport(false); }}><Eye size={18}/>Pilihan homepage</button>}
                 <button type="button" disabled={busy} onClick={event => { closeMenu(event.currentTarget); setShowTrash(true); setShowFeatured(false); setShowImport(false); setReorderMode(false); }}><Trash2 size={18}/>Sampah ({trash.length})</button>
-                <button type="button" disabled={busy} onClick={event => { closeMenu(event.currentTarget); setShowFeatured(false); setShowImport(true); }}><Upload size={18}/>Import banyak file</button>
+                <button type="button" disabled={busy} onClick={event => { closeMenu(event.currentTarget); setShowFeatured(false); setShowImport(true); }}><Upload size={18}/>Upload beberapa file</button>
               </div>
             </details></div>
           </div>
-          {showFeatured && kind === 'webapp' && <section className="wm-import-panel" aria-label="Unggulan homepage">
-            <div className="cms-panel-heading"><h2>Unggulan homepage</h2><button type="button" className="wm-button" onClick={() => setShowFeatured(false)}>Tutup</button></div>
-            <p className="wm-editor-note">Maks. 3 unggulan, sesuai urutan portofolio.</p>
+          {showFeatured && kind === 'webapp' && <section className="wm-import-panel" aria-label="Pilihan homepage">
+            <div className="cms-panel-heading"><h2>Pilihan homepage</h2><button type="button" className="wm-button" onClick={() => setShowFeatured(false)}>Tutup</button></div>
+            <p className="wm-editor-note">Pilih hingga 3 proyek. Urutannya mengikuti koleksi.</p>
             <div className="wm-featured-options">
               {items.filter(work => work.kind === 'webapp' && work.published && !workReadiness(work)).map(work => {
                 const selected = homepageWorks(items).some(value => value.id === work.id);
@@ -440,7 +450,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
           </section>}
           {showImport && <section className="wm-import-panel" aria-label="Tambah dari media">
             <div className="cms-panel-heading"><h2>{kind === 'video' ? 'Tambahkan video' : 'Tambahkan gambar'}</h2><button type="button" className="wm-button" aria-label="Tutup upload" disabled={busy} onClick={() => setShowImport(false)}><X size={18}/></button></div>
-            <p className="wm-editor-note">Setiap file menjadi satu portofolio.</p>
+            <p className="wm-editor-note">Satu file jadi satu item portofolio.</p>
             <FileDrop
             key={kind}
             multiple
@@ -449,7 +459,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
             onBusyChange={mediaBusy}
             onUploaded={importImages}
           /></section>}
-          <SortableList items={visible} reorderable={reorderMode} disabled={busy || !!query} onChange={order}>
+          <SortableList items={visible} reorderable={reorderMode} disabled={busy || !!query || incompleteOnly} onChange={order}>
             {(work, index, handle) => (
               <div className="cms-work-row">
                 {handle}
@@ -497,7 +507,8 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
               </div>
             )}
           </SortableList>
-          {!visible.length && <p className="wm-empty">{query?'Tidak ada judul yang cocok.':'Belum ada portofolio.'}</p>}
+          {!!pendingRemovals.length && <section className="wm-pending-removals" aria-labelledby="pending-removals-title"><h2 id="pending-removals-title">Menunggu penghapusan ({pendingRemovals.length})</h2><p>Sudah dihapus dari draft. Penghapusan berlaku setelah perubahan koleksi diterbitkan.</p><ul>{pendingRemovals.map(({item}) => <li key={item.id}>{item.title}</li>)}</ul></section>}
+          {!visible.length && !pendingRemovals.length && <p className="wm-empty">{query?'Tidak ada judul yang cocok.':incompleteOnly?'Tidak ada portofolio yang belum lengkap di kategori ini.':'Belum ada portofolio.'}</p>}
           </>}
         </>
       )}
@@ -509,7 +520,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
           update(item.id,setWorkKind(item,value)); setKind(value);
         }}/>}
       {item && <dialog ref={previewDialog} className="wm-editor-preview-dialog" aria-labelledby="work-preview-title" onClick={event => {if(event.target===previewDialog.current)previewDialog.current.close();}}>
-        <div className="cms-panel-heading"><h2 id="work-preview-title">{item.caseStudy ? 'Pratinjau studi kasus' : 'Pratinjau kartu'}</h2><button type="button" className="wm-button" aria-label="Tutup pratinjau" onClick={() => previewDialog.current?.close()}><X size={18}/></button></div>
+        <div className="cms-panel-heading"><h2 id="work-preview-title">{item.caseStudy ? 'Preview studi kasus' : 'Preview kartu'}</h2><button type="button" className="wm-button" aria-label="Tutup preview" onClick={() => previewDialog.current?.close()}><X size={18}/></button></div>
         {item.image && <img {...workThumbnail(item.image)} sizes="500px" alt={item.imageAlt || item.title}/>}
         <h3>{item.title}</h3>{item.description && <p>{item.description}</p>}
       </dialog>}

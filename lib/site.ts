@@ -22,14 +22,14 @@ export const siteFields: SiteField[] = [
   },
   {
     key: 'seoDescription',
-    label: 'Deskripsi pencarian',
+    label: 'Deskripsi di hasil pencarian',
     group: 'Identitas',
     selector: 'meta[name="description"]',
     attribute: 'content',
   },
   {
     key: 'heroMetadata',
-    label: 'Label pembuka',
+    label: 'Teks kecil di atas judul',
     group: 'Hero',
     selector: '.hero-metadata',
   },
@@ -42,7 +42,7 @@ export const siteFields: SiteField[] = [
   },
   {
     key: 'intro',
-    label: 'Pengantar',
+    label: 'Deskripsi singkat',
     group: 'Hero',
     selector: '.hero-bottom > p',
   },
@@ -60,7 +60,7 @@ export const siteFields: SiteField[] = [
   },
   {
     key: 'worksTitle',
-    label: 'Judul bagian portofolio',
+    label: 'Judul portofolio',
     group: 'Portofolio',
     selector: '#work-title',
   },
@@ -73,40 +73,40 @@ export const siteFields: SiteField[] = [
   },
   {
     key: 'aboutSignature',
-    label: 'Nama dan posisi',
+    label: 'Nama & peran',
     group: 'About',
     selector: '.about-signature',
     lines: true,
   },
   {
     key: 'aboutBody1',
-    label: 'Pernyataan singkat',
+    label: 'Quote',
     group: 'About',
     selector: '.about-copy .about-statement',
   },
   {
     key: 'aboutBody2',
-    label: 'Penjelasan About',
+    label: 'Cerita tentang saya',
     group: 'About',
     selector: '.about-copy > p:last-of-type',
   },
   {
     key: 'capabilitiesTitle',
-    label: 'Judul kemampuan',
+    label: 'Judul What I Do',
     group: 'About',
     selector: '.capability-layout > h3',
   },
   ...Array.from({ length: 4 }, (_, i) => [
     {
       key: `capabilityTitle${i}`,
-      label: `Kemampuan ${i + 1}`,
+      label: `Layanan ${i + 1}`,
       group: 'Kemampuan',
       selector: `.capability-list > :nth-child(${i + 1}) :is(summary,h4)`,
     },
   ]).flat(),
   {
     key: 'processTitle',
-    label: 'Judul proses',
+    label: 'Judul How I Work',
     group: 'Proses',
     selector: '#process-title',
   },
@@ -127,7 +127,7 @@ export const siteFields: SiteField[] = [
   ...Array.from({ length: 3 }, (_, i) => [
     {
       key: `toolTitle${i}`,
-      label: `Kelompok ${i + 1}`,
+      label: `Kategori tools ${i + 1}`,
       group: 'Tools',
       selector: `.toolkit-groups > div:nth-child(${i + 1}) h3`,
     },
@@ -147,7 +147,7 @@ export const siteFields: SiteField[] = [
   },
   {
     key: 'contactBody',
-    label: 'Pengantar kontak',
+    label: 'Deskripsi kontak',
     group: 'Kontak',
     selector: '.contact-layout > div p',
   },
@@ -159,14 +159,14 @@ export const siteFields: SiteField[] = [
   },
   {
     key: 'whatsapp',
-    label: 'Tautan WhatsApp',
+    label: 'Link WhatsApp',
     group: 'Kontak',
     selector: '.contact-layout .button',
     attribute: 'href',
   },
   {
     key: 'instagram',
-    label: 'Tautan Instagram',
+    label: 'Link Instagram',
     group: 'Kontak',
     selector: '.contact-bottom a[data-social="instagram"], .contact-bottom a[href*="instagram.com"]',
     attribute: 'href',
@@ -180,7 +180,7 @@ export const siteFields: SiteField[] = [
   },
   {
     key: 'linkedin',
-    label: 'Tautan LinkedIn',
+    label: 'Link LinkedIn',
     group: 'Kontak',
     selector: '.contact-bottom a[data-social="linkedin"]',
     attribute: 'href',
@@ -250,7 +250,7 @@ export const SiteSchema = z
       if (validator && !validator.safeParse(value).success)
         ctx.addIssue({
           code: 'custom',
-          message: `${field.label}: tautan tidak valid.`,
+          message: `${field.label}: link tidak valid.`,
         });
     }
   });

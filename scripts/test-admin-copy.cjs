@@ -28,7 +28,7 @@ test('hiding a live portfolio exposes the hide action; an already private portfo
 
 test('draft status never claims a local copy exists when persistence failed', () => {
   const state = { online: true, dirty: true, localCopy: false, saving: false, failed: false, storageFailed: false };
-  assert.equal(draftStatusCopy(state), 'Menunggu simpan otomatis…');
+  assert.equal(draftStatusCopy(state), 'Menunggu disimpan…');
   assert.equal(draftStatusCopy({ ...state, saving: true }), 'Menyimpan…');
   assert.equal(draftStatusCopy({ ...state, dirty: false }), 'Draft tersimpan');
   assert.equal(draftStatusCopy({ ...state, online: false, localCopy: true }), 'Offline · tersimpan di perangkat');

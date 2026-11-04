@@ -618,6 +618,7 @@ html:has(.showcase dialog[open]){overflow:hidden}
 .showcase .case-inline-image .case-detail-image,.showcase .case-form-image>img{display:block;width:100%;height:auto;object-fit:contain}
 .showcase .case-form-image{margin-block:32px}
 .showcase .case-form-image figcaption{font-size:13px;line-height:1.6;margin-top:12px;color:var(--secondary)}
+.showcase .case-narrative p,.showcase .study-case-blocks p{white-space:pre-line}
 .showcase .work-collection-summary{margin:0 0 24px;color:var(--secondary);font-size:14px;line-height:1.6}
 .showcase #web-apps:has(.work-collection-summary)>.works-heading{margin-bottom:8px}
 .showcase .case-editorial .case-outcomes{border:0}
@@ -637,6 +638,7 @@ html:has(.showcase dialog[open]){overflow:hidden}
 .showcase #about .about-editorial:has(.about-workboard)>.about-introduction{display:contents}
 .showcase #about .about-editorial .about-heading{grid-row:1}
 .showcase #about .about-editorial #about-title{font-size:clamp(32px,5.2vw,58px);line-height:1.08}
+@media(max-width:599px){.showcase #about .about-editorial #about-title{font-size:clamp(26px,6.8vw,30px)}}
 .showcase #about .about-editorial .about-signature{font-size:12px;margin-top:16px;color:var(--secondary)}
 .showcase #about .about-editorial .about-copy{grid-row:3}
 .showcase #about .about-editorial .about-copy .about-statement{font-size:clamp(27px,2.3vw,42px);line-height:1.45;letter-spacing:-.02em;font-weight:600;margin-bottom:20px}

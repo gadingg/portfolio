@@ -1,8 +1,50 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { runtime } = require('./cms-script-runtime.cjs');
-const { summarizeWorks, stampWorkUpdates } = runtime()('lib/admin-overview.ts');
+const { summarizeWorks, stampWorkUpdates, incompletePublishedIds, incompleteWorksForReview, previewDiffersFromPublic } = runtime()('lib/admin-overview.ts');
 const item = (id, extra = {}) => ({ id, kind:'webapp', title:id, description:'', image:'', imageAlt:'', url:'https://example.com', published:true, demo:false, artwork:'hub', ...extra });
+
+test('incomplete inventory links to exactly the enabled public records that cannot display', () => {
+  const records=[item('live'),item('missing',{url:''}),item('hidden',{url:'',published:false})];
+  assert.deepEqual([...incompletePublishedIds(records)],['missing']);
+  const summary=summarizeWorks(records,records);
+  assert.equal(summary.incomplete,1);
+  assert.equal(summary.review.length,0);
+  assert.equal(incompletePublishedIds([]).size,0);
+});
+
+test('incomplete review preserves pending deletions and shows the latest saved draft without restoring records', () => {
+  const missing=item('missing',{url:''}),removed=item('removed',{url:''}),fixed={...missing,url:'https://example.com'};
+  const draft=[fixed],records=incompleteWorksForReview(draft,[missing,removed,item('live')]);
+  assert.equal(records.length,2);
+  assert.equal(records[0].item.url,fixed.url);
+  assert.equal(records[0].pendingRemoval,false);
+  assert.equal(records[1].pendingRemoval,true);
+  assert.equal(records[1].item.id,'removed');
+  assert.deepEqual(draft,[fixed]);
+});
+
+test('draft preview warns for incomplete previews, content changes and public records absent from draft', () => {
+  const live=item('live'),incomplete=item('missing',{url:''});
+  assert.equal(previewDiffersFromPublic([live],[live]),false);
+  assert.equal(previewDiffersFromPublic([{...live,updatedAt:'2026-11-04T01:00:00Z'}],[Object.fromEntries(Object.entries(live).reverse())]),false);
+  assert.equal(previewDiffersFromPublic([live,incomplete],[live,incomplete]),true);
+  assert.equal(previewDiffersFromPublic([{...live,title:'Draft title'}],[live]),true);
+  assert.equal(previewDiffersFromPublic([],[live]),true);
+  assert.equal(previewDiffersFromPublic([live,item('hidden',{published:false})],[live]),false);
+  assert.equal(previewDiffersFromPublic([],[]),false);
+});
+
+test('authenticated homepage preview reports its draft scope without changing preview links', async () => {
+  const draft=[item('draft',{caseStudy:{slug:'draft'}}),item('hidden',{published:false})];
+  const route=runtime({'@/lib/cms-http':{cmsAccess:async()=>null,cmsError:error=>{throw error;}},'@/lib/db/works':{getWorksDocument:async()=>({draft:{items:draft},published:{items:[]}})}})('app/api/admin/works-preview/route.ts');
+  const response=await route.GET(),data=await response.json();
+  assert.equal(response.status,200);
+  assert.equal(response.headers.get('cache-control'),'no-store');
+  assert.equal(data.hasUnpublishedPortfolio,true);
+  assert.equal(data.items.length,1);
+  assert.equal(data.items[0].url,'/admintgadink/preview/draft');
+});
 
 test('Tayang uses the public snapshot; drafts and pending deletions do not miscount the collection', () => {
   const published = [item('live'), item('pending-removal'), item('hidden', { published:false })];

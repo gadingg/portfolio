@@ -163,11 +163,11 @@
 .cms-drop .admin-icon-action { position:relative; }
 .cms-manager .cms-sticky-toolbar { border-color:var(--border); padding:10px 14px; }
 .cms-manager .wm-save-scope { margin:0; }
-.cms-manager .wm-savebar:not(:has(button)) { background:transparent; border-color:transparent; padding-inline:0; }
+.cms-manager .wm-savebar:not(:has(button)) { background:var(--admin-bg,#0c1016); border-color:transparent; }
 .wm-workspace .wm-toolbar { display:grid; grid-template-columns:auto minmax(140px,1fr) auto; }
 .wm-workspace .wm-search { max-width:none; }
 .wm-workspace .wm-toolbar>.wm-button:not(.wm-primary) { background:transparent; border-color:var(--border); }
-.wm-workspace .wm-savebar:has(.wm-button:disabled):not(:has(.wm-save-scope)) { background:transparent; border-color:transparent; }
+.wm-workspace .wm-savebar:has(.wm-button:disabled):not(:has(.wm-save-scope)) { background:var(--admin-bg,#0c1016); border-color:transparent; }
 @media(max-width:760px) {
   .wm-workspace .wm-toolbar { grid-template-columns:44px minmax(0,1fr) auto; gap:8px; }
   .wm-workspace .wm-search { grid-column:1 / -1; grid-row:1; }
@@ -183,6 +183,8 @@
 .works-manager .video-source-choice label{display:flex;flex-direction:row;align-items:center;gap:8px;min-height:44px}
 .works-manager .video-source-choice input{width:20px;height:20px;accent-color:var(--amber)}
 .wm-save-status{display:flex;align-items:center;gap:8px}.wm-save-status>svg{color:var(--amber);flex-shrink:0}
+.wm-filter-status{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;font-size:13px;color:var(--muted)}
+.wm-pending-removals{padding-block:24px;color:var(--muted);font-size:13px;line-height:1.7}.works-manager .wm-pending-removals h2{font-size:16px;color:var(--ink);margin:0 0 8px}.wm-pending-removals ul{margin:16px 0 0;padding-left:20px}
 .wm-trash-list{padding-top:24px}.wm-trash-list>.wm-editor-note{margin-bottom:20px}.wm-trash-list .wm-summary{flex:1}.wm-trash-list .cms-work-row{gap:16px}.wm-trash-list .wm-empty{display:grid;justify-items:center;gap:12px;text-align:center}
 .wm-workspace .wm-trash-tab{margin-left:auto}
 @media(max-width:760px){.wm-workspace .wm-tabs{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.wm-workspace .wm-trash-tab{margin-left:0}.wm-workspace .wm-trash-tab>svg{display:none}.wm-trash-list .cms-work-row{flex-wrap:wrap}.wm-trash-list .wm-summary{min-width:140px}.wm-trash-list .wm-button{margin-left:auto}}
