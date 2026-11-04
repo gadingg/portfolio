@@ -1,13 +1,14 @@
 # Internal Listing Hub
 
-12 seconds, 30 fps, 1080 x 1350. Silent UI walkthrough for a looping portfolio player. Four 3-second beats; 0.65-second camera moves. Existing mockup asset only. No fictional interactions or performance claims. Data shown belongs to the supplied mockup, not a new measurement.
+12 seconds, 30 fps, 1080 x 1350. Four distinct live UI states, silent loop. No captions or playback controls. Screen proportions are preserved. Aligned portrait screens, 0.75s horizontal transitions, matching cyclic end state.
 
-0s: Search the database. Temukan properti dari database bersama.
+Captured on 2026-11-04:
+https://listinghub-patos.vercel.app/all
+https://listinghub-patos.vercel.app/gading
 
-3s: Narrow the options. Filter membantu mempersempit pilihan.
+0s: Database
+3s: House results
+6s: Detailed filters
+9s: Personal listings
 
-6s: Share the details. Salin spesifikasi atau kirim ke klien.
-
-9s: Manage personal listings. Ruang terpisah untuk listing tiap agent.
-
-Banned: rotating devices, invented UI, count-up results, sound, decorative glow. Primary labels 76px. Mobile layout is separately composed.
+Authored transitions between real captured states, not a continuous screen recording. No live writes or submitted forms. Personal finance is excluded. My Daily sample tasks are typed in an unsaved form.

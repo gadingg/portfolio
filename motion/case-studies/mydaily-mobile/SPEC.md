@@ -1,13 +1,13 @@
 # Literally... My Daily App
 
-12 seconds, 30 fps, 1080 x 1350. Silent UI walkthrough for a looping portfolio player. Four 3-second beats; 0.65-second camera moves. Existing mockup asset only. No fictional interactions or performance claims. Data shown belongs to the supplied mockup, not a new measurement.
+12 seconds, 30 fps, 1080 x 1350. Four distinct live UI states, silent loop. No captions or playback controls. Screen proportions are preserved. Aligned portrait screens, 0.75s horizontal transitions, matching cyclic end state.
 
-0s: Plan the day. Task dan ringkasan harian dalam satu tempat.
+Captured on 2026-11-04:
+https://dailyappgading.vercel.app/
 
-3s: Know where money goes. Lihat pengeluaran berdasarkan kategori.
+0s: Tasks and links
+3s: Unsaved task draft
+6s: Link form
+9s: Focus timer
 
-6s: Keep the habit going. Check-in membantu membaca konsistensi.
-
-9s: See the daily progress. Tinjau kebiasaan dan progress harian.
-
-Banned: rotating devices, invented UI, count-up results, sound, decorative glow. Primary labels 76px. Mobile layout is separately composed.
+Authored transitions between real captured states, not a continuous screen recording. No live writes or submitted forms. Personal finance is excluded. My Daily sample tasks are typed in an unsaved form.

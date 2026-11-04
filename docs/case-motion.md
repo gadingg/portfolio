@@ -7,11 +7,11 @@ Six public cases have a 12-second HyperFrames walkthrough after the project over
 - Desktop: 1920 x 1080, 30 fps, H.264 MP4.
 - Mobile: separately composed at 1080 x 1350, 30 fps, H.264 MP4.
 - All 12 files contain one video stream and no audio. Faststart was verified for every file.
-- Measured sizes: 351 to 715 KiB per file, 6,086,278 bytes for all videos combined. Posters add 376,642 bytes in total.
+- Current measured sizes: 421 to 816 KiB per file, 7651453 bytes for all videos combined. Posters add 460832 bytes in total.
 - Only the current case and matching responsive source load when the section approaches the viewport. The page does not load all 12 videos.
-- Four three-second beats use camera focus and short annotations over existing UI assets. These are authored walkthroughs, not recordings of live form submissions or newly measured outcomes.
+- Listing Hub, MBG, My Daily and Req Video now use four distinct live UI captures per case, with authored transitions and matching loop states. These are not continuous recordings or evidence of submitted forms. Meta Ads and office Daily App retain their earlier assets because the user deferred inaccessible live sources.
 
-Sources are in `motion/case-studies/<slug>` and `<slug>-mobile`. Each has editable HTML, assets, SPEC.md and REVIEW.md. `scripts/build-case-motion.cjs` regenerates the initial sources; it overwrites source edits, so preserve manual edits before using it again. HyperFrames is a production tool only, not a new web runtime dependency.
+Sources are in `motion/case-studies/<slug>` and `<slug>-mobile`. Each has editable HTML, assets, SPEC.md and REVIEW.md. `scripts/build-case-motion.cjs` rebuilds the eight live-capture compositions from `motion/live-captures`, leaving Meta Ads and office Daily App unchanged. It overwrites source edits, so preserve manual edits before using it again. HyperFrames is a production tool only, not a new web runtime dependency.
 
 ## Playback
 
@@ -34,7 +34,7 @@ Built-in defaults are applied without writing production CMS documents. On subse
 - Production build and 114 tests passed, including settings validation, draft/publication distinction, hidden media authorization, custom layout placement and manual overrides.
 - Browser checks covered source-less initial loading, muted playback, offscreen pause, mobile source selection, custom-layout insertion, and CMS media selection with draft saving. Final refinement verified looping playback with no controls or supporting captions.
 - CMS QA used an in-memory fixture on port 3022. No production uploads, draft writes or publication were performed. Remote upload behavior uses the existing signed upload implementation and was not retested against Supabase in this change.
-- A composite source limits how far its UI can be enlarged. Individual source screenshots would improve the closest shots in a later revision. No UI, feature, role or result was invented to fill those gaps.
+- Live-capture revision on 2026-11-04: eight HyperFrames checks passed without runtime or layout errors. All eight encodes are 12 seconds, H.264, 30 fps, silent, with faststart. Desktop and mobile contact sheets were inspected. First/last frame mean absolute differences were below 1 on a 0-255 scale after downsampling. Four player tests passed. No production publish or provider upload was performed for this asset-only revision. My Daily finance was excluded and example tasks were never saved.
 
 ## Delivery gate
 
