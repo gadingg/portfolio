@@ -94,7 +94,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
   const itemsRef = useRef(items);
   itemsRef.current = items;
   const autosave = useAutoDraft({ storageKey: 'portfolio:draft:works:v1', value: JSON.stringify(items), baseline: JSON.stringify(saved), revision,
-    enabled: false, blocked: busy, saving: operation === 'save', save: () => save('save', true),
+    enabled: false, error, busy, blocked: busy, saving: operation === 'save', save: () => save('publish'),
     restore: value => { const items = JSON.parse(value); if (!Array.isArray(items) || items.some(item => !item || typeof item.id !== 'string' || typeof item.title !== 'string' || !workKinds.includes(item.kind))) throw Error('Cadangan tidak valid.'); setItems(items); } });
   function adopt(data: any, snapshot?: string, workId?: string) {
     const submitted: WorkItem[] = snapshot ? JSON.parse(snapshot) : [];
@@ -134,7 +134,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
     if(workKinds.includes(selectedKind as WorkKind))setKind(selectedKind as WorkKind);
     load();
   }, []);
-  useEffect(()=>{window.scrollTo({top:0,behavior:'instant'});document.querySelector('.admin-main')?.scrollTo({top:0,behavior:'instant'});},[editing]);
+  useEffect(()=>{window.scrollTo({top:0,behavior:'instant'});document.querySelector('.admin-main')?.scrollTo({top:0,behavior:'instant'});requestAnimationFrame(()=>{const heading=document.querySelector<HTMLElement>('.wm-editor-screen h1');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}else document.querySelector<HTMLElement>('.cms-work-open')?.focus({preventScroll:true});});},[editing]);
   useEffect(() => {
     if (revision === null) return;
     const url = new URL(window.location.href);
@@ -204,8 +204,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
     setOperation(action); setBusy(true); setError('');
     if (!automatic) setNotice('');
     try {
-
-
+      if(action==='publish'&&!workId&&!await review(summarizeWorks(snapshot,published)))return false;
       adopt(await send(action, selected ? [selected] : snapshot, undefined, workId), JSON.stringify(snapshot), workId);
       if (!automatic) setNotice(action === 'publish' ? selected ? selected.published ? `${selected.title} sudah tayang.` : `${selected.title} disembunyikan dari website.` : 'Semua perubahan sudah diterbitkan.' : 'Draft tersimpan.');
       else notify('Draft tersimpan.', {id:'autosave', duration:2500});
@@ -363,7 +362,8 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
           <ExternalLink size={18} />
         </a>}
       </div>
-      {revision !== null && !showTrash && <PublicationBar dirty={selectedDirty} unpublished={selectedUnpublished} busy={busy} operation={operation} scope={item ? '' : publicationCopy.scope} publishLabel={item && !item.published && publicItem ? 'Sembunyikan dari website' : item ? publicationCopy.publishLabel === 'Terbitkan' ? publicItem ? 'Terbitkan revisi' : 'Terbitkan' : publicationCopy.publishLabel : 'Terbitkan perubahan'}
+      {revision!==null&&!showTrash&&!item&&(dirty||unpublished)&&<section id="collection-changes" className="collection-change-panel" aria-labelledby="collection-review-title"><h2 id="collection-review-title">Perubahan koleksi</h2><p>Berlaku untuk semua kategori. Periksa rincian sebelum menerapkan perubahan.</p><ul>{summarizeWorks(items,published).counts.map(count=><li key={count}>{count.replace(/portfolio/g,'portofolio')}</li>)}</ul><button type="button" className="wm-button" disabled={busy||!autosave.online} onClick={()=>{void save('publish');}}>Tinjau perubahan koleksi</button>{!autosave.online&&<p role="status">Tidak ada koneksi. Coba lagi setelah tersambung.</p>}</section>}
+      {revision !== null && !showTrash && !!item && <PublicationBar dirty={selectedDirty} unpublished={selectedUnpublished} busy={busy} operation={operation} scope={item ? 'Berlaku hanya untuk portofolio ini.' : publicationCopy.scope} publishLabel={item && !item.published && publicItem ? 'Sembunyikan dari website' : item ? publicationCopy.publishLabel === 'Terbitkan' ? publicItem ? 'Terbitkan revisi' : 'Terbitkan' : publicationCopy.publishLabel : 'Terbitkan perubahan'}
         busyLabel={publicationCopy.busyLabel} showPublish={publicationCopy.showPublish} pendingSuffix={item ? publicItem ? ' · Versi lama masih tayang' : ' · Belum tayang' : ' · Ada perubahan belum tayang'}
         visibility={item ? { checked: item.published, onChange: checked => update(item.id, { published: checked }) } : undefined}
         status={!dirty && !selectedUnpublished && autosave.online ? publicationCopy.cleanLabel : autosave.status} offline={!autosave.online} failed={autosave.failed}

@@ -73,7 +73,7 @@ export function AISettings({ initialStatus }: { initialStatus: Status | null }) 
     {confirmation}
     <header className="wm-heading">
       <h1>Pengaturan AI</h1>
-      <AdminLink className="wm-button" href="/admintgadink/dashboard/ai">AI Study Case</AdminLink>
+
     </header>
     {!status && error && <p className="cms-error" role="alert">{error}</p>}
     {!status ? <button type="button" className="wm-button" disabled={Boolean(busy)} onClick={() => request('load')}>{busy ? 'Memuat…' : 'Coba lagi'}</button> :

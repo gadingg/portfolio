@@ -44,7 +44,7 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
   const contentRef = useRef(content);
   revisionRef.current = revision; contentRef.current = content;
   const autosave = useAutoDraft({ storageKey: 'portfolio:draft:site:v1', value: JSON.stringify(content), baseline: saved, revision,
-    enabled: false, blocked: busy, saving: operation === 'save', save: () => save('save', true),
+    enabled: false, error, busy, blocked: busy, saving: operation === 'save', save: () => save('publish'),
     restore: value => { const content = JSON.parse(value); if (!content?.values || !content?.cv || !Array.isArray(content.cv.experience) || !Array.isArray(content.cv.education)) throw Error('Cadangan tidak valid.'); setContent(content); } });
   function adopt(data: any, snapshot?: string) {
     setContent(current => snapshot && JSON.stringify(current) !== snapshot ? current : data.draft);
@@ -100,7 +100,7 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
     setContent((old) => (old ? { ...old, cv: { ...old.cv, ...patch } } : old));
   const homepageGroups=['Hero','Portofolio','About','Kemampuan','Proses','Tools'];
   const groups = ['Hero & About','Keahlian & Proses','Kontak & File CV'];
-  const included = group === groups[0] ? ['Hero','About','Identitas','SEO'] : group === groups[1] ? ['Kemampuan','Proses','Tools'] : ['Kontak','Footer'];
+  const included = group === groups[0] ? ['Hero','About','Identitas','SEO','Portofolio'] : group === groups[1] ? ['Kemampuan','Proses','Tools'] : ['Kontak','Footer'];
   if (autosave.recovery && !autosave.canRestore) return <DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} onRestore={autosave.canRestore ? autosave.restoreRecovery : undefined} />;
   return (
     <div className="works-manager cms-manager wm-site-workspace">
@@ -194,8 +194,8 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
                     </label>
                   ),
                 )}
-                {(['experience','education'] as const).map(section => <div key={section}>
-                <h3>{section==='experience'?'Pengalaman':'Pendidikan'}</h3>
+                {(['experience','education'] as const).map(section => <details className="cv-list-disclosure" key={section}>
+                <summary>{section==='experience'?'Pengalaman':'Pendidikan'}</summary>
                 <p className="wm-muted">Tulis satu poin per baris.</p>
                 <SortableList
                   items={(content.cv[section]||[]).map((item, i) => ({
@@ -238,7 +238,7 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
                         className="wm-button"
                         aria-label={`Hapus ${section==='experience'?'pengalaman':'pendidikan'} ${i + 1}`}
                         onClick={async () =>
-                          await ask('Hapus bagian ini dari draft?') && cv({
+                          await ask('Hapus bagian ini dari form? Simpan untuk menerapkan perubahan.') && cv({
                             [section]: content.cv[section].filter(
                               (_item, index) => index !== i,
                             ),
@@ -265,7 +265,7 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
                   <Plus size={18} />
                   Tambah {section==='experience'?'pengalaman':'pendidikan'}
                 </button>
-                </div>)}
+                </details>)}
               </>
             )}
             {group === 'Kontak & File CV' && (

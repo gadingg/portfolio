@@ -1,6 +1,7 @@
 import { workKinds, type WorkItem } from './works';
 import { isReadyWork, workReadiness } from './work-readiness';
 import { sameDraftContent } from './draft-backup';
+import {summarizeWorks as publicationSummary} from './publish-summary';
 
 export function incompletePublishedIds(published: WorkItem[]) {
   return new Set(published.filter(item => item.published && !isReadyWork(item)).map(item => item.id));
@@ -20,6 +21,8 @@ export function previewDiffersFromPublic(draft: WorkItem[], published: WorkItem[
 }
 
 export function summarizeWorks(draft: WorkItem[], published: WorkItem[]) {
+  const pending=publicationSummary(draft,published);
+  const changedIds=new Set(pending.entries.map(entry=>entry.id.replace(/^work:/,'')));
   const live = published.filter(item => item.published && isReadyWork(item));
   const incomplete = published.filter(item => item.published && !isReadyWork(item));
   const visible = new Map(live.map(item => [item.id, item]));
@@ -29,13 +32,13 @@ export function summarizeWorks(draft: WorkItem[], published: WorkItem[]) {
   const stored = new Map(published.map(item => [item.id,item]));
   const drafts = items.filter(item => !stored.has(item.id));
   const hidden = published.filter(item => !item.published);
-  const status = (item: WorkItem) => !stored.has(item.id) ? 'Draft baru' : JSON.stringify(item) !== JSON.stringify(stored.get(item.id)) ? 'Ada perubahan draft' : !item.published ? 'Disembunyikan' : workReadiness(item) || 'Tayang';
+  const status = (item: WorkItem) => !stored.has(item.id) ? 'Draft baru' : changedIds.has(item.id) ? 'Ada perubahan draft' : !item.published ? 'Disembunyikan' : workReadiness(item) || 'Tayang';
   const recent = [...draft].sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')).slice(0, 5);
   return {
     total: items.length, live: live.length, drafts: drafts.length, hidden: hidden.length, incomplete:incomplete.length,
-    review: draft.filter(item => !stored.has(item.id) || JSON.stringify(item) !== JSON.stringify(stored.get(item.id))).map(item => ({ id: item.id, kind: item.kind, title: item.title, status: status(item) })),
+    review: draft.filter(item => changedIds.has(item.id)).map(item => ({ id: item.id, kind: item.kind, title: item.title, status: status(item) })),
     examples: items.filter(item => item.demo).length,
-    changed: JSON.stringify(draft) !== JSON.stringify(published),
+    changed: pending.entries.length>0, pending,
     categories: workKinds.map(kind => ({ kind, total: items.filter(item => item.kind === kind).length })),
     recent: recent.map(item => ({ ...item, isLive: visible.has(item.id), status: status(item) })),
   };

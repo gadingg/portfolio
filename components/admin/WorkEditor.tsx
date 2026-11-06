@@ -1,5 +1,5 @@
 'use client';
-import {useState,useEffect} from 'react';
+import {useState,useEffect,useRef} from 'react';
 import {InlineStudyAssistant} from './InlineStudyAssistant';
 import {FileText, Settings2, Image as ImageIcon, Eye, Link as LinkIcon} from 'lucide-react';
 import {workKinds, workLabels, setCaseStudyEnabled, type WorkItem, type WorkKind} from '@/lib/works';
@@ -25,13 +25,16 @@ export function WorkEditor({item, items, disabled, errors, onChange, onKindChang
 }) {
   const study = item.caseStudy;
   const [tab,setTab]=useState('basic');
-  useEffect(()=>{const keys=Object.keys(errors);if(keys.length)setTab(keys.some(key=>/^caseStudy\.(problem|solution|impact)/.test(key))?'par':keys.some(key=>/^caseStudy\.(blocks|app|motion)|designImages/.test(key))?'gallery':'basic');},[errors]);
+  const tabs=useRef<HTMLDivElement>(null);
+  function selectTab(next:string){setTab(next);const screen=tabs.current?.closest<HTMLElement>('.wm-editor-screen');if(screen&&tabs.current){screen.scrollTo({top:Math.max(0,tabs.current.offsetTop-100),behavior:'instant'});}}
+
+  useEffect(()=>{const key=Object.keys(errors)[0];if(!key)return;setTab(/^caseStudy\.(problem|solution|impact)/.test(key)?'par':/^caseStudy\.|^designImages|^imageAlt/.test(key)||(key==='url'&&item.kind!=='video')?'gallery':'basic');},[errors,item.kind]);
   function error(path: string) {return errors[path] ? <small id={`work-error-${path}`} className="work-field-error">{errors[path]}</small> : null;}
   function attrs(path: string) {return {'data-work-field':path, 'aria-invalid':!!errors[path], 'aria-describedby':errors[path] ? `work-error-${path}` : undefined};}
   const summary = item.kind === 'webapp' ? 'Ringkasan proyek' : 'Keterangan (opsional)';
   const description = <label>{summary}<textarea {...attrs('description')} rows={3} maxLength={500} value={item.description} onChange={event => onChange({description:event.target.value})}/>{error('description')}</label>;
   return <div className={`work-editor work-editor--${item.kind}`}>
-    <div className="editor-tabs" role="group" aria-label="Bagian editor">{[['basic','Info Dasar & Cover'],['par','Studi Kasus PAR'],['gallery','Galeri & Link']].filter(([key])=>key!=='par'||!!study).map(([key,label])=><button type="button" className="wm-button" aria-pressed={tab===key} key={key} onClick={()=>setTab(key)}>{label}</button>)}</div>
+    <div ref={tabs} className="editor-tabs" role="group" aria-label="Bagian editor">{[['basic','Info Dasar & Cover'],['par','Studi Kasus PAR'],['gallery','Galeri & Link']].filter(([key])=>key!=='par'||!!study).map(([key,label])=><button type="button" className="wm-button" aria-pressed={tab===key} key={key} onClick={()=>selectTab(key)}>{label}</button>)}</div>
     <fieldset className="work-editor-fields" disabled={disabled}>
       <legend className="wm-sr-only">Editor portofolio</legend>
       <div hidden={tab!=='basic'} className="work-editor-fields">

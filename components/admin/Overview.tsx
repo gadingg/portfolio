@@ -39,14 +39,14 @@ export function Overview({ draft, published, engagement, days }: {
       <div className="overview-stat"><div className="overview-stat-heading"><h2>Disembunyikan</h2><EyeOff aria-hidden="true" /></div><strong>{number(summary.hidden)}</strong></div>
     </section>
 
-    {summary.review.length > 0 && <section className="overview-panel" aria-labelledby="review-title">
-      <div className="overview-section-heading"><h2 id="review-title">Draft yang perlu dicek</h2></div>
-      <ul className="overview-popular">{summary.review.map(item => <li key={item.id}>
-        <AdminLink href={`/admintgadink/dashboard/works?kind=${item.kind}&work=${encodeURIComponent(item.id)}`}>{item.title || 'Tanpa judul'}</AdminLink>
-        <span>{item.status}</span>
-      </li>)}</ul>
+    {summary.changed && <section className="overview-change-card" aria-labelledby="collection-change-title">
+      <span className="overview-change-icon"><Layers3 size={24} aria-hidden="true"/></span>
+      <div><h2 id="collection-change-title">{summary.pending.entries.length} perubahan menunggu diterapkan</h2>
+        <p>{summary.pending.counts.map(count=>count.replace(/portfolio/g,'portofolio')).join(' · ')||'Perubahan catatan portofolio'}</p>
+        <details><summary>Lihat rincian perubahan</summary><ul>{summary.pending.entries.map(entry=><li key={entry.id}><strong>{entry.title}</strong><span>{entry.changes.join(', ')||'Urutan berubah'}</span></li>)}</ul></details>
+      </div>
+      <AdminLink className="wm-button" href="/admintgadink/dashboard/works#collection-changes">Tinjau {summary.pending.entries.length} perubahan<ArrowRight size={18} aria-hidden="true"/></AdminLink>
     </section>}
-    {summary.changed && !summary.review.length && <div className="overview-publication-note"><span>Ada perubahan koleksi yang belum tayang.</span><AdminLink href="/admintgadink/dashboard/works">Buka portofolio</AdminLink></div>}
 
 
     <div className="overview-content-grid">
