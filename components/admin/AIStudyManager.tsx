@@ -112,7 +112,7 @@ export function AIStudyManager({ initial }: { initial: { items: WorkItem[]; revi
     finally{lock.current=false;setBusy(false);}
   }
   function renderStudy(study:AIStudy,preview=false){
-    const fields=[['title','Judul portofolio'],['description','Deskripsi singkat'],['problem','Masalah awal'],['approach','Yang saya buat'],['outcome','Hasilnya']] as const;
+    const fields=[['title','Judul portofolio'],['description','Deskripsi singkat'],['problem','Problem'],['approach','Approach'],['outcome','Result']] as const;
     return <>
       {fields.filter(([key])=>!preview||pending?.target==='all'||pending?.target===key).map(([key,label])=><ReviewField key={key} label={label} id={`ai-${preview?'next':'edit'}-${key}`} value={study[key]} disabled={disabled} readOnly={preview} multiline={key!=='title'} maxLength={key==='title'?140:key==='description'?500:1500} onChange={value=>changeResult({[key]:value})} regenerate={!preview&&<button type="button" className="wm-button admin-icon-action" title={`Buat versi lain: ${label}`} aria-label={`Buat versi lain: ${label}`} disabled={disabled||!configured||prepared} onClick={()=>generate(key)}><RotateCw size={18} aria-hidden="true"/></button>}/>)}
       {!selected&&(!preview||pending?.target==='all')&&<label>Slug pendek<input maxLength={32} readOnly={preview} disabled={!preview&&disabled} value={study.slug} onChange={event=>changeResult({slug:event.target.value})}/></label>}

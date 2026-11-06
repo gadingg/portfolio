@@ -52,7 +52,7 @@ export function WorkEditor({item, items, disabled, errors, onChange, onKindChang
       <div hidden={tab!=='par'} className="work-editor-fields">
       {study && <section className="work-editor-story" aria-labelledby="work-story-title">
         <h2 id="work-story-title">Ringkasan PAR</h2><InlineStudyAssistant item={item} disabled={disabled} onChange={onChange}/>
-        {(['problem','solution','impact'] as const).map((key, index) => <label key={key}>{['Masalah awal','Yang saya buat','Hasilnya'][index]}
+        {(['problem','solution','impact'] as const).map((key, index) => <label key={key}>{['Problem','Approach','Result'][index]}
           <textarea {...attrs(`caseStudy.${key}`)} rows={3} maxLength={12000} value={study[key]} onChange={event => onChange({caseStudy:{...study,[key]:event.target.value}})}/>
           {error(`caseStudy.${key}`)}
         </label>)}
