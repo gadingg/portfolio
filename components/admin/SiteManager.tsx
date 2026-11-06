@@ -10,7 +10,7 @@ import { summarizeSite } from '@/lib/publish-summary';
 import './works-manager.css';
 import { PublicationBar } from './PublicationBar';
 import { draftSaveMessage } from '@/lib/draft-backup';
-import { useAutoDraft } from './useAutoDraft';
+import { useManualSave as useAutoDraft } from './useManualSave';
 import { DraftRecovery } from './DraftRecovery';
 import { AdminSkeleton } from './AdminSkeleton';
 import {useAdminToast, useToastMessage} from './AdminToasts';
@@ -26,12 +26,13 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
     [saved, setSaved] = useState(initial ? JSON.stringify(initial.draft) : ''),
     [published, setPublished] = useState(initial ? JSON.stringify(initial.published) : ''),
     [revision, setRevision] = useState(initial?.revision || 0),
-    [group, setGroup] = useState(area==='home'?'Hero':'Identitas'),
+    [group, setGroup] = useState('Hero & About'),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
     [notice, setNotice] = useState('');
   const [operation, setOperation] = useState<'save' | 'publish' | null>(null);
   useToastMessage(notice);
+  useToastMessage(error,'error');
   const dirty = !!content && JSON.stringify(content) !== saved;
   const mutationLock = useRef(false);
   const pendingMutation = useRef<Promise<void> | null>(null);
@@ -43,7 +44,7 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
   const contentRef = useRef(content);
   revisionRef.current = revision; contentRef.current = content;
   const autosave = useAutoDraft({ storageKey: 'portfolio:draft:site:v1', value: JSON.stringify(content), baseline: saved, revision,
-    enabled: content !== null, blocked: busy, saving: operation === 'save', save: () => save('save', true),
+    enabled: false, blocked: busy, saving: operation === 'save', save: () => save('save', true),
     restore: value => { const content = JSON.parse(value); if (!content?.values || !content?.cv || !Array.isArray(content.cv.experience) || !Array.isArray(content.cv.education)) throw Error('Cadangan tidak valid.'); setContent(content); } });
   function adopt(data: any, snapshot?: string) {
     setContent(current => snapshot && JSON.stringify(current) !== snapshot ? current : data.draft);
@@ -78,9 +79,6 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
     pendingMutation.current = new Promise(resolve => { finishMutation.current = resolve; });
     if (!automatic) setNotice('');
     try {
-      if (action === 'publish' && published) {
-        if (!(await review(summarizeSite(snapshot, JSON.parse(published))))) return false;
-      }
       const res = await fetch('/api/admin/site', {
         method: 'PUT', signal: AbortSignal.timeout(15000), headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: snapshot, revision: revisionRef.current, action }),
@@ -101,7 +99,8 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
   const cv = (patch: Partial<SiteContent['cv']>) =>
     setContent((old) => (old ? { ...old, cv: { ...old.cv, ...patch } } : old));
   const homepageGroups=['Hero','Portofolio','About','Kemampuan','Proses','Tools'];
-  const groups = area==='home'?homepageGroups:[...new Set(siteFields.map(field=>field.group).filter(group=>!homepageGroups.includes(group))), 'CV', 'File unduhan'];
+  const groups = ['Hero & About','Keahlian & Proses','Kontak & File CV'];
+  const included = group === groups[0] ? ['Hero','About','Identitas','SEO'] : group === groups[1] ? ['Kemampuan','Proses','Tools'] : ['Kontak','Footer'];
   if (autosave.recovery && !autosave.canRestore) return <DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} onRestore={autosave.canRestore ? autosave.restoreRecovery : undefined} />;
   return (
     <div className="works-manager cms-manager wm-site-workspace">
@@ -109,11 +108,11 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
       {publicationReview}
       {autosave.recovery && autosave.canRestore && <DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} onRestore={autosave.canRestore ? autosave.restoreRecovery : undefined} />}
       <div className="wm-heading">
-        <div><h1>{area==='home'?'Konten homepage':'Profil & CV'}</h1></div>
-        {area==='home'?<a href="/admintgadink/dashboard/editor/home" className="wm-button" onClick={async event=>{event.preventDefault();if(uploadBusy.current)return;if(pendingMutation.current)await pendingMutation.current;if(JSON.stringify(contentRef.current)!==savedRef.current&&!(await save('save')))return;router.push('/admintgadink/dashboard/editor/home');}}><Eye size={18}/>Edit layout</a>:<AdminLink href="/admintgadink/dashboard/site?area=home" className="wm-button">Konten homepage</AdminLink>}
+        <div><h1>Konten Website & CV</h1></div>
+
       </div>
       {content && <PublicationBar dirty={!!dirty} unpublished={saved !== published} busy={busy} operation={operation} scope="Konten website dan CV diterbitkan bersamaan." status={!dirty && saved === published && autosave.online ? 'Sudah tayang' : autosave.status} offline={!autosave.online} failed={autosave.failed}
-        onSave={autosave.retry} onPublish={() => { void save('publish'); }}/>}
+        onSave={() => {void save('save');}} onPublish={() => { void save('publish'); }}/>}
       {error && (
         <div className="wm-message wm-error" role="alert">
           {error}
@@ -133,7 +132,7 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
       {!content && !error && <AdminSkeleton />}
       {content && (
         <>
-          <div className="wm-site-layout"><label className="wm-section-select">Mau edit bagian mana?<select value={group} onChange={event => setGroup(event.target.value)}>{groups.map(value => <option key={value} value={value}>{value === 'CV' ? 'Isi CV' : value === 'Kontak' ? 'Profil & kontak' : value}</option>)}</select></label><nav className="cms-section-tabs" aria-label={area==='home'?'Bagian homepage':'Bagian profil dan CV'}>
+          <div className="wm-site-layout"><nav className="cms-section-tabs" aria-label={area==='home'?'Bagian homepage':'Bagian profil dan CV'}>
             {groups.map((value) => (
               <button
                 type="button"
@@ -147,9 +146,9 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
             ))}
           </nav>
           <fieldset disabled={busy && operation !== 'save'} className="cms-editor-fields">
-            <h2>{group === 'CV' ? 'Isi CV' : group === 'Kontak' ? 'Profil & kontak' : group}</h2>
+            <h2>{group === 'Kontak & File CV' ? 'Isi CV' : group === 'Kontak' ? 'Profil & kontak' : group}</h2>
             {siteFields
-              .filter((field) => field.group === group)
+              .filter((field) => included.includes(field.group))
               .map((field) => (
                 <div key={field.key}>
                   <label>
@@ -181,7 +180,7 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
                   )}
                 </div>
               ))}
-            {group === 'CV' && (
+            {group === 'Kontak & File CV' && (
               <>
                 {(['name', 'role', 'profile', 'capabilities', 'phone', 'email', 'website', 'location', 'languages'] as const).map(
                   (key, i) => (
@@ -269,7 +268,7 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
                 </div>)}
               </>
             )}
-            {group === 'File unduhan' && (
+            {group === 'Kontak & File CV' && (
               <>
                 <p className="wm-muted">{content.cv.pdf ? (content.cv.pdf.split('/').at(-1)?.split('?')[0] || 'CV.pdf').replace(/^\d+-[a-f0-9-]{36}-/, '') : 'PDF dibuat dari isi CV.'}</p>
                 <FileDrop

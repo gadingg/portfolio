@@ -7,6 +7,31 @@
   window.addEventListener('scroll', updateHeader, { passive: true });
   window.addEventListener('pageshow', updateHeader);
 
+  const navigationGroups=[
+    [...document.querySelectorAll('.desktop-nav a[href^="#"],.header-contact[href^="#"]')],
+    [...document.querySelectorAll('.menu-dialog nav a[href^="#"]')]
+  ];
+  let frame;
+  function updateActive(){
+    const threshold=(header?.getBoundingClientRect().height||72)+window.innerHeight*.25;
+    navigationGroups.forEach(navigation=>{
+      const sections=[...new Set(navigation.map(link=>document.getElementById(link.hash.slice(1))).filter(Boolean))];
+      const current=sections.filter(section=>section.getBoundingClientRect().top<=threshold).sort((a,b)=>b.getBoundingClientRect().top-a.getBoundingClientRect().top)[0];
+      navigation.forEach(link=>{
+        const active=!!current&&link.hash===`#${current.id}`;
+        if(active)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');
+      });
+    });
+    frame=null;
+  }
+  const scheduleActive=()=>{if(!frame)frame=requestAnimationFrame(updateActive);};
+  window.addEventListener('scroll',scheduleActive,{passive:true});
+  window.addEventListener('resize',scheduleActive,{passive:true});
+  window.addEventListener('hashchange',scheduleActive);
+  window.addEventListener('pageshow',scheduleActive);
+  document.addEventListener('portfolio:works-ready',scheduleActive);
+  updateActive();
+
   const svgNS = 'http://www.w3.org/2000/svg';
   const icon = (name) => {
     const svg = document.createElementNS(svgNS, 'svg');

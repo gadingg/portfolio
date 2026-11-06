@@ -39,7 +39,7 @@ import { summarizeWorks } from '@/lib/publish-summary';
 import './works-manager.css';
 import { PublicationBar } from './PublicationBar';
 import { draftSaveMessage, sameDraftContent } from '@/lib/draft-backup';
-import { useAutoDraft } from './useAutoDraft';
+import { useManualSave as useAutoDraft } from './useManualSave';
 import { DraftRecovery } from './DraftRecovery';
 import { workPublicationCopy } from '@/lib/admin-copy';
 import { workThumbnail } from '@/lib/work-images';
@@ -88,12 +88,13 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
     [notice, setNotice] = useState('');
   const [operation, setOperation] = useState<'save' | 'publish' | null>(null);
   useToastMessage(notice);
+  useToastMessage(error,'error');
   const dirty = !sameDraftContent(JSON.stringify(items), JSON.stringify(saved)),
     unpublished = !sameDraftContent(JSON.stringify(items), JSON.stringify(published));
   const itemsRef = useRef(items);
   itemsRef.current = items;
   const autosave = useAutoDraft({ storageKey: 'portfolio:draft:works:v1', value: JSON.stringify(items), baseline: JSON.stringify(saved), revision,
-    enabled: revision !== null, blocked: busy, saving: operation === 'save', save: () => save('save', true),
+    enabled: false, blocked: busy, saving: operation === 'save', save: () => save('save', true),
     restore: value => { const items = JSON.parse(value); if (!Array.isArray(items) || items.some(item => !item || typeof item.id !== 'string' || typeof item.title !== 'string' || !workKinds.includes(item.kind))) throw Error('Cadangan tidak valid.'); setItems(items); } });
   function adopt(data: any, snapshot?: string, workId?: string) {
     const submitted: WorkItem[] = snapshot ? JSON.parse(snapshot) : [];
@@ -203,8 +204,8 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
     setOperation(action); setBusy(true); setError('');
     if (!automatic) setNotice('');
     try {
-      if (action === 'publish' && selected && !(await ask(selected.published ? `Terbitkan “${selected.title}” ke website?` : `Sembunyikan “${selected.title}” dari website?`, selected.published ? 'Terbitkan' : 'Sembunyikan'))) return false;
-      if (action === 'publish' && !workId && !(await review(summarizeWorks(snapshot, published)))) return false;
+
+
       adopt(await send(action, selected ? [selected] : snapshot, undefined, workId), JSON.stringify(snapshot), workId);
       if (!automatic) setNotice(action === 'publish' ? selected ? selected.published ? `${selected.title} sudah tayang.` : `${selected.title} disembunyikan dari website.` : 'Semua perubahan sudah diterbitkan.' : 'Draft tersimpan.');
       else notify('Draft tersimpan.', {id:'autosave', duration:2500});
@@ -332,7 +333,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
   const editingLocked = busy && operation !== 'save';
   const publicationCopy = workPublicationCopy(item, published.find(value => value.id === item?.id));
   return (
-    <div ref={workspace} className="works-manager cms-manager wm-workspace" onDragEnter={event => {
+    <div ref={workspace} className={`works-manager cms-manager wm-workspace ${item ? 'wm-editor-screen' : ''}`} onDragEnter={event => {
       if (!editing && !busy && event.dataTransfer.types.includes('Files')) setShowImport(true);
     }}>
       {confirmation}
@@ -344,7 +345,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
             <button
               type="button"
               className="wm-button"
-              onClick={() => setEditing(null)}
+              onClick={async () => {if(dirty&&!await ask('Ada perubahan yang belum disimpan. Kembali tanpa menyimpan?', 'Kembali'))return;setItems(savedRef.current);setEditing(null);}}
             >
               <ArrowLeft size={18} />
               Semua portofolio
@@ -366,7 +367,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
         busyLabel={publicationCopy.busyLabel} showPublish={publicationCopy.showPublish} pendingSuffix={item ? publicItem ? ' · Versi lama masih tayang' : ' · Belum tayang' : ' · Ada perubahan belum tayang'}
         visibility={item ? { checked: item.published, onChange: checked => update(item.id, { published: checked }) } : undefined}
         status={!dirty && !selectedUnpublished && autosave.online ? publicationCopy.cleanLabel : autosave.status} offline={!autosave.online} failed={autosave.failed}
-        onSave={autosave.retry} onPublish={() => { void save('publish'); }}/>}
+        onSave={() => {void save('save');}} onPublish={() => { void save('publish'); }}/>}
       {error && (
         <div className="wm-message wm-error" role="alert">
           {error}
@@ -497,6 +498,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
                   aria-label={`Hapus ${work.title}`}
                   onClick={async (event) => {
                     closeMenu(event.currentTarget);
+                    if (!await ask(`“${work.title}” akan hilang dari website dan dipindahkan ke Sampah. Anda bisa memulihkannya dalam 72 jam sebelum dihapus permanen.`, 'Ya, Pindahkan ke Sampah', true)) return;
                     await changeTrash('move', work.id);
                   }}
                 >
@@ -512,7 +514,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
           </>}
         </>
       )}
-      {item && <WorkEditor item={item} items={items} disabled={editingLocked} errors={fieldErrors}
+      {item && <WorkEditor key={item.id} item={item} items={items} disabled={editingLocked} errors={fieldErrors}
         onChange={patch => update(item.id,patch)} onBusyChange={mediaBusy} onOpenVisual={openVisual}
         onKindChange={async value => {
           if (value === item.kind) return;

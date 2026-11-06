@@ -2,10 +2,17 @@
 import { useId, useRef, useState } from 'react';
 import { Upload, Images, Video, X } from 'lucide-react';
 import { AdminSkeleton } from './AdminSkeleton';
-import {useToastMessage} from './AdminToasts';
+import {useAdminToast} from './AdminToasts';
 import {workThumbnail} from '@/lib/work-images';
 import { captureVideoCover, uploadCover, uploadPortfolioVideo } from '@/lib/video-upload';
 export type UploadedMedia = { url: string; filename: string; type: string; cover?:string };
+function UploadFeedback({label,percent}:{label:string;percent:number|null}) {
+  return <div className="cms-upload-feedback" role="status" aria-live="polite">
+    <span>{label}</span>
+    {percent === null ? <div className="cms-upload-skeleton" aria-hidden="true"><span/></div> :
+      <progress max="100" value={percent} aria-label="Progress upload video"/>}
+  </div>;
+}
 export function FileDrop({
   folder = 'works',
   multiple = false,
@@ -36,6 +43,8 @@ export function FileDrop({
   onFileLink?: (url: string) => void;
 }) {
   const titleId = useId();
+  const notify=useAdminToast();
+  const [uploadPercent,setUploadPercent]=useState<number|null>(null),[pickerOpen,setPickerOpen]=useState(false);
   const [link, setLink] = useState(''), [linkError, setLinkError] = useState('');
   const uploadLock = useRef(false);
   const input = useRef<HTMLInputElement>(null),
@@ -53,7 +62,6 @@ export function FileDrop({
     [hasMore, setHasMore] = useState(false),
     [libraryError, setLibraryError] = useState(''),
     [listing, setListing] = useState(false);
-  useToastMessage(!busy ? progress : '');
   async function upload(files: File[]) {
     if (busy || disabled || uploadLock.current || !files.length) return;
     uploadLock.current = true;
@@ -62,19 +70,22 @@ export function FileDrop({
     setError('');
     const successes: UploadedMedia[] = [],
       failures: File[] = [];
+    const messages:string[]=[];
     const batch = multiple ? files : files.slice(0, 1);
     for (let i = 0; i < batch.length; i++) {
       const file = batch[i];
       setProgress(`Mengunggah ${i + 1}/${batch.length}`);
+      setUploadPercent(null);
       try {
         if (!accept.split(',').includes(file.type))
           throw Error('Format tidak didukung');
         const isVideo=['video/mp4','video/webm'].includes(file.type);
         if (file.size > (isVideo?40:4) * 1024 * 1024) throw Error(`Maksimal ${isVideo?40:4} MB per file`);
         if (isVideo) {
-          const uploaded=await uploadPortfolioVideo(file,percent=>setProgress(`Mengunggah ${i+1}/${batch.length} · ${percent}%`));
+          const uploaded=await uploadPortfolioVideo(file,percent=>{setUploadPercent(percent);setProgress(`Mengunggah ${i+1}/${batch.length} · ${percent}%`);});
+          setUploadPercent(null);setProgress('Menyiapkan thumbnail…');
           try { uploaded.cover=await uploadCover(await captureVideoCover(file)); }
-          catch {setError(previous=>`${previous}${previous?' · ':''}${file.name}: video tersimpan, pilih cover sendiri.`);}
+          catch {const message=`${file.name}: video tersimpan, pilih cover sendiri.`;messages.push(message);setError(previous=>`${previous}${previous?' · ':''}${message}`);}
           successes.push(uploaded);
           continue;
         }
@@ -84,25 +95,31 @@ export function FileDrop({
         const res = await fetch('/api/admin/media', {
           method: 'POST',
           body: form,
+          signal: AbortSignal.timeout(60000),
         });
         const data = await res.json();
-        if (!res.ok) throw Error(data.error);
+        if (!res.ok) throw Error(data.error || 'Upload gagal. Coba lagi.');
         successes.push(data);
       } catch (e) {
         failures.push(file);
+        messages.push(`${file.name}: ${e instanceof Error ? e.message : 'Upload gagal'}`);
         setError(
           (previous) =>
             `${previous}${previous ? ' · ' : ''}${file.name}: ${e instanceof Error ? e.message : 'Upload gagal'}`,
         );
       }
     }
-    if (successes.length) onUploaded(successes);
-    if (successes.length && picker) dialog.current?.close();
+    try { if (successes.length) onUploaded(successes); }
+    catch {messages.push('File terunggah, tetapi belum masuk ke form. Pilih dari koleksi media.');}
+    if (successes.length && !messages.length && picker) dialog.current?.close();
     setFailed(failures);
     setBusy(false);
     uploadLock.current = false;
     onBusyChange?.(false);
-    setProgress(successes.length ? `${successes.length} file sudah masuk` : '');
+    setProgress('');
+    setUploadPercent(null);
+    if(successes.length)notify(`${successes.length} file berhasil diunggah.`);
+    if(messages.length)notify(messages.join(' · '),{tone:failures.length?'error':'info',duration:8000});
     if (input.current) input.current.value = '';
   }
   async function loadLibrary(nextOffset = 0) {
@@ -131,7 +148,7 @@ export function FileDrop({
   }
   function openPicker() {
     setSelected([]); setLink(fileLink || ''); setLinkError('');
-    dialog.current?.showModal(); void loadLibrary();
+    dialog.current?.showModal();setPickerOpen(true); void loadLibrary();
   }
   return (
     <div className="cms-upload">
@@ -156,7 +173,7 @@ export function FileDrop({
         {picker ? <div className="cms-picker-action">
           <button type="button" className="wm-button" disabled={busy || disabled} onClick={openPicker}>
             {busy ? <span className="admin-spinner" aria-hidden="true"/> : <Images size={18} aria-hidden="true"/>}
-            {busy ? progress : uploadLabel || 'Tambah media'}
+            {uploadLabel || 'Tambah media'}
           </button>
           <small>Tarik file ke sini · maks. {accept.startsWith('video/')?40:4} MB</small>
         </div> : <>
@@ -166,8 +183,8 @@ export function FileDrop({
           disabled={busy || disabled}
           onClick={() => input.current?.click()}
         >
-          <Upload size={18} aria-hidden="true" />
-          {busy ? progress : uploadLabel || (accept.startsWith('video/') ? 'Upload video' : accept.startsWith('image/') ? previewSrc ? 'Ganti gambar' : 'Upload gambar' : 'Upload file')}
+          {busy ? <span className="admin-spinner" aria-hidden="true"/> : <Upload size={18} aria-hidden="true" />}
+          {uploadLabel || (accept.startsWith('video/') ? 'Upload video' : accept.startsWith('image/') ? previewSrc ? 'Ganti gambar' : 'Upload gambar' : 'Upload file')}
         </button>
         <span className="cms-drop-hint">Tarik file ke sini · maks. {accept.startsWith('video/')?40:4} MB</span>
         <button
@@ -191,6 +208,7 @@ export function FileDrop({
           onChange={(e) => upload(Array.from(e.target.files || []))}
         />
       </div>
+      {busy && !pickerOpen && <UploadFeedback label={progress} percent={uploadPercent}/>}
       {error && !picker && (
         <div role="alert" className="cms-error">
           {error}
@@ -210,6 +228,7 @@ export function FileDrop({
         ref={dialog}
         className="cms-media-dialog"
         aria-labelledby={titleId}
+        onClose={()=>setPickerOpen(false)}
         onDragOver={event => {if (!busy && !disabled) event.preventDefault();}}
         onDrop={event => {event.preventDefault(); event.stopPropagation(); if (!busy && !disabled) void upload(Array.from(event.dataTransfer.files));}}
         onClick={(e) => {
@@ -229,10 +248,11 @@ export function FileDrop({
         </div>
         {picker && <div className="cms-picker-toolbar">
           <button type="button" className="wm-button" disabled={busy || disabled} onClick={() => input.current?.click()}>
-            <Upload size={18} aria-hidden="true"/>{busy ? progress : 'Upload baru'}
+            {busy ? <span className="admin-spinner" aria-hidden="true"/> : <Upload size={18} aria-hidden="true"/>}Upload baru
           </button>
           <span>Atau pilih file tersimpan di bawah.</span>
         </div>}
+        {busy && pickerOpen && <UploadFeedback label={progress} percent={uploadPercent}/>}
         {picker && error && <div className="cms-error" role="alert">{error}
           {!!failed.length && <button type="button" className="wm-button" disabled={busy || disabled} onClick={() => upload(failed)}>Coba lagi</button>}
         </div>}
@@ -310,7 +330,7 @@ export function FileDrop({
           <button
             type="button"
             className="wm-button wm-primary"
-            disabled={!selected.length}
+            disabled={busy || disabled || !selected.length}
             onClick={() => {
               onUploaded(
                 selected.map((id) => {

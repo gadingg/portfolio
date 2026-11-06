@@ -53,7 +53,7 @@ export function editorialCaseLayout(layout: VisualLayout, summary?: { problem: s
     const grid = $('<div class="case-summary-grid"></div>');
     steps.each((index, element) => {
       const step = $(element).clone();
-      step.find('h2,h3').first().text(['Problem', 'Approach', 'Outcome'][index]);
+      step.find('h2,h3').first().text(['Problem', 'Approach', 'Result'][index]);
       const copy = summary && [summary.problem, summary.solution, summary.impact][index];
       if (copy?.trim()) step.find('p').first().text(copy);
       grid.append(step);
@@ -64,7 +64,7 @@ export function editorialCaseLayout(layout: VisualLayout, summary?: { problem: s
     [summary.problem, summary.solution, summary.impact].forEach((text, index) => {
       if (!text.trim()) return;
       const step = $('<section class="case-summary-step"><h2></h2><p></p></section>');
-      step.find('h2').text(['Problem','Approach','Outcome'][index]); step.find('p').text(text);
+      step.find('h2').text(['Problem','Approach','Result'][index]); step.find('p').text(text);
       section.find('.case-summary-grid').append(step);
     });
     const anchor = $('.case-cover-art,.project-art').first();
@@ -79,12 +79,16 @@ export function editorialCaseLayout(layout: VisualLayout, summary?: { problem: s
     const heading = section.children('.case-summary-heading');
     if (heading.length) heading.text('Project overview');
     else section.prepend('<h2 class="case-summary-heading">Project overview</h2>');
+    const intro=$('.case-intro').first(),visual=$('.case-cover-art,.project-art,.case-narrative,.study-case-blocks').first();
+    if(intro.length&&!section.find(intro).length)intro.after(section);
+    else if(visual.length&&!section.find(visual).length)visual.before(section);
   });
   if(summary?.slug)applyAppActions($,summary);
   $('[data-cms-motion-slot]').remove();
   if(summary?.slug&&caseMotion({...summary,slug:summary.slug}))$('.case-overview').first().after('<div data-cms-motion-slot class="case-motion-slot"></div>');
   $('.case-summary-step').each((index,element)=>{
     const title=$(element).find('h2,h3').first();
+    if(title.text().trim()==='Outcome')title.text('Result');
     title.children('svg').remove();
     title.prepend(`<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#${['search','lightbulb','check-check'][index%3]}"></use></svg>`);
   });

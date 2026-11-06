@@ -10,6 +10,7 @@ import { refineSiteCopy } from '../public-copy';
 import { isReadyWork } from '../work-readiness';
 import { workThumbnail } from '../work-images';
 import type { WorkItem } from '../works';
+import { workFiltersHTML } from '../work-filters';
 export const homepageTemplate = () =>
   fs.readFile(path.join(process.cwd(), 'public/index.html'), 'utf8');
 export async function initialSite(): Promise<SiteContent> {
@@ -145,6 +146,14 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[],about
   // Existing visual layouts retain their structure while public controls use the current treatment.
   $('#menu-toggle').removeClass('button button-outline').attr({ 'aria-label': 'Open menu', title: 'Open menu' }).empty().append('<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#menu"></use></svg>');
   $('.contact-section .contact-email, .contact-section [data-contact-email], .contact-section a[data-social="email"]').remove();
+  $('.contact-section [data-copy-email]').remove();
+  if(site.cv.email) $('.contact-layout > div').last().append(
+    $('<button type="button" class="button contact-copy-email" data-copy-email></button>').attr('data-email',site.cv.email).text('Salin Email').append('<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#mail"></use></svg>')
+  );
+  if(!$('#work [data-work-filters]').length) $('#work > .section-heading').after(workFiltersHTML());
+  $('#work').attr('data-work-explorer','').attr('id','work');
+  if(!$('#work #portfolio-results').length&&$('#work > .works-group').length) $('#work > .works-group').wrapAll('<div id="portfolio-results" class="portfolio-results"></div>');
+  if (!$('script[src="/assets/js/contact-copy.js"]').length) $('body').append('<script src="/assets/js/contact-copy.js" defer></script>');
   $('.contact-bottom').each((_i, element) => {
     const footer = $(element);
     let links = footer.children('.social-links').first();

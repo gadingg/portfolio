@@ -1,4 +1,6 @@
 'use client';
+import {useState,useEffect} from 'react';
+import {InlineStudyAssistant} from './InlineStudyAssistant';
 import {FileText, Settings2, Image as ImageIcon, Eye, Link as LinkIcon} from 'lucide-react';
 import {workKinds, workLabels, setCaseStudyEnabled, type WorkItem, type WorkKind} from '@/lib/works';
 import {homepageWorks, setHomepageFeatured} from '@/lib/homepage-works';
@@ -22,13 +24,17 @@ export function WorkEditor({item, items, disabled, errors, onChange, onKindChang
   onBusyChange: (busy: boolean) => void; onOpenVisual: () => void;
 }) {
   const study = item.caseStudy;
+  const [tab,setTab]=useState('basic');
+  useEffect(()=>{const keys=Object.keys(errors);if(keys.length)setTab(keys.some(key=>/^caseStudy\.(problem|solution|impact)/.test(key))?'par':keys.some(key=>/^caseStudy\.(blocks|app|motion)|designImages/.test(key))?'gallery':'basic');},[errors]);
   function error(path: string) {return errors[path] ? <small id={`work-error-${path}`} className="work-field-error">{errors[path]}</small> : null;}
   function attrs(path: string) {return {'data-work-field':path, 'aria-invalid':!!errors[path], 'aria-describedby':errors[path] ? `work-error-${path}` : undefined};}
   const summary = item.kind === 'webapp' ? 'Ringkasan proyek' : 'Keterangan (opsional)';
   const description = <label>{summary}<textarea {...attrs('description')} rows={3} maxLength={500} value={item.description} onChange={event => onChange({description:event.target.value})}/>{error('description')}</label>;
   return <div className={`work-editor work-editor--${item.kind}`}>
+    <div className="editor-tabs" role="group" aria-label="Bagian editor">{[['basic','Info Dasar & Cover'],['par','Studi Kasus PAR'],['gallery','Galeri & Link']].filter(([key])=>key!=='par'||!!study).map(([key,label])=><button type="button" className="wm-button" aria-pressed={tab===key} key={key} onClick={()=>setTab(key)}>{label}</button>)}</div>
     <fieldset className="work-editor-fields" disabled={disabled}>
-      <legend>Ringkasan</legend>
+      <legend className="wm-sr-only">Editor portofolio</legend>
+      <div hidden={tab!=='basic'} className="work-editor-fields">
       <label>Judul<input {...attrs('title')} value={item.title} maxLength={140} onChange={event => onChange({title:event.target.value})}/>{error('title')}</label>
       {item.kind === 'webapp' && description}
       {item.kind !== 'video' && <section className="work-editor-media" data-work-field="image" aria-label={item.kind === 'design' ? 'Gambar desain' : 'Cover proyek'}>
@@ -39,15 +45,19 @@ export function WorkEditor({item, items, disabled, errors, onChange, onKindChang
         {error('image')}
       </section>}
       {item.kind === 'video' && <VideoSourceEditor item={item} disabled={disabled} errors={errors} onBusyChange={onBusyChange} onChange={onChange}/>}
-      {item.kind==='design'&&<div data-work-field="designImages"><DesignImagesEditor item={item} disabled={disabled} onBusyChange={onBusyChange} onChange={onChange}/>
-        {Object.entries(errors).filter(([key])=>key.startsWith('designImages')).map(([key,text])=><small className="work-field-error" key={key}>{text}</small>)}</div>}
+      </div>
+      <div hidden={tab!=='par'} className="work-editor-fields">
       {study && <section className="work-editor-story" aria-labelledby="work-story-title">
-        <h2 id="work-story-title">Gambaran proyek</h2>
+        <h2 id="work-story-title">Ringkasan PAR</h2><InlineStudyAssistant item={item} disabled={disabled} onChange={onChange}/>
         {(['problem','solution','impact'] as const).map((key, index) => <label key={key}>{['Masalah awal','Yang saya buat','Hasilnya'][index]}
           <textarea {...attrs(`caseStudy.${key}`)} rows={3} maxLength={12000} value={study[key]} onChange={event => onChange({caseStudy:{...study,[key]:event.target.value}})}/>
           {error(`caseStudy.${key}`)}
         </label>)}
       </section>}
+      </div>
+      <div hidden={tab!=='gallery'} className="work-editor-fields">
+      {item.kind==='design'&&<div data-work-field="designImages"><DesignImagesEditor item={item} disabled={disabled} onBusyChange={onBusyChange} onChange={onChange}/>
+        {Object.entries(errors).filter(([key])=>key.startsWith('designImages')).map(([key,text])=><small className="work-field-error" key={key}>{text}</small>)}</div>}
       {item.kind !== 'webapp' && <SettingsDisclosure title="Deskripsi & link" icon={<FileText size={20}/>}>
         <div className="work-editor-fields">{description}
           {item.kind === 'design' && <label>Link proyek (opsional)<input {...attrs('url')} inputMode="url" value={item.url} onChange={event => onChange({url:event.target.value})}/>{error('url')}</label>}
@@ -72,7 +82,7 @@ export function WorkEditor({item, items, disabled, errors, onChange, onKindChang
       {study && <SettingsDisclosure title="Edit layout & bantuan AI" icon={<FileText size={20}/>}>
         <div className="work-editor-fields">
           <div className="work-editor-secondary-actions"><button type="button" className="wm-button" onClick={onOpenVisual}>Edit halaman studi kasus</button>
-            <AdminLink className="wm-button" href={`/admintgadink/dashboard/ai?work=${item.id}`}>Revisi dengan AI</AdminLink></div>
+</div>
           {item.aiDraft && <SettingsDisclosure title="Catatan AI" icon={<FileText size={18}/>}>
             <label>Brief awal<textarea rows={4} maxLength={30000} value={item.aiDraft.brief} onChange={event => onChange({aiDraft:{...item.aiDraft!,brief:event.target.value}})}/></label>
             {!!item.aiDraft.confirmations.length && <ul>{item.aiDraft.confirmations.map((text,index)=><li key={index}>{text}</li>)}</ul>}
@@ -99,6 +109,7 @@ export function WorkEditor({item, items, disabled, errors, onChange, onKindChang
           </SettingsDisclosure>
         </div>
       </SettingsDisclosure>
+      </div>
     </fieldset>
   </div>;
 }

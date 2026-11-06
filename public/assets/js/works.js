@@ -9,6 +9,31 @@
   const safeURL = value => { if(typeof value!=='string'||!value.trim())return '';try { const u = new URL(value, location.origin); return (u.protocol === 'https:' || u.origin === location.origin) && !u.username && !u.password ? u.href : ''; } catch { return ''; } };
   const instagram = value => { try { const u = new URL(value); const match = u.pathname.match(/^\/(p|reel|tv)\/([\w-]+)\/?$/); return u.protocol === 'https:' && ['instagram.com','www.instagram.com'].includes(u.hostname) && !u.port && !u.username && !u.password && match ? `https://www.instagram.com/${match[1]}/${match[2]}/` : ''; } catch { return ''; } };
   const shell = document.querySelector('.showcase');
+  const filters=document.querySelector('[data-work-filters]');
+  const search=filters?.querySelector('[data-work-search]');
+  let filterKind=filters?.querySelector('[aria-pressed="true"]')?.dataset.filterKind||'all';
+  let snapshot=null,exploring=false;
+  const matchesSearch=item=>[item.title,item.description,item.caseStudy?.problem,item.caseStudy?.solution].filter(Boolean).join(' ').normalize('NFKC').toLocaleLowerCase().includes((search?.value||'').trim().normalize('NFKC').toLocaleLowerCase());
+  function applyFilters(){
+    if(!snapshot)return;
+    exploring=true;
+    filters.querySelectorAll('[data-filter-kind]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.filterKind===filterKind)));
+    if(groups.some(group=>group.dataset.collection)){
+      const heading=document.querySelector('.collection-intro h1');
+      if(heading)heading.textContent=filterKind==='all'?'Portfolio':filters.querySelector(`[data-filter-kind="${filterKind}"]`).textContent;
+    }
+    renderItems(snapshot);
+  }
+  filters?.querySelectorAll('[data-filter-kind]').forEach(button=>button.addEventListener('click',()=>{filterKind=button.dataset.filterKind;applyFilters();}));
+  let searchTimer;
+  search?.addEventListener('input',()=>{clearTimeout(searchTimer);searchTimer=setTimeout(applyFilters,120);});
+  document.addEventListener('click',event=>{
+    const link=event.target.closest?.('a[href^="#"]');
+    const target=link&&groups.find(group=>link.hash===`#${group.id}`);
+    if(!filters||!target?.hidden||target.dataset.collection)return;
+    clearTimeout(searchTimer);if(search)search.value='';
+    filterKind=target.dataset.workKind;applyFilters();
+  },{capture:true});
   let currentTrigger;
   let imageItems = [], imageIndex = 0;
   function designArtwork(items) {
@@ -295,7 +320,7 @@
     list.tabIndex=0;list.setAttribute('aria-label',`${group.querySelector('h3')?.textContent||'Works'} carousel`);
     const update=()=>{const overflow=list.scrollWidth>list.clientWidth+4;controls.hidden=!overflow;const children=[...list.children];const left=list.getBoundingClientRect().left;let index=0,min=Infinity;children.forEach((child,i)=>{const distance=Math.abs(child.getBoundingClientRect().left-left);if(distance<min){min=distance;index=i;}});position.textContent=`${index+1} / ${children.length}`;const label=paused?'Resume slides':'Pause slides';toggle.replaceChildren(icon(paused?'play':'pause'));toggle.setAttribute('aria-label',label);toggle.title=label;toggle.setAttribute('aria-pressed',String(paused));};
     const move=direction=>{const step=(list.children[1]?.getBoundingClientRect().left-list.children[0]?.getBoundingClientRect().left)||(list.children[0]?.getBoundingClientRect().width||list.clientWidth)+16;const max=list.scrollWidth-list.clientWidth;const next=direction>0?(list.scrollLeft>=max-4?0:Math.min(max,list.scrollLeft+step)):(list.scrollLeft<=4?max:Math.max(0,list.scrollLeft-step));list.scrollTo({left:next,behavior:reduced.matches?'instant':'smooth'});};
-    const tick=()=>{if(automatic&&!paused&&!hover&&!focus&&visible&&!document.hidden&&!document.querySelector('dialog[open]')&&list.scrollWidth>list.clientWidth+4)move(1);};
+    const tick=()=>{if(!group.hidden&&!group.dataset.workFiltered&&automatic&&!paused&&!hover&&!focus&&visible&&!document.hidden&&!document.querySelector('dialog[open]')&&list.scrollWidth>list.clientWidth+4)move(1);};
     let timer;
     const restart=()=>{clearInterval(timer);timer=setInterval(tick,3000);};
     controls.querySelector('[data-carousel-prev]')?.addEventListener('click',()=>{move(-1);restart();});controls.querySelector('[data-carousel-next]')?.addEventListener('click',()=>{move(1);restart();});toggle.addEventListener('click',()=>{paused=!paused;restart();update();});
@@ -312,7 +337,15 @@
   groups.filter(g=>g.dataset.carousel).forEach(setupCarousel);
   let loading=false;
   function renderItems(data, hydrate = false) {
-      groups.forEach(group=>{group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=true);const list=group.querySelector('[data-works-list]');let items=data.items.filter(item=>item.kind===group.dataset.workKind&&item.published&&!(item.kind==='webapp'&&item.demo));const viewAll=group.querySelector('.works-heading > a');
+      snapshot=data;
+      const eligible=data.items.filter(item=>item.published&&!(item.kind==='webapp'&&item.demo));
+      groups.forEach(group=>{group.querySelectorAll('.works-recovery').forEach(node=>node.hidden=true);const list=group.querySelector('[data-works-list]');
+        const kind=filters&&group.dataset.collection?filterKind:group.dataset.workKind;
+        group.hidden=!!filters&&!group.dataset.collection&&filterKind!=='all'&&filterKind!==kind;
+        if(exploring)group.dataset.workFiltered='true';
+        let items=eligible.filter(item=>(kind==='all'||item.kind===kind)&&(!filters||matchesSearch(item)));
+        if(exploring&&!group.dataset.collection&&!items.length)group.hidden=true;
+        const viewAll=group.querySelector('.works-heading > a');
         if(viewAll){
           const heading=viewAll.parentElement.querySelector('h2,h3');
           if(heading){
@@ -326,7 +359,7 @@
           viewAll.replaceChildren(document.createTextNode('View all'),icon('arrow-right'));
           viewAll.setAttribute('aria-label',`View all ${group.dataset.workKind==='webapp'?'web apps and case studies':group.dataset.workKind==='design'?'design projects':'videos'}`);
         }
-        if(group.dataset.workKind==='webapp'&&!group.dataset.collection){const manual=items.some(item=>item.homepageFeatured!==undefined);items=items.filter(item=>!manual||item.homepageFeatured===true).slice(0,3);}
+        if(group.dataset.workKind==='webapp'&&!group.dataset.collection&&!exploring){const manual=items.some(item=>item.homepageFeatured!==undefined);items=items.filter(item=>!manual||item.homepageFeatured===true).slice(0,3);}
         const existing = [...list.querySelectorAll(':scope > [data-ssr-work-id]')];
         if (hydrate && existing.length === items.length && existing.every((element, index) => element.dataset.ssrWorkId === items[index].id)) {
           existing.forEach((element, index) => {
@@ -353,8 +386,19 @@
           group._updateCarousel?.();
           return;
         }
-        list.replaceChildren(...items.map(item=>card(item,items,group.dataset.collection?'h2':'h4',!!group.querySelector('.editorial-gallery'))));if(!items.length)list.append(node('p','works-message','No portfolio items yet.'));list.scrollLeft=0;list.setAttribute('aria-busy','false');group._updateCarousel?.();
+        list.replaceChildren(...items.map(item=>card(item,items,group.dataset.collection?'h2':'h4',!!group.querySelector('.editorial-gallery'))));if(!items.length)list.append(node('p','works-message',exploring?'Tidak ada portofolio yang cocok. Coba kata lain atau pilih All.':'No portfolio items yet.'));list.scrollLeft=0;list.setAttribute('aria-busy','false');group._updateCarousel?.();
       });
+      if(filters){
+        filters.querySelectorAll('button,input').forEach(control=>control.disabled=false);
+        const status=filters.querySelector('[data-filter-status]');
+        const count=eligible.filter(item=>(filterKind==='all'||item.kind===filterKind)&&matchesSearch(item)).length;
+        const collection=groups.some(group=>group.dataset.collection);
+        if(status){
+          if(!exploring&&!collection)status.textContent='';
+          else if(count||collection)status.textContent=`${count} portofolio`;
+          else status.textContent='Tidak ada portofolio yang cocok. Coba kata lain atau pilih All.';
+        }
+      }
       document.dispatchEvent(new Event('portfolio:works-ready'));
   }
   async function load() {

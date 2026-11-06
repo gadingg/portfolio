@@ -1242,6 +1242,15 @@ html[data-theme="light"] .hero-video.is-ready {
   font: inherit;
 }
 .admin-login-form button { margin-top: 12px; width: 100%; }
+.admin-password-field{position:relative;min-width:0}
+.admin-password-field input{padding-right:60px;font-size:16px}
+.admin-login-form .admin-password-toggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:44px;min-width:44px;height:44px;margin:0;padding:0;border:0;border-radius:8px;background:transparent;color:var(--ink);cursor:pointer}
+.admin-password-toggle:hover{background:rgba(255,255,255,.08)}
+.admin-login-form :focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.admin-login-submit{display:flex;align-items:center;justify-content:center;gap:12px;min-height:48px}
+.admin-login-spinner{animation:admin-login-spin .8s linear infinite}
+@keyframes admin-login-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.admin-login-spinner{animation:none}}
 .admin-field-label { display: grid; gap: 7px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .admin-field-label input, .admin-field-label textarea, .admin-field-label select { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 9px; background: rgba(255,255,255,.04); color: var(--ink); font: inherit; font-size: 13px; letter-spacing: normal; text-transform: none; }
 .admin-field-label small { color: var(--muted); font-size: 11px; font-weight: 400; letter-spacing: normal; text-transform: none; }

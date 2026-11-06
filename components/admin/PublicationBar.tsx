@@ -11,10 +11,9 @@ export function PublicationBar({dirty, unpublished, busy, operation, scope, publ
 }) {
   const state = publicationState(dirty, unpublished, busy);
   return <div className="cms-sticky-toolbar wm-savebar" aria-label="Perubahan tersimpan dan publikasi">
-    <span role="status" className="wm-save-status">{dirty?<CircleDot size={17} aria-hidden="true"/>:<CheckCircle2 size={17} aria-hidden="true"/>}{operation === 'publish' ? busyLabel : status || state.label}{!dirty && unpublished && !busy && !offline ? pendingSuffix : ''}</span>
-    {visibility && <label className="wm-check"><input type="checkbox" checked={visibility.checked} disabled={busy && operation !== 'save'} onChange={event => visibility.onChange(event.target.checked)} />Tampilkan setelah diterbitkan</label>}
-    {failed && <button type="button" className="wm-button" disabled={busy || offline} onClick={onSave}>Coba simpan lagi</button>}
-    {showPublish && (dirty || unpublished || operation === 'publish') && <button type="button" className="wm-button wm-primary" disabled={!state.canPublish || offline} onClick={onPublish} aria-busy={operation === 'publish'}><AdminActionLabel pending={operation === 'publish'} idle={publishLabel} busy={busyLabel} icon={<Upload size={17}/>}/></button>}
-    {scope && showPublish && unpublished && <small className="wm-save-scope">{scope}</small>}
+    <span role="status" className="wm-save-status">{busy ? 'Menyimpan…' : dirty ? 'Ada perubahan' : unpublished ? 'Draft' : 'Published'}</span>
+    {visibility && <label className="wm-check"><input type="checkbox" checked={visibility.checked} disabled={busy && operation !== 'save'} onChange={event => visibility.onChange(event.target.checked)} />Tampilkan di website</label>}
+    <button type="button" className="wm-button wm-primary" disabled={busy || (!dirty && !unpublished)} onClick={onPublish} aria-busy={busy}><AdminActionLabel pending={busy} idle="Simpan & Terbitkan" busy="Menyimpan…" icon={<Upload size={17}/>}/></button>
+
   </div>;
 }

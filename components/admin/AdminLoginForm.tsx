@@ -2,10 +2,12 @@
 
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Eye, EyeOff, LoaderCircle } from 'lucide-react';
 
 export function AdminLoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const emailRef = useRef<HTMLInputElement>(null);
@@ -41,7 +43,7 @@ export function AdminLoginForm() {
       <p className="admin-kicker">Gading Admin</p>
       <h1 id="admin-login-title">Masuk ke admin</h1>
 
-      <form onSubmit={handleSubmit} className="admin-login-form">
+      <form onSubmit={handleSubmit} className="admin-login-form" aria-busy={loading}>
         <label htmlFor="admin-email">Email</label>
         <input
           ref={emailRef}
@@ -55,20 +57,23 @@ export function AdminLoginForm() {
         />
 
         <label htmlFor="admin-password">Password</label>
-        <input
+        <div className="admin-password-field"><input
           id="admin-password"
           name="password"
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           autoComplete="current-password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           required
-        />
+        /><button type="button" className="admin-password-toggle" aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'} aria-controls="admin-password" aria-pressed={showPassword} onClick={() => setShowPassword(value => !value)}>
+          {showPassword ? <EyeOff size={20} aria-hidden="true"/> : <Eye size={20} aria-hidden="true"/>}
+        </button></div>
 
         {error && <p className="admin-form-error" role="alert">{error}</p>}
 
-        <button type="submit" className="button button--primary" disabled={loading}>
-          {loading ? 'Sedang masuk…' : 'Masuk'}
+        <button type="submit" className="button button--primary admin-login-submit" disabled={loading}>
+          {loading && <LoaderCircle className="admin-login-spinner" size={20} aria-hidden="true"/>}
+          <span role="status">{loading ? 'SEDANG MASUK...' : 'MASUK'}</span>
         </button>
       </form>
     </section>

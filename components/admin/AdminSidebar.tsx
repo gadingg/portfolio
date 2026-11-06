@@ -75,9 +75,7 @@ export function AdminSidebar() {
   const navItems = [
     { label: 'Ringkasan', href: '/admintgadink/dashboard', icon: LayoutDashboard },
     { label: 'Portofolio', href: '/admintgadink/dashboard/works', icon: Images },
-    { label: 'Homepage', href: '/admintgadink/dashboard/site?area=home', icon: PanelTop },
-    { label: 'AI Study Case', href: '/admintgadink/dashboard/ai', icon: FilePenLine },
-    { label: 'Profil & CV', href: '/admintgadink/dashboard/site', icon: Contact },
+    { label: 'Konten Website & CV', href: '/admintgadink/dashboard/site', icon: PanelTop },
     { label: 'Pengaturan AI', href: '/admintgadink/dashboard/settings', icon: Settings2 },
   ];
 
@@ -108,7 +106,7 @@ export function AdminSidebar() {
         {/* Navigation */}
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           {navItems.map((item) => {
-            const isActive = pathname === item.href.split('?')[0] && (item.href.includes('?area=home') ? search.get('area')==='home' : item.href.endsWith('/site') ? search.get('area')!=='home' : true);
+            const isActive = pathname === item.href.split('?')[0] && (item.href.includes('?area=home') ? search.get('area')==='home' : item.href.endsWith('/site') ? true : true);
             const Icon = item.icon;
             return (
               <AdminLink

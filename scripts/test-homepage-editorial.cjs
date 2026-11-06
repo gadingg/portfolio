@@ -49,18 +49,18 @@ test('visual case summaries use the shared cards without changing the saved HTML
   assert.equal(editorialCaseLayout(edited,{problem:'New <problem>',solution:'Solution',impact:'Impact'}).html,edited.html);
 });
 
-test('custom visual pages gain one overview after their cover and retain the rest of the story',()=>{
+test('custom visual pages gain one overview before their cover and retain the rest of the story',()=>{
   const layout={html:'<main><figure class="case-cover-art"><img src="/cover.png"></figure><p>Story</p></main>',css:''};
   const result=editorialCaseLayout(layout,{problem:'P',solution:'A',impact:'O'}),$=load(result.html);
-  assert.equal($('.case-cover-art').next().hasClass('case-overview'),true);
+  assert.equal($('.case-cover-art').prev().hasClass('case-overview'),true);
   assert.equal($('main>p').text(),'Story');
 });
 
-test('legacy draft-preview layouts reuse their existing summary once, after the cover',()=>{
+test('legacy draft-preview layouts reuse their existing summary once, before the cover',()=>{
   const source={html:'<main><header class="case-intro"><h1>Title</h1></header><div class="project-art"><img src="/cover.png"></div><div class="case-narrative"><section><h2>The problem</h2><p>Original P</p></section><section><h2>The solution</h2><p>Original A</p></section><section><h2>The impact</h2><p>Original O</p></section><div class="study-case-blocks"><h2>Detailed story</h2><p>Story</p></div></div></main>',css:''};
   const rendered=editorialCaseLayout(source,{problem:'P',solution:'A',impact:'O'}),$=load(rendered.html);
   assert.equal($('.case-overview').length,1);assert.equal($('.case-summary-step').length,3);
-  assert.equal($('.project-art').next().hasClass('case-overview'),true);
+  assert.equal($('.project-art').prev().hasClass('case-overview'),true);
   assert.deepEqual($('.case-summary-step p').map((_,el)=>$(el).text()).get(),['P','A','O']);
   assert.equal($('.study-case-blocks p').text(),'Story');
   assert.equal($('h2').filter((_,el)=>$(el).text()==='The problem').length,0);

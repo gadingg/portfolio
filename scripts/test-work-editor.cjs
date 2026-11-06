@@ -33,7 +33,7 @@ test('video editor renders exactly its active source and keeps raw file links in
   $=render(work('video',{videoSource:'file',videoFile:'/api/media/works/active.mp4'}));
   assert.equal($('video').length,1);assert.equal($('[data-work-field=url]').length,0);
   assert.equal($('.cms-picker-link').closest('dialog').length,1);
-  assert.equal($('button').filter((_,element)=>$(element).text()==='Ambil frame sekarang').length,1);
+  assert.equal($('button').filter((_,element)=>$(element).text()==='Jadikan thumbnail').length,1);
 });
 test('disabled video demos expose only their enable control, preserving configuration for reactivation',()=>{
   const {CaseMotionEditor}=runtime('components/admin/CaseMotionEditor.tsx');
