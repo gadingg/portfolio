@@ -14,7 +14,7 @@ test('fresh and stored home layouts render one content-first grid without search
  const first=await db.renderHomepage(site,[],items),$=load(withInitialWorks(first,items));
  assert.equal($('#work [data-work-search],#work .works-heading,#work [data-carousel]').length,0);
  assert.equal($('#work [data-work-kind]').length,1);assert.equal($('#work [data-filter-kind]').length,4);assert.equal($('#work .work-card').length,6);
- assert.equal($('#work .work-card:not(.work-card-video) h3').length,5);assert.equal($('#work [data-view-all-works]').length,1);assert.equal($('#work [data-view-all-works]').attr('href'),'/works');
+ assert.equal($('#work .work-card h3').length,6);assert.equal($('#work .work-card-description').length,0);assert.equal($('#work .work-card-link').length,6);assert.equal($('#work .work-card-video .video-bottom').length,0);assert.equal($('#work .work-card-interactive .work-media').length,3);assert.equal($('#work button button,#work a a').length,0);assert.equal($('#work [data-view-all-works]').length,1);assert.equal($('#work [data-view-all-works]').attr('href'),'/works');
  for(const id of ['web-apps','visuals','videos'])assert.equal($(`#work button#${id}`).length,1);
  site.layout={html:first,css:''};const again=load(await db.renderHomepage(site,[],items));assert.equal(again('#work [data-work-filters]').length,1);assert.equal(again('#portfolio-results').length,1);assert.equal(again('#work [data-view-all-works]').length,1);
  const short=load(withInitialWorks(first,[app('one')]));assert.equal(short('.works-all-footer').is('[hidden]'),true);

@@ -22,7 +22,7 @@ export function workCardsHTML(items: WorkItem[], collection = false, showcase = 
     const destination = item.demo ? 'Preview' : item.caseStudy ? 'View case study' : 'Open app';
     const arrow = '<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#arrow-right"></use></svg>';
     if (item.kind === 'webapp') {
-      const content = `<span class="work-media work-art-${item.artwork}">${picture}</span><${heading} class="work-card-title">${title}</${heading}>${item.description ? `<p class="work-card-description">${escape(item.description)}</p>` : ''}<div class="work-card-meta"><span class="work-destination">${destination}${arrow}</span></div>`;
+      const content = `<span class="work-media work-art-${item.artwork}">${picture}</span><${heading} class="work-card-title">${title}</${heading}>${headingTag !== 'h3' && item.description ? `<p class="work-card-description">${escape(item.description)}</p>` : ''}<div class="work-card-meta"><span class="work-destination">${destination}${arrow}</span></div>`;
       return `<article data-ssr-work-id="${escape(item.id)}" class="work-card work-card-webapp">${href ? `<a class="work-card-link" href="${escape(href)}" aria-label="${destination}: ${title}"${href.startsWith('/') ? '' : ' target="_blank" rel="noopener noreferrer"'}>${content}</a>` : `<div class="work-card-link">${content}</div>`}</article>`;
     }
     const file=item.videoSource==='instagram'?'':safeURL(item.videoFile||''),instagramOriginal=instagramURL(item.url);
@@ -31,6 +31,12 @@ export function workCardsHTML(items: WorkItem[], collection = false, showcase = 
     const videoLabel=playable?'Watch video':instagram?'View on Instagram':'Preview';
     const destinationURL=item.kind==='video'?(playable?file:instagram?instagramOriginal!:src):src;
     const external=item.kind==='video'&&!playable&&instagram;
+    if (headingTag === 'h3') {
+      const label = item.kind === 'design' ? 'View design' : videoLabel;
+      const media = `<a class="work-media work-art-${item.artwork}" href="${escape(destinationURL)}" aria-label="${item.kind === 'design' ? 'Enlarge' : videoLabel}: ${title}"${external?' target="_blank" rel="noopener noreferrer"':''}>${picture}</a>`;
+      const headingHTML = href && item.kind === 'design' ? `<a class="design-title-link" href="${escape(href)}">${title}</a>` : title;
+      return `<article data-ssr-work-id="${escape(item.id)}" class="work-card work-card-${item.kind}"><div class="work-card-link work-card-interactive">${media}<h3 class="work-card-title">${headingHTML}</h3><div class="work-card-meta"><span class="work-destination">${label}${arrow}</span></div></div></article>`;
+    }
     const media = `<a class="work-media work-art-${item.artwork}" href="${escape(destinationURL)}" aria-label="${item.kind === 'design' ? 'Enlarge' : videoLabel}: ${title}"${external?' target="_blank" rel="noopener noreferrer"':''}>${picture}${item.kind === 'video' ? `<span class="video-bottom"><span class="video-play">${videoLabel}</span><strong>${title}</strong></span>` : ''}</a>`;
     const caption = item.kind === 'design' ? `<div class="${showcase ? 'video-bottom design-showcase-caption' : 'work-caption'}"><${heading} class="work-card-title">${href ? `<a class="design-title-link" href="${escape(href)}">${title}</a>` : title}</${heading}></div>` : '';
     return `<article data-ssr-work-id="${escape(item.id)}" class="work-card work-card-${item.kind}">${media}${caption}</article>`;
