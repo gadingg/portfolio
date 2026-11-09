@@ -2,14 +2,14 @@
 name: Gading Public Showcase
 description: A dark, artwork-led portfolio for creative marketing and practical problem solving.
 colors:
-  canvas: "#060706"
-  surface: "#141613"
+  canvas: "#0c0e10"
+  surface: "#171a1d"
   ink: "#f3f0e8"
   secondary: "#b6b8ae"
-  accent: "#ff5a1f"
-  line: "#33372f"
-  control-line: "#7b8073"
-  accent-hover: "#ff8153"
+  accent: "#e58b5a"
+  line: "#353a3e"
+  control-line: "#858a8e"
+  accent-hover: "#efaa83"
   dark-hover: "#252820"
 typography:
   display:
@@ -304,3 +304,5 @@ How I Work update: Observe → Brainstorm → Design & Build → Collaborate →
 Admin flow refinement (2026-11-02): use a single route-specific skeleton during initialization, with screen-reader status and no following visible loading paragraph. Works and Website & CV hydrate authenticated initial snapshots. Retain text for primary actions and navigation; repeated row edit/open, media-library and AI field-refresh actions use named 44px icons with focus feedback. Show publish controls for pending changes and keep one saved-status location. Contextual explanations use disclosures. Preserve navy/amber tokens and draft/publication semantics. See docs/briefs/2026-11-02-admin-flow.md.
 
 Portfolio authoring refinement (2026-11-03): use a single-column form per content type, visible case-story fields, a shared media picker, compact video thumbnails, and optional disclosures for supporting content and settings. Card preview appears only on request; authenticated case previews open in a separate tab after pending changes save. Validation opens/focuses the relevant field. See docs/briefs/2026-11-03-editor-authoring.md.
+
+Public palette refinement (2026-11-09): charcoal canvas and surfaces with warm orange for primary actions and small brand details. Active portfolio filters use off-white with dark text. Hero and Contact use a faint static silver radial light inspired by Moonlight Silver and Dark Radial Glow. Galleries retain quiet solid backgrounds. Contact is charcoal with an orange action and visible accent focus outline. Project hover uses a neutral border without a colored halo. Admin tokens and artwork colors remain unchanged.

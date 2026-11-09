@@ -251,5 +251,12 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[],about
   });
   $('body').append('<script src="/assets/js/engagement.js" defer></script>');
   if (!$('script[src="/assets/js/capabilities-motion.js"]').length) $('body').append('<script src="/assets/js/capabilities-motion.js" defer></script>');
+  const work=$('#work');
+  if(work.length){
+    work.attr('data-homepage-works','');
+    work.find('[data-work-filters],#portfolio-results,.works-group,.works-all-footer').remove();
+    work.children('.section-heading').after(workFiltersHTML('all',true));
+    work.append('<div id="portfolio-results" class="portfolio-results" data-work-kind="all" data-homepage-limit="6" aria-label="Selected portfolio"><div class="works-grid" data-works-list aria-busy="true"><p class="works-message" role="status">Loading portfolio…</p></div><div class="works-recovery" hidden><p role="status">Couldn\'t load the portfolio.</p><button type="button" class="button button-outline" data-retry-works>Try again</button></div></div><div class="works-all-footer"><a class="text-link" href="/works" data-view-all-works>View all works <svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#arrow-right"></use></svg></a></div>');
+  }
   return $.html();
 }

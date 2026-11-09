@@ -98,7 +98,8 @@ test('CMS homepage enhancements use the owner email once and preserve collection
   const db=runtime({'./cms':{}})('lib/db/site.ts'),site=await db.initialSite();site.cv.email='owner@example.com';
   const result=await db.renderHomepage(site),$=html(result);
   assert.equal($('[data-work-filters]').length,1);assert.equal($('#portfolio-results').length,1);
-  assert.equal($('#portfolio-results>[data-work-kind]').length,3);
+  assert.equal($('#portfolio-results[data-work-kind="all"][data-homepage-limit="6"]').length,1);
+  assert.equal($('#work [data-work-search],#work .works-heading').length,0);
   assert.equal($('[data-filter-kind]').length,4);assert.equal($('[data-copy-email]').attr('data-email'),'owner@example.com');
   assert.equal($('[data-copy-email]').text().trim(),'Salin Email');
   site.layout={html:result,css:''};

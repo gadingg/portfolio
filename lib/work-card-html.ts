@@ -3,7 +3,7 @@ import { instagramURL, publicWork, type WorkItem } from './works';
 import { cleanPlaceholderCopy } from './placeholder-copy';
 import { workThumbnail } from './work-images';
 import { isReadyWork } from './work-readiness';
-import { homepageWorks } from './homepage-works';
+import { homepageWorks, homepagePreview } from './homepage-works';
 
 const escape = (text: string) => text.replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]!));
 const safeURL = (value: string) => {
@@ -12,11 +12,11 @@ const safeURL = (value: string) => {
 };
 export const worksJSON = (items: WorkItem[]) => JSON.stringify({items:items.filter(item=>item.published).map(publicWork)}).replace(/</g, '\\u003c');
 
-export function workCardsHTML(items: WorkItem[], collection = false, showcase = false): string {
+export function workCardsHTML(items: WorkItem[], collection = false, showcase = false, headingTag?: 'h3'): string {
   return items.map(original => {
     const item = cleanPlaceholderCopy(publicWork(original));
     const title = escape(item.title), src = safeURL(item.image), href = safeURL(item.caseStudy ? `/work/${item.caseStudy.slug}` : item.url);
-    const heading = collection ? 'h2' : 'h4';
+    const heading = headingTag || (collection ? 'h2' : 'h4');
     const thumbnail=workThumbnail(src);
     const picture = src ? `<img src="${escape(thumbnail.src)}"${thumbnail.srcSet?` srcset="${escape(thumbnail.srcSet)}" sizes="${thumbnail.sizes}"`:''} alt="${escape(item.imageAlt || item.title)}" loading="lazy" decoding="async"/>` : `<span class="work-type-art"><span>${title}</span></span>`;
     const destination = item.demo ? 'Preview' : item.caseStudy ? 'View case study' : 'Open app';
@@ -43,7 +43,8 @@ export function withInitialWorks(html: string, items: WorkItem[]): string {
     const group = $(element), list = group.find('[data-works-list]').first();
     if (!list.length) return;
     group.find('.works-recovery').attr('hidden','');
-    let selected = items.filter(item => item.published && isReadyWork(item) && item.kind === group.attr('data-work-kind'));
+    const homepage=group.is('[data-homepage-limit]');
+    let selected = items.filter(item => item.published && isReadyWork(item) && (group.attr('data-work-kind') === 'all' || item.kind === group.attr('data-work-kind')));
     const total = selected.length, link = group.find('.works-heading > a').first();
     if (link.length) {
       const kind = group.attr('data-work-kind'), heading = link.parent().find('h2,h3').first();
@@ -58,8 +59,11 @@ export function withInitialWorks(html: string, items: WorkItem[]): string {
       link.attr('aria-label', `View all ${kind === 'webapp' ? 'web apps and case studies' : kind === 'design' ? 'design projects' : 'videos'}`);
     }
     const collection = group.attr('data-collection') === 'true';
-    if (!collection && group.attr('data-work-kind') === 'webapp') selected = homepageWorks(selected);
-    list.html(workCardsHTML(selected, collection, !!group.find('.editorial-gallery').length) || '<p class="works-message">No portfolio items yet.</p>').attr('aria-busy', 'false');
+    if(homepage){
+      selected=homepagePreview(selected);
+      $('#work .works-all-footer').attr('hidden',total>selected.length?null:'');
+    }else if (!collection && group.attr('data-work-kind') === 'webapp') selected = homepageWorks(selected);
+    list.html(workCardsHTML(selected, collection, !!group.find('.editorial-gallery').length,homepage?'h3':undefined) || '<p class="works-message">No portfolio items yet.</p>').attr('aria-busy', 'false');
   });
   $('#initial-works').remove();
   $('body').append(`<script id="initial-works" type="application/json">${worksJSON(items)}</script>`);

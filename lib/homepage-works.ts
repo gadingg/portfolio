@@ -1,4 +1,4 @@
-import type { WorkItem } from './works';
+import type { WorkItem, WorkKind } from './works';
 import { isReadyWork } from './work-readiness';
 
 // Older documents retain their existing three selections until the first CMS edit.
@@ -6,6 +6,19 @@ export function homepageWorks(items: WorkItem[]): WorkItem[] {
   const apps = items.filter(item => item.kind === 'webapp');
   const manual = apps.some(item => item.homepageFeatured !== undefined);
   return apps.filter(item => item.published && isReadyWork(item) && (!manual || item.homepageFeatured === true)).slice(0, 3);
+}
+
+export function homepagePreview(items: WorkItem[], kind: WorkKind | 'all' = 'all'): WorkItem[] {
+  const ready = items.filter(item => item.published && isReadyWork(item));
+  if (kind !== 'all') return ready.filter(item => item.kind === kind).slice(0, 6);
+  const designs = ready.filter(item => item.kind === 'design');
+  const videos = ready.filter(item => item.kind === 'video');
+  const artwork: WorkItem[] = [];
+  for (let i = 0; i < Math.max(designs.length, videos.length); i++) {
+    if (designs[i]) artwork.push(designs[i]);
+    if (videos[i]) artwork.push(videos[i]);
+  }
+  return [...homepageWorks(ready), ...artwork].slice(0, 6);
 }
 
 export function setHomepageFeatured(items: WorkItem[], id: string, selected: boolean): WorkItem[] {

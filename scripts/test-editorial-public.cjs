@@ -27,7 +27,7 @@ test('artwork lightbox and optional detail link remain separate sibling interact
  const demo=descendants(cards()({...design,demo:true},[design],'h4'));
  assert.equal(demo.filter(node=>node.className==='sample-label').length,0);
 });
-test('stored CMS layouts receive editorial hero, exact bio, and matching design/video carousel controls',async()=>{
+test('stored CMS layouts retain editorial copy and receive the single Selected Works preview',async()=>{
  const db=runtime({'./cms':{}})('lib/db/site.ts'),{load}=require('cheerio'),site=await db.initialSite(),old=load(fs.readFileSync('public/index.html','utf8'));
  site.values.headline='I think. I create.\nI solve.';site.values.aboutLead='Saya suka ikut mikir dari awal.';
  site.values.aboutBody1='Mulai dari mencari ide campaign, menyusun content, membuat visual, sampai melihat workflow yang ribet dan mencari cara supaya bisa dibuat lebih simpel lewat web-app atau AI.';
@@ -37,7 +37,8 @@ test('stored CMS layouts receive editorial hero, exact bio, and matching design/
  assert.equal($('.hero-metadata').text(),'2+ years in creative marketing & product development');assert.equal($('#hero-title').text(),'I Think. I Create.I Solve.');
  assert.equal($('.about-copy>p').length,1);
  assert.equal($('.about-statement').text(),'Plan campaigns. Design visuals. Build useful tools.');assert.equal($('.about-copy>p').text(),'Plan campaigns. Design visuals. Build useful tools.');
- assert.equal($('#visuals').attr('data-carousel'),'true');assert.equal($('#visuals .carousel-controls').length,1);assert.equal($('#visuals .editorial-gallery.works-track').length,1);assert.equal($('#videos[data-carousel] .carousel-controls').length,1);
+ assert.equal($('#work [data-carousel],#work .carousel-controls,#work .works-track').length,0);
+ assert.equal($('#portfolio-results[data-homepage-limit="6"]').length,1);
  assert.equal($('#visuals .gallery-hint').length,0);
  assert.equal(site.values.aboutLead,'Saya suka ikut mikir dari awal.');
 });
@@ -71,13 +72,13 @@ test('legacy five-capability layouts receive four exact title-only cards without
  assert.deepEqual($('.capability-card h4').map((_,el)=>$(el).text()).get(),Array.from(capabilityTitles));
  assert.equal(site.values.capabilityTitle1,'Desain dengan arah yang jelas');assert.equal(site.values.capabilityBody1,'Copy yang disimpan melalui CMS.');
  assert.equal(site.values.capabilityBody4,'Stored paragraph 4');
- assert.equal($('#work>.section-heading p').length,0);assert.equal($('.works-heading>.works-view-all').length,3);
+ assert.equal($('#work>.section-heading p').length,0);assert.equal($('#work .works-heading').length,0);assert.equal($('#work [data-view-all-works]').length,1);
  assert.equal(site.values.worksIntro,'Keep this stored value intact');assert.equal(siteFields.some(field=>field.key==='worksIntro'),false);
  $('.capability-visual').first().addClass('custom-visual');
  site.values.capabilityLayoutVersion='2';site.values.capabilityTitle1='Editable title after migration';
  site.layout={html:$('body').html(),css:''};const again=load(await db.renderHomepage(site));
  assert.equal(again('.capability-card').length,4);assert.equal(again('.capability-visual').length,4);
- assert.equal(again('#visuals .carousel-controls').length,1);
+ assert.equal(again('#work .carousel-controls').length,0);assert.equal(again('#work button#visuals[data-filter-kind="design"]').length,1);
  assert.equal(again('.capability-visual').first().hasClass('custom-visual'),true);
  assert.equal(again('.capability-card h4').eq(1).text(),'Editable title after migration');
  assert.equal(siteFields.filter(field=>field.key.startsWith('capabilityTitle')).length,4);
