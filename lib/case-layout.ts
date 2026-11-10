@@ -9,8 +9,8 @@ function applyAppActions($:ReturnType<typeof load>,study:{slug?:string;appUrl?:s
   intro.find('.case-app-actions').remove();
   intro.find('a').filter((_index,element)=>/^Open (app|All Database|Personal Listing)/.test($(element).text().trim())).remove();
   const links=caseAppLinks(study);if(!links.length)return;
-  const nav=$('<nav class="case-app-actions" aria-label="Aplikasi project"></nav>');
-  links.forEach((link,index)=>nav.append($('<a target="_blank" rel="noopener noreferrer"></a>').attr('class',index===0?'button button-outline':'text-link').attr('href',link.url).text(link.label).append('<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#external-link"></use></svg>')));
+  const nav=$('<nav class="case-app-actions" aria-label="Project apps"></nav>');
+  links.forEach((link,index)=>nav.append($('<a target="_blank" rel="noopener noreferrer"></a>').attr('class','text-link').attr('href',link.url).text(link.label).append('<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#external-link"></use></svg>')));
   intro.append(nav);
 }
 
@@ -74,13 +74,17 @@ export function editorialCaseLayout(layout: VisualLayout, summary?: { problem: s
     }
   }
   $('.case-narrative hr,.study-case-blocks hr').replaceWith('<div class="case-section-break" aria-hidden="true"></div>');
+  if(!$('.case-cover-art').length&&$('.project-art').length)$('.project-art').first().wrap('<figure class="case-cover-art"></figure>');
+  $('main').has('.case-intro').first().addClass('case-page');
   $('.case-overview').each((_index,element)=>{
     const section=$(element);
     const heading = section.children('.case-summary-heading');
     if (heading.length) heading.text('Project overview');
     else section.prepend('<h2 class="case-summary-heading">Project overview</h2>');
     const intro=$('.case-intro').first(),visual=$('.case-cover-art,.project-art,.case-narrative,.study-case-blocks').first();
-    if(intro.length&&!section.find(intro).length)intro.after(section);
+    const cover=$('.case-cover-art').first();
+    if(cover.length&&!cover.find(section).length){if(intro.length&&!intro.find(cover).length)intro.after(cover);cover.after(section);}
+    else if(intro.length&&!section.find(intro).length)intro.after(section);
     else if(visual.length&&!section.find(visual).length)visual.before(section);
   });
   if(summary?.slug)applyAppActions($,summary);

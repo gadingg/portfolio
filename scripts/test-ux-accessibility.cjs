@@ -87,8 +87,8 @@ test('stored visual case summaries precede visual documentation, preserve eviden
   const summary={problem:'Actual problem',solution:'Actual approach',impact:'Actual result'};
   const result=editorialCaseLayout(layout,summary),$=html(result.html);
   assert.deepEqual($('.case-summary-step').map((i,el)=>$(el).find('h2,h3').text()).get(),['Problem','Approach','Result']);
-  assert.equal($('.case-intro').next().hasClass('case-overview'),true);
-  assert.equal($('.case-overview').next().hasClass('case-cover-art'),true);
+  assert.equal($('.case-intro').next().hasClass('case-cover-art'),true);
+  assert.equal($('.case-cover-art').next().hasClass('case-overview'),true);
   assert.equal($('.case-narrative p').text(),'Evidence remains.');
   assert.equal(result.css,layout.css);assert.equal(layout.html.includes('case-overview'),false);
   assert.equal(html(editorialCaseLayout(result,summary).html)('.case-overview').length,1);

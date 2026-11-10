@@ -418,7 +418,7 @@
       });
       if(filters){
         filters.querySelectorAll('button,input').forEach(control=>control.disabled=false);
-        const status=filters.querySelector('[data-filter-status]');
+        const status=filters.querySelector('[data-filter-status]')||document.querySelector('.collection-count[data-filter-status]');
         const count=eligible.filter(item=>(filterKind==='all'||item.kind===filterKind)&&matchesSearch(item)).length;
         const collection=groups.some(group=>group.dataset.collection);
         if(status){

@@ -20,6 +20,6 @@ test('fresh and stored home layouts render one content-first grid without search
  const short=load(withInitialWorks(first,[app('one')]));assert.equal(short('.works-all-footer').is('[hidden]'),true);
 });
 test('archives keep their search input and complete cards',()=>{
- const {workFiltersHTML}=modules('lib/work-filters.ts');assert.equal(load(workFiltersHTML())('[data-work-search]').length,1);assert.equal(load(workFiltersHTML())('.work-search span').text(),'Search portfolio');assert.equal(load(workFiltersHTML())('[data-work-search]').attr('placeholder'),'Search by title or topic…');assert.equal(load(workFiltersHTML('all',true))('[data-work-search]').length,0);
+ const {workFiltersHTML}=modules('lib/work-filters.ts');assert.equal(load(workFiltersHTML())('[data-work-search]').length,1);assert.equal(load(workFiltersHTML())('.work-search span').text(),'Search portfolio');assert.equal(load(workFiltersHTML())('[data-work-search]').attr('placeholder'),'Search by title or topic…');assert.equal(load(workFiltersHTML('all',true))('[data-work-search]').length,0);assert.equal(load(workFiltersHTML('all',false,true))('[data-filter-status]').length,0);assert.equal(load(workFiltersHTML('all',false,true))('[data-work-search]').length,1);
  const archive=load(withInitialWorks('<section data-work-kind="all" data-collection="true"><div data-works-list></div></section>',items));assert.equal(archive('.work-card').length,items.length);
 });

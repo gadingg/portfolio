@@ -135,10 +135,10 @@ export default async function StudyCasePage({
             {presentation&&<CaseAppActions study={presentation}/>}
           </header>
 
-          <CaseOverview problem={problem} approach={approach} outcome={outcome}/>
           <figure className="case-cover-art">
             <ProjectArtwork project={project} priority />
           </figure>
+          <CaseOverview problem={problem} approach={approach} outcome={outcome}/>
 
           {presentation&&<CaseMotion motion={caseMotion(presentation)}/>}
 

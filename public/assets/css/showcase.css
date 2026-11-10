@@ -766,3 +766,29 @@ body:has(.showcase),body.showcase{width:100%;max-width:100vw;overflow-x:clip}
 .showcase .case-motion-progress span{flex:1;border-radius:3px;background:color-mix(in srgb,var(--ink) 22%,transparent)}
 .showcase .case-motion-progress span.is-active{background:var(--accent-gradient)}
 @media(max-width:640px){.showcase .case-motion-frame--mobile .case-motion-progress{left:5.556%;top:68.519%;width:70.556%;height:.445%;gap:1.837%}}
+
+/* Shared case and archive rhythm: navigation, introduction, visual, then story. */
+.showcase :is(.case-page,.collection-page){padding-block:20px 72px}
+.showcase .case-back{margin:0 0 12px;min-height:44px;padding-block:8px}
+.showcase .case-intro{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:20px}
+.showcase .case-intro>div{max-width:880px;min-width:0}
+.showcase .case-intro p{margin-top:12px;line-height:1.65}
+.showcase .case-app-actions{justify-content:flex-start;gap:8px 20px}
+.showcase .case-app-actions .text-link{min-height:44px;font-size:14px;padding:8px 0}
+.showcase .case-cover-art{margin:32px 0 0}
+.showcase .case-overview{margin-top:32px}
+.showcase .case-overview>.case-summary-heading{margin-bottom:16px}
+.showcase .case-overview .case-summary-step{background:var(--surface);border-color:var(--line)}
+.showcase .collection-intro{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;margin:0 0 24px}
+.showcase .collection-intro .collection-count{margin:0;font-size:14px;line-height:1.5;color:var(--secondary);font-variant-numeric:tabular-nums}
+.showcase .collection-page .work-explorer{gap:16px;margin-bottom:24px}
+.showcase .collection-page .work-filter-options{display:flex;flex-flow:row nowrap;gap:8px;min-width:0;width:100%;max-width:100%;overflow-x:auto;padding:4px 4px 8px;scrollbar-width:none;overscroll-behavior-x:contain}
+.showcase .collection-page .work-filter-options::-webkit-scrollbar{display:none}
+.showcase .collection-page .work-filter{flex:none;white-space:nowrap;min-height:44px;padding:8px 16px;border-radius:999px;font-size:14px}
+.showcase .collection-page .work-filter:focus-visible{outline-offset:-4px}
+.showcase .collection-page .work-filter[aria-pressed=true]:focus-visible{outline-color:var(--canvas)}
+.showcase .collection-page .work-search{max-width:480px;width:100%}
+.showcase .collection-page .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+@media(min-width:768px){.showcase :is(.case-page,.collection-page){padding-top:24px}.showcase .case-back{margin-bottom:16px}.showcase .case-cover-art,.showcase .case-overview{margin-top:32px}.showcase .collection-intro{margin-bottom:24px}}
+
+@media(min-width:960px){.showcase .collection-page .work-explorer{grid-template-columns:minmax(0,1fr) minmax(240px,360px);align-items:center;gap:24px}.showcase .collection-page .work-search{max-width:none}}
