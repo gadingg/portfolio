@@ -16,5 +16,5 @@ export function paletteContrast(p:PublicPalette){
 }
 export function paletteCSS(value?:Partial<PublicPalette>){
  const p=resolvePalette(value);
- return '.showcase{'+Object.entries({canvas:p.canvas,surface:p.surface,ink:p.ink,secondary:p.secondary,line:p.line,'control-line':p.controlLine,accent:p.start,'accent-end':p.end,'accent-text':p.buttonText,'accent-gradient':'linear-gradient('+p.angle+'deg,'+p.start+','+p.end+')'}).map(([key,value])=>'--'+key+':'+value).join(';')+'}';
+ return '.showcase{'+Object.entries({canvas:p.canvas,surface:p.surface,ink:p.ink,secondary:p.secondary,line:p.line,'control-line':p.controlLine,accent:p.start,'accent-end':p.end,'accent-text':p.buttonText,'accent-gradient':'linear-gradient('+p.angle+'deg,'+p.start+','+p.end+')'}).map(([key,value])=>'--'+key+':'+value).join(';')+'}body:has(.showcase){background-color:'+p.canvas+'!important;background-image:none!important}';
 }

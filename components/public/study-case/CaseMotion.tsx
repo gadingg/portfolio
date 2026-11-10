@@ -1,12 +1,14 @@
 'use client';
 import {useEffect,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
-import type {CaseMotionConfig} from '@/lib/case-motion';
+import {hasPaletteProgress, type CaseMotionConfig} from '@/lib/case-motion';
 
 function MotionPlayer({motion}:{motion:CaseMotionConfig}){
   const section=useRef<HTMLElement>(null),video=useRef<HTMLVideoElement>(null);
   const visible=useRef(false),reduced=useRef(false);
   const [failed,setFailed]=useState(false);
+  const [step,setStep]=useState(0);
+  const paletteProgress=hasPaletteProgress(motion);
   useEffect(()=>{
     const player=video.current,root=section.current;if(!player||!root)return;
     let disposed=false,loaded=false;
@@ -27,7 +29,8 @@ function MotionPlayer({motion}:{motion:CaseMotionConfig}){
     <header><h2>{motion.title||'See the workflow in motion.'}</h2></header>
     <div className={`case-motion-frame${motion.mobileVideo?' case-motion-frame--mobile':''}`}>
       {motion.poster&&<picture className="case-motion-poster" aria-hidden="true">{motion.mobilePoster&&<source media="(max-width:640px)" srcSet={motion.mobilePoster}/>}<img src={motion.poster} alt="" loading="lazy"/></picture>}
-      <video ref={video} muted loop playsInline preload="none" style={{opacity:failed?0:1}} aria-label={motion.title||'Project walkthrough'} onPlaying={()=>setFailed(false)} onError={()=>setFailed(true)}/>
+      <video ref={video} muted loop playsInline preload="none" style={{opacity:failed?0:1}} aria-label={motion.title||'Project walkthrough'} onTimeUpdate={paletteProgress?event=>setStep(Math.min(3,Math.floor(event.currentTarget.currentTime/3))):undefined} onLoadedMetadata={()=>setStep(0)} onPlaying={()=>setFailed(false)} onError={()=>setFailed(true)}/>
+      {paletteProgress&&<div className="case-motion-progress" aria-hidden="true">{[0,1,2,3].map(index=><span key={index} className={index<=step?'is-active':undefined}/>)}</div>}
     </div>
   </section>;
 }

@@ -9,11 +9,18 @@ const titles: Record<string,string> = {
   mydaily:'A clearer view of everyday life.', reqvideo:'From request to a confirmed schedule.',
 };
 const descriptions:Record<string,string>={listinghub:'Search, filter, share, and manage personal listings.',metaads:'Read the report, compare the signals, and plan the next action.',mbg:'Record activities, follow the rules, and review progress.',dailyapp:'Tasks, prompts, watermarks, and resources in one workspace.',mydaily:'Daily tasks, spending, habits, and progress.',reqvideo:'Submit a listing, review the queue, and confirm the schedule.'};
+export function paletteMotion(motion:CaseMotionConfig):CaseMotionConfig {
+ if(!/^\/assets\/motion\/(metaads|dailyapp)\.mp4$/.test(motion.video))return motion;
+ const next={...motion};
+ for(const key of ['video','mobileVideo','poster','mobilePoster'] as const){const value=next[key];if(value&&/^\/assets\/motion\/(metaads|dailyapp)(-mobile)?\.(mp4|webp)$/.test(value))next[key]=value.replace(/\.(mp4|webp)$/,'-clean.$1');}
+ return next;
+}
+export function hasPaletteProgress(motion:CaseMotionConfig){return /^\/assets\/motion\/(metaads|dailyapp)-clean\.mp4$/.test(motion.video);}
 export function caseMotion(study:{slug:string;motion?:CaseMotionConfig}):CaseMotionConfig|null {
-  if(study.motion)return study.motion.enabled&&study.motion.video?study.motion:null;
+  if(study.motion)return study.motion.enabled&&study.motion.video?paletteMotion(study.motion):null;
   if(!titles[study.slug])return null;
   const base=`/assets/motion/${study.slug}`;
-  return {enabled:true,title:titles[study.slug],video:`${base}.mp4`,mobileVideo:`${base}-mobile.mp4`,poster:`${base}.webp`,mobilePoster:`${base}-mobile.webp`,description:descriptions[study.slug]};
+  return paletteMotion({enabled:true,title:titles[study.slug],video:`${base}.mp4`,mobileVideo:`${base}-mobile.mp4`,poster:`${base}.webp`,mobilePoster:`${base}-mobile.webp`,description:descriptions[study.slug]});
 }
 export function withCaseMotion(item:WorkItem):WorkItem{
   if(!item.caseStudy||item.caseStudy.motion)return item;

@@ -11,8 +11,8 @@
   --muted: rgba(243, 240, 232, 0.65);
   --soft: rgba(243, 240, 232, 0.12);
   --line: rgba(243, 240, 232, 0.10);
-  --orange: #ff5a1f;
-  --orange-soft: rgba(255, 90, 31, 0.22);
+  --orange: #5ab2f7;
+  --orange-soft: rgba(90, 178, 247, 0.22);
   --ease: cubic-bezier(.22, 1, .36, 1);
 
   --night: oklch(15% 0.04 220);
@@ -20,7 +20,7 @@
   --sunset: oklch(64% 0.16 54);
   --amber: oklch(76% 0.15 75);
   --indigo: oklch(23% 0.08 275);
-  --accent: #ff5a1f;
+  --accent: #5ab2f7;
 
   /* Craft Design Engineering Beziers */
   --easing: cubic-bezier(.16, 1, .3, 1);
@@ -42,7 +42,7 @@ body {
   overflow-x: hidden;
   background-color: #060706 !important;
   background-image:
-    radial-gradient(circle at 70% 10%, rgba(255, 90, 31, 0.12), transparent 34rem),
+    radial-gradient(circle at 70% 10%, rgba(196, 207, 218, 0.05), transparent 34rem),
     radial-gradient(circle at 15% 45%, rgba(243, 240, 232, 0.05), transparent 26rem) !important;
   background-attachment: scroll;
   color: #f3f0e8 !important;
@@ -105,8 +105,8 @@ body {
 
 .magnetic-button:hover {
   transform: translateY(-2px);
-  border-color: rgba(255, 90, 31, .45);
-  background: rgba(255, 90, 31, .13);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
 }
 
 .section-label {
@@ -126,7 +126,7 @@ body {
   height: 7px;
   border-radius: 999px;
   background: var(--orange);
-  box-shadow: 0 0 20px rgba(255, 90, 31, .5);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--accent) 50%, transparent);
 }
 
 /* Case study editorial layout */
@@ -156,7 +156,7 @@ body {
 }
 
 .case-summary-step > span {
-  color: #ff5a1f;
+  color: var(--accent);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: .14em;

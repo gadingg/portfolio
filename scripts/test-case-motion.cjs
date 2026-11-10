@@ -3,7 +3,7 @@ const {runtime}=require('./cms-script-runtime.cjs'),run=runtime();
 test('case walkthrough defaults cover six existing cases and explicit settings win',()=>{
  const {caseMotion,withCaseMotion}=run('lib/case-motion.ts');
  for(const slug of ['listinghub','metaads','mbg','dailyapp','mydaily','reqvideo']){
-  const motion=caseMotion({slug});assert.equal(motion.enabled,true);assert.equal(motion.video,`/assets/motion/${slug}.mp4`);assert.equal(motion.mobileVideo,`/assets/motion/${slug}-mobile.mp4`);
+  const motion=caseMotion({slug});assert.equal(motion.enabled,true);assert.equal(motion.video,`/assets/motion/${slug}${['metaads','dailyapp'].includes(slug)?'-clean':''}.mp4`);assert.equal(motion.mobileVideo,`/assets/motion/${slug}-mobile${['metaads','dailyapp'].includes(slug)?'-clean':''}.mp4`);
  }
  assert.equal(caseMotion({slug:'unknown'}),null);
  const item={id:'kept',caseStudy:{slug:'listinghub'}};const enriched=withCaseMotion(item);assert.equal(item.caseStudy.motion,undefined);assert.equal(caseMotion({...enriched.caseStudy,slug:'renamed'}).video,'/assets/motion/listinghub.mp4');
