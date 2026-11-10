@@ -1,10 +1,12 @@
+import { paletteCSS } from '@/lib/public-palette';
 import { ArrowUp, Instagram, Linkedin, Mail, MessageCircle } from 'lucide-react';
 import { getPublicSite } from '@/lib/db/site';
 import { CopyEmailButton } from '../CopyEmailButton';
 
 export async function AuraFooter() {
-  const {values,cv}=await getPublicSite();
+  const {values,cv,palette}=await getPublicSite();
   return <>
+    <style data-public-palette>{paletteCSS(palette)}</style>
     <section className="contact-section" aria-labelledby="case-contact-title"><div className="section-shell">
       <div className="contact-layout"><h2 id="case-contact-title">{values.contactTitle.split('\n').map((line,i)=><span key={i}>{i>0&&<br/>}{line}</span>)}</h2><div>{values.contactBody&&<p>{values.contactBody}</p>}<a className="button button-dark" href={values.whatsapp} target="_blank" rel="noopener noreferrer">{values.contactButton}<MessageCircle className="icon" aria-hidden="true" /></a>{cv.email&&<CopyEmailButton email={cv.email}/>}</div></div>
       <div className="contact-bottom">{values.footerSignature&&<span>{values.footerSignature}</span>}<div className="social-links">

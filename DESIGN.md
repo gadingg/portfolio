@@ -6,10 +6,11 @@ colors:
   surface: "#171a1d"
   ink: "#f3f0e8"
   secondary: "#b6b8ae"
-  accent: "#e58b5a"
+  accent: "#5ab2f7"
   line: "#353a3e"
   control-line: "#858a8e"
-  accent-hover: "#efaa83"
+  accent-end: "#12cff3"
+  accent-gradient: "linear-gradient(110deg, #5ab2f7, #12cff3)"
   dark-hover: "#252820"
 typography:
   display:
@@ -307,4 +308,10 @@ Portfolio authoring refinement (2026-11-03): use a single-column form per conten
 
 Public palette refinement (2026-11-09): charcoal canvas and surfaces with warm orange for primary actions and small brand details. Active portfolio filters use off-white with dark text. Hero and Contact use a faint static silver radial light inspired by Moonlight Silver and Dark Radial Glow. Galleries retain quiet solid backgrounds. Contact is charcoal with an orange action and visible accent focus outline. Project hover uses a neutral border without a colored halo. Admin tokens and artwork colors remain unchanged.
 
-Selected Works card consistency (2026-11-09): homepage app, design and video cards share the same surface, 16px desktop/12px mobile inset, border, radius, 3:4 portrait media stage and thumbnail/title/button rhythm. Homepage descriptions are omitted without changing project data. Artwork stays contained at its original proportions. Video titles move below the image. Artwork and video triggers extend over the card; optional design-detail links remain separate keyboard targets. Archive and dedicated gallery layouts are preserved.
+Selected Works card consistency (2026-11-09): homepage app, design and video cards share the same surface, 16px desktop/12px mobile inset, border, radius, 3:4 portrait media stage and thumbnail/title/button rhythm. Homepage web-app descriptions remain visible, while design and video descriptions are omitted without changing project data. Artwork stays contained at its original proportions. Video titles move below the image. Artwork and video triggers extend over the card; optional design-detail links remain separate keyboard targets. Archive and dedicated gallery layouts are preserved.
+
+Public language and card rhythm (2026-11-10): English navigation, controls, search, status and recovery messages. Indonesian project narratives are preserved. Selected Works uses a 16px thumbnail-to-title gap, 8px title-to-description gap and borderless text actions with 44px targets. Dialog and menu dismiss controls share a centered X in a 44px icon button with an accessible name.
+
+Hero CTA trial (2026-11-10): only View portfolio uses a static Mint to Cyan gradient (#5ef0b5 to #45d9f5), with a lighter hover pair and charcoal text. Other public accents and buttons retain the existing palette.
+
+Public Arctic Sprint system (2026-11-10): supersedes the hero-only color trials and warm orange interface accents. Shared validated site.palette tokens control background, surfaces, text, borders, gradient endpoints, button text and angle. Primary buttons and display emphasis use the gradient; small icons, borders, focus rings and animated packets use its blue/cyan stops. What I Do progress/palette and the How I Work SVG pipeline follow the tokens. CMS Website & CV > Color Palette offers live local preview, color/HEX controls, angle, contrast readout and reset. Existing publication/revision flow persists settings. Artwork and source-app screenshots retain their own colors; admin operational amber remains separate.

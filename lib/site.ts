@@ -1,3 +1,4 @@
+import { PaletteSchema } from './public-palette';
 import latestCV from './cv-2026.json';
 import { z } from 'zod';
 import { contentURL, mediaURL } from './content-blocks';
@@ -201,6 +202,7 @@ export const siteFields: SiteField[] = [
 export const defaultCV = latestCV;
 export const SiteSchema = z
   .object({
+    palette: PaletteSchema.optional(),
     layout: VisualLayoutSchema.optional(),
     values: z.record(z.string().max(4000)).transform((values): Record<string, string> => ({ linkedin: defaultLinkedIn, heroMetadata: defaultHeroMetadata, ...values })),
     cv: z.object({

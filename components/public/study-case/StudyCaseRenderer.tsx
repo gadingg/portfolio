@@ -107,13 +107,13 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
             return (
               <blockquote
                 key={block.id || index}
-                className="glass rounded-[24px] p-6 sm:p-8 my-8 border-l border-l-[#ff5a1f] border-t border-r border-b border-[#f3f0e8]/10"
+                className="glass rounded-[24px] p-6 sm:p-8 my-8 border-l border-l-[var(--accent)] border-t border-r border-b border-[#f3f0e8]/10"
               >
                 <p className="text-lg sm:text-xl md:text-2xl italic font-medium leading-relaxed text-[#f3f0e8]">
                   &ldquo;{quote.quote}&rdquo;
                 </p>
                 {quote.attribution && (
-                  <cite className="block mt-4 text-xs sm:text-sm font-bold uppercase tracking-wider text-[#ff5a1f] not-italic">
+                  <cite className="block mt-4 text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--accent)] not-italic">
                     {quote.attribution} {quote.role ? `(${quote.role})` : ''}
                   </cite>
                 )}
@@ -189,7 +189,7 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
                     key={i}
                     className="flex items-start gap-3 text-base sm:text-lg text-[#f3f0e8]/75 leading-relaxed"
                   >
-                    {list.ordered?<span aria-hidden="true">{i+1}.</span>:<span className="h-1.5 w-1.5 rounded-full bg-[#ff5a1f] mt-2.5 shrink-0" />}
+                    {list.ordered?<span aria-hidden="true">{i+1}.</span>:<span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] mt-2.5 shrink-0" />}
                     <span>{item}</span>
                   </li>
                 ))}

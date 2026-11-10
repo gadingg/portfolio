@@ -12,7 +12,7 @@ export function MetricsBlock({ content }: { content: MetricsBlockContent }) {
             key={idx}
             className={`flex flex-col ${idx > 0 ? 'pt-4 sm:pt-0 sm:pl-6' : ''}`}
           >
-            <span className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-[-0.04em] text-[#ff5a1f] leading-none">
+            <span className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-[-0.04em] text-[var(--accent)] leading-none">
               {item.value}
             </span>
             <span className="text-xs sm:text-sm font-extrabold tracking-[0.1em] uppercase text-[#f3f0e8] mt-3">

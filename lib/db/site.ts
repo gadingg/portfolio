@@ -1,3 +1,4 @@
+import { paletteCSS, resolvePalette } from '../public-palette';
 import 'server-only';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -33,7 +34,7 @@ export async function initialSite(): Promise<SiteContent> {
   }
   values.footerName = 'R. Gading Utama';
   values.capabilityLayoutVersion = '2';
-  return { values, cv: defaultCV };
+  return { values, cv: defaultCV, palette: resolvePalette() };
 }
 const withSiteDefaults = (site: SiteContent): SiteContent => {
   const values: Record<string, string> = { linkedin: defaultLinkedIn, heroMetadata: defaultHeroMetadata, ...site.values };
@@ -58,7 +59,7 @@ const withSiteDefaults = (site: SiteContent): SiteContent => {
   for (const [key, [previous, next]] of Object.entries(editorialDefaults)) if (previous.includes(values[key]?.replace(/\u00a0/g, ' ').trim())) values[key] = next;
   // Replace the previous CV edition on read, then retain edits saved against this edition.
   const cv = site.cv.sourceVersion === defaultCV.sourceVersion ? site.cv : structuredClone(defaultCV);
-  return refineSiteCopy({ ...site, values, cv });
+  return refineSiteCopy({ ...site, values, cv, palette: resolvePalette(site.palette) });
 };
 export const getSiteDocument = async () => {
   const document = await readCMS('site', initialSite);
@@ -148,7 +149,7 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[],about
   $('.contact-section .contact-email, .contact-section [data-contact-email], .contact-section a[data-social="email"]').remove();
   $('.contact-section [data-copy-email]').remove();
   if(site.cv.email) $('.contact-layout > div').last().append(
-    $('<button type="button" class="button contact-copy-email" data-copy-email></button>').attr('data-email',site.cv.email).text('Salin Email').append('<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#mail"></use></svg>')
+    $('<button type="button" class="button contact-copy-email" data-copy-email></button>').attr('data-email',site.cv.email).text('Copy email').append('<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#mail"></use></svg>')
   );
   if(!$('#work [data-work-filters]').length) $('#work > .section-heading').after(workFiltersHTML());
   $('#work').attr('data-work-explorer','').attr('id','work');
@@ -258,5 +259,15 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[],about
     work.children('.section-heading').after(workFiltersHTML('all',true));
     work.append('<div id="portfolio-results" class="portfolio-results" data-work-kind="all" data-homepage-limit="6" aria-label="Selected portfolio"><div class="works-grid" data-works-list aria-busy="true"><p class="works-message" role="status">Loading portfolio…</p></div><div class="works-recovery" hidden><p role="status">Couldn\'t load the portfolio.</p><button type="button" class="button button-outline" data-retry-works>Try again</button></div></div><div class="works-all-footer"><a class="text-link" href="/works" data-view-all-works>View all works <svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#arrow-right"></use></svg></a></div>');
   }
+  $('[data-close-dialog]').each((_index, element) => {
+    $(element).attr('class','work-dialog-close').attr('aria-label','Close menu').empty().append('<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#x"></use></svg>');
+  });
+  $('.pipeline-svg').each((index, element) => {
+    const svg=$(element),id='pipeline-accent-'+index;
+    svg.find('[data-palette-gradient]').remove();
+    svg.prepend('<defs data-palette-gradient><linearGradient id="'+id+'" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:var(--accent)"/><stop offset="100%" style="stop-color:var(--accent-end)"/></linearGradient></defs>');
+    svg.find('.pipeline-fill').attr('style','stroke:url(#'+id+')');
+  });
+  $('head').append($('<style data-public-palette>').text(paletteCSS(site.palette)));
   return $.html();
 }

@@ -71,6 +71,7 @@ export function summarizeSite(draft: SiteContent,published: SiteContent): Publis
   const cvLabels:Record<string,string>={name:'Nama',role:'Posisi',profile:'Profil',capabilities:'Kemampuan',phone:'Telepon',email:'Email',website:'Website',location:'Lokasi',languages:'Bahasa',experience:'Pengalaman',education:'Pendidikan',pdf:'File PDF CV'};
   const cvChanges=Object.keys({...published.cv,...draft.cv}).filter(key=>different(draft.cv[key as keyof typeof draft.cv],published.cv[key as keyof typeof published.cv])).map(key=>cvLabels[key]||key);
   if(cvChanges.length)entries.push({id:'site-cv',title:'CV',changes:cvChanges});
+  if(different(draft.palette,published.palette))entries.push({id:'site-palette',title:'Color Palette',changes:['Warna, gradient, dan tombol publik']});
   if(different(draft.layout,published.layout))entries.push({id:'site-layout',title:'Layout homepage',changes:['Teks, gambar, atau susunan halaman di editor visual']});
   return {scope:'Berlaku untuk seluruh perubahan Website & CV, termasuk layout homepage.',counts:entries.length?[`${entries.length} bagian diperbarui`]:[],entries};
 }

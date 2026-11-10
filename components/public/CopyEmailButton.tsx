@@ -17,11 +17,11 @@ export function CopyEmailButton({email}:{email:string}) {
   return <>
     <button type="button" className="button contact-copy-email" onClick={copy} disabled={state==='busy'}>
       {state==='success'?<Check className="icon" aria-hidden="true"/>:<Mail className="icon" aria-hidden="true"/>}
-      {state==='success'?'Tersalin':'Salin Email'}
+      {state==='success'?'Copied':'Copy email'}
     </button>
     <div className="public-toast-region" aria-live="polite" aria-atomic="true">
-      {state==='success'&&<p className="public-toast">Email berhasil disalin!</p>}
-      {state==='error'&&<div className="public-toast"><p>Email belum bisa disalin. Pilih alamatnya:</p><input aria-label="Alamat email" readOnly value={email} onFocus={event=>event.currentTarget.select()}/><a href={`mailto:${email}`}>Kirim email</a></div>}
+      {state==='success'&&<p className="public-toast">Email copied.</p>}
+      {state==='error'&&<div className="public-toast"><p>Couldn’t copy the email. Select the address below.</p><input aria-label="Email address" readOnly value={email} onFocus={event=>event.currentTarget.select()}/><a href={`mailto:${email}`}>Send email</a></div>}
     </div>
   </>;
 }

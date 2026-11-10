@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { Eye, Plus, Trash2 } from 'lucide-react';
+import { PaletteEditor } from './PaletteEditor';
 import { siteFields, type SiteContent } from '@/lib/site';
 import { FileDrop } from './FileDrop';
 import { SortableList } from './SortableList';
@@ -99,8 +100,8 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
   const cv = (patch: Partial<SiteContent['cv']>) =>
     setContent((old) => (old ? { ...old, cv: { ...old.cv, ...patch } } : old));
   const homepageGroups=['Hero','Portofolio','About','Kemampuan','Proses','Tools'];
-  const groups = ['Hero & About','Keahlian & Proses','Kontak & File CV'];
-  const included = group === groups[0] ? ['Hero','About','Identitas','SEO','Portofolio'] : group === groups[1] ? ['Kemampuan','Proses','Tools'] : ['Kontak','Footer'];
+  const groups = ['Hero & About','Keahlian & Proses','Kontak & File CV','Color Palette'];
+  const included = group === groups[0] ? ['Hero','About','Identitas','SEO','Portofolio'] : group === groups[1] ? ['Kemampuan','Proses','Tools'] : group==='Color Palette'?[]:['Kontak','Footer'];
   if (autosave.recovery && !autosave.canRestore) return <DraftRecovery backup={autosave.recovery} onUseServer={autosave.useServerVersion} onRestore={autosave.canRestore ? autosave.restoreRecovery : undefined} />;
   return (
     <div className="works-manager cms-manager wm-site-workspace">
@@ -147,6 +148,7 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
           </nav>
           <fieldset disabled={busy && operation !== 'save'} className="cms-editor-fields">
             <h2>{group === 'Kontak & File CV' ? 'Isi CV' : group === 'Kontak' ? 'Profil & kontak' : group}</h2>
+            {group==='Color Palette'&&<PaletteEditor value={content.palette} onChange={palette=>setContent(old=>old?{...old,palette}:old)}/>}
             {siteFields
               .filter((field) => included.includes(field.group))
               .map((field) => (

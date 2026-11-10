@@ -59,7 +59,7 @@
   }
   const modal = node('dialog','work-dialog'); modal.setAttribute('aria-labelledby','work-dialog-title');
   const top = node('div','dialog-top'); const title = node('h2','',''); title.id='work-dialog-title';
-  const close = node('button','button button-outline','Close'); close.type='button'; close.append(icon('x')); top.append(title,close);
+  const close = node('button','work-dialog-close',''); close.type='button'; close.setAttribute('aria-label','Close'); close.title='Close'; close.append(icon('x')); top.append(title,close);
   const body = node('div','work-dialog-body'); const bottom = node('div','work-dialog-bottom'); modal.append(top,body,bottom); shell.append(modal);
   close.addEventListener('click',()=>modal.close());
   modal.addEventListener('close',()=>{cancelImage();releaseVideo();body.replaceChildren();bottom.replaceChildren();currentTrigger?.focus({preventScroll:true});});
@@ -244,7 +244,7 @@
     if(app){
       unit.setAttribute('aria-label',`${destination}: ${item.title}`);
       if(href){unit.href=href;if(!href.startsWith(location.origin+'/')){unit.target='_blank';unit.rel='noopener noreferrer';}}
-      else {unit.type='button';unit.addEventListener('click',()=>{openDialog(unit,item.title);modal.dataset.mode='sample';body.append(node('p','demo-explanation','Detail project akan tersedia di sini.'));});}
+      else {unit.type='button';unit.addEventListener('click',()=>{openDialog(unit,item.title);modal.dataset.mode='sample';body.append(node('p','demo-explanation','Project details will be available here.'));});}
     } else {
       if(video?.kind==='instagram'){media.href=video.href;media.target='_blank';media.rel='noopener noreferrer';}else media.type='button';
       media.setAttribute('aria-label',`${item.kind==='design'?'Enlarge':video?.label||'Preview'}: ${item.title}`);
@@ -268,7 +268,7 @@
         caption.append(heading);unit.append(caption);
       }else{
         unit.append(heading);
-        if(app&&!compact)unit.append(node(href?'p':'span','work-card-description',summary(item.description)));
+        if(app&&item.description)unit.append(node(href?'p':'span','work-card-description',summary(item.description)));
       }
     }
     const meta=node(app&&!href?'span':'div','work-card-meta');
@@ -414,7 +414,7 @@
           group._updateCarousel?.();
           return;
         }
-        list.replaceChildren(...items.map(item=>card(item,item.kind==='design'?items.filter(work=>work.kind==='design'):items,group.dataset.collection?'h2':homeGroup?'h3':'h4',!!group.querySelector('.editorial-gallery'))));if(!items.length)list.append(node('p','works-message',exploring?'Tidak ada portofolio yang cocok. Coba kata lain atau pilih All.':'No portfolio items yet.'));list.scrollLeft=0;list.setAttribute('aria-busy','false');group._updateCarousel?.();
+        list.replaceChildren(...items.map(item=>card(item,item.kind==='design'?items.filter(work=>work.kind==='design'):items,group.dataset.collection?'h2':homeGroup?'h3':'h4',!!group.querySelector('.editorial-gallery'))));if(!items.length)list.append(node('p','works-message',exploring?'No matching work. Try another search or choose All.':'No portfolio items yet.'));list.scrollLeft=0;list.setAttribute('aria-busy','false');group._updateCarousel?.();
       });
       if(filters){
         filters.querySelectorAll('button,input').forEach(control=>control.disabled=false);
@@ -422,10 +422,10 @@
         const count=eligible.filter(item=>(filterKind==='all'||item.kind===filterKind)&&matchesSearch(item)).length;
         const collection=groups.some(group=>group.dataset.collection);
         if(status){
-          if(homepage){const shown=results.querySelectorAll('.work-card').length;status.textContent=`${shown} dari ${count} portofolio ditampilkan.`;}
+          if(homepage){const shown=results.querySelectorAll('.work-card').length;status.textContent=`Showing ${shown} of ${count} projects.`;}
           else if(!exploring&&!collection)status.textContent='';
-          else if(count||collection)status.textContent=`${count} portofolio`;
-          else status.textContent='Tidak ada portofolio yang cocok. Coba kata lain atau pilih All.';
+          else if(count||collection)status.textContent=`${count} ${count===1?'project':'projects'}`;
+          else status.textContent='No matching work. Try another search or choose All.';
         }
       }
       document.dispatchEvent(new Event('portfolio:works-ready'));

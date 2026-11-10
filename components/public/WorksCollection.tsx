@@ -17,7 +17,7 @@ export async function WorksCollection({kind='all'}:{kind?:WorkKind|'all'}) {
       <div className="collection-intro"><h1>{kind==='all'?'Portfolio':workLabels[kind]}</h1></div>
       <div dangerouslySetInnerHTML={{__html:workFiltersHTML(kind)}}/>
       <noscript><nav className="collection-nav" aria-label="Work collections"><a href="/works">All</a>{workKinds.map(value=><a href={`/${value}`} key={value}>{workLabels[value]}</a>)}</nav></noscript>
-      <section id="portfolio-results" data-work-kind={kind} data-collection="true" aria-label="Portofolio">
+      <section id="portfolio-results" data-work-kind={kind} data-collection="true" aria-label="Portfolio">
         <div className="works-grid" data-works-list aria-busy="false" dangerouslySetInnerHTML={{__html: workCardsHTML(selected,true) || '<p class="works-message">No portfolio items yet.</p>'}}/>
         <div className="works-recovery" hidden><p role="status">Couldn't load the portfolio.</p><button type="button" className="button button-outline" data-retry-works>Try again</button></div>
         <noscript><p>Open a portfolio image or link to see the details.</p></noscript>

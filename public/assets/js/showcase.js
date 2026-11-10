@@ -53,7 +53,7 @@
       const frame = image.parentElement;
       if (!frame || frame.classList.contains('media-error')) return;
       frame.classList.add('media-error');
-      frame.append(icon('image-off'), element('p', '', 'Gambar belum bisa dimuat.'));
+      frame.append(icon('image-off'), element('p', '', 'Image unavailable.'));
     }, { once: true });
     if (image.complete && !image.naturalWidth) image.dispatchEvent(new Event('error'));
   }

@@ -22,7 +22,7 @@ export function workCardsHTML(items: WorkItem[], collection = false, showcase = 
     const destination = item.demo ? 'Preview' : item.caseStudy ? 'View case study' : 'Open app';
     const arrow = '<svg class="icon" aria-hidden="true"><use href="/assets/icons/lucide.svg#arrow-right"></use></svg>';
     if (item.kind === 'webapp') {
-      const content = `<span class="work-media work-art-${item.artwork}">${picture}</span><${heading} class="work-card-title">${title}</${heading}>${headingTag !== 'h3' && item.description ? `<p class="work-card-description">${escape(item.description)}</p>` : ''}<div class="work-card-meta"><span class="work-destination">${destination}${arrow}</span></div>`;
+      const content = `<span class="work-media work-art-${item.artwork}">${picture}</span><${heading} class="work-card-title">${title}</${heading}>${item.description ? `<p class="work-card-description">${escape(item.description)}</p>` : ''}<div class="work-card-meta"><span class="work-destination">${destination}${arrow}</span></div>`;
       return `<article data-ssr-work-id="${escape(item.id)}" class="work-card work-card-webapp">${href ? `<a class="work-card-link" href="${escape(href)}" aria-label="${destination}: ${title}"${href.startsWith('/') ? '' : ' target="_blank" rel="noopener noreferrer"'}>${content}</a>` : `<div class="work-card-link">${content}</div>`}</article>`;
     }
     const file=item.videoSource==='instagram'?'':safeURL(item.videoFile||''),instagramOriginal=instagramURL(item.url);
