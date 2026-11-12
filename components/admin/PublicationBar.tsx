@@ -18,7 +18,7 @@ export function PublicationBar({dirty, unpublished, busy, publishing, offline, f
   if (!visibility && !status && !pending) return null;
   return <div className="cms-sticky-toolbar wm-savebar cms-publish-bar" aria-label="Publikasi">
     {visibility && <label className="wm-check"><input type="checkbox" checked={visibility.checked} disabled={busy} onChange={event => visibility.onChange(event.target.checked)} />Tampilkan di website</label>}
-    <div className="cms-publish-actions">
+    <div className="cms-publish-bar-actions">
       {status && <span role="status" className="wm-save-status">{status}</span>}
       {pending && <button type="button" className="wm-button wm-primary" disabled={busy || offline} onClick={onPublish} aria-busy={publishing}>
         <AdminActionLabel pending={publishing} idle={failed ? 'Coba lagi' : publishLabel} busy="Menyimpan…" icon={<Upload size={18} aria-hidden="true"/>}/>

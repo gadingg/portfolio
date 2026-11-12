@@ -27,6 +27,13 @@
 }
 .admin-shell .wm-button { position:relative; max-width:100%; line-height:1.4; text-align:center; overflow-wrap:anywhere; transition:background .15s,border-color .15s,transform .15s; }
 .admin-shell .wm-button > svg { width:18px; height:18px; flex:0 0 18px; pointer-events:none; }
+.admin-theme .admin-login-submit,
+.admin-theme .works-manager .wm-button.wm-primary,
+.admin-theme .visual-editor .visual-publish {
+  background:var(--admin-accent-gradient);
+  border-color:var(--amber);
+  color:var(--admin-accent-text);
+}
 .admin-shell .wm-button:active:not(:disabled) { transform:translateY(1px); }
 .admin-shell .wm-button:disabled { cursor:wait; }
 .admin-shell .wm-button:disabled:not([aria-busy="true"]) { cursor:default; }

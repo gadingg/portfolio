@@ -110,7 +110,11 @@ export function FileDrop({
       }
     }
     try { if (successes.length) onUploaded(successes); }
-    catch {messages.push('File terunggah, tetapi belum masuk ke form. Pilih dari koleksi media.');}
+    catch {
+      const message = 'File terunggah, tetapi belum masuk ke form. Pilih dari koleksi media.';
+      messages.push(message);
+      setError(message);
+    }
     if (successes.length && !messages.length && picker) dialog.current?.close();
     setFailed(failures);
     setBusy(false);
@@ -118,8 +122,8 @@ export function FileDrop({
     onBusyChange?.(false);
     setProgress('');
     setUploadPercent(null);
-    if(successes.length)notify(`${successes.length} file berhasil diunggah.`);
-    if(messages.length)notify(messages.join(' · '),{tone:failures.length?'error':'info',duration:8000});
+    if (!picker && successes.length) notify(`${successes.length} file berhasil diunggah.`);
+    if (!picker && messages.length) notify(messages.join(' · '),{tone:failures.length?'error':'info',duration:8000});
     if (input.current) input.current.value = '';
   }
   async function loadLibrary(nextOffset = 0) {
@@ -171,10 +175,15 @@ export function FileDrop({
       >
         {previewSrc && <img className="cms-drop-preview" {...workThumbnail(previewSrc)} sizes={thumbnail ? '80px' : '(max-width: 760px) 85vw, 720px'} alt={previewAlt} draggable={false} loading="lazy" decoding="async"/>}
         {picker ? <div className="cms-picker-action">
-          <button type="button" className="wm-button" disabled={busy || disabled} onClick={openPicker}>
-            {busy ? <span className="admin-spinner" aria-hidden="true"/> : <Images size={18} aria-hidden="true"/>}
-            {uploadLabel || 'Tambah media'}
-          </button>
+          <div className="cms-picker-buttons">
+            <button type="button" className="wm-button" disabled={busy || disabled} onClick={() => input.current?.click()}>
+              {busy ? <span className="admin-spinner" aria-hidden="true"/> : <Upload size={18} aria-hidden="true"/>}
+              {uploadLabel || 'Upload file'}
+            </button>
+            <button type="button" className="wm-button" disabled={busy || disabled} onClick={openPicker}>
+              <Images size={18} aria-hidden="true"/>Pilih dari koleksi
+            </button>
+          </div>
           <small>Tarik file ke sini · maks. {accept.startsWith('video/')?40:4} MB</small>
         </div> : <>
         <button
@@ -209,7 +218,7 @@ export function FileDrop({
         />
       </div>
       {busy && !pickerOpen && <UploadFeedback label={progress} percent={uploadPercent}/>}
-      {error && !picker && (
+      {error && !pickerOpen && (
         <div role="alert" className="cms-error">
           {error}
           {failed.length > 0 && (
@@ -226,7 +235,7 @@ export function FileDrop({
       )}
       <dialog
         ref={dialog}
-        className="cms-media-dialog"
+        className="cms-media-dialog cms-media-picker"
         aria-labelledby={titleId}
         onClose={()=>setPickerOpen(false)}
         onDragOver={event => {if (!busy && !disabled) event.preventDefault();}}
@@ -236,24 +245,18 @@ export function FileDrop({
         }}
       >
         <div className="cms-panel-heading">
-          <h2 id={titleId}>Media</h2>
+          <h2 id={titleId}>Koleksi media</h2>
           <button
             className="wm-button"
             type="button"
             onClick={() => dialog.current?.close()}
             aria-label="Tutup media"
           >
-            <X size={20} />
+            <X size={20} aria-hidden="true"/>
           </button>
         </div>
-        {picker && <div className="cms-picker-toolbar">
-          <button type="button" className="wm-button" disabled={busy || disabled} onClick={() => input.current?.click()}>
-            {busy ? <span className="admin-spinner" aria-hidden="true"/> : <Upload size={18} aria-hidden="true"/>}Upload baru
-          </button>
-          <span>Atau pilih file tersimpan di bawah.</span>
-        </div>}
         {busy && pickerOpen && <UploadFeedback label={progress} percent={uploadPercent}/>}
-        {picker && error && <div className="cms-error" role="alert">{error}
+        {error && <div className="cms-error" role="alert">{error}
           {!!failed.length && <button type="button" className="wm-button" disabled={busy || disabled} onClick={() => upload(failed)}>Coba lagi</button>}
         </div>}
         {libraryError && (
@@ -274,6 +277,7 @@ export function FileDrop({
               key={item.id}
               type="button"
               className="cms-media-choice"
+              title={item.name}
               aria-pressed={selected.includes(item.id)}
               onClick={() =>
                 setSelected((ids) =>
@@ -316,7 +320,7 @@ export function FileDrop({
             } catch {setLinkError('Gunakan link file MP4 atau WebM yang valid.');}
           }}>Gunakan link</button>
         </details>}
-        <div className="wm-toolbar">
+        <div className="cms-media-footer">
           {hasMore && (
             <button
               type="button"

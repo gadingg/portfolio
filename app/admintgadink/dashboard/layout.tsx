@@ -5,7 +5,6 @@ import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminChangesProvider } from '@/components/admin/AdminChanges';
 import { AdminToasts } from '@/components/admin/AdminToasts';
 import { verifyAdminSession } from '@/lib/auth/session';
-import '@/components/admin/admin-controls.css';
 
 export const metadata: Metadata = {
   title: 'Admin Dashboard | Gading Portofolio CMS',

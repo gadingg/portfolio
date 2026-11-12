@@ -52,6 +52,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
   const router=useRouter();
   const notify = useAdminToast();
   const workspace = useRef<HTMLDivElement>(null), previewDialog = useRef<HTMLDialogElement>(null);
+  const backButton = useRef<HTMLButtonElement>(null);
   const freshItems = useRef(new Map<string, WorkItem>());
   const [showFeatured, setShowFeatured] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<WorkEditorErrors>({});
@@ -133,7 +134,15 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
     if(workKinds.includes(selectedKind as WorkKind))setKind(selectedKind as WorkKind);
     load();
   }, []);
-  useEffect(()=>{window.scrollTo({top:0,behavior:'instant'});document.querySelector('.admin-main')?.scrollTo({top:0,behavior:'instant'});requestAnimationFrame(()=>{const heading=document.querySelector<HTMLElement>('.wm-editor-screen h1');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}else document.querySelector<HTMLElement>('.cms-work-open')?.focus({preventScroll:true});});},[editing]);
+  useEffect(() => {
+    window.scrollTo({top:0,behavior:'instant'});
+    document.querySelector('.admin-main')?.scrollTo({top:0,behavior:'instant'});
+    const frame = requestAnimationFrame(() => {
+      const target = backButton.current || workspace.current?.querySelector<HTMLElement>('.cms-work-open');
+      target?.focus({preventScroll:true});
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [editing]);
   useEffect(() => {
     if (revision === null) return;
     const url = new URL(window.location.href);
@@ -347,6 +356,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
         <div>
           {editing && (
             <button
+              ref={backButton}
               type="button"
               className="wm-button"
               disabled={busy}
