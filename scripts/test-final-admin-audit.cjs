@@ -8,16 +8,17 @@ test('pending collection includes removals while ignoring technical timestamps a
  assert.equal(summary.changed,true);assert.equal(summary.review.length,0);assert.equal(summary.pending.entries.length,1);assert.equal(summary.pending.entries[0].title,'removed');
  assert.equal(lib('lib/admin-overview.ts').summarizeWorks([work('keep',{updatedAt:'2026-11-07T00:00:00Z'})],[work('keep')]).changed,false);
 });
-const base={dirty:true,unpublished:false,busy:false,operation:null,scope:'Hanya karya ini.',onSave(){},onPublish(){}};
+const base={dirty:true,unpublished:false,busy:false,publishing:false,offline:false,failed:false,publishLabel:'Simpan & terbitkan',onPublish(){}};
 const render=patch=>load(renderToStaticMarkup(React.createElement(PublicationBar,{...base,...patch})));
-test('private save and live hide actions have distinct names and keep scope visible',()=>{
- assert.equal(render({visibility:{checked:false,onChange(){}},publishLabel:'Terbitkan'})('.admin-action-label > span[aria-hidden=false]').text(),'Simpan Perubahan');
- assert.equal(render({visibility:{checked:false,onChange(){}},publishLabel:'Sembunyikan dari website'})('.admin-action-label > span[aria-hidden=false]').text(),'Simpan & Sembunyikan');
- assert.equal(render({})('.wm-save-scope').text(),base.scope);
+test('publication bar shows the action without a redundant change status or scope',()=>{
+ const $=render({visibility:{checked:false,onChange(){}},publishLabel:'Simpan tanpa tayang'});
+ assert.equal($('.admin-action-label > span[aria-hidden=false]').text(),'Simpan tanpa tayang');
+ assert.equal($('input[type=checkbox]:checked').length,0);
+ assert.equal($('[role=status], .wm-save-scope').length,0);
 });
 test('offline and failed saves are explicit and only the main action offers retry',()=>{
  let $=render({offline:true});assert.equal($('button:disabled').length,1);assert.match($('[role=status]').text(),/Tidak ada koneksi/);
- $=render({failed:true,dirty:false});assert.equal($('button').length,1);assert.equal($('.admin-action-label > span[aria-hidden=false]').text(),'Coba simpan lagi');assert.equal($('button:disabled').length,0);
+ $=render({failed:true,dirty:false});assert.equal($('button').length,1);assert.equal($('.admin-action-label > span[aria-hidden=false]').text(),'Coba lagi');assert.equal($('button:disabled').length,0);
 });
 const ts=require('typescript'),fs=require('node:fs');
 test('manual save observes real connectivity and failed retry without browser storage',async()=>{

@@ -40,7 +40,6 @@ export function AdminLoginForm() {
 
   return (
     <section className="admin-login-card" aria-labelledby="admin-login-title">
-      <p className="admin-kicker">Gading Admin</p>
       <h1 id="admin-login-title">Masuk ke admin</h1>
 
       <form onSubmit={handleSubmit} className="admin-login-form" aria-busy={loading}>

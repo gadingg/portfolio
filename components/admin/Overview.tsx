@@ -41,11 +41,8 @@ export function Overview({ draft, published, engagement, days }: {
 
     {summary.changed && <section className="overview-change-card" aria-labelledby="collection-change-title">
       <span className="overview-change-icon"><Layers3 size={24} aria-hidden="true"/></span>
-      <div><h2 id="collection-change-title">{summary.pending.entries.length} perubahan menunggu diterapkan</h2>
-        <p>{summary.pending.counts.map(count=>count.replace(/portfolio/g,'portofolio')).join(' · ')||'Perubahan catatan portofolio'}</p>
-        <details><summary>Lihat rincian perubahan</summary><ul>{summary.pending.entries.map(entry=><li key={entry.id}><strong>{entry.title}</strong><span>{entry.changes.join(', ')||'Urutan berubah'}</span></li>)}</ul></details>
-      </div>
-      <AdminLink className="wm-button" href="/admintgadink/dashboard/works#collection-changes">Tinjau {summary.pending.entries.length} perubahan<ArrowRight size={18} aria-hidden="true"/></AdminLink>
+      <h2 id="collection-change-title">Draft koleksi belum terbit</h2>
+      <AdminLink className="wm-button" href="/admintgadink/dashboard/works#collection-changes">Buka draft<ArrowRight size={18} aria-hidden="true"/></AdminLink>
     </section>}
 
 

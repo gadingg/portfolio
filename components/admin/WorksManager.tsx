@@ -1,7 +1,7 @@
 'use client';
 import { workReadiness } from '@/lib/work-readiness';
 import {useRouter} from 'next/navigation';
-import { incompletePublishedIds, incompleteWorksForReview } from '@/lib/admin-overview';
+import { incompletePublishedIds } from '@/lib/admin-overview';
 import { homepageWorks, setHomepageFeatured } from '@/lib/homepage-works';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -41,7 +41,6 @@ import { PublicationBar } from './PublicationBar';
 import { draftSaveMessage, sameDraftContent } from '@/lib/draft-backup';
 import { useManualSave as useAutoDraft } from './useManualSave';
 import { DraftRecovery } from './DraftRecovery';
-import { workPublicationCopy } from '@/lib/admin-copy';
 import { workThumbnail } from '@/lib/work-images';
 import { AdminSkeleton } from './AdminSkeleton';
 import {useAdminToast, useToastMessage} from './AdminToasts';
@@ -53,7 +52,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
   const router=useRouter();
   const notify = useAdminToast();
   const workspace = useRef<HTMLDivElement>(null), previewDialog = useRef<HTMLDialogElement>(null);
-  const freshItems = useRef(new Set<string>());
+  const freshItems = useRef(new Map<string, WorkItem>());
   const [showFeatured, setShowFeatured] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<WorkEditorErrors>({});
   const [trash, setTrash] = useState<TrashedWork[]>(initial?.trash || []);
@@ -77,10 +76,10 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
   const [query, setQuery] = useState('');
   const [incompleteOnly, setIncompleteOnly] = useState(selection?.status === 'incomplete');
   const incompleteIds = incompletePublishedIds(published);
-  const incompleteRecords = incompleteWorksForReview(items,published);
+  const incompleteItems = items.filter(item => incompleteIds.has(item.id));
   const [showImport, setShowImport] = useState(false);
   const [reorderMode,setReorderMode]=useState(false);
-  const initialWork = initial?.items.find(item => item.id === selection?.work) || (selection?.status === 'incomplete' && !selection?.kind ? incompleteRecords[0]?.item : undefined);
+  const initialWork = initial?.items.find(item => item.id === selection?.work) || (selection?.status === 'incomplete' && !selection?.kind ? incompleteItems[0] : undefined);
   const [kind, setKind] = useState<WorkKind>(initialWork?.kind || (workKinds.includes(selection?.kind as WorkKind) ? selection?.kind as WorkKind : 'webapp')),
     [editing, setEditing] = useState<string | null>(selection?.work ? initialWork?.id || null : null),
     [busy, setBusy] = useState(false),
@@ -237,9 +236,6 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
       setTrash(data.trash); setRevision(data.revision); revisionRef.current = data.revision;
       if (editing === id) setEditing(null);
       setError(''); setNotice('');
-      notify(action === 'move' ? 'Portofolio dipindahkan ke Sampah.' : 'Portofolio dipulihkan.', {
-        ...(action === 'move' ? {action:{label:'Urungkan',run:() => changeTrash('restore', id)}} : {}),
-      });
     } catch (error) {notify(error instanceof Error ? error.message : 'Coba lagi.', {tone:'error'});}
     finally {mutationLock.current = false; setBusy(false); setTrashBusyId(null); finishMutation.current?.(); pendingMutation.current = null;}
   }
@@ -276,7 +272,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
       ...(kind === 'video' ? {videoSource:'file' as const} : {}),
     };
     const item = kind === 'webapp' ? setCaseStudyEnabled(base,true) : base;
-    freshItems.current.add(item.id);
+    freshItems.current.set(item.id, item);
     setItems((current) => [...current, item]);
     setEditing(item.id);
   }
@@ -306,7 +302,6 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
   }
   const item = items.find((value) => value.id === editing),
     visible = items.filter((value) => value.kind === kind && (!incompleteOnly || incompleteIds.has(value.id)) && value.title.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
-  const pendingRemovals = incompleteOnly ? incompleteRecords.filter(record => record.pendingRemoval && record.item.kind === kind && record.item.title.toLocaleLowerCase().includes(query.toLocaleLowerCase())) : [];
   const publicItem = published.find(value => value.id === editing && value.published);
   async function openVisual() {
     if (!item || uploadBusy.current) return;
@@ -330,10 +325,20 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
   const selectedUnpublished = item ? !sameDraftContent(JSON.stringify(item), JSON.stringify(published.find(value => value.id === item.id) || null)) : unpublished;
   const selectedDirty = item ? !sameDraftContent(JSON.stringify(item), JSON.stringify(saved.find(value => value.id === item.id) || null)) : dirty;
   const editingLocked = busy && operation !== 'save';
-  const publicationCopy = workPublicationCopy(item, published.find(value => value.id === item?.id));
+  const freshItem = item && freshItems.current.has(item.id) && !saved.some(value => value.id === item.id);
+  async function leaveEditor() {
+    if (!item) return;
+    const savedItem = savedRef.current.find(value => value.id === item.id);
+    const baseline = savedItem || freshItems.current.get(item.id);
+    if (!sameDraftContent(JSON.stringify(item), JSON.stringify(baseline || null)) &&
+      !await ask('Editan yang belum disimpan akan dibuang.', 'Buang editan', false, 'Buang editan?')) return;
+    setItems(current => current.flatMap(value => value.id === item.id ? savedItem ? [savedItem] : [] : [value]));
+    freshItems.current.delete(item.id);
+    setEditing(null);
+  }
   return (
     <div ref={workspace} className={`works-manager cms-manager wm-workspace ${item ? 'wm-editor-screen' : ''}`} onDragEnter={event => {
-      if (!editing && !busy && event.dataTransfer.types.includes('Files')) setShowImport(true);
+      if (!editing && !showTrash && !busy && event.dataTransfer.types.includes('Files')) setShowImport(true);
     }}>
       {confirmation}
       {publicationReview}
@@ -344,15 +349,16 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
             <button
               type="button"
               className="wm-button"
-              onClick={async () => {if(dirty&&!await ask('Ada perubahan yang belum disimpan. Kembali tanpa menyimpan?', 'Kembali'))return;setItems(savedRef.current);setEditing(null);}}
+              disabled={busy}
+              onClick={leaveEditor}
             >
               <ArrowLeft size={18} />
               Semua portofolio
             </button>
           )}
-          <h1>{item ? freshItems.current.has(item.id) ? {webapp:'Tambah studi kasus',design:'Tambah desain',video:'Tambah video'}[item.kind] : item.title : 'Portofolio'}</h1>
+          <h1>{item ? freshItem ? {webapp:'Tambah studi kasus',design:'Tambah desain',video:'Tambah video'}[item.kind] : item.title : 'Portofolio'}</h1>
         </div>
-        {item ? <button type="button" className="wm-button" disabled={busy} onClick={openPreview}><Eye size={18}/>Preview</button> : <a
+        {item ? <button type="button" className="wm-button" disabled={busy} onClick={openPreview}><Eye size={18}/>Pratinjau</button> : <a
           className="wm-public-link"
           href={publicItem?.caseStudy ? `/work/${publicItem.caseStudy.slug}` : `/${kind}`}
           target="_blank"
@@ -362,12 +368,11 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
           <ExternalLink size={18} />
         </a>}
       </div>
-      {revision!==null&&!showTrash&&!item&&(dirty||unpublished)&&<section id="collection-changes" className="collection-change-panel" aria-labelledby="collection-review-title"><h2 id="collection-review-title">Perubahan koleksi</h2><p>Berlaku untuk semua kategori. Periksa rincian sebelum menerapkan perubahan.</p><ul>{summarizeWorks(items,published).counts.map(count=><li key={count}>{count.replace(/portfolio/g,'portofolio')}</li>)}</ul><button type="button" className="wm-button" disabled={busy||!autosave.online} onClick={()=>{void save('publish');}}>Tinjau perubahan koleksi</button>{!autosave.online&&<p role="status">Tidak ada koneksi. Coba lagi setelah tersambung.</p>}</section>}
-      {revision !== null && !showTrash && !!item && <PublicationBar dirty={selectedDirty} unpublished={selectedUnpublished} busy={busy} operation={operation} scope={item ? 'Berlaku hanya untuk portofolio ini.' : publicationCopy.scope} publishLabel={item && !item.published && publicItem ? 'Sembunyikan dari website' : item ? publicationCopy.publishLabel === 'Terbitkan' ? publicItem ? 'Terbitkan revisi' : 'Terbitkan' : publicationCopy.publishLabel : 'Terbitkan perubahan'}
-        busyLabel={publicationCopy.busyLabel} showPublish={publicationCopy.showPublish} pendingSuffix={item ? publicItem ? ' · Versi lama masih tayang' : ' · Belum tayang' : ' · Ada perubahan belum tayang'}
-        visibility={item ? { checked: item.published, onChange: checked => update(item.id, { published: checked }) } : undefined}
-        status={!dirty && !selectedUnpublished && autosave.online ? publicationCopy.cleanLabel : autosave.status} offline={!autosave.online} failed={autosave.failed}
-        onSave={() => {void save('save');}} onPublish={() => { void save('publish'); }}/>}
+      {revision!==null&&!showTrash&&!item&&(dirty||unpublished)&&<section id="collection-changes" className="collection-change-panel" aria-labelledby="collection-review-title"><h2 id="collection-review-title">Draft koleksi</h2><button type="button" className="wm-button" disabled={busy||!autosave.online} onClick={()=>{void save('publish');}}>Tinjau sebelum terbit</button>{!autosave.online&&<p role="status">Tidak ada koneksi.</p>}</section>}
+      {revision !== null && item && <PublicationBar dirty={selectedDirty} unpublished={selectedUnpublished} busy={busy} publishing={operation === 'publish'}
+        publishLabel={item.published ? 'Simpan & terbitkan' : publicItem ? 'Simpan & sembunyikan' : 'Simpan tanpa tayang'}
+        visibility={{checked:item.published,onChange:checked=>update(item.id,{published:checked})}}
+        offline={!autosave.online} failed={autosave.failed} onPublish={()=>{void save('publish');}}/>}
       {error && (
         <div className="wm-message wm-error" role="alert">
           {error}
@@ -387,27 +392,31 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
       {revision === null && !error && <AdminSkeleton variant="list" />}
       {revision !== null && !item && (
         <>
-          <div className="wm-tabs" role="group" aria-label="Kategori portofolio">
+          <div className="wm-tabs" role="group" aria-label="Tampilan portofolio">
             {workKinds.map((value) => (
               <button
                 key={value}
                 type="button"
                 className="wm-button"
                 aria-pressed={!showTrash && kind === value}
-                aria-label={`${workLabels[value]} ${incompleteOnly ? incompleteRecords.filter(record => record.item.kind === value).length : items.filter(work => work.kind === value).length}`}
+                aria-label={`${workLabels[value]} ${(incompleteOnly ? incompleteItems : items).filter(work => work.kind === value).length}`}
                 disabled={busy}
                 onClick={() => { setShowTrash(false); setKind(value); setQuery(''); setShowImport(false); setShowFeatured(false); setReorderMode(false); }}
               >
                 <span className="wm-tab-label">{workLabels[value]}</span>
                 <span className="wm-tab-short" aria-hidden="true">{{webapp:'Web / Apps',design:'Desain',video:'Video'}[value]}</span>
                 <span>
-                  {incompleteOnly ? incompleteRecords.filter(record => record.item.kind === value).length : items.filter(item => item.kind === value).length}
+                  {(incompleteOnly ? incompleteItems : items).filter(item => item.kind === value).length}
                 </span>
               </button>
             ))}
+            <button type="button" className="wm-button wm-trash-tab" aria-pressed={showTrash} disabled={busy}
+              onClick={() => { setShowTrash(true); setShowFeatured(false); setShowImport(false); setReorderMode(false); }}>
+              <Trash2 size={18} aria-hidden="true"/>Sampah <span>{trash.length}</span>
+            </button>
           </div>
           {showTrash ? <section className="wm-trash-list" aria-label="Sampah portofolio">
-            <div className="wm-heading"><h2>Sampah ({trash.length})</h2><button type="button" className="wm-button" onClick={() => setShowTrash(false)}>Kembali ke koleksi</button></div><p className="wm-editor-note">Pulihkan dalam 72 jam.</p>
+            <div className="wm-heading"><h2>Sampah</h2><button type="button" className="wm-button" onClick={() => setShowTrash(false)}>Kembali ke koleksi</button></div>
             {trash.length ? trash.map(entry => {
               const work = entry.draft || entry.published!;
               return <div className="cms-work-row" key={entry.id}>
@@ -415,10 +424,10 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
                 <div className="wm-summary"><strong>{work.title}</strong><span>{trashTimeLeft(entry)}</span><span>Kembali sebagai {entry.published?.published ? 'tayang' : entry.published ? 'disembunyikan' : 'draft'}</span></div>
                 <button type="button" className="wm-button" aria-busy={trashBusyId === entry.id} disabled={busy || trashExpired(entry)} onClick={() => changeTrash('restore', entry.id)}>{trashBusyId === entry.id ? <span className="admin-spinner" aria-hidden="true"/> : <Undo2 size={18}/>}Pulihkan</button>
               </div>;
-            }) : <div className="wm-empty"><Trash2 size={28} aria-hidden="true"/><h2>Sampah kosong</h2><p>Portofolio yang dihapus akan muncul di sini.</p></div>}
+            }) : <div className="wm-empty"><Trash2 size={28} aria-hidden="true"/><p>Sampah kosong</p></div>}
           </section> : <>
 
-          {incompleteOnly && <div className="wm-filter-status"><span>Belum lengkap · {visible.length + pendingRemovals.length} portofolio</span><button type="button" className="wm-button" onClick={() => {setIncompleteOnly(false);setReorderMode(false);}}>Lihat semua</button></div>}
+          {incompleteOnly && <div className="wm-filter-status"><span>Belum lengkap · {visible.length} portofolio</span><button type="button" className="wm-button" onClick={() => {setIncompleteOnly(false);setReorderMode(false);}}>Lihat semua</button></div>}
           <div className="wm-toolbar">
             {reorderMode && <button type="button" className="wm-button" onClick={() => setReorderMode(false)}><Check size={18}/>Selesai</button>}
             <label className="wm-search"><span className="wm-sr-only">Cari portofolio</span><Search size={18} aria-hidden="true"/><input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder="Cari judul…" /></label>
@@ -429,7 +438,6 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
               <div className="wm-menu-panel">
                 <button type="button" disabled={busy || !!query || reorderMode || incompleteOnly} onClick={event => { closeMenu(event.currentTarget); setReorderMode(true); }}><ListOrdered size={18}/>Atur urutan</button>
                 {kind === 'webapp' && <button type="button" disabled={busy} onClick={event => { closeMenu(event.currentTarget); setShowFeatured(true); setShowImport(false); }}><Eye size={18}/>Pilihan homepage</button>}
-                <button type="button" disabled={busy} onClick={event => { closeMenu(event.currentTarget); setShowTrash(true); setShowFeatured(false); setShowImport(false); setReorderMode(false); }}><Trash2 size={18}/>Sampah ({trash.length})</button>
                 <button type="button" disabled={busy} onClick={event => { closeMenu(event.currentTarget); setShowFeatured(false); setShowImport(true); }}><Upload size={18}/>Upload beberapa file</button>
               </div>
             </details></div>
@@ -480,7 +488,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
                   <span className="wm-summary">
                     <strong>{work.title}</strong>
                     <span>
-                      {!sameDraftContent(JSON.stringify(work), JSON.stringify(published.find(value => value.id === work.id) || null)) ? 'Ada perubahan draft' : !work.published ? 'Disembunyikan' : workReadiness(work) || 'Tayang'}
+                      {!sameDraftContent(JSON.stringify(work), JSON.stringify(published.find(value => value.id === work.id) || null)) ? 'Draft belum terbit' : !work.published ? 'Disembunyikan' : workReadiness(work) || 'Tayang'}
                       {work.caseStudy ? ' · Studi kasus' : ''}
 
                     </span>
@@ -498,7 +506,9 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
                   aria-label={`Hapus ${work.title}`}
                   onClick={async (event) => {
                     closeMenu(event.currentTarget);
-                    if (!await ask(`“${work.title}” akan hilang dari website dan dipindahkan ke Sampah. Anda bisa memulihkannya dalam 72 jam sebelum dihapus permanen.`, 'Ya, Pindahkan ke Sampah', true)) return;
+                    const live = published.some(item => item.id === work.id && item.published && !workReadiness(item));
+                    const message = live ? `“${work.title}” langsung turun dari website. Bisa dipulihkan dalam 72 jam.` : `“${work.title}” bisa dipulihkan dalam 72 jam.`;
+                    if (!await ask(message, 'Pindahkan ke Sampah', true)) return;
                     await changeTrash('move', work.id);
                   }}
                 >
@@ -509,8 +519,7 @@ export function WorksManager({initial, selection}: {initial?: InitialWorks; sele
               </div>
             )}
           </SortableList>
-          {!!pendingRemovals.length && <section className="wm-pending-removals" aria-labelledby="pending-removals-title"><h2 id="pending-removals-title">Menunggu penghapusan ({pendingRemovals.length})</h2><p>Sudah dihapus dari draft. Penghapusan berlaku setelah perubahan koleksi diterbitkan.</p><ul>{pendingRemovals.map(({item}) => <li key={item.id}>{item.title}</li>)}</ul></section>}
-          {!visible.length && !pendingRemovals.length && <p className="wm-empty">{query?'Tidak ada judul yang cocok.':incompleteOnly?'Tidak ada portofolio yang belum lengkap di kategori ini.':'Belum ada portofolio.'}</p>}
+          {!visible.length && <p className="wm-empty">{query?'Tidak ada judul yang cocok.':incompleteOnly?'Tidak ada portofolio yang belum lengkap di kategori ini.':'Belum ada portofolio.'}</p>}
           </>}
         </>
       )}

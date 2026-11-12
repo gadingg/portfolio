@@ -54,16 +54,17 @@ test('admin pages verify the session before reading private draft data and pass 
 test('publication controls show one next action only for pending changes, and retain offline recovery', () => {
   const {PublicationBar} = loader()('components/admin/PublicationBar.tsx');
   const render = props => html(renderToStaticMarkup(React.createElement(PublicationBar, {
-    dirty: false, unpublished: false, busy: false, operation: null, scope: 'Selected portfolio',
-    onSave() {}, onPublish() {}, ...props,
+    dirty: false, unpublished: false, busy: false, publishing: false, offline: false, failed: false,
+    publishLabel: 'Terbitkan', onPublish() {}, ...props,
   })));
   let $ = render({});
   assert.equal($('button').length, 0); assert.equal($('.wm-save-scope').length, 0);
   $ = render({dirty: true});
   assert.equal($('button').length, 1); assert.equal($('button').attr('disabled'), undefined);
   $ = render({unpublished: true, offline: true, failed: true});
-  assert.equal($('button').length, 2); assert.equal($('button[disabled]').length, 2);
-  $ = render({unpublished: true, operation: 'publish', busy: true});
+  assert.equal($('button').length, 1); assert.equal($('button[disabled]').length, 1);
+  assert.match($('[role=status]').text(), /Tidak ada koneksi/);
+  $ = render({unpublished: true, publishing: true, busy: true});
   assert.equal($('button[aria-busy=true]').length, 1);
 });
 

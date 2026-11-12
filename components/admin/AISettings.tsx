@@ -101,9 +101,9 @@ export function AISettings({ initialStatus }: { initialStatus: Status | null }) 
           </div>
         </fieldset>
         {status.configured && <details>
-          <summary>Pengaturan lanjutan</summary>
+          <summary>Kelola API key</summary>
           <button type="button" className="wm-button" disabled={Boolean(busy)} onClick={async () => {
-            if (await ask('Hapus API key? Generate tidak tersedia sampai key baru disimpan.', 'Hapus key')) void request('delete');
+            if (await ask('Tambahkan key baru untuk menggunakan Gemini lagi.', 'Hapus key', false, 'Hapus API key?')) void request('delete');
           }}>Hapus key</button>
         </details>}
         {!status.configured && <a className="ai-inline-link" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Buat key di Google AI Studio</a>}

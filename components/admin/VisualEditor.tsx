@@ -199,13 +199,12 @@ export function VisualEditor({target}:{target:string}){
   }
   const sectionIndex=activeSection?sections.indexOf(activeSection):-1;
   const publicationCopy=meta.current?.publicationCopy;
-  const pendingHint='';
   return <div className={`visual-editor ${preview?'visual-preview':''} ${panelOpen?'visual-panel-open':''}`}>
     {confirmation}
     {publicationReview}
     <header className="visual-toolbar" inert={!!autosave.recovery && !autosave.canRestore}>
       <AdminLink href={target==='home'?'/admintgadink/dashboard/site?area=home':'/admintgadink/dashboard/works'} onClick={leave} className="visual-icon visual-back" aria-label="Kembali ke admin"><ArrowLeft size={20}/><span>Admin</span></AdminLink>
-      <div className="visual-title"><h1>{title}</h1>{ready&&<span role="status">{uploading?'Mengunggah…':busy?'Menyimpan…':!autosave.online||autosave.failed?autosave.status:dirty?'Ada perubahan':unpublished?'Draft':publicationCopy?.showPublish===false?(publicationCopy.cleanLabel||'Tidak tampil di website'):'Published'}</span>}</div>
+      <div className="visual-title"><h1>{title}</h1>{ready&&(uploading||busy||!autosave.online||autosave.failed||(!dirty&&unpublished))&&<span role="status">{uploading?'Mengunggah…':busy?'Menyimpan…':!autosave.online?'Tidak ada koneksi':autosave.failed?'Gagal menyimpan':'Draft belum terbit'}</span>}</div>
       <button className="visual-tools-toggle" aria-label="Alat editor" aria-expanded={toolsOpen} onClick={()=>setToolsOpen(!toolsOpen)}>Alat</button>
       <div className={`visual-tools-content ${toolsOpen?'is-open':''}`}>
       <div className="visual-history"><button aria-label="Urungkan" disabled={!ready||busy||uploading||!canUndo} onClick={()=>editor.current?.UndoManager.undo()}><Undo2 size={18}/></button><button aria-label="Ulangi" disabled={!ready||busy||uploading||!canRedo} onClick={()=>editor.current?.UndoManager.redo()}><Redo2 size={18}/></button></div>
@@ -216,7 +215,7 @@ export function VisualEditor({target}:{target:string}){
 
       {(dirty||unpublished||autosave.failed||(busy&&action==='publish'))&&<button className="visual-publish" aria-label={autosave.failed?'Coba simpan lagi':publicationCopy?.publishLabel?.includes('Sembunyikan')?'Simpan & Sembunyikan':publicationCopy?.showPublish===false?'Simpan Perubahan':'Simpan & Terbitkan'} aria-busy={busy&&action==='publish'} disabled={!ready||!autosave.online||!publicationState(dirty,unpublished,busy||uploading).canPublish} onClick={()=>save('publish')}><AdminActionLabel pending={busy&&action==='publish'} idle={autosave.failed?'Coba simpan lagi':publicationCopy?.publishLabel?.includes('Sembunyikan')?'Simpan & Sembunyikan':publicationCopy?.showPublish===false?'Simpan Perubahan':'Simpan & Terbitkan'} busy={publicationCopy?.busyLabel||'Menerbitkan…'}/></button>}
     </header>
-    {target==='home'&&ready&&<div className="visual-draft-context"><strong>Preview editor</strong>{hasUnpublishedPortfolio&&<><span>Portofolio berbeda dari versi publik.</span><AdminLink href="/admintgadink/dashboard/works">Cek portofolio</AdminLink></>}</div>}
+    {target==='home'&&ready&&hasUnpublishedPortfolio&&<div className="visual-draft-context"><AdminLink href="/admintgadink/dashboard/works">Cek draft portofolio</AdminLink></div>}
     {error&&<div role="alert" className="visual-error">{error}{!ready?<button onClick={()=>window.location.reload()}>Coba lagi</button>:<button onClick={()=>setError('')} aria-label="Tutup pesan">Tutup</button>}</div>}
     {preview&&<p className="visual-preview-note"><a href={dirty?undefined:meta.current?.previewUrl} aria-disabled={dirty} target="_blank" rel="noopener noreferrer">Buka draft di tab baru <ExternalLink size={14}/></a>{dirty&&' Simpan perubahan untuk membuka preview.'}</p>}
     <div className="visual-workspace" aria-busy={busy} inert={!!autosave.recovery && !autosave.canRestore}>

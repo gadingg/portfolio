@@ -25,11 +25,10 @@ export function VideoSourceEditor({item, disabled, errors = {}, onBusyChange, on
     finally {setCapturing(false); onBusyChange(false);}
   }
   return <section className="work-editor-video" aria-label="Video dan thumbnail">
-    <h2>Video</h2>
     <fieldset className="video-source-choice" disabled={disabled}>
       <legend>Sumber video</legend>
-      <label><input type="radio" name={`video-source-${item.id}`} checked={source === 'file'} onChange={() => onChange({videoSource:'file'})}/>Upload video</label>
-      <label><input type="radio" name={`video-source-${item.id}`} checked={source === 'instagram'} onChange={() => onChange({videoSource:'instagram'})}/>Link Instagram</label>
+      <label><input type="radio" name={`video-source-${item.id}`} checked={source === 'file'} onChange={() => onChange({videoSource:'file'})}/>File video</label>
+      <label><input type="radio" name={`video-source-${item.id}`} checked={source === 'instagram'} onChange={() => onChange({videoSource:'instagram'})}/>Instagram</label>
     </fieldset>
     {source === 'instagram' ? <label>Link Instagram
       <input data-work-field="url" type="url" value={item.url} placeholder="https://www.instagram.com/reel/…" disabled={disabled}

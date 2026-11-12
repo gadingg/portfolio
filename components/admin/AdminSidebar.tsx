@@ -59,7 +59,7 @@ export function AdminSidebar() {
 
   const handleLogout = async () => {
     if(loggingOut)return;
-    if(changes?.isDirty() && !(await ask('Perubahan terakhir belum tersimpan. Tetap keluar?', 'Keluar tanpa menyimpan'))) return;
+    if(changes?.isDirty() && !(await ask('Editan yang belum disimpan akan dibuang.', 'Keluar', false, 'Keluar dari admin?'))) return;
     setLoggingOut(true);setLogoutError('');
     try {
       const response=await fetch('/api/admin/logout', { method: 'POST' });

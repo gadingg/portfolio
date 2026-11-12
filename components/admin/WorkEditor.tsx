@@ -34,7 +34,7 @@ export function WorkEditor({item, items, disabled, errors, onChange, onKindChang
   const summary = item.kind === 'webapp' ? 'Ringkasan proyek' : 'Keterangan (opsional)';
   const description = <label>{summary}<textarea {...attrs('description')} rows={3} maxLength={500} value={item.description} onChange={event => onChange({description:event.target.value})}/>{error('description')}</label>;
   return <div className={`work-editor work-editor--${item.kind}`}>
-    <div ref={tabs} className="editor-tabs" role="group" aria-label="Bagian editor">{[['basic','Info Dasar & Cover'],['par','Studi Kasus PAR'],['gallery','Galeri & Link']].filter(([key])=>key!=='par'||!!study).map(([key,label])=><button type="button" className="wm-button" aria-pressed={tab===key} key={key} onClick={()=>selectTab(key)}>{label}</button>)}</div>
+    <div ref={tabs} className="editor-tabs" role="group" aria-label="Bagian editor">{[['basic',item.kind==='video'?'Video & thumbnail':'Info & cover'],['par','Studi kasus'],['gallery',item.kind==='video'?'Pengaturan':'Galeri & link']].filter(([key])=>key!=='par'||!!study).map(([key,label])=><button type="button" className="wm-button" aria-pressed={tab===key} key={key} onClick={()=>selectTab(key)}>{label}</button>)}</div>
     <fieldset className="work-editor-fields" disabled={disabled}>
       <legend className="wm-sr-only">Editor portofolio</legend>
       <div hidden={tab!=='basic'} className="work-editor-fields">
@@ -51,7 +51,7 @@ export function WorkEditor({item, items, disabled, errors, onChange, onKindChang
       </div>
       <div hidden={tab!=='par'} className="work-editor-fields">
       {study && <section className="work-editor-story" aria-labelledby="work-story-title">
-        <h2 id="work-story-title">Ringkasan PAR</h2><InlineStudyAssistant item={item} disabled={disabled} onChange={onChange}/>
+        <h2 id="work-story-title">Ringkasan studi kasus</h2><InlineStudyAssistant item={item} disabled={disabled} onChange={onChange}/>
         {(['problem','solution','impact'] as const).map((key, index) => <label key={key}>{['Problem','Approach','Result'][index]}
           <textarea {...attrs(`caseStudy.${key}`)} rows={3} maxLength={12000} value={study[key]} onChange={event => onChange({caseStudy:{...study,[key]:event.target.value}})}/>
           {error(`caseStudy.${key}`)}

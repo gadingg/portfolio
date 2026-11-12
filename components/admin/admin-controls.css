@@ -7,6 +7,24 @@
 .admin-spinner { display:inline-block; width:16px; height:16px; flex:0 0 16px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:admin-spin .7s linear infinite; }
 .admin-sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 .admin-shell :where(a,button) { touch-action:manipulation; }
+.admin-shell { --admin-control-height:44px; --admin-control-radius:8px; --admin-page-gap:24px; }
+.admin-shell .cms-manager .wm-heading { gap:16px; margin-bottom:var(--admin-page-gap); }
+.admin-shell .cms-manager .wm-button { min-height:var(--admin-control-height); border-radius:var(--admin-control-radius); }
+.admin-shell .cms-manager .wm-tabs .wm-button { border-radius:0; }
+.admin-shell .cms-manager :is(input:not([type]),input[type=text],input[type=email],input[type=password],input[type=url],input[type=search],input[type=number],select,textarea) {
+  min-width:0;
+  max-width:100%;
+  min-height:var(--admin-control-height);
+  padding-block:10px;
+  border-radius:var(--admin-control-radius);
+  line-height:1.4;
+}
+.admin-shell .cms-manager textarea { resize:vertical; }
+.admin-shell .visual-toolbar :is(button,.visual-back) { min-height:var(--admin-control-height); }
+@media(max-width:760px) {
+  .admin-shell { --admin-page-gap:20px; }
+  .admin-shell .cms-manager :is(input:not([type]),input[type=text],input[type=email],input[type=password],input[type=url],input[type=search],input[type=number],select,textarea) { font-size:16px; }
+}
 .admin-shell .wm-button { position:relative; max-width:100%; line-height:1.4; text-align:center; overflow-wrap:anywhere; transition:background .15s,border-color .15s,transform .15s; }
 .admin-shell .wm-button > svg { width:18px; height:18px; flex:0 0 18px; pointer-events:none; }
 .admin-shell .wm-button:active:not(:disabled) { transform:translateY(1px); }

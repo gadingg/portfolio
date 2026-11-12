@@ -2,3 +2,5 @@
 .cms-confirm .cms-confirm-danger{background:#b91c1c;color:#fff;border-color:#b91c1c}
 .cms-confirm .cms-confirm-danger:hover{background:#991b1b;border-color:#991b1b}
 @media(max-width:480px){.cms-confirm>div{flex-direction:column-reverse}.cms-confirm button{width:100%;white-space:normal}}
+.cms-confirm h2{font-size:20px;margin-bottom:8px}
+.cms-confirm p{font-size:14px;margin-bottom:20px;color:var(--muted,#b6b8ae)}

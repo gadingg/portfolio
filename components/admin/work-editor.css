@@ -20,17 +20,20 @@
 .work-editor .cms-drop--thumbnail{justify-content:flex-start;border:0;padding:0}
 .work-editor .cms-drop--thumbnail .cms-drop-preview{width:80px;height:100px;object-fit:contain}
 .work-editor .cms-drop--thumbnail .cms-picker-action{justify-items:start}
-.work-editor-video{display:grid;gap:20px}.work-editor-video h2{margin-bottom:0}
+.work-editor-video{display:grid;gap:12px}
 .work-editor-video>label{display:grid;gap:10px}.work-editor-video .cms-video-preview{max-height:260px;margin-bottom:16px}
 .work-video-actions{display:flex;align-items:center;gap:12px}.work-video-actions>.cms-upload{flex:1}
 .work-video-actions .cms-drop--picker{border:0;justify-content:flex-start;padding:0}.work-video-actions .cms-picker-action{justify-items:start}
-.work-video-thumbnail{padding-top:12px;display:grid;gap:16px}.work-video-thumbnail h3{font-size:14px;margin:0}
+.work-video-thumbnail{margin-top:8px;padding-top:16px;border-top:1px solid var(--border);display:grid;gap:8px}.work-video-thumbnail h3{font-size:14px;margin:0}
 .work-frame-action{justify-self:start;background:transparent!important;border-color:var(--border)!important}
 .cms-picker-toolbar{display:flex;align-items:center;gap:16px;margin-block:20px}.cms-picker-toolbar>span{font-size:13px;color:var(--muted)}
 .cms-picker-link{margin-top:20px;padding-block:12px;border-top:1px solid var(--border)}
 .cms-picker-link>summary{min-height:44px;cursor:pointer;font-size:14px;display:flex;align-items:center;text-decoration:underline;text-underline-offset:4px}
 .cms-picker-link>label{display:grid;gap:8px;margin-block:12px}
-.wm-editor-tools{display:flex;align-items:center;gap:12px}.wm-workspace:has(.work-editor)>.wm-savebar,.wm-workspace:has(.work-editor)>.wm-heading{max-width:880px;margin-inline:auto}
+.wm-editor-tools{display:flex;align-items:center;gap:12px}
+.wm-editor-screen.wm-workspace > :is(.wm-heading,.wm-savebar,.work-editor,.wm-message){max-width:880px;margin-inline:auto}
+.wm-editor-screen .editor-tabs{margin:0 0 20px}
+.work-editor .work-editor-fields{gap:20px}
 .wm-workspace:has(.work-editor)>.wm-heading{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start}
 .wm-workspace:has(.work-editor)>.wm-heading>div{display:contents}
 .wm-workspace:has(.work-editor)>.wm-heading>div>button{grid-column:1;grid-row:1;justify-self:start;margin:0}
@@ -42,3 +45,8 @@
 .work-editor-fields > legend { color:var(--ink); font-weight:600; margin-bottom:12px; }
 .wm-savebar > .wm-check { min-height:44px; display:inline-flex; align-items:center; gap:8px; font-size:13px; }
 @media(max-width:760px) { .wm-savebar > .wm-check { flex-basis:100%; min-height:36px; } }
+@media(max-width:600px) {
+  .wm-workspace .wm-toolbar{grid-template-columns:minmax(0,1fr);gap:12px}
+  .wm-workspace .wm-toolbar :is(.wm-search,.wm-create-actions){grid-column:1}
+  .wm-create-actions{flex-wrap:wrap}
+}

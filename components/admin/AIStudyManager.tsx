@@ -132,7 +132,7 @@ export function AIStudyManager({ initial }: { initial: { items: WorkItem[]; revi
     {error&&<p className="cms-error" role="alert">{error}{revision!==null&&<button className="wm-button" disabled={disabled} type="button" onClick={async()=>{if(!dirty.current||await ask('Muat ulang daftar? Editan di halaman ini yang belum disimpan akan dibuang.','Muat ulang'))void load();}}>Muat ulang daftar</button>}</p>}
     {message&&busy&&<p role="status" className="ai-notice"><span className="admin-spinner" aria-hidden="true"/>{message}</p>}
     {loading?<AdminSkeleton />:revision===null?<button type="button" className="wm-button" onClick={load}>Coba lagi</button>:<>
-      {!configured&&!importing&&<div className="ai-notice"><p>Catatan bebas butuh API key. Hasil dari Copy Prompt bisa diimpor langsung.</p></div>}
+      {!configured&&!importing&&<div className="ai-notice"><p>Tambahkan API key di Pengaturan AI untuk membuat draft dari brief.</p></div>}
       <div className="ai-authoring-layout">
         <section className="ai-input-panel" aria-labelledby="ai-brief-title"><div className="ai-field-heading"><h2 id="ai-brief-title">Ceritakan proyeknya</h2><button type="button" className="wm-button" onClick={copyPrompt} disabled={busy}><Copy size={16} aria-hidden="true" />Copy Prompt</button></div>
           <div className="ai-actions" role="group" aria-label="Cara menyiapkan draft">
@@ -149,7 +149,6 @@ export function AIStudyManager({ initial }: { initial: { items: WorkItem[]; revi
             <label>Deskripsi thumbnail (aksesibilitas)<input maxLength={250} value={alt} onChange={event=>{setAlt(event.target.value);dirty.current=true;setApplied('');}}/></label>
           </fieldset>
           <button type="button" className="wm-button wm-primary" disabled={disabled||(importing ? !prepared : !configured)||brief.trim().length<20} onClick={()=>generate()} aria-busy={busy}>{busy?'Memproses…':importing?'Impor ringkasan':result?'Generate versi baru':'Generate Study Case'}</button>
-          {!importing&&<p className="wm-editor-note">Catatan dikirim ke Gemini saat diproses.</p>}
         </section>
         <div className="ai-review-panel" ref={resultRef} tabIndex={-1} aria-labelledby="ai-review-title">
           <h2 id="ai-review-title">Cek draft</h2>
@@ -158,7 +157,7 @@ export function AIStudyManager({ initial }: { initial: { items: WorkItem[]; revi
             {pending&&<section className="ai-pending" ref={reviewRef} tabIndex={-1} aria-label="Versi baru dari AI"><h3>Versi baru</h3>{pending.target !== 'all' && <div className="ai-current-copy"><strong>Teks saat ini</strong><p>{pending.target.startsWith('section:') ? result.sections[Number(pending.target.split(':')[1])]?.body : result[pending.target as 'title' | 'description' | 'problem' | 'approach' | 'outcome'] || 'Belum ada teks'}</p></div>}{renderStudy(pending.result,true)}<div className="ai-actions"><button type="button" className="wm-button wm-primary" disabled={disabled} onClick={async()=>{if(await ask('Pakai versi ini untuk mengganti bagian yang dipilih? Bagian lain tetap dipakai.','Pakai versi ini')){setResult(mergeAIRevision(result,pending.result,pending.target));setPending(null);dirty.current=true;setApplied('');}}}>Pakai versi ini</button><button type="button" className="wm-button" disabled={disabled} onClick={()=>setPending(null)}>Tetap pakai teks lama</button></div></section>}
 
             {!pending && renderStudy(result)}
-            <section className="ai-private-notes"><h3>Perlu dicek</h3>{result.confirmations.length?<ul>{result.confirmations.map((text,index)=><li key={index}>{text}</li>)}</ul>:<p>Tidak ada yang perlu dicek.</p>}</section>
+            {!!result.confirmations.length&&<section className="ai-private-notes"><h3>Perlu dicek</h3><ul>{result.confirmations.map((text,index)=><li key={index}>{text}</li>)}</ul></section>}
             {!!result.screenshots.length&&<section className="ai-private-notes"><h3>Saran screenshot</h3><ul>{result.screenshots.map((shot,index)=><li key={index}><strong>Setelah bagian {shot.afterSection+1}</strong><p>{shot.description}</p>{shot.caption&&<p>Caption: {shot.caption}</p>}</li>)}</ul></section>}
           </>}
         </div>

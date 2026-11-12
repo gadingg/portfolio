@@ -112,8 +112,8 @@ export function SiteManager({initial,area='profile'}: {initial?: InitialSite;are
         <div><h1>Konten Website & CV</h1></div>
 
       </div>
-      {content && <PublicationBar dirty={!!dirty} unpublished={saved !== published} busy={busy} operation={operation} scope="Konten website dan CV diterbitkan bersamaan." status={!dirty && saved === published && autosave.online ? 'Sudah tayang' : autosave.status} offline={!autosave.online} failed={autosave.failed}
-        onSave={() => {void save('save');}} onPublish={() => { void save('publish'); }}/>}
+      {content && <PublicationBar dirty={!!dirty} unpublished={saved !== published} busy={busy} publishing={operation === 'publish'}
+        publishLabel="Terbitkan website & CV" offline={!autosave.online} failed={autosave.failed} onPublish={()=>{void save('publish');}}/>}
       {error && (
         <div className="wm-message wm-error" role="alert">
           {error}
