@@ -137,6 +137,17 @@ export default async function StudyCasePage({
 
           <figure className="case-cover-art">
             <ProjectArtwork project={project} priority />
+            {project.cover_image_url === '/assets/work/listing-hub-device-mockup.webp' && (
+              <figcaption className="case-cover-credit">
+                3D model{' '}
+                <a href="https://sketchfab.com/3d-models/iphone-17-pro-max-87fc1df741384124a8ce0226d2b2058d">
+                  iPhone 17 Pro Max by MajdyModels
+                </a>
+                {' · '}
+                <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+                {' · Screen and finish customized'}
+              </figcaption>
+            )}
           </figure>
           <CaseOverview problem={problem} approach={approach} outcome={outcome}/>
 
