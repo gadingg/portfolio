@@ -24,7 +24,10 @@ import { projectPresentations, useBriefArtwork } from '@/lib/project-presentatio
 export const revalidate = 60;
 export const maxDuration = 15;
 
-export function generateStaticParams() { return []; }
+export async function generateStaticParams() {
+  const projects = await getPublishedProjects();
+  return projects.map(({slug}) => ({slug}));
+}
 
 function paragraphAfterHeading(blocks: ContentBlock[], headingPattern: RegExp) {
   const headingIndex = blocks.findIndex((block) => {
