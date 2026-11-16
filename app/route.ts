@@ -3,7 +3,8 @@ import { NextResponse } from 'next/server';
 import { getPublicSite,renderHomepage } from '@/lib/db/site';
 import { getPublicWorks } from '@/lib/db/works';
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-static';
+export const revalidate = 60;
 
 export async function GET() {
   try {
@@ -13,11 +14,10 @@ export async function GET() {
       status: 200,
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'no-store',
       },
     });
   } catch (error: any) {
     console.error('Failed to load main portfolio index.html:', error);
-    return new NextResponse("Couldn't load the portfolio. Try again.", { status: 503 });
+    throw error;
   }
 }

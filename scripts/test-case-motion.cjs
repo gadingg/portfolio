@@ -37,3 +37,13 @@ test('an unfinished walkthrough can be drafted but needs its video and poster be
 });
 
 test('legacy custom cover wrappers normalize once and keep imagery before overview',()=>{const {editorialCaseLayout}=run('lib/case-layout.ts');const input={html:'<main><header class="case-intro"><h1>Original</h1></header><div class="project-art"><img src="/original.webp" alt="Original"></div><div class="case-narrative"><p>Owner story.</p></div></main>',css:'.owner{padding:10px}'};const summary={slug:'listinghub',problem:'Problem',solution:'Approach',impact:'Result',appLinks:[{label:'Open All Database',url:'https://example.com/all'},{label:'Open Personal Listing',url:'https://example.com/agent'}]};const result=editorialCaseLayout(input,summary),$=load(result.html);assert.equal($('.case-intro').next().is('.case-cover-art'),true);assert.equal($('.case-cover-art').next().is('.case-overview'),true);assert.equal($('.case-cover-art img').attr('src'),'/original.webp');assert.equal($('.case-app-actions .text-link').length,2);assert.equal($('.case-app-actions .button').length,0);assert.equal($('.case-narrative p').text(),'Owner story.');assert.equal(result.css,input.css);assert.equal(editorialCaseLayout(result,summary).html,result.html);});
+test('published visual covers replace a legacy 3840px URL with responsive, prioritized markup',()=>{
+ const {editorialCaseLayout}=run('lib/case-layout.ts'),{cleanVisualLayout}=run('lib/visual-layout.ts');
+ const url=encodeURIComponent('https://test.supabase.co/storage/cover.webp');
+ const layout={html:`<figure class="case-cover-art"><img src="/_next/image?url=${url}&w=3840&q=75" loading="lazy"></figure>`,css:''};
+ const cover=load(cleanVisualLayout(editorialCaseLayout(layout,undefined,true)).html)('img');
+ assert.match(cover.attr('srcset'),/w=828/);
+ assert.doesNotMatch(cover.attr('srcset'),/3840/);
+ assert.equal(cover.attr('loading'),'eager');
+ assert.equal(cover.attr('fetchpriority'),'high');
+});

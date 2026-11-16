@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import { CaseImage } from './CaseImage';
 import { ExternalLink } from 'lucide-react';
 import {
   ContentBlock,
@@ -74,9 +75,8 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
                 className={`case-visual my-10 ${widthMode !== 'standard' ? 'case-visual--wide' : ''}`}
               >
                 <div className="case-inline-image">
-                  <Image
+                  <CaseImage
                     src={image.url}
-                    unoptimized={image.url?.startsWith('/api/media/')}
                     alt={image.alt || 'Project visual'}
                     width={1200}
                     height={800}
@@ -135,9 +135,8 @@ export function StudyCaseRenderer({ blocks }: { blocks: ContentBlock[] }) {
                     className={`group ${i === 0 && images.length > 2 ? 'sm:col-span-2' : ''}`}
                   >
                     <div className={`relative overflow-hidden rounded-[16px] bg-[#10110f] ${i === 0 && images.length > 2 ? 'aspect-[16/9]' : 'aspect-[4/3]'}`}>
-                      <Image
+                      <CaseImage
                         src={image.url}
-                        unoptimized={image.url?.startsWith('/api/media/')}
                         alt={image.alt || `Project gallery image ${i + 1}`}
                         fill
                         sizes={i === 0 && images.length > 2 ? '100vw' : '(max-width: 768px) 100vw, 50vw'}

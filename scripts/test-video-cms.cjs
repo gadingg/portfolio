@@ -63,12 +63,13 @@ test('video media gateway only signs visible published references or authenticat
 });
 test('video loads only in the popup, offers a Play fallback and releases its source on close',async()=>{
  const source=fs.readFileSync('public/assets/js/works.js','utf8'),created=[];
- function node(tag,cls,text){const el={tag,cls,textContent:text,children:[],listeners:{},append(...children){this.children.push(...children);},setAttribute(){},addEventListener(event,fn){this.listeners[event]=fn;},play(){this.played=true;return Promise.reject(Error('blocked'));},pause(){this.paused=true;},removeAttribute(name){delete this[name];},querySelectorAll(){return[];},load(){this.loads=(this.loads||0)+1;}};created.push(el);return el;}
+ function node(tag,cls,text){const el={tag,cls,textContent:text,children:[],listeners:{},append(...children){this.children.push(...children);},setAttribute(){},addEventListener(event,fn){this.listeners[event]=fn;},play(){this.played=true;return Promise.reject(new DOMException('blocked','NotAllowedError'));},pause(){this.paused=true;},removeAttribute(name){delete this[name];},querySelectorAll(){return[];},load(){this.loads=(this.loads||0)+1;}};created.push(el);return el;}
  const body=node('div'),bottom=node('div'),modal={dataset:{}},openDialog=()=>{};
  const openVideo=vm.runInNewContext(source.slice(source.indexOf('  function openVideo'),source.indexOf('  const artworkText'))+';openVideo',{node,body,bottom,modal,openDialog,safeURL:value=>value||'',instagram:value=>value||'',image:()=>node('img'),icon:()=>node('svg')});
  assert.equal(created.some(el=>el.tag==='video'),false);
- openVideo({title:'Film',videoFile:'/api/media/works/film.mp4',image:'/cover.jpg',url:'https://www.instagram.com/reel/real/'},{});
- const video=created.find(el=>el.tag==='video');assert.equal(video.src,'/api/media/works/film.mp4');assert.equal(video.played,true);assert.equal(video.preload,'none');assert.equal(video.controls,true);
+ const trigger={closest:()=>({querySelector:()=>({currentSrc:'/cover-640.webp'})})};
+ openVideo({title:'Film',videoFile:'/api/media/works/film.mp4',image:'/cover.jpg',url:'https://www.instagram.com/reel/real/'},trigger);
+ const video=created.find(el=>el.tag==='video');assert.equal(video.src,'/api/media/works/film.mp4');assert.equal(video.poster,'/cover-640.webp');assert.equal(video.played,true);assert.equal(video.preload,'none');assert.equal(video.controls,true);
  await new Promise(resolve=>setImmediate(resolve));assert.ok(bottom.children.some(el=>el.textContent==='Press Play to watch.'));
  assert.ok(bottom.children.some(el=>el.textContent==='View on Instagram'&&el.href==='https://www.instagram.com/reel/real/'));
  const release=vm.runInNewContext(source.slice(source.indexOf('  function releaseVideo'),source.indexOf('  const modal ='))+';releaseVideo',{body:{querySelectorAll:()=>[video]}});

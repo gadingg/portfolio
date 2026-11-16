@@ -207,12 +207,17 @@
     openDialog(trigger,item.title);modal.dataset.mode='video';
     const file=item.videoSource==='instagram'?'':safeURL(item.videoFile);
     if(file&&/\.(mp4|webm)(?:[?#].*)?$/i.test(file)){
-      const video=node('video','portfolio-video-player');video.src=file;video.poster=safeURL(item.image);video.controls=true;video.autoplay=true;video.playsInline=true;video.preload='none';body.append(video);
+      const video=node('video','portfolio-video-player');
+      const thumbnail=trigger?.closest('.work-card')?.querySelector('.work-media img');
+      const poster=thumbnail?.currentSrc||image(item.image,item.imageAlt||item.title,'',true).src;
+      if(poster)video.poster=poster;
+      video.controls=true;video.autoplay=true;video.playsInline=true;video.preload='none';body.append(video);
       const status=node('p','','Loading video…');status.setAttribute('role','status');bottom.append(status);
       video.addEventListener('playing',()=>{status.textContent='';});
       video.addEventListener('waiting',()=>{status.textContent='Loading video…';});
       video.addEventListener('error',()=>{status.textContent='The video could not be played. Close it and try again.';});
-      video.play().catch(()=>{status.textContent='Press Play to watch.';});
+      video.src=file;
+      video.play().catch(error=>{if(error.name==='NotAllowedError')status.textContent='Press Play to watch.';});
       const original=instagram(item.url);if(original){const link=node('a','button button-outline','View on Instagram');link.href=original;link.target='_blank';link.rel='noopener noreferrer';bottom.append(link);}return;
     }
     const url=instagram(item.url);

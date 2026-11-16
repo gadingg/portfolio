@@ -32,7 +32,9 @@ test('responsive derivatives still require published access; originals remain by
   const params={params:Promise.resolve({path:['works','1792212542785-50bd4dd1-2833-486d-ac27-bae92c807fd5.png']})};
   const request=w=>({headers:new Headers(),nextUrl:new URL(`https://portfolio.test/api/media/works/image.png${w?'?w='+w:''}`)});
   const response=await route.GET(request(640),params),bytes=Buffer.from(await response.arrayBuffer()),metadata=await sharp(bytes).metadata();
-  assert.equal(metadata.width,640);assert.equal(response.headers.get('Content-Type'),'image/webp');assert.equal(response.headers.get('Cache-Control'),'private, no-cache');
+  assert.equal(metadata.width,640);assert.equal(response.headers.get('Content-Type'),'image/webp');assert.equal(response.headers.get('Cache-Control'),'private, max-age=60, must-revalidate');
+  const cached=await route.GET({...request(640),headers:new Headers({'If-None-Match':response.headers.get('etag')})},params);
+  assert.equal(cached.status,304);
   assert.deepEqual(Buffer.from(await (await route.GET(request(),params)).arrayBuffer()),original);
   allowed=false;assert.equal((await route.GET(request(640),params)).status,404);assert.equal(downloads,2);
 });

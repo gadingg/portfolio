@@ -76,7 +76,7 @@ test('site content is escaped and the original public sections survive rendering
 });
 test('private media is exposed only by a visible published reference',async()=>{
  const url='/api/media/works/1-aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa.png';let docs=[{id:'works',published:{items:[{published:false,image:url}]}}];
- const helper=loader({'./supabase/admin':{createAdminClient:()=>({from:()=>({select:async()=>({data:docs,error:null})})})}})('lib/cms-media.ts');
+ const helper=loader({'next/cache':{unstable_cache:fn=>fn},'./supabase/admin':{createAdminClient:()=>({from:()=>({select:async()=>({data:docs,error:null})})})}})('lib/cms-media.ts');
  assert.equal(await helper.publishedMedia(url),false);docs[0].published.items[0].published=true;assert.equal(await helper.publishedMedia(url),true);
  docs=[{id:'site',published:{values:{heroImage:url+'?version=1'}}}];assert.equal(await helper.publishedMedia(url),true);assert.equal(await helper.publishedMedia(url+'x'),false);
 });

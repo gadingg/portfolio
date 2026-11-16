@@ -21,8 +21,10 @@ import { AuraFooter } from '@/components/public/study-case/AuraFooter';
 import { ProjectArtwork } from '@/components/public/study-case/ProjectArtwork';
 import { projectPresentations, useBriefArtwork } from '@/lib/project-presentation';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 export const maxDuration = 15;
+
+export function generateStaticParams() { return []; }
 
 function paragraphAfterHeading(blocks: ContentBlock[], headingPattern: RegExp) {
   const headingIndex = blocks.findIndex((block) => {
@@ -101,7 +103,7 @@ export default async function StudyCasePage({
 
   if(presentation?.layout)return <div className="showcase" id="case-top">
     <StudyCaseHeader projectTitle={project.title}/>
-    <div className="case-editorial"><VisualLayout layout={editorialCaseLayout(presentation.layout, presentation)}/></div>
+    <div className="case-editorial"><VisualLayout layout={editorialCaseLayout(presentation.layout, presentation, true)}/></div>
     <CaseMotion motion={caseMotion(presentation)} portal/>
     <div className="section-shell case-narrative mx-auto max-w-3xl"><NextProjectNav nextProject={nextProject}/></div>
     <AuraFooter/>

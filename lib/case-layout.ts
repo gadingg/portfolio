@@ -3,6 +3,7 @@ import type { VisualLayout } from './visual-layout';
 import type { WorkItem } from './works';
 import {caseAppLinks,type CaseAppLink} from './case-app-links';
 import {caseMotion,type CaseMotionConfig} from './case-motion';
+import {caseCoverSizes,workThumbnail} from './work-images';
 
 function applyAppActions($:ReturnType<typeof load>,study:{slug?:string;appUrl?:string;appLinks?:CaseAppLink[]}){
   const intro=$('.case-intro').first();if(!intro.length)return;
@@ -36,7 +37,7 @@ export function syncCaseIdentity(previous: WorkItem | undefined, next: WorkItem)
 }
 
 // Apply the shared reading structure without rewriting saved custom layouts.
-export function editorialCaseLayout(layout: VisualLayout, summary?: { problem: string; solution: string; impact: string;slug?:string;appUrl?:string;appLinks?:CaseAppLink[];motion?:CaseMotionConfig }): VisualLayout {
+export function editorialCaseLayout(layout: VisualLayout, summary?: { problem: string; solution: string; impact: string;slug?:string;appUrl?:string;appLinks?:CaseAppLink[];motion?:CaseMotionConfig }, optimizeCover=false): VisualLayout {
   const $ = load(layout.html, null, false);
   // Older visual pages were seeded from the former draft preview's three sections.
   const legacy = $('.case-narrative>section').filter((_index, section) =>
@@ -75,6 +76,20 @@ export function editorialCaseLayout(layout: VisualLayout, summary?: { problem: s
   }
   $('.case-narrative hr,.study-case-blocks hr').replaceWith('<div class="case-section-break" aria-hidden="true"></div>');
   if(!$('.case-cover-art').length&&$('.project-art').length)$('.project-art').first().wrap('<figure class="case-cover-art"></figure>');
+  if(optimizeCover){
+    const cover=$('.case-cover-art img').first();
+    const source=cover.attr('src')||'';
+    const original=source.startsWith('/_next/image?')
+      ?new URLSearchParams(source.slice(source.indexOf('?')+1)).get('url')||''
+      :source;
+    const local=original.startsWith('/')&&!original.startsWith('//');
+    const supportedRemote=/^https:\/\/(?:[a-z0-9.-]+\.supabase\.co|images\.unsplash\.com|picsum\.photos)\//i.test(original);
+    if(local||supportedRemote){
+      const image=workThumbnail(original,caseCoverSizes);
+      if(image.srcSet)cover.attr({src:image.src,srcset:image.srcSet,sizes:caseCoverSizes});
+    }
+    cover.attr({loading:'eager',fetchpriority:'high',decoding:'async'});
+  }
   $('main').has('.case-intro').first().addClass('case-page');
   $('.case-overview').each((_index,element)=>{
     const section=$(element);

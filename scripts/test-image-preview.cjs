@@ -67,7 +67,7 @@ test('cached and conditional image responses recheck publication access before r
  const handler=runtime({'@/lib/auth/session':{verifyAdminSession:async()=>admin},'@/lib/cms-media':{cmsMediaBucket:'private',publishedMedia:async()=>allowed},'@/lib/supabase/admin':{createAdminClient:()=>({storage:{from:()=>({download:async()=>{downloads++;return missing?{error:Error('missing')}:{data:new Blob([original],{type:'image/png'})};}})}})}})('app/api/media/[...path]/route.ts');
  const params={params:Promise.resolve({path:['works','1792212542785-50bd4dd1-2833-486d-ac27-bae92c807fd5.png']})};
  const request=(etag,width=640)=>({nextUrl:new URL(`https://portfolio.test/api/media/image.png?w=${width}`),headers:new Headers(etag?{'if-none-match':etag}:{})});
- const first=await handler.GET(request(),params);assert.equal(first.status,200);assert.equal(first.headers.get('cache-control'),'private, no-cache');assert.equal(first.headers.get('vary'),'Cookie');
+ const first=await handler.GET(request(),params);assert.equal(first.status,200);assert.equal(first.headers.get('cache-control'),'private, max-age=60, must-revalidate');assert.equal(first.headers.get('vary'),'Cookie');
  const etag=first.headers.get('etag');assert.ok(etag);assert.equal((await handler.GET(request(etag),params)).status,304);assert.equal(downloads,1);
  allowed=false;const denied=await handler.GET(request(etag),params);assert.equal(denied.status,404);assert.equal(denied.headers.get('cache-control'),'no-store');assert.equal(downloads,1);
  admin=true;assert.equal((await handler.GET(request(etag),params)).status,304);

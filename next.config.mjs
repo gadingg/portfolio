@@ -21,7 +21,10 @@ const nextConfig = {
     '/api/cv': ['./public/assets/cv/cv-gading-utama-2026.pdf'],
   },
   async headers() {
-    return [{ source: '/(.*)', headers: securityHeaders }];
+    return [
+      { source: '/(.*)', headers: securityHeaders },
+      { source: '/assets/motion/:path*', headers: [{key:'Cache-Control',value:'public, max-age=3600'}] },
+    ];
   },
   images: {
     remotePatterns: [
