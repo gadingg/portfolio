@@ -1,0 +1,60 @@
+.site-editor{display:grid;gap:16px;min-width:0}
+.site-editor-header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+.site-editor-header h1{margin:0;font-size:clamp(22px,3vw,34px);line-height:1.18}
+.site-editor-header .wm-savebar{position:static;min-width:0;margin:0;padding:0;background:none;flex:0 0 auto}
+.site-editor-nav,.site-subnav,.site-live-stage-tools,.site-device-controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.site-editor-nav{padding-bottom:12px;border-bottom:1px solid var(--border)}
+.site-editor-nav .wm-button,.site-subnav .wm-button{min-height:44px}
+.site-editor-nav [aria-pressed="true"],.site-subnav [aria-pressed="true"],.site-device-controls [aria-pressed="true"]{
+  border-color:var(--accent,#5ab2f7);background:var(--surface);color:var(--ink)
+}
+.site-advanced{margin-inline-start:auto}
+.site-editor-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,320px);align-items:start;gap:16px;min-width:0}
+.site-live-stage,.site-cv-preview,.site-editor-panel{min-width:0;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+.site-live-stage{overflow:hidden}
+.site-live-stage-tools{justify-content:space-between;padding:10px 12px;background:var(--surface)}
+.site-editor .site-live-stage-tools select{width:auto;min-width:0;min-height:44px}
+.site-device-controls .wm-button,.site-panel-close{padding:0;width:44px;height:44px;justify-content:center}
+.site-live-canvas{min-height:360px;background:var(--admin-bg);display:grid;justify-items:center;align-items:start}
+.site-live-frame{position:relative;width:100%;max-width:1100px;height:clamp(380px,calc(100dvh - 255px),900px);overflow:hidden}
+.site-live-frame.is-mobile{max-width:390px}
+.site-live-frame iframe{position:absolute;inset:0;display:block;border:0;width:100%;height:100%;transform-origin:top left;background:var(--admin-bg)}
+.site-preview-status{width:100%;margin:0;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--muted)}
+.site-editor-panel{padding:16px;display:grid;gap:16px}
+.site-website-panel{max-height:calc(100dvh - 235px);overflow:auto;overscroll-behavior:contain}
+.site-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.site-panel-heading h2{margin:0;font-size:20px}
+.site-panel-heading h2:focus{outline:none}
+.site-editor-fields{border:0;padding:0;margin:0;min-inline-size:0;display:grid;gap:16px}
+.site-editor-fields label,.site-cv-entries,.site-cv-entries .cms-block-fields{display:grid;gap:8px;min-width:0}
+.site-editor-fields :is(input,textarea,select){max-width:100%}
+.site-empty-panel{margin:0;color:var(--muted);line-height:1.5}
+.site-field-selected label{color:var(--ink)}
+.site-field-selected :is(input,textarea){border-color:var(--accent,#5ab2f7)}
+.site-cv-preview{max-height:calc(100dvh - 200px);overflow:auto}
+.site-cv-preview .cv-page{margin:12px auto;padding:clamp(18px,3vw,48px);width:calc(100% - 24px)}
+.site-cv-preview .cv-header,.site-cv-preview .cv-entry{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.site-cv-preview [data-cv-section]{cursor:pointer}
+.site-cv-preview .cv-page h1{font-size:clamp(26px,5vw,54px)}
+.site-cv-preview .cv-page a{overflow-wrap:anywhere}
+.site-cv-entries .cms-work-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:start;gap:8px}
+.site-settings-panel{max-width:760px}
+@media(max-width:1060px){
+  .site-editor-grid{grid-template-columns:minmax(0,1fr)}
+  .site-website-panel{display:none}
+  .site-website-panel.is-open{display:grid;position:fixed;z-index:40;bottom:0;inset-inline:0;
+    max-height:min(49dvh,440px);overflow:auto;background:var(--admin-bg);border-radius:16px 16px 0 0;
+    padding-bottom:max(16px,env(safe-area-inset-bottom))}
+  .site-website-panel .site-panel-heading{position:sticky;top:-16px;background:var(--admin-bg);padding-block:4px;z-index:1}
+  .site-live-frame{height:clamp(380px,calc(100dvh - 245px),760px)}
+  .site-cv-preview{max-height:54dvh}
+}
+@media(max-width:600px){
+  .site-editor-header{flex-wrap:wrap}
+  .site-editor-header .wm-savebar{margin-inline-start:auto}
+  .site-editor-nav .wm-button{font-size:13px;padding-inline:10px}
+  .site-advanced{margin-inline-start:0}
+  .site-live-stage-tools{padding-inline:8px}
+  .site-editor .site-live-stage-tools select{max-width:calc(100% - 100px)}
+  .site-editor-fields :is(input,textarea,select){font-size:16px}
+}
