@@ -13,18 +13,32 @@ test('each portfolio type has a focused primary form and moves settings out of t
   for(const kind of ['webapp','design','video']) {
     const $=render(work(kind,kind==='webapp'?{caseStudy:study}:kind==='video'?{videoSource:'file',videoFile:'/api/media/works/demo.mp4'}:{}));
     assert.equal($('.wm-card-preview').length,0);
-    assert.equal($('select').closest('details').length,$('select').length);
-    $('details,dialog').remove();
-    assert.equal($('[data-work-field=title]').length,1);
-    assert.equal($('select').length,0);
-    assert.equal($('input[type=checkbox]').length,0);
+    assert.equal($('.editor-tabs button[aria-pressed="true"]').length,1);
+    const panels=$('fieldset.work-editor-fields > div');
+    const basic=panels.not('[hidden]');
+    const story=panels.has('.work-editor-story');
+    const category=$('select').has('option[value="webapp"]');
+    assert.equal(basic.length,1);
+    assert.equal(basic.find('[data-work-field=title]').length,1);
+    assert.equal(category.length,1);
+    assert.equal(category.closest('details:not([open])').length,1);
+    assert.equal(category.closest('fieldset > div').is('[hidden]'),true);
+    assert.equal(basic.find('input[type=checkbox],select').length,0);
     if(kind==='webapp') {
-      assert.equal($('textarea').length,4);
-      assert.equal($('[data-work-field="caseStudy.problem"]').length,1);
-      assert.equal($('video').length,0);
+      assert.equal(basic.find('textarea[data-work-field=description]').length,1);
+      assert.equal(story.is('[hidden]'),true);
+      assert.deepEqual(story.find('textarea[data-work-field]').map((_,el)=>$(el).attr('data-work-field')).get(),
+        ['caseStudy.problem','caseStudy.solution','caseStudy.impact']);
+      assert.equal(basic.find('video').length,0);
     }
-    if(kind==='design') {assert.equal($('textarea').length,0);assert.equal($('button').length,1);}
-    if(kind==='video') {assert.equal($('video').length,1);assert.equal($('input[type=radio]').length,2);}
+    if(kind==='design') {
+      assert.equal(basic.find('textarea').length,0);
+      assert.equal(basic.find('section[aria-label="Gambar desain"] button').filter((_,button)=>$(button).text().trim()==='Ganti gambar').length,1);
+    }
+    if(kind==='video') {
+      assert.equal(basic.find('video').length,1);
+      assert.equal(basic.find('input[type=radio]').length,2);
+    }
   }
 });
 test('video editor renders exactly its active source and keeps raw file links inside the media picker',()=>{
@@ -43,20 +57,43 @@ test('disabled video demos expose only their enable control, preserving configur
   $=html(renderToStaticMarkup(React.createElement(CaseMotionEditor,{study:{...value,motion:{...value.motion,enabled:true}},disabled:false,onChange(){},onBusyChange(){}})));
   assert.equal($('video').length,1);assert.equal(value.motion.title,'Keep');
 });
-test('field handlers patch only their own content and category changes use the dedicated confirmation path',async()=>{
+test('editor tabs expose the relevant fields and category changes delegate to the confirmation handler',()=>{
   const item=work('webapp',{caseStudy:study}),patches=[],kinds=[];
-  const tree=WorkEditor({...props(item),onChange:patch=>patches.push(patch),onKindChange:async kind=>kinds.push(kind)});
+  let tab, pendingEffects=[];
+  const {WorkEditor:InteractiveEditor}=componentRuntime({react:{
+    ...React,
+    useState(initial){tab??=initial;return [tab,value=>{tab=value;}];},
+    useRef:initial=>({current:initial}),
+    useEffect:effect=>pendingEffects.push(effect),
+  }})('components/admin/WorkEditor.tsx');
+  const editorProps={...props(item),onChange:patch=>patches.push(patch),onKindChange:async kind=>kinds.push(kind)};
+  function render(errors={}){
+    pendingEffects=[];
+    return InteractiveEditor({...editorProps,errors});
+  }
   function nodes(element) {
     if(!element||typeof element!=='object')return [];
     return [element,...React.Children.toArray(element.props?.children).flatMap(nodes)];
   }
-  const elements=nodes(tree);
-  elements.find(el=>el.props?.['data-work-field']==='title').props.onChange({target:{value:'New title'}});
-  elements.find(el=>el.props?.['data-work-field']==='caseStudy.problem').props.onChange({target:{value:'New problem'}});
-  await elements.find(el=>el.type==='select').props.onChange({target:{value:'design'}});
+  const field=(tree,path)=>nodes(tree).find(el=>el.props?.['data-work-field']===path);
+  const activePanel=tree=>nodes(tree).find(el=>el.type==='fieldset').props.children.find(el=>el?.props?.hidden===false);
+  function selectTab(tree,label){
+    nodes(tree).find(el=>el.type==='button'&&el.props.children===label).props.onClick();
+    return render();
+  }
+  let tree=render();
+  field(activePanel(tree),'title').props.onChange({target:{value:'New title'}});
+  tree=selectTab(tree,'Studi kasus');
+  field(activePanel(tree),'caseStudy.problem').props.onChange({target:{value:'New problem'}});
+  tree=selectTab(tree,'Galeri & link');
+  nodes(activePanel(tree)).find(el=>el.type==='select').props.onChange({target:{value:'design'}});
   assert.deepEqual(patches[0],{title:'New title'});
   assert.equal(patches[1].caseStudy.problem,'New problem');assert.equal(patches[1].caseStudy.solution,'Solution');
   assert.deepEqual(kinds,['design']);assert.equal(item.title,'Project');
+  const errors={'caseStudy.problem':'Lengkapi Problem'};
+  render(errors);
+  pendingEffects.forEach(effect=>effect());
+  assert.equal(field(activePanel(render(errors)),'caseStudy.problem').props['aria-invalid'],true);
 });
 test('publication errors identify missing story fields, thumbnails and active video sources',()=>{
   let errors=workEditorErrors(work('webapp',{caseStudy:{...study,problem:'',solution:'',impact:''}}));
