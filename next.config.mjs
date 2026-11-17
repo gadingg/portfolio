@@ -13,6 +13,7 @@ const securityHeaders = [
   { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
   { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
 ];
+const contentSecurityPolicy = securityHeaders[0].value;
 
 const nextConfig = {
   async redirects(){return Object.entries(caseSlugRedirects).map(([old,slug])=>({source:`/work/${old}`,destination:`/work/${slug}`,permanent:true}));},
@@ -24,6 +25,11 @@ const nextConfig = {
   async headers() {
     return [
       { source: '/(.*)', headers: securityHeaders },
+      { source: '/', headers: [{key:'Content-Security-Policy',value:contentSecurityPolicy.replace("frame-src https:", "frame-src 'self' https:")}] },
+      { source: '/cv', has: [{type:'query',key:'dialog',value:'1'}], headers: [
+        {key:'Content-Security-Policy',value:contentSecurityPolicy.replace("frame-ancestors 'none'", "frame-ancestors 'self'")},
+        {key:'X-Frame-Options',value:'SAMEORIGIN'},
+      ] },
       { source: '/assets/motion/:path*', headers: [{key:'Cache-Control',value:'public, max-age=3600'}] },
     ];
   },

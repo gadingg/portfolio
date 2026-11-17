@@ -11,8 +11,9 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function CvPage({searchParams}:{searchParams:Promise<{preview?:string}>}) {
-  const preview=(await searchParams).preview==='1';if(preview&&!await verifyAdminSession())redirect('/admintgadink');
+export default async function CvPage({searchParams}:{searchParams:Promise<{preview?:string;dialog?:string}>}) {
+  const query=await searchParams;
+  const preview=query.preview==='1';if(preview&&!await verifyAdminSession())redirect('/admintgadink');
   const site=preview?(await getSiteDocument()).draft:await getPublicSite();
-  return <CVContent site={site} preview={preview}/>;
+  return <CVContent site={site} preview={preview} embedded={query.dialog==='1'}/>;
 }

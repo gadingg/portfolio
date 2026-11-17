@@ -155,6 +155,7 @@ export async function renderHomepage(site: SiteContent,caseSlugs?:string[],about
   $('#work').attr('data-work-explorer','').attr('id','work');
   if(!$('#work #portfolio-results').length&&$('#work > .works-group').length) $('#work > .works-group').wrapAll('<div id="portfolio-results" class="portfolio-results"></div>');
   if (!$('script[src="/assets/js/contact-copy.js"]').length) $('body').append('<script src="/assets/js/contact-copy.js" defer></script>');
+  if (!$('script[src="/assets/js/cv-dialog.js"]').length) $('body').append('<script src="/assets/js/cv-dialog.js" defer></script>');
   $('.contact-bottom').each((_i, element) => {
     const footer = $(element);
     let links = footer.children('.social-links').first();

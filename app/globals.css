@@ -1312,6 +1312,7 @@ html[data-theme="light"] .hero-video.is-ready {
 
 
 .cv-page { width: min(920px, calc(100% - 32px)); margin: 64px auto; padding: clamp(24px, 6vw, 64px); background: #f3f0e8; color: #11130f; border-radius: 20px; }
+.cv-page.cv-embedded { width: 100%; margin: 0; border-radius: 0; }
 .cv-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; padding-bottom: 32px; border-bottom: 2px solid #11130f; }
 .cv-kicker { margin: 0 0 12px; color: #b93608; font-size: 11px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
 .cv-header h1 { margin: 0; font-size: clamp(2.5rem, 8vw, 5rem); line-height: 1; letter-spacing: -.035em; }

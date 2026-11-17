@@ -6,10 +6,10 @@ function CVDescription({text}:{text:string}) {
   return lines.length>1 ? <ul className="cv-bullets">{lines.map((line,index)=><li key={index}>{line}</li>)}</ul> : <p>{text}</p>;
 }
 
-export function CVContent({site,preview=false}:{site:SiteContent;preview?:boolean}) {
+export function CVContent({site,preview=false,embedded=false}:{site:SiteContent;preview?:boolean;embedded?:boolean}) {
   const {cv,values}=site;
   return (
-    <article className="cv-page" lang="en">
+    <article className={embedded?'cv-page cv-embedded':'cv-page'} lang="en">
       <header className="cv-header" data-cv-section="profile">
         <div>
           <h1>{cv.name}</h1>
@@ -23,7 +23,7 @@ export function CVContent({site,preview=false}:{site:SiteContent;preview?:boolea
         </div>
         <div className="cv-actions" data-cv-section="pdf">
           <a href={preview?'/api/cv?preview=1':'/api/cv'} download className="button button--primary">Download PDF</a>
-          <Link href="/" className="button button--secondary">Portfolio</Link>
+          {!embedded&&<Link href="/" className="button button--secondary">Portfolio</Link>}
         </div>
       </header>
 
